@@ -1,0 +1,126 @@
+#
+# Defines environment variables before .zshrc is sourced
+#
+
+# DOTFILES ###################################################################
+
+export DOTFILES=~/.dotfiles
+fpath=($DOTFILES/zsh $fpath)
+
+# Editors ####################################################################
+
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+
+# Language ###################################################################
+
+if [[ -z "$LANG" ]]; then
+	eval "$(locale)"
+fi
+
+# Less #######################################################################
+
+export LESS='-F -g -i -M -R -w -X -z-4'
+
+# Paths ######################################################################
+
+typeset -gU cdpath fpath mailpath manpath path
+typeset -gUT INFOPATH infopath
+
+# Set the the list of directories that cd searches.
+cdpath=(
+	$cdpath
+)
+
+# Set the list of directories that info searches for manuals.
+infopath=(
+	/usr/local/share/info
+	/usr/share/info
+	$infopath
+)
+
+# Set the list of directories that man searches for manuals.
+manpath=(
+	/usr/local/share/man
+	/usr/share/man
+	$manpath
+)
+
+for path_file in /etc/manpaths.d/*(.N); do
+	manpath+=($(<$path_file))
+done
+unset path_file
+
+# Set the list of directories that Zsh searches for programs.
+path=(
+	./node_modules/.bin
+	$HOME/Applications
+	$HOME/Dropbox/Bin
+	$HOME/bin
+	/usr/local/{bin,sbin}
+	$path
+)
+
+for path_file in /etc/paths.d/*(.N); do
+	path+=($(<$path_file))
+done
+unset path_file
+
+# Cache and temp files #######################################################
+
+export CACHEDIR="$HOME/.cache"
+if [[ ! -d "$CACHEDIR" ]]; then
+	mkdir -p "$CACHEDIR"
+fi
+
+export ZCACHEDIR="$CACHEDIR/zsh"
+if [[ ! -d "$ZCACHEDIR" ]]; then
+	mkdir -p "$ZCACHEDIR"
+fi
+
+if [[ -d "$TMPDIR" ]]; then
+	export TMPPREFIX="${TMPDIR%/}/zsh"
+	if [[ ! -d "$TMPPREFIX" ]]; then
+		mkdir -p "$TMPPREFIX"
+	fi
+fi
+
+# Python #####################################################################
+
+if (( $+commands[virtualenv] )); then
+	VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
+	VIRTUAL_ENV_DISABLE_PROMPT=1
+fi
+
+# Go #########################################################################
+
+if (( $+commands[go] )); then
+	GOROOT=$(go env GOROOT 2> /dev/null)
+	if [[ ! -z "$GOROOT" ]]; then
+		path+=$GOROOT/bin
+	fi
+	case "$OSTYPE" in
+		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
+		linux*)  export GOPATH=$HOME/go ;;
+	esac
+	path+=$GOPATH/bin
+fi
+
+# Ruby #######################################################################
+
+case "$OSTYPE" in
+	darwin*) export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0 ;;
+	linux*)  export GEM_HOME=$HOME/.gem/ruby/1.9.1 ;;
+esac
+path+=$GEM_HOME/bin
+
+# Local config #############################################################
+
+local_config=~/.config/zsh/zshenv
+if [[ -f "$local_config" ]]; then
+	source $local_config
+fi
+unset local_config
+
+# vim:shiftwidth=4:tabstop=4:noexpandtab

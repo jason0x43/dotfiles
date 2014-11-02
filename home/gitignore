@@ -1,0 +1,35 @@
+# Temp/junk files
+.*.swp
+*.diff
+*.err
+*.orig
+*.log
+*~
+
+# Project files
+.tern-project
+.tern-port
+
+# OS folders
+.DS_Store
+.cache
+Icon?
+
+# Other folders
+.hg
+.svn
+
+# Node
+/node_modules
+/npm-debug.log
+
+# Other stuff
+*.pyc
+/tmp
+
+# Intern files
+.internrc
+intern-local.js
+selftest.local.sh
+html-report
+local.intern.js

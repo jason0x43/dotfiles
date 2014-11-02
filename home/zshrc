@@ -1,0 +1,786 @@
+#!/usr/bin/env zsh
+
+# Color ################################################################## {{{
+
+# 256 color utilities
+if [[ "$TERM" =~ ".*-256color" ]]; then
+	typeset -gA FX FG BG
+	FX=(
+		none                      "\e[00m"
+		normal                    "\e[22m"
+		bold                      "\e[01m"    no-bold                      "\e[22m"
+		faint                     "\e[02m"    no-faint                     "\e[22m"
+		standout                  "\e[03m"    no-standout                  "\e[23m"
+		underline                 "\e[04m"    no-underline                 "\e[24m"
+		blink                     "\e[05m"    no-blink                     "\e[25m"
+		fast-blink                "\e[06m"    no-fast-blink                "\e[25m"
+		reverse                   "\e[07m"    no-reverse                   "\e[27m"
+		conceal                   "\e[08m"    no-conceal                   "\e[28m"
+		strikethrough             "\e[09m"    no-strikethrough             "\e[29m"
+		gothic                    "\e[20m"    no-gothic                    "\e[22m"
+		double-underline          "\e[21m"    no-double-underline          "\e[22m"
+		proportional              "\e[26m"    no-proportional              "\e[50m"
+		overline                  "\e[53m"    no-overline                  "\e[55m"
+
+		no-border                 "\e[54m"
+		border-rectangle          "\e[51m"    no-border-rectangle          "\e[54m"
+		border-circle             "\e[52m"    no-border-circle             "\e[54m"
+
+		no-ideogram-marking       "\e[65m"
+		underline-or-right        "\e[60m"    no-underline-or-right        "\e[65m"
+		double-underline-or-right "\e[61m"    no-double-underline-or-right "\e[65m"
+		overline-or-left          "\e[62m"    no-overline-or-left          "\e[65m"
+		double-overline-or-left   "\e[63m"    no-double-overline-or-left   "\e[65m"
+		stress                    "\e[64m"    no-stress                    "\e[65m"
+
+		font-default              "\e[10m"
+		font-first                "\e[11m"    no-font-first                "\e[10m"
+		font-second               "\e[12m"    no-font-second               "\e[10m"
+		font-third                "\e[13m"    no-font-third                "\e[10m"
+		font-fourth               "\e[14m"    no-font-fourth               "\e[10m"
+		font-fifth                "\e[15m"    no-font-fifth                "\e[10m"
+		font-sixth                "\e[16m"    no-font-sixth                "\e[10m"
+		font-seventh              "\e[17m"    no-font-seventh              "\e[10m"
+		font-eigth                "\e[18m"    no-font-eigth                "\e[10m"
+		font-ninth                "\e[19m"    no-font-ninth                "\e[10m"
+	)
+
+	FG[none]="$FX[none]"
+	BG[none]="$FX[none]"
+	colors=(black red green yellow blue magenta cyan white)
+	for color in {0..255}; do
+		if (( $color >= 0 )) && (( $color < $#colors )); then
+			index=$(( $color + 1 ))
+			FG[$colors[$index]]="\e[38;5;${color}m"
+			BG[$colors[$index]]="\e[48;5;${color}m"
+		fi
+
+		FG[$color]="\e[38;5;${color}m"
+		BG[$color]="\e[48;5;${color}m"
+	done
+	unset color{s,} index
+fi
+
+# Turn on color for everything
+zstyle ':zconf:*:*' color 'yes'
+autoload -U colors && colors
+
+# Terminal theme
+if [[ "$OSTYPE" == darwin* && $TERM_PROGRAM == iTerm.app ]]; then
+	termbg=$CACHEDIR/termbg
+
+	# Solarized palette, adjusted for iTerm2's deficient color handling
+	typeset -A PALETTE
+	PALETTE=(
+		base03  "002029"
+		base02  "082933"
+		base01  "465b62"
+		base00  "526870"
+		base0   "708284"
+		base1   "819090"
+		base2   "eae3ca"
+		base3   "fdf5db"
+		red     "d4191e"
+		green   "728b00"
+		yellow  "a67800"
+		blue    "1b74cb"
+		magenta "c9156f"
+		cyan    "209286"
+		orange  "c03601"
+		violet  "5857ba"
+	)
+
+	function setScheme() {
+		echo $1 >! $termbg
+		if [ -n "$TMUX" ]; then
+			tmux source-file $DOTFILES/tmux/$1.conf > /dev/null
+		fi
+	}
+
+	# Set a color in the color palette. The first arg is the cell to set
+	# (foreground, background, ANSI0, ANSI1, etc.), the second is the color as
+	# a 6-digit hex value. More information about iTerm2's proprietary codes is
+	# at https://iterm2.com/documentation-escape-codes.html.
+	if [ -n "$TMUX" ]; then
+		# The escape codes must be prefixed when running in tmux
+		function setColor {
+			echo -ne "\033Ptmux;\033\033]P${1}${2}\033\\"
+		}
+	else
+		function setColor {
+			echo -ne "\033]P${1}${2}\033\\"
+		}
+	fi
+
+	# Setup the palette
+	function setPalette() {
+		setColor '0' "$PALETTE[base02]"
+		setColor '1' "$PALETTE[red]"
+		setColor '2' "$PALETTE[green]"
+		setColor '3' "$PALETTE[yellow]"
+		setColor '4' "$PALETTE[blue]"
+		setColor '5' "$PALETTE[magenta]"
+		setColor '6' "$PALETTE[cyan]"
+		setColor '7' "$PALETTE[base2]"
+		setColor '8' "$PALETTE[base03]"
+		setColor '9' "$PALETTE[orange]"
+		setColor 'A' "$PALETTE[base01]"
+		setColor 'B' "$PALETTE[base00]"
+		setColor 'C' "$PALETTE[base0]"
+		setColor 'D' "$PALETTE[violet]"
+		setColor 'E' "$PALETTE[base1]"
+		setColor 'F' "$PALETTE[base3]"
+	}
+
+	# Enable Solarized Light
+	function light() {
+		setPalette
+		setScheme light Light
+		setColor 'g' "$PALETTE[base00]"
+		setColor 'h' "$PALETTE[base3]"
+		setColor 'i' "$PALETTE[base01]"
+		setColor 'j' "$PALETTE[base2]"
+		setColor 'k' "$PALETTE[base00]"
+	}
+
+	# Enable Solarized Dark
+	function dark() {
+		setPalette
+		setScheme dark Dark
+		setColor 'g' "$PALETTE[base0]"
+		setColor 'h' "$PALETTE[base03]"
+		setColor 'i' "$PALETTE[base1]"
+		setColor 'j' "$PALETTE[base02]"
+		setColor 'k' "$PALETTE[base0]"
+	}
+
+	# If a termbg file exists, set the theme
+	if [[ -e $termbg ]]; then
+		case $(cat $termbg) in
+			light)
+				light;;
+			dark)
+				dark;;
+		esac
+	fi
+fi
+
+# Git log colors
+zstyle -s ':zconf:module:git:log:medium' format '_git_log_medium_format' \
+	|| _git_log_medium_format='%C(bold)Commit:%C(reset) %C(green)%H%C(red)%d%n%C(bold)Author:%C(reset) %C(cyan)%an <%ae>%n%C(bold)Date:%C(reset)   %C(blue)%ai (%ar)%C(reset)%n%+B'
+zstyle -s ':zconf:module:git:log:oneline' format '_git_log_oneline_format' \
+	|| _git_log_oneline_format='%C(green)%h%C(reset) %s%C(red)%d%C(reset)%n'
+zstyle -s ':zconf:module:git:log:brief' format '_git_log_brief_format' \
+	|| _git_log_brief_format='%C(green)%h%C(reset) %s%n%C(blue)(%ar by %an)%C(red)%d%C(reset)%n'
+
+# Git status
+zstyle -s ':zconf:module:git:status:ignore' submodules '_git_status_ignore_submodules' \
+	|| _git_status_ignore_submodules='none'
+
+# Less
+if zstyle -t ':zconf:environment:termcap' color; then
+	export LESS_TERMCAP_mb=$'\E[01;31m'    # Begins blinking
+	export LESS_TERMCAP_md=$'\E[01;31m'    # Begins bold
+	export LESS_TERMCAP_me=$'\E[0m'        # Ends mode
+	export LESS_TERMCAP_se=$'\E[0m'        # Ends standout-mode
+	export LESS_TERMCAP_so=$'\E[00;47;30m' # Begins standout-mode
+	export LESS_TERMCAP_ue=$'\E[0m'        # Ends underline
+	export LESS_TERMCAP_us=$'\E[01;32m'    # Begins underline
+fi
+
+# Grep
+if zstyle -t ':zconf:environment:grep' color; then
+	export GREP_COLOR='37;45'
+	export GREP_OPTIONS='--color=auto'
+fi
+
+# }}}
+
+# Line editor ############################################################ {{{
+
+# Do not override precmd/preexec; append to the hook array
+autoload -Uz add-zsh-hook
+
+# Use human-friendly key identifiers
+zmodload zsh/terminfo
+typeset -gA key_info
+key_info=(
+	'Control'      '\C-'
+	'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
+	'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
+	'Escape'       '\e'
+	'Meta'         '\M-'
+	'Backspace'    "^?"
+	'Delete'       "^[[3~"
+	'F1'           "$terminfo[kf1]"
+	'F2'           "$terminfo[kf2]"
+	'F3'           "$terminfo[kf3]"
+	'F4'           "$terminfo[kf4]"
+	'F5'           "$terminfo[kf5]"
+	'F6'           "$terminfo[kf6]"
+	'F7'           "$terminfo[kf7]"
+	'F8'           "$terminfo[kf8]"
+	'F9'           "$terminfo[kf9]"
+	'F10'          "$terminfo[kf10]"
+	'F11'          "$terminfo[kf11]"
+	'F12'          "$terminfo[kf12]"
+	'Insert'       "$terminfo[kich1]"
+	'Home'         "$terminfo[khome]"
+	'PageUp'       "$terminfo[kpp]"
+	'End'          "$terminfo[kend]"
+	'PageDown'     "$terminfo[knp]"
+	'Up'           "$terminfo[kcuu1]"
+	'Left'         "$terminfo[kcub1]"
+	'Down'         "$terminfo[kcud1]"
+	'Right'        "$terminfo[kcuf1]"
+	'BackTab'      "$terminfo[kcbt]"
+)
+
+# Set empty $key_info values to an invalid UTF-8 sequence to induce silent
+# bindkey failure
+for key in "${(k)key_info[@]}"; do
+	if [[ -z "$key_info[$key]" ]]; then
+		key_info[$key]='�'
+	fi
+done
+
+# Make typing and editing URLs easier
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
+
+# Make sure to load this *before* history-substring-search
+source "/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+
+# }}}
+
+# Completions ############################################################ {{{
+
+# Add system-wide completions
+fpath=(/usr/local/share/zsh-completions $fpath)
+
+# Load and initialize the completion system, ignoring insecure directories
+export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+autoload -Uz compinit && compinit -i -d $ZCOMPFILE
+
+# Options
+setopt COMPLETE_IN_WORD # Complete from both ends of a word
+setopt ALWAYS_TO_END    # Move cursor to the end of a completed word
+setopt PATH_DIRS        # Perform path search even on command names with slashes
+setopt AUTO_MENU        # Show completion menu on a succesive tab press
+setopt AUTO_LIST        # Automatically list choices on ambiguous completion
+setopt AUTO_PARAM_SLASH # If completed parameter is a directory, add a trailing slash
+unsetopt MENU_COMPLETE  # Do not autoselect the first completion entry
+unsetopt FLOW_CONTROL   # Disable start/stop characters in shell editor
+
+# Use caching to make completion for cammands such as dpkg and apt usable
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${ZCACHEDIR}"
+
+# Case-insensitive (all), partial-word, and then substring completion
+if zstyle -t ':zconf:module:completion:*' case-sensitive; then
+	zstyle ':completion:*' matcher-list 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+	setopt CASE_GLOB
+else
+	zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+	unsetopt CASE_GLOB
+fi
+
+# Group matches and describe
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*:matches' group 'yes'
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:options' auto-description '%d'
+zstyle ':completion:*:corrections' format ' %F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:descriptions' format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*' format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose yes
+
+# Fuzzy match mistyped completions
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+zstyle ':completion:*:approximate:*' max-errors 1 numeric
+
+# Increase the number of errors based on the length of the typed word
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
+
+# Don't complete unavailable commands
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+
+# Array completion element sorting
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+
+# Directories
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+zstyle ':completion:*' squeeze-slashes true
+
+# History
+zstyle ':completion:*:history-words' stop yes
+zstyle ':completion:*:history-words' remove-all-dups yes
+zstyle ':completion:*:history-words' list false
+zstyle ':completion:*:history-words' menu yes
+
+# Environmental Variables
+zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-value-*]#*,}%%,*}:#-*-}
+
+# Populate hostname completion
+zstyle -e ':completion:*:hosts' hosts 'reply=(
+	${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
+	${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
+	${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
+)'
+
+# Don't complete uninteresting users...
+zstyle ':completion:*:*:*:users' ignored-patterns \
+	adm amanda apache avahi beaglidx bin cacti canna clamav daemon \
+	dbus distcache dovecot fax ftp games gdm gkrellmd gopher \
+	hacluster haldaemon halt hsqldb ident junkbust ldap lp mail \
+	mailman mailnull mldonkey mysql nagios \
+	named netdump news nfsnobody nobody nscd ntp nut nx openvpn \
+	operator pcap postfix postgres privoxy pulse pvm quagga radvd \
+	rpc rpcuser rpm shutdown squid sshd sync uucp vcsa xfs '_*'
+
+# ... unless we really want to
+zstyle '*' single-ignored show
+
+# Ignore multiple entries
+zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
+zstyle ':completion:*:rm:*' file-patterns '*:all-files'
+
+# Kill
+zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm -w'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;36=0=01'
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:*:kill:*' force-list always
+zstyle ':completion:*:*:kill:*' insert-ids single
+
+# Man
+zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*:manuals.(^1*)' insert-sections true
+
+# SSH/SCP/RSYNC
+zstyle ':completion:*:(scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:ssh:*' group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
+
+# }}}
+
+# Prompt ################################################################# {{{
+
+# VI keybindings
+bindkey -v
+
+# Prompt 
+autoload -Uz promptinit && promptinit
+prompt 'jason0x43'
+
+# }}}
+
+# Utility functions ###################################################### {{{
+
+# Checks if a name is a command, function, or alias
+function is-callable {
+	(( $+commands[$1] )) || (( $+functions[$1] )) || (( $+aliases[$1] ))
+}
+
+# Gets password from OS X Keychain
+# $ get-pass github
+function get-pass() {
+	keychain="$HOME/Library/Keychains/login.keychain"
+	security -q find-generic-password -g -l $@ $keychain 2>&1 |\
+		awk -F\" '/password:/ {print $2}';
+}
+
+# Better find(1)
+function ff() {
+	find . -iname "*${1:-}*"
+}
+
+# Show how much RAM application uses
+# $ ram safari
+# # => safari uses 154.69 MBs of RAM
+function ram() {
+	local sum
+	local items
+	local app="$1"
+	if [ -z "$app" ]; then
+		echo "First argument - pattern to grep from processes"
+	else
+		sum=0
+		for i in `ps aux | grep -i "$app" | grep -v "grep" | awk '{print $6}'`; do
+			sum=$(($i + $sum))
+		done
+		sum=$(echo "scale=2; $sum / 1024.0" | bc)
+		if [[ $sum != "0" ]]; then
+			echo "${fg[blue]}${app}${reset_color} is using ${fg[green]}${sum}${reset_color} MB of RAM."
+		else
+			echo "There are no processes with pattern '${fg[blue]}${app}${reset_color}' are running."
+		fi
+	fi
+}
+
+# $ aes-enc file.zip
+function aes-enc() {
+	openssl enc -aes-256-cbc -e -in $1 -out "$1.aes"
+}
+
+# $ aes-dec file.zip.aes
+function aes-dec() {
+	openssl enc -aes-256-cbc -d -in $1 -out "${1%.*}"
+}
+
+# Monitor IO in real-time (open files etc)
+function openfiles() {
+	sudo dtrace -n 'syscall::open*:entry { printf("%s %s",execname,copyinstr(arg0)); }'
+}
+
+# Load 8 cores at once
+function maxcpu() {
+	dn=/dev/null
+	yes > $dn & yes > $dn & yes > $dn & yes > $dn &
+	yes > $dn & yes > $dn & yes > $dn & yes > $dn &
+}
+
+# $ retry ping google.com
+function retry() {
+	echo Retrying "$@"
+	$@
+	sleep 1
+	retry $@
+}
+
+# Git pull current branch
+function gp {
+	if [[ $1 != "" ]]; then
+		git pull ${1} `git rev-parse --abbrev-ref HEAD`
+	else
+		git pull
+	fi
+}
+
+# }}}
+
+# Aliases ################################################################ {{{
+
+# Disable certificate check for wget
+alias wget='wget --no-check-certificate'
+
+# Useful global aliases
+alias -g 'GR'='| grep -i'
+
+# Go to previous pwd
+alias back='popd'
+
+# Git short-cuts
+alias ga='git add'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gca='git commit --verbose --all'
+alias gcb='git checkout -b'
+alias gco='git checkout'
+alias gcp='git cherry-pick --ff'
+alias gcpn='git cherry-pick --no-commit'
+alias gd='git diff'
+alias gdh='git diff HEAD'
+alias gds='git diff --stat'
+alias gg='git grep'
+alias ggi='git grep --ignore-case'
+alias ggl='git grep --files-with-matches'
+alias ggil='git grep --ignore-case --files-with-matches'
+alias gid='git rev-parse HEAD'
+alias gl='git lg'
+alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
+alias gls='git ls-files'
+alias grc='git rebase --continue'
+alias gs='git st'
+alias tiga='tig --all'
+
+# Pretty print json
+alias json='python -m json.tool'
+
+# Disable correction for some commands
+alias ack='nocorrect ack'
+alias cd='nocorrect cd'
+alias cp='nocorrect cp'
+alias gcc='nocorrect gcc'
+alias gist='nocorrect gist'
+alias grep='nocorrect grep'
+alias ln='nocorrect ln'
+alias man='nocorrect man'
+alias mkdir='nocorrect mkdir'
+alias mv='nocorrect mv'
+alias rm='nocorrect rm'
+alias vim='nocorrect vim'
+
+# Disable globbing
+alias bower='noglob bower'
+alias fc='noglob fc'
+alias find='noglob find'
+alias ftp='noglob ftp'
+alias history='noglob history'
+alias locate='noglob locate'
+alias rsync='noglob rsync'
+alias scp='noglob scp'
+alias sftp='noglob sftp'
+
+# Define general aliases
+alias b='${(z)BROWSER}'
+alias cp="${aliases[cp]:-cp} -i"
+alias e='${(z)VISUAL:-${(z)EDITOR}}'
+alias ln="${aliases[ln]:-ln} -i"
+alias mkdir="${aliases[mkdir]:-mkdir} -p"
+alias mv="${aliases[mv]:-mv} -i"
+alias p='${(z)PAGER}'
+alias po='popd'
+alias pu='pushd'
+alias rm="${aliases[rm]:-rm} -i"
+alias type='type -a'
+alias vi='vim'
+
+if is-callable 'dircolors'; then
+	# GNU Core Utilities
+	alias ls='ls --group-directories-first'
+
+	if zstyle -t ':zconf:module:utility:ls' color; then
+		if [[ -s "$HOME/.dir_colors" ]]; then
+			eval "$(dircolors "$HOME/.dir_colors")"
+		else
+			eval "$(dircolors)"
+		fi
+
+		alias ls="$aliases[ls] --color=auto"
+	else
+		alias ls="$aliases[ls] -F"
+	fi
+else
+	# BSD Core Utilities
+	if zstyle -t ':zconf:module:utility:ls' color; then
+		# Define colors for BSD ls
+		export LSCOLORS='exfxcxdxbxGxDxabagacad'
+
+		# Define colors for the completion system
+		export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+
+		alias ls='ls -G'
+	else
+		alias ls='ls -F'
+	fi
+fi
+
+alias l='ls -1A'         # Lists in one column, hidden files
+alias ll='ls -lh'        # Lists human readable sizes
+alias lr='ll -R'         # Lists human readable sizes, recursively
+alias la='ll -A'         # Lists human readable sizes, hidden files
+alias lm='la | "$PAGER"' # Lists human readable sizes, hidden files through pager
+alias lk='ll -Sr'        # Lists sorted by size, largest last
+alias lt='ll -tr'        # Lists sorted by date, most recent last
+alias lc='lt -c'         # Lists sorted by date, most recent last, shows change time
+alias lu='lt -u'         # Lists sorted by date, most recent last, shows access time
+
+# Simple file download
+if (( $+commands[curl] )); then
+	alias get='curl --continue-at - --location --progress-bar --remote-name --remote-time'
+elif (( $+commands[wget] )); then
+	alias get='wget --continue --progress=bar --timestamping'
+fi
+
+# Space usage
+alias df='df -kh'
+alias du='du -kh'
+
+# CPU/memory usage
+if (( $+commands[vtop] )); then
+	alias top=vtop
+elif (( $+commands[htop] )); then
+	alias top=htop
+else
+	alias topc='top -o cpu'
+	alias topm='top -o vsize'
+fi
+
+# Universal open, copy, and paste
+if [[ "$OSTYPE" == darwin* ]]; then
+	alias o='open'
+elif [[ "$OSTYPE" == cygwin* ]]; then
+	alias o='cygstart'
+	alias pbcopy='tee > /dev/clipboard'
+	alias pbpaste='cat /dev/clipboard'
+else
+	alias o='xdg-open'
+
+	if (( $+commands[xclip] )); then
+		alias pbcopy='xclip -selection clipboard -in'
+		alias pbpaste='xclip -selection clipboard -out'
+	elif (( $+commands[xsel] )); then
+		alias pbcopy='xsel --clipboard --input'
+		alias pbpaste='xsel --clipboard --output'
+	fi
+fi
+
+# Copy and paste
+alias c='pbcopy'
+alias p='pbpaste'
+
+if [[ "$OSTYPE" == darwin* ]]; then
+	# Remove all items safely, to Trash (`brew install trash`)
+	# alias rm='nocorrect trash -i'
+
+	# Case-insensitive pgrep that outputs full path
+	alias pgrep='pgrep -fli'
+
+	# Open chrome from the command line
+	alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
+else
+	# Process grep should output full paths to binaries
+	alias pgrep='pgrep -fl'
+fi
+
+# }}}
+
+# Shell options ########################################################## {{{
+
+# Navigation
+setopt AUTO_CD           # Auto changes to a directory without typing cd
+setopt AUTO_PUSHD        # Push the old directory onto the stack on cd
+setopt PUSHD_IGNORE_DUPS # Do not store duplicates in the stack
+setopt PUSHD_SILENT      # Do not print the directory stack after pushd or popd
+setopt PUSHD_TO_HOME     # Push to home directory when no argument is given
+setopt CDABLE_VARS       # Change directory to a path stored in a variable
+setopt AUTO_NAME_DIRS    # Auto add variable-stored paths to ~ list
+setopt MULTIOS           # Write to multiple descriptors
+setopt EXTENDED_GLOB     # Use extended globbing syntax
+unsetopt CLOBBER         # Don't overwrite existing files with > and >>
+
+# Files and commands
+setopt CORRECT           # Correct mis-typed commands
+setopt BRACE_CCL         # Allow brace character class list expansion
+setopt COMBINING_CHARS   # Combine zero-length punctuation characters (accents)
+                         # with the base character
+setopt RC_QUOTES         # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'
+unsetopt MAIL_WARNING    # Don't print a warning message if a mail file has been accessed
+
+# Jobs
+setopt LONG_LIST_JOBS    # List jobs in the long format by default
+setopt AUTO_RESUME       # Attempt to resume existing job before creating a new process
+setopt NOTIFY            # Report status of background jobs immediately
+unsetopt BG_NICE         # Don't run all background jobs at a lower priority
+unsetopt HUP             # Don't kill jobs on shell exit
+unsetopt CHECK_JOBS      # Don't report on jobs when shell exit
+
+# History
+setopt BANG_HIST              # Treat the '!' character specially during expansion
+setopt EXTENDED_HISTORY       # Write the history file in the ':start:elapsed;command' format
+setopt INC_APPEND_HISTORY     # Write to the history file immediately, not when the shell exits
+setopt SHARE_HISTORY          # Share history between all sessions
+setopt HIST_EXPIRE_DUPS_FIRST # Expire a duplicate event first when trimming history
+setopt HIST_IGNORE_DUPS       # Do not record an event that was just recorded again
+setopt HIST_IGNORE_ALL_DUPS   # Delete an old recorded event if a new event is a duplicate
+setopt HIST_FIND_NO_DUPS      # Do not display a previously found event
+setopt HIST_IGNORE_SPACE      # Do not record an event starting with a space
+setopt HIST_SAVE_NO_DUPS      # Do not write a duplicate event to the history file
+setopt HIST_VERIFY            # Do not execute immediately upon history expansion
+setopt HIST_BEEP              # Beep when accessing non-existent history
+
+# }}}
+
+# History ################################################################ {{{
+
+HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"  # The path to the history file
+HISTSIZE=10000                # The maximum number of events to save in the internal history
+SAVEHIST=10000                # The maximum number of events to save in the history file
+
+# Lists the ten most used commands
+alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
+
+# }}}
+
+# Random OSX stuff ####################################################### {{{
+
+if [[ "$OSTYPE" == darwin* ]]; then
+	# Open a file with QuickLook
+	function ql {
+		qlmanage -p "$1" &> /dev/null
+	}
+
+	# Open a manpage in Dash.app
+	function dash {
+		if (( $# > 0 )); then
+			open "dash://man:$1" 2>/dev/null
+			if (( $? != 0 )); then
+				print "$0: Dash is not installed" >&2
+				break
+			fi
+		else
+			print 'What manual page do you want?' >&2
+		fi
+	}
+fi
+
+# }}}
+
+# Node ################################################################### {{{
+
+# Load NPM completion
+if (( $+commands[npm] )); then
+	cache_file="$ZCACHEDIR/npm.zsh"
+
+	if [[ "$commands[npm]" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+		# npm is slow; cache its output.
+		npm completion >! "$cache_file" 2> /dev/null
+	fi
+
+	source "$cache_file"
+	unset cache_file
+fi
+
+# }}}
+
+# History substring search ############################################### {{{
+
+source "/usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh"
+
+zstyle -s ':zconf:module:history-substring-search:color' found \
+  'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND' \
+	|| HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
+
+zstyle -s ':zconf:module:history-substring-search:color' not-found \
+  'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND' \
+	|| HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+
+zstyle -s ':zconf:module:history-substring-search' globbing-flags \
+  'HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS' \
+	|| HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+
+if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
+  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
+fi
+
+if ! zstyle -t ':zconf:module:history-substring-search' color; then
+  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
+fi
+
+# key bindings
+if [[ -n "$key_info" ]]; then
+	bindkey -M vicmd "k" history-substring-search-up
+	bindkey -M vicmd "j" history-substring-search-down
+
+	for keymap in 'viins'; do
+		bindkey -M "$keymap" "$key_info[Up]" history-substring-search-up
+		bindkey -M "$keymap" "$key_info[Down]" history-substring-search-down
+	done
+fi
+
+# }}}
+
+# vim:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker

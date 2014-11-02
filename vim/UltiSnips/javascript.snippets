@@ -1,0 +1,44 @@
+# Anonymous function
+snippet f
+function (${1}) {
+	${0}
+}
+endsnippet
+
+# AMD define, multi-line dependencies
+snippet def
+define([
+	'${1}'
+], function (${2}) {
+	${0}
+});
+endsnippet
+
+# AMD define, single-line dependencies
+snippet def1
+define([ '${1}' ], function (${2}) {
+	${0}
+});
+endsnippet
+
+# AMD define, multi-line dependencies
+snippet req
+require([ '${1}' ], function (${2}) {
+	${0}
+});
+endsnippet
+
+# Dojo inherited
+snippet inh
+this.inherited(arguments);
+endsnippet
+
+# stringify
+snippet jst
+JSON.stringify(${1})
+endsnippet
+
+# console.log
+snippet log
+console.log(${1});
+endsnippet

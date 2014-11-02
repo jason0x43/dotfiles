@@ -1,0 +1,58 @@
+[color]
+	ui = auto
+[pack]
+	threads = 0
+[diff]
+	renamelimit = 0
+	tool = vimdiff
+	renames = true
+[difftool]
+	prompt = false
+[core]
+	excludesfile = ~/.gitignore
+	autocrlf = input
+	editor = vim
+	precomposeunicode = true
+	pager = less -F -X
+[alias]
+	st = status --short
+	unstage = reset HEAD
+	staged = diff --staged --name-status
+	id = rev-parse HEAD
+	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
+	cat = show
+	untrack = rm --cached
+	forget = rm --cached
+	lgb = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)'
+	lg = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)' --all
+	co = checkout
+	last = cat-file commit HEAD
+	cb = checkout -b
+	rb = branch -d
+	cp = cherry-pick
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[credential]
+	helper = osxkeychain
+[push]
+	default = simple
+[tig]
+	line-graphics = utf-8
+[tig "color"]
+	cursor = white 237
+	title-focus = white blue
+	author = 61 default
+	date = 240 default
+[tig "bind"]
+	generic = <Ctrl-f> scroll-page-down
+	generic = G move-first-line
+	status = C !git commit --verbose
+[url "git@github.com:"]
+	insteadOf = gh:
+	pushInsteadOf = gh:
+	pushInsteadOf = git://github.com/
+[url "git@gist.github.com:"]
+	insteadOf = gist:
+	pushInsteadOf = gist:
+	pushInsteadOf = git://gist.github.com/
