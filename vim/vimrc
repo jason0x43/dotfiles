@@ -590,26 +590,20 @@ function! UpdateBackground()
 			set background=dark
 		endif
 	endif
-endfunction
 
-" check if the background has changed
-au! CursorHold,CursorHoldI * call UpdateBackground()
-
-" apply custom styles for the theme and update LightLine
-function! UpdateScheme()
 	hi Comment cterm=italic
 	hi Folded cterm=italic
 	LightlineRefresh
 endfunction
 
-" when the colorscheme changes, apply custom styles and update LightLine
-au! ColorScheme * call UpdateScheme()
+" check if the background has changed
+au! CursorHold,CursorHoldI * call UpdateBackground()
 
 filetype plugin indent on | syntax on
 
+colorscheme solarized
+
 " process the termbg file if one exists
 call UpdateBackground()
-
-colorscheme solarized
 
 " vim:tabstop=4:shiftwidth=4:noexpandtab
