@@ -484,8 +484,10 @@ alias back='popd'
 
 # Git short-cuts
 alias ga='git add'
+alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -d'
+alias gc='git commit --verbose'
 alias gca='git commit --verbose --all'
 alias gcb='git checkout -b'
 alias gco='git checkout'
