@@ -650,6 +650,15 @@ fi
 
 # }}}
 
+# ZSH help ############################################################### {{{
+
+unalias run-help
+autoload run-help
+alias help='run-help'
+HELPDIR=/usr/share/zsh/5.0.5/help
+
+# }}}
+
 # Shell options ########################################################## {{{
 
 # Navigation
