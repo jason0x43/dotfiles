@@ -655,7 +655,7 @@ fi
 unalias run-help
 autoload run-help
 alias help='run-help'
-HELPDIR=/usr/share/zsh/5.0.5/help
+HELPDIR=/usr/local/share/zsh/help
 
 # }}}
 
