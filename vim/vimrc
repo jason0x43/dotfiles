@@ -374,6 +374,9 @@ augroup END
 " NERDTree ------------------------------------------------------- {{{
 let g:NERDTreeHijackNetrw = 0
 let g:NERDTreeMinimalUI   = 1
+" disable C-K and C-J mappings; wasn't using, and they break tmux-navigator
+let g:NERDTreeMapJumpPrevSibling = ''
+let g:NERDTreeMapJumpNextSibling = ''
 map <silent> <Leader>e :NERDTreeToggle<CR>
 " }}}
 
