@@ -593,9 +593,6 @@ function! UpdateBackground()
 			set background=dark
 		endif
 	endif
-
-	hi Comment cterm=italic
-	hi Folded cterm=italic
 	LightlineRefresh
 endfunction
 
