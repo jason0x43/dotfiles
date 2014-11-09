@@ -32,7 +32,4 @@ sourcetreebulkmerge.binary=True
 cmd.sourcetreediff=opendiff
 opts.sourcetreediff=
 
-[web]
-cacerts = /usr/local/etc/hg-dummy-cert.pem
-
 %include ~/.config/hg/hgrc
