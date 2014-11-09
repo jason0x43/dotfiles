@@ -133,6 +133,8 @@ Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 Plug 'jason0x43/vim-colors-solarized'
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'html' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+" Start tagbar for go files so vim-go can inject golang support
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle', 'for': [ 'go' ] }
 Plug 'junegunn/vim-easy-align'
 Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ] }
 Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
@@ -274,7 +276,7 @@ endfunction
 function! LightlineFilename()
   let fname = expand('%:t')
   return fname == 'ControlP' ? g:lightline.ctrlp_item :
-	  \ fname == '__Tagbar__' ? g:lightline.fname :
+	  \ fname == '__Tagbar__' ? 'TagBar' :
 	  \ fname =~ '__Gundo\|NERD_tree' ? '' :
 	  \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
 	  \ &ft == 'unite' ? unite#get_status_string() :
@@ -429,6 +431,10 @@ function! SynInit()
 	au! load_syn
 	call plug#load('syntastic')
 endfunction
+" }}}
+
+" Tagbar --------------------------------------------------------- {{{
+map <silent> <Leader>t :TagbarToggle<CR>
 " }}}
 
 " tern ----------------------------------------------------------- {{{
