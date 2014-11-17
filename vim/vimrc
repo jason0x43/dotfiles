@@ -219,6 +219,7 @@ map <silent> <Leader>ig :ToggleIndentGuides<CR>
 " javascript ----------------------------------------------------- {{{
 let g:html_indent_script1 = 'inc'
 let g:html_indent_style1 = 'inc'
+let g:js_indent_flat_switch = 1
 " }}}
 
 " json ----------------------------------------------------------- {{{
