@@ -163,7 +163,7 @@ if executable('go')
 endif
 
 if has('lua')
-	Plug 'Shougo/neocomplete.vim', { 'on': [] }
+	Plug 'Shougo/neocomplete.vim'
 endif
 
 call plug#end()
@@ -366,11 +366,6 @@ endif
 let g:neocomplete#force_omni_input_patterns.javascript = '[^. \t]\.\w*'
 
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-
-augroup load_nc
-	au!
-	au InsertEnter * call plug#load('neocomplete.vim') | au! load_nc
-augroup END
 " }}}
 
 " NERDTree ------------------------------------------------------- {{{
