@@ -1,0 +1,25 @@
+#compdef alfred
+# ------------------------------------------------------------------------------
+# Description
+# -----------
+#
+#  Completion script for alfred (https://github.com/jason0x43/go-alfred)
+#
+# ------------------------------------------------------------------------------
+# Authors
+# -------
+#
+#  * Jason Cheatham (https://github.com/jason0x43)
+#
+# ------------------------------------------------------------------------------
+
+local cmds
+local -a base_commands
+
+cmds=`alfred -z`
+base_commands=("${(f)cmds}")
+_describe -t base_commands 'COMMANDS' base_commands
+
+return 0
+
+# vim: ft=zsh sw=4 ts=4 noet
