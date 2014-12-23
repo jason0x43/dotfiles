@@ -139,11 +139,13 @@ Plug 'junegunn/vim-easy-align'
 Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ] }
 Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
 Plug 'moll/vim-bbye'
+Plug 'niklasl/vim-rdf'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'scrooloose/syntastic', { 'on': [] }
 Plug 'sickill/vim-pasta'
 Plug 'suy/vim-context-commentstring'
+Plug 'tfnico/vim-gradle'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
