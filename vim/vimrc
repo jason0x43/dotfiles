@@ -131,7 +131,7 @@ Plug 'honza/vim-snippets', { 'on': [] }
 Plug 'itchyny/lightline.vim'
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 Plug 'jason0x43/vim-colors-solarized'
-Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'html' ] }
+Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 " Start tagbar for go files so vim-go can inject golang support
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle', 'for': [ 'go' ] }
