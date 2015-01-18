@@ -418,6 +418,7 @@ let g:syntastic_loc_list_height = 3
 let g:syntastic_typescript_tsc_args = '--module amd --noImplicitAny'
 let g:syntastic_typescript_checkers = ['tslint']
 let g:syntastic_csslint_args = '--ignore=ids,adjoining-classes'
+let g:syntastic_javascript_checkers = ['jshint', 'jscs']
 
 map <silent> <Leader>nc :SyntasticCheck<CR>
 map <silent> <Leader>ne :Errors<CR>
