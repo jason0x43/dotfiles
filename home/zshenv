@@ -99,6 +99,10 @@ if (( $+commands[virtualenv] )); then
 	VIRTUAL_ENV_DISABLE_PROMPT=1
 fi
 
+if [[ -e ~/Library/Python/2.7/bin ]]; then
+	export PATH=$PATH:~/Library/Python/2.7/bin
+fi
+
 # Go #########################################################################
 
 if (( $+commands[go] )); then
