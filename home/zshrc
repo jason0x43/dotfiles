@@ -797,5 +797,7 @@ if [[ -n "$key_info" ]]; then
 fi
 
 # }}}
+#
+[ -f $DOTFILES/zsh/fzf ] && source $DOTFILES/zsh/fzf
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker

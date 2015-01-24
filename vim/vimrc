@@ -167,6 +167,10 @@ if executable('go')
 endif
 call plug#end()
 
+" fzf fuzzy finder; FZF_PATH is set via zshrc, and uses the vim files from the
+" homebrew install of fzf
+set rtp+=$FZF_PATH
+
 " a -------------------------------------------------------------- {{{
 let g:alternateExtensions_coffee = 'js'
 let g:alternateExtensions_styl = 'css'
@@ -440,49 +444,35 @@ augroup load_us
 augroup END
 " }}}
 
-" unite ---------------------------------------------------------- {{{
-map <Leader>b :Unite -hide-source-names -buffer-name=buffers -start-insert buffer<cr>
-map <Leader>f :Unite -hide-source-names -buffer-name=files -start-insert file_rec/async<cr>
-map <Leader>g :Unite -hide-source-names -buffer-name=git-files -start-insert file_rec/git:--cached:--other:--exclude-standard<cr>
-map <Leader>s :Unite grep:.<cr>
-map <Leader>k :Unite mark<cr>
-
-let g:unite_data_directory = expand('~/.cache/vim/unite')
-let g:unite_enable_use_short_source_names = 1
-let g:unite_enable_start_insert = 1
-let g:unite_force_overwrite_statusline = 0
-let g:unite_split_rule = "botright"
-let g:unite_winheight = 10
-
-if executable('ag')
-	" Use ag in unite grep source.
-	let g:unite_source_grep_command = 'ag'
-	let g:unite_source_grep_default_opts =
-		\ '-i --line-numbers --nocolor --nogroup --hidden --ignore ' .
-		\  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-	let g:unite_source_grep_recursive_opt = ''
-endif
-
-" startup initialization for unite
-augroup unite
-	au!
-	au FileType unite call UniteInit()
-augroup END
-
-function! UniteInit()
-	au! unite
-	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_rank'])
+" FZF ------------------------------------------------------------ {{{
+function! BuffersList()
+	let all = range(1, bufnr('$'))
+	let res = []
+	for b in all
+		if buflisted(b)
+			call add(res, bufname(b))
+		endif
+	endfor
+	return res
 endfunction
+command! FZFBuffers call fzf#run({
+	\'source': BuffersList(),
+	\'sink' : 'e ',
+	\'options' : '-m',
+	\'tmux_height' : 8,
+	\})
+command! FZFGit call fzf#run({
+	\'source': 'git ls-tree -r --name-only HEAD',
+	\'sink' : 'e ',
+	\'options' : '-m',
+	\'tmux_height' : 8,
+	\})
 
-" set unite key maps each time a unite buffer is opened
-autocmd FileType unite call s:unite_settings()
-function! s:unite_settings()
-	imap <buffer> <C-j> <Plug>(unite_select_next_line)
-	imap <buffer> <C-k> <Plug>(unite_select_previous_line)
-	nmap <buffer> <ESC> <Plug>(unite_exit)
-	imap <buffer> <ESC> <Plug>(unite_exit)
-endfunction
+let g:fzf_tmux_height=15
+map <Leader>f :FZF<cr>
+map <Leader>b :FZFBuffers<cr>
+map <Leader>g :FZFGit<cr>
+
 " }}}
 
 " == End plugins =============================================
