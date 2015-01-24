@@ -158,16 +158,12 @@ Plug 'vim-coffee-script', { 'for': 'coffeescript' }
 Plug 'vim-tmuxify'
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 Plug 'tpope/vim-vinegar'
+Plug 'Valloric/YouCompleteMe'
 
 if executable('go')
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	let g:go_fmt_command = "goimports"
 endif
-
-if has('lua')
-	Plug 'Shougo/neocomplete.vim'
-endif
-
 call plug#end()
 
 " a -------------------------------------------------------------- {{{
@@ -353,22 +349,6 @@ function! LightlineRefresh()
 	call lightline#update()
 endfunction
 command! LightlineRefresh :call LightlineRefresh()
-" }}}
-
-" neocomplete ---------------------------------------------------- {{{
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#auto_completion_start_length = 1
-let g:neocomplete#sources#buffer#cache_limit_size = 50000
-let g:neocomplete#data_directory = $HOME.'/.cache/vim/neocomplete'
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#sources#syntax#min_keyword_length = 2
-
-if !exists('g:neocomplete#force_omni_input_patterns')
-	let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.javascript = '[^. \t]\.\w*'
-
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 " }}}
 
 " NERDTree ------------------------------------------------------- {{{
