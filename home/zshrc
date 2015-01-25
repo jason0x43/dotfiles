@@ -72,22 +72,22 @@ if [[ "$OSTYPE" == darwin* && $TERM_PROGRAM == iTerm.app ]]; then
 	# Solarized palette
 	typeset -A PALETTE
 	PALETTE=(
-		base03  "002b36"
-		base02  "073642"
-		base01  "586e75"
-		base00  "657b83"
-		base0   "839496"
-		base1   "93a1a1"
-		base2   "eee8d5"
-		base3   "fdf6e3"
-		yellow  "b58900"
-		orange  "cb4b16"
-		red     "dc322f"
-		magenta "d33682"
-		violet  "6c71c4"
-		blue    "268bd2"
-		cyan    "2aa198"
-		green   "859900"
+		base03  "022028"
+		base02  "0a2a32"
+		base01  "475b62"
+		base00  "536970"
+		base0   "718384"
+		base1   "829191"
+		base2   "eae5cb"
+		base3   "fdf6de"
+		yellow  "a67700"
+		orange  "bd3712"
+		red     "d31c24"
+		magenta "c71c6f"
+		violet  "595ab9"
+		blue    "2177c8"
+		cyan    "269286"
+		green   "738a03"
 	)
 
 	function setScheme() {
