@@ -6,7 +6,7 @@ fi
 # Setup fzf ############################################################
 
 if [[ -z "$FZF_DEFAULT_OPTS" ]]; then
-	export FZF_DEFAULT_OPTS=--no-256
+	export FZF_DEFAULT_OPTS=--no-color
 fi
 
 # Auto-completion ######################################################
