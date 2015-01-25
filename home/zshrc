@@ -526,6 +526,8 @@ alias mkdir='nocorrect mkdir'
 alias mv='nocorrect mv'
 alias rm='nocorrect rm'
 alias vim='nocorrect vim'
+alias tsd='nocorrect tsd'
+alias jake='nocorrect jake'
 
 # Disable globbing
 alias bower='noglob bower'
