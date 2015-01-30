@@ -30,7 +30,6 @@
 	"requireBlocksOnNewline": true,
 	"disallowEmptyBlocks": true,
 	"requireSpacesInsideObjectBrackets": "allButNested",
-	"requireSpacesInsideArrayBrackets": "allButNested",
 	"disallowQuotedKeysInObjects": "allButReserved",
 	"disallowSpaceAfterObjectKeys": true,
 	"requireCommaBeforeLineBreak": true,
