@@ -71,4 +71,13 @@ if [[ $- =~ i ]]; then
 	bindkey '^R' fzf-history-widget
 fi
 
+# Useful functions #####################################################
+
+function fkill() {
+	pid=$(ps -ef | sed 1d | fzf -e -m | awk '{print $2}')
+	if [ -n "$pid" ]; then
+		echo "kill -${1:-TERM} $pid"
+	fi
+}
+
 # vim:filetype=zsh:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker
