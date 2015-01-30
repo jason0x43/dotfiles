@@ -2,6 +2,9 @@ set nocompatible
 filetype off
 
 " general options ------------------------------------------------ {{{
+set encoding=utf-8
+scriptencoding utf-8
+
 set autoindent
 set background=dark
 set backspace=indent,eol,start
@@ -24,7 +27,6 @@ set diffopt+=vertical
 
 " put all swap files in a central location
 set directory=$CACHEDIR/vim/swap
-set encoding=utf-8
 
 " make vertical split bar solid
 set fillchars+=vert:\│
@@ -75,7 +77,7 @@ set wildignore+=*.pyc,*.obj,*.bin
 " }}}
 
 " leader mappings ------------------------------------------------ {{{
-let mapleader=";"
+let g:mapleader=";"
 
 " <leader>s to save
 map <silent> <Leader>w :w<CR>
@@ -293,8 +295,8 @@ endfunction
 function! LightlineFugitive()
 	try
 		if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-			let mark = ''  " edit here for cool mark
-			let _ = fugitive#head()
+			let l:mark = ''  " edit here for cool mark
+			let l:_ = fugitive#head()
 			return strlen(_) ? mark._ : ''
 		endif
 	catch
@@ -371,11 +373,11 @@ let g:netrw_home = expand('$CACHEDIR/vim/')
 " default to tree listing
 let g:netrw_liststyle = 3
 augroup netrw
-	au!
-	au FileType netrw call NetrwInit()
+	autocmd!
+	autocmd FileType netrw call NetrwInit()
 augroup END
 function! NetrwInit()
-	au! netrw
+	autocmd! netrw
 	if exists('g:loaded_vinegar')
 		let g:netrw_list_hide=join([g:netrw_list_hide, netrw_gitignore#Hide()], ',')
 	endif
@@ -410,12 +412,12 @@ map <silent> <Leader>nc :SyntasticCheck<CR>
 map <silent> <Leader>ne :Errors<CR>
 
 augroup load_syn
-	au!
-	au BufRead * call SynInit()
-	au BufWrite * call SynInit()
+	autocmd!
+	autocmd BufRead * call SynInit()
+	autocmd BufWrite * call SynInit()
 augroup END
 function! SynInit()
-	au! load_syn
+	autocmd! load_syn
 	call plug#load('syntastic')
 endfunction
 " }}}
@@ -440,15 +442,15 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 " UltiSnips ------------------------------------------------------ {{{
 let g:UltiSnipsExpandTrigger = "<c-k>"
 augroup load_us
-	au!
-	au InsertEnter * call plug#load('ultisnips', 'vim-snippets') | au! load_us
+	autocmd!
+	autocmd InsertEnter * call plug#load('ultisnips', 'vim-snippets') | autocmd! load_us
 augroup END
 " }}}
 
 " FZF ------------------------------------------------------------ {{{
 function! BuffersList()
-	let all = range(1, bufnr('$'))
-	let res = []
+	let l:all = range(1, bufnr('$'))
+	let l:res = []
 	for b in all
 		if buflisted(b)
 			call add(res, bufname(b))
@@ -478,6 +480,11 @@ map <Leader>g :FZFGit<cr>
 
 " == End plugins =============================================
 
+" intialize the autocommand group for vimrc-defined autocommands
+augroup vimrc
+	autocmd!
+augroup END
+
 " use a better grep ---------------------------------------------- {{{
 if executable('ag')
 	" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
@@ -494,7 +501,7 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 " }}}
 
 " always go to the last accessed line when a file is opened ------ {{{
-autocmd BufReadPost *
+autocmd vimrc BufReadPost *
 	\ if line("'\"") > 1 && line("'\"") <= line("$") |
 	\   exe "normal! g`\"" |
 	\ endif
@@ -538,8 +545,8 @@ if ! has('gui_running')
 	set ttimeoutlen=10
 	augroup FastEscape
 		autocmd!
-		au InsertEnter * set timeoutlen=0
-		au InsertLeave * set timeoutlen=1000
+		autocmd InsertEnter * set timeoutlen=0
+		autocmd InsertLeave * set timeoutlen=1000
 	augroup END
 endif
 " }}}
@@ -553,7 +560,7 @@ map <silent> <Leader>h :echo "hi<" .
 " }}}
 
 " more accurate syntax highlighting
-autocmd BufEnter * :syntax sync fromstart
+autocmd vimrc BufEnter * :syntax sync fromstart
 
 " highlight columns past 80
 "let &colorcolumn=join(range(81,999), ",")
@@ -563,9 +570,9 @@ runtime! macros/matchit.vim
 
 " update the background if a termbg file exists
 function! UpdateBackground()
-	let s:termbg = expand('$CACHEDIR/termbg')
-	if filereadable(s:termbg)
-		let lines=readfile(s:termbg)
+	let l:termbg = expand('$CACHEDIR/termbg')
+	if filereadable(termbg)
+		let l:lines=readfile(termbg)
 		if lines[0] == 'light'
 			set background=light
 		else
@@ -575,8 +582,12 @@ function! UpdateBackground()
 	LightlineRefresh
 endfunction
 
+" random filetypes
+autocmd vimrc BufRead .jscsrc set filetype=json
+autocmd vimrc BufRead .tslintrc set filetype=json
+
 " check if the background has changed
-au! CursorHold,CursorHoldI * call UpdateBackground()
+autocmd! vimrc CursorHold,CursorHoldI * call UpdateBackground()
 
 filetype plugin indent on | syntax on
 
