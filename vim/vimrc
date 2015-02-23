@@ -592,6 +592,7 @@ runtime! macros/matchit.vim
 autocmd vimrc BufRead .jscsrc set filetype=json
 autocmd vimrc BufRead .tslintrc set filetype=json
 autocmd vimrc BufRead .textile set filetype=textile
+
 " update the background if a termbg file exists
 function! UpdateBackground()
 	let l:termbg = expand('$CACHEDIR/termbg')
@@ -605,10 +606,7 @@ function! UpdateBackground()
 	endif
 	LightlineRefresh
 endfunction
-
-
-" check if the background has changed
-autocmd! vimrc CursorHold,CursorHoldI * call UpdateBackground()
+command! UpdateBg call UpdateBackground()
 
 filetype plugin indent on | syntax on
 
