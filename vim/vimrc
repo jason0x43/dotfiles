@@ -588,6 +588,10 @@ autocmd vimrc BufEnter * :syntax sync fromstart
 " load the builting matchit plugin
 runtime! macros/matchit.vim
 
+" set random filetypes
+autocmd vimrc BufRead .jscsrc set filetype=json
+autocmd vimrc BufRead .tslintrc set filetype=json
+autocmd vimrc BufRead .textile set filetype=textile
 " update the background if a termbg file exists
 function! UpdateBackground()
 	let l:termbg = expand('$CACHEDIR/termbg')
@@ -602,9 +606,6 @@ function! UpdateBackground()
 	LightlineRefresh
 endfunction
 
-" random filetypes
-autocmd vimrc BufRead .jscsrc set filetype=json
-autocmd vimrc BufRead .tslintrc set filetype=json
 
 " check if the background has changed
 autocmd! vimrc CursorHold,CursorHoldI * call UpdateBackground()
