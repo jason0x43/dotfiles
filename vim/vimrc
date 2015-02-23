@@ -73,13 +73,16 @@ set updatetime=2000
 set undofile
 set virtualedit=
 set visualbell
+" make find more useful
 set wildignore+=*.pyc,*.obj,*.bin
+set wildmenu
+set path=**
 " }}}
 
 " leader mappings ------------------------------------------------ {{{
 let g:mapleader=";"
 
-" <leader>s to save
+map <Leader>f :find 
 map <silent> <Leader>w :w<CR>
 map <silent> <Leader>W :w!<CR>
 
@@ -117,7 +120,6 @@ Plug '1995eaton/vim-better-javascript-completion', { 'for': [ 'javascript', 'htm
 Plug 'AndrewRadev/linediff.vim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'SirVer/ultisnips', { 'on': [] }
-Plug 'Shougo/unite.vim', { 'on': 'Unite' }
 Plug 'Shougo/vimproc.vim'
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'a.vim'
@@ -171,7 +173,56 @@ call plug#end()
 
 " fzf fuzzy finder; FZF_PATH is set via zshrc, and uses the vim files from the
 " homebrew install of fzf
-set rtp+=$FZF_PATH
+if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
+	set rtp+=$FZF_PATH
+
+	" maintain a list of active buffers, sorted by most-recently-used
+	let s:fzf_buffers = []
+
+	function! FzfBufEntered()
+		" move the current buffer to the top of the list
+		let l:name = resolve(expand("<afile>"))
+		if name != ""
+			let l:i = index(s:fzf_buffers, name)
+			if i != -1
+				call remove(s:fzf_buffers, i)
+			endif
+			let s:fzf_buffers = insert(s:fzf_buffers, name)
+		endif
+	endfunction
+
+	function! FzfBufDeleted()
+		" remove the buffer being deleted from the list
+		let l:name = resolve(expand("<afile>"))
+		if name != ""
+			call remove(s:fzf_buffers, index(s:fzf_buffers, name))
+		endif
+	endfunction
+
+	augroup fzfbuf
+		autocmd!
+		autocmd BufAdd,BufEnter * call FzfBufEntered()
+		autocmd BufDelete * call FzfBufDeleted()
+	augroup END
+
+	command! FZFBuffers call fzf#run({
+		\'source': s:fzf_buffers,
+		\'sink' : 'e ',
+		\'options' : '-m',
+		\'tmux_height' : 8,
+		\})
+	command! FZFGit call fzf#run({
+		\'source': 'git ls-tree -r --name-only HEAD',
+		\'sink' : 'e ',
+		\'options' : '-m',
+		\'tmux_height' : 8,
+		\})
+
+	let g:fzf_tmux_height=15
+	map <Leader>f :FZF<cr>
+	map <Leader>b :FZFBuffers<cr>
+	map <Leader>g :FZFGit<cr>
+endif
 
 " a -------------------------------------------------------------- {{{
 let g:alternateExtensions_coffee = 'js'
@@ -445,37 +496,6 @@ augroup load_us
 	autocmd!
 	autocmd InsertEnter * call plug#load('ultisnips', 'vim-snippets') | autocmd! load_us
 augroup END
-" }}}
-
-" FZF ------------------------------------------------------------ {{{
-function! BuffersList()
-	let l:all = range(1, bufnr('$'))
-	let l:res = []
-	for b in all
-		if buflisted(b)
-			call add(res, bufname(b))
-		endif
-	endfor
-	return res
-endfunction
-command! FZFBuffers call fzf#run({
-	\'source': BuffersList(),
-	\'sink' : 'e ',
-	\'options' : '-m',
-	\'tmux_height' : 8,
-	\})
-command! FZFGit call fzf#run({
-	\'source': 'git ls-tree -r --name-only HEAD',
-	\'sink' : 'e ',
-	\'options' : '-m',
-	\'tmux_height' : 8,
-	\})
-
-let g:fzf_tmux_height=15
-map <Leader>f :FZF<cr>
-map <Leader>b :FZFBuffers<cr>
-map <Leader>g :FZFGit<cr>
-
 " }}}
 
 " == End plugins =============================================

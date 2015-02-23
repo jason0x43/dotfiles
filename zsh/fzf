@@ -16,7 +16,6 @@ export FZF_PATH=`echo $(which fzf)(:A:h:h)`
 
 # Key bindings #########################################################
 
-# CTRL-T - Paste the selected file path(s) into the command line
 __fsel() {
 	set -o nonomatch
 	command find * -path '*/\.*' -prune \
@@ -30,6 +29,8 @@ __fsel() {
 
 if [[ $- =~ i ]]; then
 	if [ -n "$TMUX_PANE" -a ${FZF_TMUX:-1} -ne 0 -a ${LINES:-40} -gt 15 ]; then
+		this=$0
+
 		fzf-file-widget() {
 			local height
 			height=${FZF_TMUX_HEIGHT:-40%}
@@ -38,8 +39,7 @@ if [[ $- =~ i ]]; then
 			else
 				height="-l $height"
 			fi
-			echo 'splitting'
-			tmux split-window $height "zsh -c 'source $0; tmux send-keys -t $TMUX_PANE \"\$(__fsel)\"'"
+			tmux split-window $height "zsh -c 'source $this; tmux send-keys -t $TMUX_PANE \"\$(__fsel)\"'"
 		}
 	else
 		fzf-file-widget() {
@@ -48,26 +48,27 @@ if [[ $- =~ i ]]; then
 		}
 	fi
 
-	zle     -N   fzf-file-widget
+	# CTRL-P - Paste the selected file path(s) into the command line
+	zle -N fzf-file-widget
 	bindkey '^P' fzf-file-widget
 
-	# ALT-C - cd into the selected directory
 	fzf-cd-widget() {
 		cd "${$(set -o nonomatch; command find -L * -path '*/\.*' -prune \
 			-o -type d -print 2> /dev/null | fzf):-.}"
 		zle reset-prompt
 	}
 
-	zle     -N    fzf-cd-widget
+	# ALT-C - cd into the selected directory
+	zle -N fzf-cd-widget
 	bindkey '\ec' fzf-cd-widget
 
-	# CTRL-R - Paste the selected command from history into the command line
 	fzf-history-widget() {
 		LBUFFER=$(fc -l 1 | fzf +s +m -n2..,.. | sed "s/ *[0-9*]* *//")
 		zle redisplay
 	}
 
-	zle     -N   fzf-history-widget
+	# CTRL-R - Paste the selected command from history into the command line
+	zle -N fzf-history-widget
 	bindkey '^R' fzf-history-widget
 fi
 
@@ -76,7 +77,14 @@ fi
 function fkill() {
 	pid=$(ps -ef | sed 1d | fzf -e -m | awk '{print $2}')
 	if [ -n "$pid" ]; then
-		echo "kill -${1:-TERM} $pid"
+		kill -${1:-TERM} $pid
+	fi
+}
+
+function fvi() {
+	file=$(fzf -e -m)
+	if [ -n "$file" ]; then
+		vi $file
 	fi
 }
 
