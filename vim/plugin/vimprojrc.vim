@@ -12,72 +12,72 @@
 
 " only load this script once
 if exists("g:loaded_vimprojrc")
-  finish
+	finish
 endif
 let g:loaded_vimprojrc = 1
 
 " allow the user to set the name of the vimprojrc file
 if !exists("g:vimprojrc_name")
-  let s:vimprojrc_name = ".vimprojrc"
+	let s:vimprojrc_name = ".vimprojrc"
 else
-  let s:vimprojrc_name = g:vimprojrc_name
+	let s:vimprojrc_name = g:vimprojrc_name
 endif
 
 " allow the user to enable sandbox mode for the project vimrc
 if !exists("g:vimprojrc_use_sandbox")
-  let s:vimprojrc_use_sandbox = 0
+	let s:vimprojrc_use_sandbox = 0
 else
-  let s:vimprojrc_use_sandbox = g:vimprojrc_use_sandbox
+	let s:vimprojrc_use_sandbox = g:vimprojrc_use_sandbox
 endif
 
 " stuff to run when files are opened or created
 if has("autocmd")
-  augroup vimprojrc
-    autocmd!
+	augroup vimprojrc
+		autocmd!
 
-    " set type of .vimprojrc to 'vim'
-    autocmd BufRead * call s:check_if_vimprojrc(expand("<amatch>:t"))
+		" set type of .vimprojrc to 'vim'
+		autocmd BufRead * call s:check_if_vimprojrc(expand("<amatch>:t"))
 
-    " check for .vimprojrc file on every file open or buffer creation
-    autocmd VimEnter,BufNewFile,BufRead * call s:load_vimprojrc()
-  augroup END
+		" check for .vimprojrc file on every file open or buffer creation
+		autocmd VimEnter,BufNewFile,BufRead * call s:load_vimprojrc()
+	augroup END
 endif
 
 " if file is a vimprojrc file, set its type to 'vim'
 function! s:check_if_vimprojrc(path)
-  if a:path == s:vimprojrc_name
-    set filetype=vim
-  endif
+	if a:path == s:vimprojrc_name
+		set filetype=vim
+	endif
 endfunction
 
 " load the first relevant vimprojrc file
 function! s:load_vimprojrc()
-  " skip non-file buffers
-  if &buftype != ""
-    return
-  endif
+	" skip non-file buffers
+	if &buftype != ""
+		return
+	endif
 
-  " get the directory of the current file
-  let l:directory = fnameescape(expand("%:p:h"))
-  if empty(l:directory)
-    let l:directory = fnameescape(getcwd())
-  endif
+	" get the directory of the current file
+	let l:directory = fnameescape(expand("%:p:h"))
+	if empty(l:directory)
+		let l:directory = fnameescape(getcwd())
+	endif
 
-  " generate a list of all project rc files from here to $HOME
-  let l:answer = ""
-  let l:rcfile = findfile(s:vimprojrc_name, l:directory . ";")
-  if filereadable(l:rcfile)
-    let l:command = "silent "
+	" generate a list of all project rc files from here to $HOME
+	let l:answer = ""
+	let l:rcfile = findfile(s:vimprojrc_name, l:directory . ";")
+	if filereadable(l:rcfile)
+		let l:command = "silent "
 
-    if s:vimprojrc_use_sandbox != 0
-      let l:command .= "sandbox "
-    endif
+		if s:vimprojrc_use_sandbox != 0
+			let l:command .= "sandbox "
+		endif
 
-    let l:command .= "source " . fnameescape(l:rcfile)
+		let l:command .= "source " . fnameescape(l:rcfile)
 
-    exec l:command
-    "echom "vimprojrc: sourced file " . fnameescape(l:rcfile)
+		exec l:command
+		"echom "vimprojrc: sourced file " . fnameescape(l:rcfile)
 
-    redraw!
-  endif
+		redraw!
+	endif
 endfunction

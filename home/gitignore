@@ -35,3 +35,4 @@ html-report
 local.intern.js
 
 .jscsrc
+.vimprojrc
