@@ -805,4 +805,6 @@ fi
 #
 [ -f $DOTFILES/zsh/fzf ] && source $DOTFILES/zsh/fzf
 
+eval "$(direnv hook $SHELL)"
+
 # vim:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker
