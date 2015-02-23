@@ -10,7 +10,7 @@ set background=dark
 set backspace=indent,eol,start
 
 " yank to system clipboard
-set clipboard^=unnamed
+" set clipboard+=unnamedplus
 
 " keep vim from asking you to hit Enter all the time
 set cmdheight=2
