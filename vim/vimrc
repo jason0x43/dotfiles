@@ -246,6 +246,10 @@ let g:simple_bookmarks_signs = 1
 let g:simple_bookmarks_sign_text = '>'
 " }}}
 
+" easy-align ----------------------------------------------------- {{{
+map <silent> <Leader>a <Plug>(EasyAlign)
+" }}}
+
 " gitgutter ------------------------------------------------------ {{{
 let g:gitgutter_enabled = 0
 " }}}
