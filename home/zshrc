@@ -552,7 +552,10 @@ alias po='popd'
 alias pu='pushd'
 alias rm="${aliases[rm]:-rm} -i"
 alias type='type -a'
-alias vi='vim'
+alias vi='nvim'
+alias vim='nvim'
+alias view='nvim -R'
+alias vimdiff='nvim -d'
 
 if is-callable 'dircolors'; then
 	# GNU Core Utilities
