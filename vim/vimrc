@@ -73,6 +73,7 @@ set updatetime=2000
 set undofile
 set virtualedit=
 set visualbell
+
 " make find more useful
 set wildignore+=*.pyc,*.obj,*.bin
 set wildmenu
@@ -83,6 +84,8 @@ set path=**
 let g:mapleader=";"
 
 map <Leader>f :find 
+
+" <leader>w to write
 map <silent> <Leader>w :w<CR>
 map <silent> <Leader>W :w!<CR>
 
@@ -156,7 +159,6 @@ Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'dhruvasagar/vim-prosession'
 Plug 'vim-coffee-script', { 'for': 'coffeescript' }
@@ -168,6 +170,7 @@ Plug 'Valloric/YouCompleteMe'
 if executable('go')
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	let g:go_fmt_command = "goimports"
+	let g:go_auto_type_info = 1
 endif
 call plug#end()
 
