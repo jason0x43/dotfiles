@@ -198,7 +198,10 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 		" remove the buffer being deleted from the list
 		let l:name = resolve(expand("<afile>"))
 		if name != ""
-			call remove(s:fzf_buffers, index(s:fzf_buffers, name))
+			let l:idx = index(s:fzf_buffers, name)
+			if idx != -1
+				call remove(s:fzf_buffers, idx)
+			endif
 		endif
 	endfunction
 
