@@ -1,2 +1,3 @@
 tmux/plugins/*
 vim/plugged/*
+plug.vim.old
