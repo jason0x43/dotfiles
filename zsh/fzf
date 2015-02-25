@@ -82,7 +82,7 @@ function fkill() {
 }
 
 function fvi() {
-	file=$(fzf -e -m)
+	file=$(fzf)
 	if [ -n "$file" ]; then
 		vi $file
 	fi
