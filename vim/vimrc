@@ -185,7 +185,7 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 	function! FzfBufEntered()
 		" move the current buffer to the top of the list
 		let l:name = resolve(expand("<afile>"))
-		if name != ""
+		if name != "" && name !~ "NERD_tree_.*"
 			let l:i = index(s:fzf_buffers, name)
 			if i != -1
 				call remove(s:fzf_buffers, i)
@@ -254,10 +254,6 @@ let g:simple_bookmarks_sign_text = '>'
 
 " easy-align ----------------------------------------------------- {{{
 map <silent> <Leader>a <Plug>(EasyAlign)
-" }}}
-
-" gitgutter ------------------------------------------------------ {{{
-let g:gitgutter_enabled = 0
 " }}}
 
 " indentLine ----------------------------------------------------- {{{
