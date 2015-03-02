@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+# clear existing aliases
+
+unalias -m '*'
+
 # Color ################################################################## {{{
 
 # 256 color utilities
@@ -552,10 +556,17 @@ alias po='popd'
 alias pu='pushd'
 alias rm="${aliases[rm]:-rm} -i"
 alias type='type -a'
-alias vi='nvim'
-alias vim='nvim'
-alias view='nvim -R'
-alias vimdiff='nvim -d'
+alias vi='vim'
+
+if (( ! $+commands[nview] )); then
+	alias nview='nvim -R'
+fi
+if (( ! $+commands[nvimdiff] )); then
+	alias nvimdiff='nvim -d'
+fi
+# alias vim='nvim'
+# alias view='nvim -R'
+# alias vimdiff='nvim -d'
 
 if is-callable 'dircolors'; then
 	# GNU Core Utilities
