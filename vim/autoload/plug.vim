@@ -3,8 +3,7 @@
 "
 " Download plug.vim and put it in ~/.vim/autoload
 "
-"   mkdir -p ~/.vim/autoload
-"   curl -fLo ~/.vim/autoload/plug.vim \
+"   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 "     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 "
 " Edit your .vimrc
@@ -37,7 +36,7 @@
 " Visit https://github.com/junegunn/vim-plug for more information.
 "
 "
-" Copyright (c) 2014 Junegunn Choi
+" Copyright (c) 2015 Junegunn Choi
 "
 " MIT License
 "
@@ -68,14 +67,14 @@ let g:loaded_plug = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
-let s:plug_src = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+let s:plug_src = 'https://github.com/junegunn/vim-plug.git'
 let s:plug_tab = get(s:, 'plug_tab', -1)
 let s:plug_buf = get(s:, 'plug_buf', -1)
 let s:mac_gui = has('gui_macvim') && has('gui_running')
 let s:is_win = has('win32') || has('win64')
-let s:py2 = has('python') && !s:is_win
-let s:ruby = has('ruby') && (v:version >= 703 || v:version == 702 && has('patch374'))
-let s:nvim = has('nvim') && !s:is_win
+let s:py2 = has('python') && !has('nvim') && !s:is_win && !has('win32unix')
+let s:ruby = has('ruby') && !has('nvim') && (v:version >= 703 || v:version == 702 && has('patch374'))
+let s:nvim = has('nvim') && exists('*jobwait') && !s:is_win
 let s:me = resolve(expand('<sfile>:p'))
 let s:base_spec = { 'branch': 'master', 'frozen': 0 }
 let s:TYPE = {
@@ -271,7 +270,7 @@ if s:is_win
   endfunction
 
   function! s:is_local_plug(repo)
-    return a:repo =~? '^[a-z]:'
+    return a:repo =~? '^[a-z]:\|^[%~]'
   endfunction
 else
   function! s:rtp(spec)
@@ -710,7 +709,7 @@ endfunction
 function! s:update_impl(pull, force, args) abort
   let args = copy(a:args)
   let threads = (len(args) > 0 && args[-1] =~ '^[1-9][0-9]*$') ?
-                  \ remove(args, -1) : get(g:, 'plug_threads', 16)
+                  \ remove(args, -1) : get(g:, 'plug_threads', s:is_win ? 1 : 16)
 
   let managed = filter(copy(g:plugs), 's:is_managed(v:key)')
   let todo = empty(args) ? filter(managed, '!v:val.frozen || !isdirectory(v:val.dir)') :
@@ -741,6 +740,12 @@ function! s:update_impl(pull, force, args) abort
     endtry
   endif
 
+  if has('nvim') && !exists('*jobwait') && threads > 1
+    echohl WarningMsg
+    echomsg 'vim-plug: update Neovim for parallel installer'
+    echohl None
+  endif
+
   let s:update = {
     \ 'start':   reltime(),
     \ 'all':     todo,
@@ -764,7 +769,7 @@ function! s:update_impl(pull, force, args) abort
     silent python import platform; print(platform.python_version())
     redir END
     let s:py2 = s:version_requirement(
-          \ map(split(split(pyv)[0], '\.'), 'str2nr(v:val)'), [2, 7])
+          \ map(split(split(pyv)[0], '\.'), 'str2nr(v:val)'), [2, 6])
   endif
   if (s:py2 || s:ruby) && !s:nvim && s:update.threads > 1
     try
@@ -818,9 +823,7 @@ function! s:job_abort()
   if !s:nvim || !exists('s:jobs')
     return
   endif
-  augroup PlugJobControl
-    autocmd!
-  augroup END
+
   for [name, j] in items(s:jobs)
     silent! call jobstop(j.jobid)
     if j.new
@@ -830,52 +833,48 @@ function! s:job_abort()
   let s:jobs = {}
 endfunction
 
-function! s:job_handler(name) abort
+" When a:event == 'stdout', data = list of strings
+" When a:event == 'exit', data = returncode
+function! s:job_handler(job_id, data, event) abort
   if !s:plug_window_exists() " plug window closed
     return s:job_abort()
   endif
 
-  if !has_key(s:jobs, a:name)
-    return
-  endif
-  let job = s:jobs[a:name]
-
-  if v:job_data[1] == 'exit'
-    let job.running = 0
-    if s:lastline(job.result) ==# 'Error'
-      let job.error = 1
-      let job.result = substitute(job.result, "Error[\r\n]$", '', '')
-    endif
-    call s:reap(a:name)
-    call s:tick()
-  else
-    let job.result .= s:to_s(v:job_data[2])
+  if a:event == 'stdout'
+    let self.result .= substitute(s:to_s(a:data), '[\r\n]', '', 'g') . "\n"
     " To reduce the number of buffer updates
-    let job.tick = get(job, 'tick', -1) + 1
-    if job.tick % len(s:jobs) == 0
-      call s:log(job.new ? '+' : '*', a:name, job.result)
+    let self.tick = get(self, 'tick', -1) + 1
+    if self.tick % len(s:jobs) == 0
+      call s:log(self.new ? '+' : '*', self.name, self.result)
     endif
+  elseif a:event == 'exit'
+    let self.running = 0
+    if a:data != 0
+      let self.error = 1
+    endif
+    call s:reap(self.name)
+    call s:tick()
   endif
 endfunction
 
 function! s:spawn(name, cmd, opts)
-  let job = { 'running': 1, 'new': get(a:opts, 'new', 0),
-            \ 'error': 0, 'result': '' }
+  let job = { 'name': a:name, 'running': 1, 'error': 0, 'result': '',
+            \ 'new': get(a:opts, 'new', 0),
+            \ 'on_stdout': function('s:job_handler'),
+            \ 'on_exit' : function('s:job_handler'),
+            \ }
   let s:jobs[a:name] = job
 
   if s:nvim
-    let x = jobstart(a:name, 'sh', ['-c',
-            \ (has_key(a:opts, 'dir') ? s:with_cd(a:cmd, a:opts.dir) : a:cmd)
-            \ . ' || echo Error'])
-    if x > 0
-      let job.jobid = x
-      augroup PlugJobControl
-        execute 'autocmd JobActivity' a:name printf('call s:job_handler(%s)', string(a:name))
-      augroup END
+    let argv = [ 'sh', '-c',
+               \ (has_key(a:opts, 'dir') ? s:with_cd(a:cmd, a:opts.dir) : a:cmd) ]
+    let jid = jobstart(argv, job)
+    if jid > 0
+      let job.jobid = jid
     else
       let job.running = 0
       let job.error   = 1
-      let job.result  = x < 0 ? 'sh is not executable' :
+      let job.result  = jid < 0 ? 'sh is not executable' :
             \ 'Invalid arguments (or job table is full)'
     endif
   else
@@ -887,10 +886,6 @@ function! s:spawn(name, cmd, opts)
 endfunction
 
 function! s:reap(name)
-  if s:nvim
-    silent! execute 'autocmd! PlugJobControl JobActivity' a:name
-  endif
-
   let job = s:jobs[a:name]
   if job.error
     call add(s:update.errors, a:name)
@@ -1052,7 +1047,7 @@ class GLog(object):
     fname = cls.LOGDIR + os.path.sep + name
     with open(fname, 'ab') as flog:
       ltime = datetime.datetime.now().strftime("%H:%M:%S.%f")
-      msg = '[{},{}] {}{}'.format(name, ltime, msg, '\n')
+      msg = '[{0},{1}] {2}{3}'.format(name, ltime, msg, '\n')
       flog.write(msg)
 
 class Buffer(object):
@@ -1067,7 +1062,7 @@ class Buffer(object):
   def _where(self, name):
     """ Find first line with name in current buffer. Return line num. """
     found, lnum = False, 0
-    matcher = re.compile('^[-+x*] {}:'.format(name))
+    matcher = re.compile('^[-+x*] {0}:'.format(name))
     for line in vim.current.buffer:
       if matcher.search(line) is not None:
         found = True
@@ -1080,10 +1075,10 @@ class Buffer(object):
 
   def header(self):
     curbuf = vim.current.buffer
-    curbuf[0] = self.event + ' plugins ({}/{})'.format(len(self.bar), self.num_plugs)
+    curbuf[0] = self.event + ' plugins ({0}/{1})'.format(len(self.bar), self.num_plugs)
 
     num_spaces = self.num_plugs - len(self.bar)
-    curbuf[1] = '[{}{}]'.format(self.bar, num_spaces * ' ')
+    curbuf[1] = '[{0}{1}]'.format(self.bar, num_spaces * ' ')
 
     vim.command('normal! 2G')
     if not self.is_win:
@@ -1095,14 +1090,14 @@ class Buffer(object):
 
   def _write(self, action, name, lines):
     first, rest = lines[0], lines[1:]
-    msg = ['{} {}{}{}'.format(action, name, ': ' if first else '', first)]
+    msg = ['{0} {1}{2}{3}'.format(action, name, ': ' if first else '', first)]
     padded_rest = ['    ' + line for line in rest]
     msg.extend(padded_rest)
 
     try:
       if action == Action.ERROR:
         self.bar += 'x'
-        vim.command("call add(s:update.errors, '{}')".format(name))
+        vim.command("call add(s:update.errors, '{0}')".format(name))
       elif action == Action.DONE:
         self.bar += '='
 
@@ -1110,7 +1105,7 @@ class Buffer(object):
       lnum = self._where(name)
       if lnum != -1: # Found matching line num
         del curbuf[lnum]
-        if lnum > self.maxy and action in {Action.INSTALL, Action.UPDATE}:
+        if lnum > self.maxy and action in set([Action.INSTALL, Action.UPDATE]):
           lnum = 3
       else:
         lnum = 3
@@ -1145,7 +1140,7 @@ class Command(object):
           for count in range(3, 0, -1):
             if G_STOP.is_set():
               raise KeyboardInterrupt
-            msg = 'Timeout. Will retry in {} second{} ...'.format(
+            msg = 'Timeout. Will retry in {0} second{1} ...'.format(
                 count, 's' if count != 1 else '')
             self.callback([msg])
             time.sleep(1)
@@ -1217,7 +1212,7 @@ class Plugin(object):
       else:
         self.install()
         with self.lock:
-          vim.command("let s:update.new['{}'] = 1".format(self.name))
+          vim.command("let s:update.new['{0}'] = 1".format(self.name))
     except (CmdTimedOut, CmdFailed, InvalidURI) as exc:
       self.write(Action.ERROR, self.name, exc.message)
     except KeyboardInterrupt:
@@ -1225,7 +1220,7 @@ class Plugin(object):
       self.write(Action.ERROR, self.name, ['Interrupted!'])
     except:
       # Any exception except those above print stack trace
-      msg = 'Trace:\n{}'.format(traceback.format_exc().rstrip())
+      msg = 'Trace:\n{0}'.format(traceback.format_exc().rstrip())
       self.write(Action.ERROR, self.name, msg.split('\n'))
       raise
 
@@ -1242,7 +1237,7 @@ class Plugin(object):
 
     self.write(Action.INSTALL, self.name, ['Installing ...'])
     callback = functools.partial(self.buf.write, Action.INSTALL, self.name)
-    cmd = 'git clone {} --recursive {} -b {} {} 2>&1'.format(
+    cmd = 'git clone {0} --recursive {1} -b {2} {3} 2>&1'.format(
         G_PROGRESS, self.args['uri'], self.checkout, esc(target))
     com = Command(cmd, None, G_TIMEOUT, G_RETRIES, callback, clean(target))
     result = com.attempt_cmd()
@@ -1254,17 +1249,17 @@ class Plugin(object):
     expect_uri = re.sub(match, '', self.args['uri'])
     if actual_uri != expect_uri:
       msg = ['',
-             'Invalid URI: {}'.format(actual_uri),
-             'Expected     {}'.format(expect_uri),
+             'Invalid URI: {0}'.format(actual_uri),
+             'Expected     {0}'.format(expect_uri),
              'PlugClean required.']
       raise InvalidURI(msg)
 
     if G_PULL:
       self.write(Action.UPDATE, self.name, ['Updating ...'])
       callback = functools.partial(self.buf.write, Action.UPDATE, self.name)
-      cmds = ['git fetch {}'.format(G_PROGRESS),
-              'git checkout -q {}'.format(self.checkout),
-              'git merge --ff-only {}'.format(self.merge),
+      cmds = ['git fetch {0}'.format(G_PROGRESS),
+              'git checkout -q {0}'.format(self.checkout),
+              'git merge --ff-only {0}'.format(self.merge),
               'git submodule update --init --recursive']
       cmd = ' 2>&1 && '.join(cmds)
       GLog.write(cmd)
@@ -1282,7 +1277,7 @@ class Plugin(object):
     return result[-1]
 
   def write(self, action, name, msg):
-    GLog.write('{} {}: {}'.format(action, name, '\n'.join(msg)))
+    GLog.write('{0} {1}: {2}'.format(action, name, '\n'.join(msg)))
     self.buf.write(action, name, msg)
 
 class PlugThread(thr.Thread):
@@ -1298,7 +1293,7 @@ class PlugThread(thr.Thread):
     try:
       while not G_STOP.is_set():
         name, args = work_q.get_nowait()
-        GLog.write('{}: Dir {}'.format(name, args['dir']))
+        GLog.write('{0}: Dir {1}'.format(name, args['dir']))
         plug = Plugin(name, args, buf, lock)
         plug.manage()
         work_q.task_done()
@@ -1348,9 +1343,9 @@ def main():
   plugs = vim.eval('s:update.todo')
   mac_gui = vim.eval('s:mac_gui') == '1'
   is_win = vim.eval('s:is_win') == '1'
-  GLog.write('Plugs: {}'.format(plugs))
-  GLog.write('PULL: {}, WIN: {}, MAC: {}'.format(G_PULL, is_win, mac_gui))
-  GLog.write('Num Threads: {}'.format(nthreads))
+  GLog.write('Plugs: {0}'.format(plugs))
+  GLog.write('PULL: {0}, WIN: {1}, MAC: {2}'.format(G_PULL, is_win, mac_gui))
+  GLog.write('Num Threads: {0}'.format(nthreads))
 
   lock = thr.Lock()
   buf = Buffer(lock, len(plugs))
@@ -1679,6 +1674,12 @@ function! s:git_valid(spec, check_branch)
   return [ret, msg]
 endfunction
 
+function! s:rm_rf(dir)
+  if isdirectory(a:dir)
+    call s:system((s:is_win ? 'rmdir /S /Q ' : 'rm -rf ') . s:shellesc(a:dir))
+  endif
+endfunction
+
 function! s:clean(force)
   call s:prepare()
   call append(0, 'Searching for unused plugins in '.g:plug_home)
@@ -1727,9 +1728,7 @@ function! s:clean(force)
     call inputrestore()
     if yes
       for dir in todo
-        if isdirectory(dir)
-          call s:system((s:is_win ? 'rmdir /S /Q ' : 'rm -rf ') . s:shellesc(dir))
-        endif
+        call s:rm_rf(dir)
       endfor
       call append(line('$'), 'Removed.')
     else
@@ -1740,55 +1739,30 @@ function! s:clean(force)
 endfunction
 
 function! s:upgrade()
-  let new = s:me . '.new'
-  echo 'Downloading '. s:plug_src
+  echo 'Downloading the latest version of vim-plug'
   redraw
+  let tmp = tempname()
+  let new = tmp . '/plug.vim'
+
   try
-    if executable('curl')
-      let output = s:system(printf('curl -fLo %s %s', s:shellesc(new), s:plug_src))
-      if v:shell_error
-        throw get(s:lines(output), -1, v:shell_error)
-      endif
-    elseif s:ruby
-      call s:upgrade_using_ruby(new)
-    elseif s:py2
-      call s:upgrade_using_python(new)
-    else
-      return s:err('Missing: curl executable, ruby support or python support')
+    let out = s:system(printf('git clone --depth 1 %s %s', s:plug_src, tmp))
+    if v:shell_error
+      return s:err('Error upgrading vim-plug: '. out)
     endif
-  catch
-    return s:err('Error upgrading vim-plug: '. v:exception)
+
+    if readfile(s:me) ==# readfile(new)
+      echo 'vim-plug is already up-to-date'
+      return 0
+    else
+      call rename(s:me, s:me . '.old')
+      call rename(new, s:me)
+      unlet g:loaded_plug
+      echo 'vim-plug has been upgraded'
+      return 1
+    endif
+  finally
+    silent! call s:rm_rf(tmp)
   endtry
-
-  if readfile(s:me) ==# readfile(new)
-    echo 'vim-plug is already up-to-date'
-    silent! call delete(new)
-    return 0
-  else
-    call rename(s:me, s:me . '.old')
-    call rename(new, s:me)
-    unlet g:loaded_plug
-    echo 'vim-plug has been upgraded'
-    return 1
-  endif
-endfunction
-
-function! s:upgrade_using_ruby(new)
-  ruby << EOF
-  require 'open-uri'
-  File.open(VIM::evaluate('a:new'), 'w') do |f|
-    f << open(VIM::evaluate('s:plug_src')).read
-  end
-EOF
-endfunction
-
-function! s:upgrade_using_python(new)
-python << EOF
-import urllib
-import vim
-psrc, dest = vim.eval('s:plug_src'), vim.eval('a:new')
-urllib.urlretrieve(psrc, dest)
-EOF
 endfunction
 
 function! s:upgrade_specs()
