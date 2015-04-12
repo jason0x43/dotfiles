@@ -558,15 +558,19 @@ alias rm="${aliases[rm]:-rm} -i"
 alias type='type -a'
 alias vi='vim'
 
+if (( $+commands[hub] )); then
+	alias git='hub'
+fi
+
 if (( ! $+commands[nview] )); then
 	alias nview='nvim -R'
 fi
 if (( ! $+commands[nvimdiff] )); then
 	alias nvimdiff='nvim -d'
 fi
-# alias vim='nvim'
-# alias view='nvim -R'
-# alias vimdiff='nvim -d'
+alias vim='nvim'
+alias view='nvim -R'
+alias vimdiff='nvim -d'
 
 if is-callable 'dircolors'; then
 	# GNU Core Utilities
