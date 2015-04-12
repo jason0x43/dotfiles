@@ -10,7 +10,7 @@ set background=dark
 set backspace=indent,eol,start
 
 " yank to system clipboard
-" set clipboard+=unnamedplus
+set clipboard+=unnamed
 
 " keep vim from asking you to hit Enter all the time
 set cmdheight=2
@@ -123,12 +123,12 @@ Plug '1995eaton/vim-better-javascript-completion', { 'for': [ 'javascript', 'htm
 Plug 'AndrewRadev/linediff.vim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'SirVer/ultisnips', { 'on': [] }
-Plug 'Shougo/vimproc.vim'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'a.vim'
 Plug 'applescript.vim', { 'for': 'applescript' }
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'clausreinke/typescript-tools', { 'for': 'typescript' }
+Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript', 'do': 'npm -g install clausreinke/typescript-tools' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'gregsexton/gitv'
@@ -150,7 +150,7 @@ Plug 'niklasl/vim-rdf'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'scrooloose/syntastic', { 'on': [] }
-Plug 'sickill/vim-pasta'
+" Plug 'sickill/vim-pasta'
 Plug 'suy/vim-context-commentstring'
 Plug 'tfnico/vim-gradle'
 Plug 'tpope/vim-commentary'
@@ -185,7 +185,7 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 	function! FzfBufEntered()
 		" move the current buffer to the top of the list
 		let l:name = resolve(expand("<afile>"))
-		if name != "" && name !~ "NERD_tree_.*"
+		if name != "" && name !~ "NERD_tree_.*" && &buftype == ''
 			let l:i = index(s:fzf_buffers, name)
 			if i != -1
 				call remove(s:fzf_buffers, i)
@@ -597,7 +597,8 @@ runtime! macros/matchit.vim
 " set random filetypes
 autocmd vimrc BufRead .jscsrc set filetype=json
 autocmd vimrc BufRead .tslintrc set filetype=json
-autocmd vimrc BufRead .textile set filetype=textile
+autocmd vimrc BufRead *.textile set filetype=textile
+autocmd vimrc BufRead *.dashtoc set filetype=json
 
 " update the background if a termbg file exists
 function! UpdateBackground()
