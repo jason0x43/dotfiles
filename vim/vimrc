@@ -115,6 +115,11 @@ map <silent> <C-N> :cn<CR>
 map <silent> <C-P> :cp<CR>
 " }}}
 
+" intialize the autocommand group for vimrc-defined autocommands
+augroup vimrc
+	autocmd!
+augroup END
+
 " == Plugins =================================================
 
 call plug#begin('~/.vim/plugged')
@@ -127,6 +132,7 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'a.vim'
 Plug 'applescript.vim', { 'for': 'applescript' }
+Plug 'benekastah/neomake', { 'on': [] }
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript', 'do': 'npm -g install clausreinke/typescript-tools' }
 Plug 'elzr/vim-json', { 'for': 'json' }
@@ -149,7 +155,7 @@ Plug 'moll/vim-bbye'
 Plug 'niklasl/vim-rdf'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'scrooloose/syntastic', { 'on': [] }
+" Plug 'scrooloose/syntastic', { 'on': [] }
 " Plug 'sickill/vim-pasta'
 Plug 'suy/vim-context-commentstring'
 Plug 'tfnico/vim-gradle'
@@ -415,6 +421,51 @@ endfunction
 command! LightlineRefresh :call LightlineRefresh()
 " }}}
 
+" neomake -------------------------------------------------------- {{{
+augroup load_neomake
+	autocmd!
+	autocmd BufRead * call NeomakeInit()
+	autocmd BufWrite * call NeomakeInit()
+augroup END
+function! NeomakeInit()
+	autocmd! load_neomake
+	call plug#load('neomake')
+endfunction
+
+autocmd vimrc BufWritePost * Neomake
+
+" let g:neomake_open_list = 1
+let g:neomake_error_sign = {
+            \ 'text': '>>',
+            \ 'texthl': 'NeomakeError',
+            \ }
+let g:neomake_warning_sign = {
+            \ 'text': '>>',
+            \ 'texthl': 'NeomakeWarning',
+            \ }
+
+let g:neomake_typescript_tsc_maker = {
+    \ 'errorformat': '%E%f\(%l\,%c\): error %m'
+    \ }
+let g:neomake_typescript_tslint_maker = {
+	\ 'exe': 'tslint',
+	\ 'args': [ '-f' ],
+    \ 'errorformat': '%W%f[%l\, %c]: %m'
+    \ }
+let g:neomake_typescript_enabled_makers = [ 'tsc', 'tslint' ]
+
+" Custom styles for sidebar
+" This function is called by UpdateBackground to ensure that
+" the Neomake styles are refreshed whenever the color scheme
+" is updated.
+function! NeomakeRefresh()
+	hi NeomakeError ctermfg=1 ctermbg=248 cterm=bold
+	hi NeomakeWarning ctermfg=3 ctermbg=248 cterm=bold
+endfunction
+command! NeomakeRefresh :call NeomakeRefresh()
+
+" }}}
+
 " NERDTree ------------------------------------------------------- {{{
 let g:NERDTreeHijackNetrw = 0
 let g:NERDTreeMinimalUI   = 1
@@ -452,31 +503,31 @@ let g:solarized_menu = 0
 " }}}
 
 " syntastic ------------------------------------------------------ {{{
-let g:syntastic_java_javac_config_file_enabled = 1
-let g:syntastic_coffee_checkers = ['coffeelint', 'coffee']
-let g:syntastic_html_tidy_ignore_errors = [
-      \ 'lacks "action" attribute',
-      \ "'<' + '/' + letter not allowed here",
-      \	]
-let g:syntastic_loc_list_height = 3
-let g:syntastic_typescript_tsc_args = '--module amd --noImplicitAny'
-let g:syntastic_typescript_checkers = ['tslint']
-let g:syntastic_typescript_tslint_args = '-c ~/.tslintrc'
-let g:syntastic_css_csslint_args = '--ignore=ids,adjoining-classes'
-let g:syntastic_javascript_checkers = ['jshint', 'jscs']
+" let g:syntastic_java_javac_config_file_enabled = 1
+" let g:syntastic_coffee_checkers = ['coffeelint', 'coffee']
+" let g:syntastic_html_tidy_ignore_errors = [
+"       \ 'lacks "action" attribute',
+"       \ "'<' + '/' + letter not allowed here",
+"       \	]
+" let g:syntastic_loc_list_height = 3
+" " let g:syntastic_typescript_tsc_args = '--module amd --noImplicitAny'
+" let g:syntastic_typescript_checkers = ['tsc', 'tslint']
+" let g:syntastic_typescript_tslint_args = '-c ~/.tslintrc'
+" let g:syntastic_css_csslint_args = '--ignore=ids,adjoining-classes'
+" let g:syntastic_javascript_checkers = ['jshint', 'jscs']
 
-map <silent> <Leader>nc :SyntasticCheck<CR>
-map <silent> <Leader>ne :Errors<CR>
+" map <silent> <Leader>nc :SyntasticCheck<CR>
+" map <silent> <Leader>ne :Errors<CR>
 
-augroup load_syn
-	autocmd!
-	autocmd BufRead * call SynInit()
-	autocmd BufWrite * call SynInit()
-augroup END
-function! SynInit()
-	autocmd! load_syn
-	call plug#load('syntastic')
-endfunction
+" augroup load_syn
+" 	autocmd!
+" 	autocmd BufRead * call SynInit()
+" 	autocmd BufWrite * call SynInit()
+" augroup END
+" function! SynInit()
+" 	autocmd! load_syn
+" 	call plug#load('syntastic')
+" endfunction
 " }}}
 
 " Tagbar --------------------------------------------------------- {{{
@@ -505,11 +556,6 @@ augroup END
 " }}}
 
 " == End plugins =============================================
-
-" intialize the autocommand group for vimrc-defined autocommands
-augroup vimrc
-	autocmd!
-augroup END
 
 " use a better grep ---------------------------------------------- {{{
 if executable('ag')
@@ -612,6 +658,7 @@ function! UpdateBackground()
 		endif
 	endif
 	LightlineRefresh
+	NeomakeRefresh
 endfunction
 command! UpdateBg call UpdateBackground()
 
