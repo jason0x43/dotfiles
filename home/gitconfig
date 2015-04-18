@@ -30,6 +30,7 @@
 	cb = checkout -b
 	rb = branch -d
 	cp = cherry-pick
+	update = "!f() { git add --all; git commit -m '[TEMP]'; git pull --rebase; git reset HEAD~1; }; f"
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
