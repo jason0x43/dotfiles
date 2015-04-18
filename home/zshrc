@@ -820,6 +820,10 @@ fi
 #
 [ -f $DOTFILES/zsh/fzf ] && source $DOTFILES/zsh/fzf
 
+# Android
+
+export ANDROID_HOME=`echo $(which android)(:A:h:h)`
+
 eval "$(direnv hook $SHELL)"
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker
