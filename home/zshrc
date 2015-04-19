@@ -73,6 +73,9 @@ autoload -U colors && colors
 if [[ "$OSTYPE" == darwin* && $TERM_PROGRAM == iTerm.app ]]; then
 	termbg=$CACHEDIR/termbg
 
+	# Commands to be run when the colorscheme is changed
+	set -A onSchemeChange
+
 	# Solarized palette
 	typeset -A PALETTE
 	PALETTE=(
@@ -145,6 +148,9 @@ if [[ "$OSTYPE" == darwin* && $TERM_PROGRAM == iTerm.app ]]; then
 		setColor 'i' "$PALETTE[base01]"
 		setColor 'j' "$PALETTE[base2]"
 		setColor 'k' "$PALETTE[base00]"
+		for callback in $onSchemeChange; do
+			eval $callback
+		done
 	}
 
 	# Enable Solarized Dark
@@ -156,6 +162,9 @@ if [[ "$OSTYPE" == darwin* && $TERM_PROGRAM == iTerm.app ]]; then
 		setColor 'i' "$PALETTE[base1]"
 		setColor 'j' "$PALETTE[base02]"
 		setColor 'k' "$PALETTE[base0]"
+		for callback in $onSchemeChange; do
+			eval $callback
+		done
 	}
 
 	# If a termbg file exists, set the theme
@@ -562,15 +571,21 @@ if (( $+commands[hub] )); then
 	alias git='hub'
 fi
 
-if (( ! $+commands[nview] )); then
-	alias nview='nvim -R'
+if is-callable 'nvim'; then
+	if (( ! $+commands[nview] )); then
+		alias nview='nvim -R'
+	fi
+	if (( ! $+commands[nvimdiff] )); then
+		alias nvimdiff='nvim -d'
+	fi
+	alias vim='nvim'
+	alias view='nvim -R'
+	alias vimdiff='nvim -d'
+
+	if [[ -e "$HOME/.vim/refreshColors.py" ]]; then
+		onSchemeChange+='python ~/.vim/refreshColors.py'
+	fi
 fi
-if (( ! $+commands[nvimdiff] )); then
-	alias nvimdiff='nvim -d'
-fi
-alias vim='nvim'
-alias view='nvim -R'
-alias vimdiff='nvim -d'
 
 if is-callable 'dircolors'; then
 	# GNU Core Utilities

@@ -459,8 +459,13 @@ let g:neomake_typescript_enabled_makers = [ 'tsc', 'tslint' ]
 " the Neomake styles are refreshed whenever the color scheme
 " is updated.
 function! NeomakeRefresh()
-	hi NeomakeError ctermfg=1 ctermbg=248 cterm=bold
-	hi NeomakeWarning ctermfg=3 ctermbg=248 cterm=bold
+	if &background == 'dark'
+		hi NeomakeError ctermfg=1 ctermbg=0 cterm=bold
+		hi NeomakeWarning ctermfg=3 ctermbg=0 cterm=bold
+	else
+		hi NeomakeError ctermfg=1 ctermbg=7 cterm=bold
+		hi NeomakeWarning ctermfg=3 ctermbg=7 cterm=bold
+	endif
 endfunction
 command! NeomakeRefresh :call NeomakeRefresh()
 
@@ -647,7 +652,7 @@ autocmd vimrc BufRead *.textile set filetype=textile
 autocmd vimrc BufRead *.dashtoc set filetype=json
 
 " update the background if a termbg file exists
-function! UpdateBackground()
+function! RefreshColors()
 	let l:termbg = expand('$CACHEDIR/termbg')
 	if filereadable(termbg)
 		let l:lines=readfile(termbg)
@@ -660,13 +665,13 @@ function! UpdateBackground()
 	LightlineRefresh
 	NeomakeRefresh
 endfunction
-command! UpdateBg call UpdateBackground()
+command! RefreshColors call RefreshColors()
 
 filetype plugin indent on | syntax on
 
 colorscheme solarized
 
 " process the termbg file if one exists
-call UpdateBackground()
+call RefreshColors()
 
 " vim:tabstop=4:shiftwidth=4:noexpandtab
