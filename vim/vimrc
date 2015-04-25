@@ -217,23 +217,39 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 		autocmd BufDelete * call FzfBufDeleted()
 	augroup END
 
+	function! s:editfile(filename)
+		execute "split " . a:filename
+		wincmd p
+		wincmd q
+	endfunction
+
+	function! s:editbuffer(filename)
+		execute "sbuffer " . a:filename
+		wincmd p
+		wincmd q
+	endfunction
+
+	command! FZFFiles call fzf#run({
+		\'sink' : function("<sid>editfile"),
+		\'down' : 8,
+		\})
 	command! FZFBuffers call fzf#run({
 		\'source': s:fzf_buffers,
-		\'sink' : 'e ',
-		\'options' : '-m',
-		\'tmux_height' : 8,
+		\'sink' : function("<sid>editbuffer"),
+		\'down' : 8,
 		\})
 	command! FZFGit call fzf#run({
 		\'source': 'git ls-tree -r --name-only HEAD',
-		\'sink' : 'e ',
+		\'sink' : function("<sid>editfile"),
 		\'options' : '-m',
-		\'tmux_height' : 8,
+		\'down' : 8,
 		\})
 
 	let g:fzf_tmux_height=15
-	map <Leader>f :FZF<cr>
-	map <Leader>b :FZFBuffers<cr>
-	map <Leader>g :FZFGit<cr>
+	map <Leader>f :FZFFiles<CR>
+	" map <Leader>f :FZF<CR>
+	map <Leader>b :FZFBuffers<CR>
+	map <Leader>g :FZFGit<CR>
 endif
 
 " a -------------------------------------------------------------- {{{

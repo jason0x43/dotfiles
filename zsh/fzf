@@ -14,6 +14,11 @@ fi
 export FZF_PATH=`echo $(which fzf)(:A:h:h)`
 [[ $- =~ i ]] && source $FZF_PATH/shell/key-bindings.zsh
 
+bindkey '^P' fzf-file-widget
+bindkey '^G' fzf-cd-widget
+
+alias fzf='fzf-tmux'
+
 # Useful functions #####################################################
 
 function fkill() {
