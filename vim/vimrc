@@ -446,31 +446,35 @@ augroup END
 function! NeomakeInit()
 	autocmd! load_neomake
 	call plug#load('neomake')
+
+	let g:neomake_go_maker = neomake#makers#ft#go#go()
+	" let g:neomake_go_enabled_makers = ['golint']
+	let g:neomake_go_enabled_makers = []
+
+	" let g:neomake_open_list = 1
+	let g:neomake_error_sign = {
+				\ 'text': '>>',
+				\ 'texthl': 'NeomakeError',
+				\ }
+	let g:neomake_warning_sign = {
+				\ 'text': '>>',
+				\ 'texthl': 'NeomakeWarning',
+				\ }
+
+	let g:neomake_tsc_maker = {
+				\ 'errorformat': '%E%f(%l\,%c): error %m'
+				\ }
+	let g:neomake_typescript_tslint_maker = {
+				\ 'exe': 'tslint',
+				\ 'args': [ '-f' ],
+				\ 'errorformat': '%W%f[%l\, %c]: %m'
+				\ }
+	let g:neomake_typescript_enabled_makers = [ 'tslint' ]
+
+	autocmd vimrc BufWritePost *.ts Neomake! tsc
+	autocmd vimrc BufWritePost *.go Neomake! go
 endfunction
 
-autocmd vimrc BufWritePost * Neomake
-
-" let g:neomake_open_list = 1
-let g:neomake_error_sign = {
-            \ 'text': '>>',
-            \ 'texthl': 'NeomakeError',
-            \ }
-let g:neomake_warning_sign = {
-            \ 'text': '>>',
-            \ 'texthl': 'NeomakeWarning',
-            \ }
-
-let g:neomake_typescript_tsc_maker = {
-    \ 'errorformat': '%E%f\(%l\,%c\): error %m'
-    \ }
-let g:neomake_typescript_tslint_maker = {
-	\ 'exe': 'tslint',
-	\ 'args': [ '-f' ],
-    \ 'errorformat': '%W%f[%l\, %c]: %m'
-    \ }
-let g:neomake_typescript_enabled_makers = [ 'tsc', 'tslint' ]
-
-" Custom styles for sidebar
 " This function is called by UpdateBackground to ensure that
 " the Neomake styles are refreshed whenever the color scheme
 " is updated.
