@@ -156,7 +156,6 @@ Plug 'niklasl/vim-rdf'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Plug 'scrooloose/syntastic', { 'on': [] }
-" Plug 'sickill/vim-pasta'
 Plug 'suy/vim-context-commentstring'
 Plug 'tfnico/vim-gradle'
 Plug 'tpope/vim-commentary'
@@ -176,7 +175,7 @@ Plug 'Valloric/YouCompleteMe'
 if executable('go')
 	Plug 'fatih/vim-go', { 'for': 'go' }
 	let g:go_fmt_command = "goimports"
-	let g:go_auto_type_info = 1
+	" let g:go_auto_type_info = 1
 endif
 call plug#end()
 
