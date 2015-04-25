@@ -643,9 +643,9 @@ function prompt_jason_setup {
 
 	# Set editor-info formats
 	zstyle ':zconf:module:editor:info:completing' format '%B%F{red}...%f%b'
-	zstyle ':zconf:module:editor:info:keymap:primary' format ' %B%F{red}❯%F{yellow}❯%F{green}❯%f%b'
+	zstyle ':zconf:module:editor:info:keymap:primary' format ' %B%F{green}❯%f%b'
 	zstyle ':zconf:module:editor:info:keymap:primary:overwrite' format ' %F{red}♺%f'
-	zstyle ':zconf:module:editor:info:keymap:alternate' format ' %B%F{green}❮%F{yellow}❮%F{red}❮%f%b'
+	zstyle ':zconf:module:editor:info:keymap:alternate' format ' %B%F{yellow}❮%f%b'
 
 	# Set git-info formats
 	zstyle ':zconf:module:git:info' verbose 'yes'
@@ -669,10 +669,12 @@ function prompt_jason_setup {
 	# Set node-info formats
 	zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
 
-	# Define prompts.
+	# Define prompts
 	PROMPT='%F{cyan}${SSH_TTY:+%n@%m }%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${git_info:+${(e)git_info[prompt]}}%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
-	RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}'
 	SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+
+	# Disable RPROMPT for now
+	#RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}'
 }
 
 prompt_jason_setup "$@"
