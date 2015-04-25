@@ -795,13 +795,12 @@ if (( $+commands[npm] )); then
 fi
 
 # nvm
-export NVM_DIR=~/.nvm
-
-function nvm() {
-	# load nvm, which will overwrite this function, then call the real command
-	source $(brew --prefix nvm)/nvm.sh
-	nvm
-}
+nvmsh="$(brew --prefix nvm)/nvm.sh"
+if [ -e $nvmsh ]; then
+	export NVM_DIR=~/.nvm
+	source $nvmsh
+fi
+unset nvmsh
 
 # }}}
 
