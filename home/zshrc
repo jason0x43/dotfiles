@@ -830,6 +830,7 @@ if ! zstyle -t ':zconf:module:history-substring-search' color; then
 fi
 
 # key bindings
+
 if [[ -n "$key_info" ]]; then
 	bindkey -M vicmd "k" history-substring-search-up
 	bindkey -M vicmd "j" history-substring-search-down
@@ -841,8 +842,20 @@ if [[ -n "$key_info" ]]; then
 fi
 
 # }}}
-#
+
 [ -f $DOTFILES/zsh/fzf ] && source $DOTFILES/zsh/fzf
+
+# Re-source the .zshrc. If we're in a tmux session, do this for every pane currently running zsh.
+function zrefresh() {
+	if [ -n "$TMUX" ]; then
+		tmux list-panes -s -F "#D #{pane_current_command}" | \
+			grep --color=never zsh | \
+			cut -d" " -f 1 | \
+			xargs -I{} tmux send-keys -t {} ". ~/.zshrc"
+	else
+		. ~/.zshrc
+	fi
+}
 
 # Android
 
