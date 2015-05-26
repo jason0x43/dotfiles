@@ -34,5 +34,8 @@ selftest.local.sh
 html-report
 local.intern.js
 
+# TypeScript
+tscommand-*.txt
+
 .jscsrc
 .vimprojrc
