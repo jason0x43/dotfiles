@@ -26,20 +26,14 @@ function editor-info {
 	else
 		zstyle -s ':zconf:module:editor:info:keymap:primary' format 'REPLY'
 		editor_info[keymap]="$REPLY"
-
-		if [[ "$ZLE_STATE" == *overwrite* ]]; then
-			zstyle -s ':zconf:module:editor:info:keymap:primary:overwrite' format 'REPLY'
-			editor_info[overwrite]="$REPLY"
-		else
-			zstyle -s ':zconf:module:editor:info:keymap:primary:insert' format 'REPLY'
-			editor_info[overwrite]="$REPLY"
-		fi
 	fi
 
 	unset REPLY
 
-	zle reset-prompt
-	zle -R
+	zle && {
+		zle reset-prompt
+		zle -R
+	}
 }
 zle -N editor-info
 
@@ -77,13 +71,6 @@ function zle-line-finish {
 }
 zle -N zle-line-finish
 
-# Toggles emacs overwrite mode and updates editor information.
-function overwrite-mode {
-	zle .overwrite-mode
-	zle editor-info
-}
-zle -N overwrite-mode
-
 # Enters vi insert mode and updates editor information.
 function vi-insert {
 	zle .vi-insert
@@ -115,16 +102,6 @@ function expand-dot-to-parent-directory-path {
 	fi
 }
 zle -N expand-dot-to-parent-directory-path
-
-# Displays an indicator when completing.
-function expand-or-complete-with-indicator {
-	local indicator
-	zstyle -s ':zconf:module:editor:info:completing' format 'indicator'
-	print -Pn "$indicator"
-	zle expand-or-complete
-	zle redisplay
-}
-zle -N expand-or-complete-with-indicator
 
 # Inserts 'sudo ' at the beginning of the line.
 function prepend-sudo {
@@ -627,6 +604,8 @@ function prompt_jason_precmd {
 	if (( $+functions[node-info] )); then
 		node-info
 	fi
+
+	editor-info
 }
 
 # Actually build the prompt
@@ -642,9 +621,7 @@ function prompt_jason_setup {
 	add-zsh-hook precmd prompt_jason_precmd
 
 	# Set editor-info formats
-	zstyle ':zconf:module:editor:info:completing' format '%B%F{red}...%f%b'
 	zstyle ':zconf:module:editor:info:keymap:primary' format ' %B%F{green}❯%f%b'
-	zstyle ':zconf:module:editor:info:keymap:primary:overwrite' format ' %F{red}♺%f'
 	zstyle ':zconf:module:editor:info:keymap:alternate' format ' %B%F{yellow}❮%f%b'
 
 	# Set git-info formats
@@ -670,7 +647,7 @@ function prompt_jason_setup {
 	zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
 
 	# Define prompts
-	PROMPT='%F{cyan}${SSH_TTY:+%n@%m }%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${git_info:+${(e)git_info[prompt]}}%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
+	PROMPT='%F{cyan}${SSH_TTY:+%n@%m }%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${git_info:+${(e)git_info[prompt]}}${editor_info[keymap]} '
 	SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 
 	# Disable RPROMPT for now
