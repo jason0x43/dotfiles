@@ -840,6 +840,11 @@ if [[ -n "$key_info" ]]; then
 	done
 fi
 
+# autosuggest - load after history substring search
+
+[ -f $DOTFILES/zsh/autosuggest ] && source $DOTFILES/zsh/autosuggest
+export AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=14'
+
 # }}}
 
 [ -f $DOTFILES/zsh/fzf ] && source $DOTFILES/zsh/fzf
