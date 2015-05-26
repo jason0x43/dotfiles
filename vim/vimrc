@@ -129,12 +129,13 @@ Plug 'AndrewRadev/linediff.vim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'SirVer/ultisnips', { 'on': [] }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+" Plug 'Quramy/tsuquyomi', { 'for': 'typescript' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'a.vim'
 Plug 'applescript.vim', { 'for': 'applescript' }
 Plug 'benekastah/neomake', { 'on': [] }
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript', 'do': 'npm -g install clausreinke/typescript-tools' }
+" Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript', 'do': 'npm -g install clausreinke/typescript-tools' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'gregsexton/gitv'
@@ -190,7 +191,7 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 	function! FzfBufEntered()
 		" move the current buffer to the top of the list
 		let l:name = resolve(expand("<afile>"))
-		if name != "" && name !~ "NERD_tree_.*" && &buftype == ''
+		if name != "" && name !~ "NERD_tree_.*" && name !~ "NetrwTreeListing.*" && &buftype == ''
 			let l:i = index(s:fzf_buffers, name)
 			if i != -1
 				call remove(s:fzf_buffers, i)
@@ -216,37 +217,20 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 		autocmd BufDelete * call FzfBufDeleted()
 	augroup END
 
-	function! s:editfile(filename)
-		execute "split " . a:filename
-		wincmd p
-		wincmd q
-	endfunction
-
-	function! s:editbuffer(filename)
-		execute "sbuffer " . a:filename
-		wincmd p
-		wincmd q
-	endfunction
-
-	command! FZFFiles call fzf#run({
-		\'sink' : function("<sid>editfile"),
-		\'down' : 8,
-		\})
 	command! FZFBuffers call fzf#run({
 		\'source': s:fzf_buffers,
-		\'sink' : function("<sid>editbuffer"),
+		\'sink' : 'e',
 		\'down' : 8,
 		\})
 	command! FZFGit call fzf#run({
 		\'source': 'git ls-tree -r --name-only HEAD',
-		\'sink' : function("<sid>editfile"),
+		\'sink' : 'e',
 		\'options' : '-m',
 		\'down' : 8,
 		\})
 
-	let g:fzf_tmux_height=15
-	map <Leader>f :FZFFiles<CR>
-	" map <Leader>f :FZF<CR>
+	let g:fzf_tmux_height=8
+	map <Leader>f :FZF<CR>
 	map <Leader>b :FZFBuffers<CR>
 	map <Leader>g :FZFGit<CR>
 endif
@@ -565,6 +549,10 @@ let g:tern_show_signature_in_pum = 1
 " typescript ----------------------------------------------------- {{{
 let g:TSSshowErrors = 0
 command! TSSkeymap call TSSkeymap()
+
+" disable typescript-vim's indenter
+let g:typescript_indent_disable = 1
+
 " }}}
 
 " undotree ------------------------------------------------------- {{{
@@ -578,6 +566,14 @@ augroup load_us
 	autocmd InsertEnter * call plug#load('ultisnips', 'vim-snippets') | autocmd! load_us
 augroup END
 " }}}
+
+" YouCompleteMe -------------------------------------------------- {{{
+if !exists("g:ycm_semantic_triggers")
+   let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
+" }}}
+
 
 " == End plugins =============================================
 
