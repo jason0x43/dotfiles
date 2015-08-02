@@ -2,6 +2,14 @@
 # Defines environment variables before .zshrc is sourced
 #
 
+# terminfo ###################################################################
+
+# Tell terminfo to use both the home directory and /usr/share/terminfo to avoid
+# tput missing terminal definition errors.
+if [[ -e ~/.terminfo ]]; then
+	export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
+fi
+
 # DOTFILES ###################################################################
 
 export DOTFILES=~/.dotfiles
