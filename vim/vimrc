@@ -93,13 +93,16 @@ map <Leader>f :find
 map <silent> <Leader>w :w<CR>
 map <silent> <Leader>W :w!<CR>
 
-" <leader>q to quit
-map <silent> <Leader>q :q<CR>
-map <silent> <Leader>Q :q!<CR>
+" <leader>q or <leader>c to close a pane or quit
+map <silent> <Leader>q :qall<CR>
+map <silent> <Leader>Q :qall!<CR>
 
-" <leader>c to close a file
-map <silent> <Leader>c :Bd<CR>
-map <silent> <Leader>C :bd<CR>
+" <leader>c to close a pane
+map <silent> <Leader>c :close<CR>
+
+" <leader>d to delete a buffer
+map <silent> <Leader>k :Bd<CR>
+map <silent> <Leader>K :bd<CR>
 
 " highlight the cursor column for alignment help
 map <silent> <Leader>hc :set cursorcolumn!<CR>
@@ -114,6 +117,8 @@ map <silent> <Leader>v :set paste!<CR>
 " alternate redraw since C-L is taken
 map <leader>r :redraw!<CR>
 
+tnoremap <leader>e <C-\><C-n>
+
 " bind ctrl-n and ctrl-p to step through location list results
 map <silent> <C-N> :cn<CR>
 map <silent> <C-P> :cp<CR>
@@ -125,119 +130,6 @@ augroup vimrc
 augroup END
 
 " == Plugins =================================================
-
-call plug#begin('~/.vim/plugged')
-
-Plug '1995eaton/vim-better-javascript-completion', { 'for': [ 'javascript', 'html' ] }
-Plug 'AndrewRadev/linediff.vim'
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'SirVer/ultisnips', { 'on': [] }
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-" Plug 'Quramy/tsuquyomi', { 'for': 'typescript' }
-Plug 'Textile-for-VIM', { 'for': 'textile' }
-Plug 'a.vim'
-Plug 'applescript.vim', { 'for': 'applescript' }
-Plug 'benekastah/neomake', { 'on': [] }
-Plug 'christoomey/vim-tmux-navigator'
-" Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript', 'do': 'npm -g install clausreinke/typescript-tools' }
-Plug 'elzr/vim-json', { 'for': 'json' }
-Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'gregsexton/gitv'
-Plug 'gorkunov/smartpairs.vim'
-Plug 'hail2u/vim-css3-syntax', { 'for': [ 'css', 'html' ] }
-Plug 'honza/vim-snippets', { 'on': [] }
-Plug 'itchyny/lightline.vim'
-Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'jason0x43/vim-colors-solarized'
-Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
-Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
-" Start tagbar for go files so vim-go can inject golang support
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle', 'for': [ 'go' ] }
-Plug 'junegunn/vim-easy-align'
-Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ] }
-Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
-Plug 'moll/vim-bbye'
-Plug 'niklasl/vim-rdf'
-Plug 'rking/ag.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-" Plug 'scrooloose/syntastic', { 'on': [] }
-Plug 'suy/vim-context-commentstring'
-Plug 'tfnico/vim-gradle'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-Plug 'tpope/vim-obsession'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'dhruvasagar/vim-prosession'
-Plug 'vim-coffee-script', { 'for': 'coffeescript' }
-Plug 'vim-tmuxify'
-Plug 'wavded/vim-stylus', { 'for': 'stylus' }
-Plug 'tpope/vim-vinegar'
-Plug 'Valloric/YouCompleteMe'
-
-if executable('go')
-	Plug 'fatih/vim-go', { 'for': 'go' }
-	let g:go_fmt_command = "goimports"
-	" let g:go_auto_type_info = 1
-endif
-call plug#end()
-
-" fzf fuzzy finder; FZF_PATH is set via zshrc, and uses the vim files from the
-" homebrew install of fzf
-if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
-	set rtp+=$FZF_PATH
-
-	" maintain a list of active buffers, sorted by most-recently-used
-	let s:fzf_buffers = []
-
-	function! FzfBufEntered()
-		" move the current buffer to the top of the list
-		let l:name = resolve(expand("<afile>"))
-		if name != "" && name !~ "NERD_tree_.*" && name !~ "NetrwTreeListing.*" && &buftype == ''
-			let l:i = index(s:fzf_buffers, name)
-			if i != -1
-				call remove(s:fzf_buffers, i)
-			endif
-			let s:fzf_buffers = insert(s:fzf_buffers, name)
-		endif
-	endfunction
-
-	function! FzfBufDeleted()
-		" remove the buffer being deleted from the list
-		let l:name = resolve(expand("<afile>"))
-		if name != ""
-			let l:idx = index(s:fzf_buffers, name)
-			if idx != -1
-				call remove(s:fzf_buffers, idx)
-			endif
-		endif
-	endfunction
-
-	augroup fzfbuf
-		autocmd!
-		autocmd BufAdd,BufEnter * call FzfBufEntered()
-		autocmd BufDelete * call FzfBufDeleted()
-	augroup END
-
-	command! FZFBuffers call fzf#run({
-		\'source': s:fzf_buffers,
-		\'sink' : 'e',
-		\'down' : 8,
-		\})
-	command! FZFGit call fzf#run({
-		\'source': 'git ls-tree -r --name-only HEAD',
-		\'sink' : 'e',
-		\'options' : '-m',
-		\'down' : 8,
-		\})
-
-	let g:fzf_tmux_height=8
-	map <Leader>f :FZF<CR>
-	map <Leader>b :FZFBuffers<CR>
-	map <Leader>g :FZFGit<CR>
-endif
 
 " a -------------------------------------------------------------- {{{
 let g:alternateExtensions_coffee = 'js'
@@ -458,8 +350,11 @@ function! NeomakeInit()
 				\ }
 	let g:neomake_typescript_enabled_makers = [ 'tslint' ]
 
+	let g:neomake_javascript_enabled_makers = [ 'jshint' ]
+
 	autocmd vimrc BufWritePost *.ts Neomake! tsc
 	autocmd vimrc BufWritePost *.go Neomake! go
+	autocmd vimrc BufWritePost *.js Neomake
 endfunction
 
 " This function is called by UpdateBackground to ensure that
@@ -476,6 +371,8 @@ function! NeomakeRefresh()
 endfunction
 command! NeomakeRefresh :call NeomakeRefresh()
 
+map <silent> <Leader>e :cwindow<CR>
+
 " }}}
 
 " NERDTree ------------------------------------------------------- {{{
@@ -484,7 +381,7 @@ let g:NERDTreeMinimalUI   = 1
 " disable C-K and C-J mappings; wasn't using, and they break tmux-navigator
 let g:NERDTreeMapJumpPrevSibling = ''
 let g:NERDTreeMapJumpNextSibling = ''
-map <silent> <Leader>e :NERDTreeToggle<CR>
+map <silent> <Leader>n :NERDTreeToggle<CR>
 " }}}
 
 " netrw ---------------------------------------------------------- {{{
@@ -514,40 +411,21 @@ let g:solarized_terms_italic = ['iTerm.app']
 let g:solarized_menu = 0
 " }}}
 
-" syntastic ------------------------------------------------------ {{{
-" let g:syntastic_java_javac_config_file_enabled = 1
-" let g:syntastic_coffee_checkers = ['coffeelint', 'coffee']
-" let g:syntastic_html_tidy_ignore_errors = [
-"       \ 'lacks "action" attribute',
-"       \ "'<' + '/' + letter not allowed here",
-"       \	]
-" let g:syntastic_loc_list_height = 3
-" " let g:syntastic_typescript_tsc_args = '--module amd --noImplicitAny'
-" let g:syntastic_typescript_checkers = ['tsc', 'tslint']
-" let g:syntastic_typescript_tslint_args = '-c ~/.tslintrc'
-" let g:syntastic_css_csslint_args = '--ignore=ids,adjoining-classes'
-" let g:syntastic_javascript_checkers = ['jshint', 'jscs']
-
-" map <silent> <Leader>nc :SyntasticCheck<CR>
-" map <silent> <Leader>ne :Errors<CR>
-
-" augroup load_syn
-" 	autocmd!
-" 	autocmd BufRead * call SynInit()
-" 	autocmd BufWrite * call SynInit()
-" augroup END
-" function! SynInit()
-" 	autocmd! load_syn
-" 	call plug#load('syntastic')
-" endfunction
-" }}}
-
 " Tagbar --------------------------------------------------------- {{{
 map <silent> <Leader>t :TagbarToggle<CR>
 " }}}
 
 " tern ----------------------------------------------------------- {{{
 let g:tern_show_signature_in_pum = 1
+" }}}
+
+" Tsuquyomi ------------------------------------------------------ {{{
+" Override Tsuquyomi reference key mapping
+augroup tsuq
+	autocmd!
+	autocmd FileType typescript map <buffer> <Leader>r <Plug>(TsuquyomiReferences)
+augroup END
+let g:tsuquyomi_disable_quickfix = 1
 " }}}
 
 " typescript ----------------------------------------------------- {{{
@@ -578,6 +456,121 @@ endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 " }}}
 
+call plug#begin('~/.vim/plugged')
+
+Plug '1995eaton/vim-better-javascript-completion', { 'for': [ 'javascript', 'html' ] }
+Plug 'AndrewRadev/linediff.vim'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'SirVer/ultisnips', { 'on': [] }
+Plug 'honza/vim-snippets', { 'on': [] }
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'Quramy/tsuquyomi', { 'for': 'typescript', 'do': 'npm install' }
+Plug 'Textile-for-VIM', { 'for': 'textile' }
+Plug 'a.vim'
+Plug 'applescript.vim', { 'for': 'applescript' }
+Plug 'benekastah/neomake', { 'on': [] }
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'dag/vim-fish'
+Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+Plug 'elzr/vim-json', { 'for': 'json' }
+Plug 'groenewege/vim-less', { 'for': 'less' }
+Plug 'gregsexton/gitv'
+Plug 'gorkunov/smartpairs.vim'
+Plug 'hail2u/vim-css3-syntax', { 'for': [ 'css', 'html' ] }
+Plug 'itchyny/lightline.vim'
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'jason0x43/vim-colors-solarized'
+Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
+Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+" Start tagbar for go files so vim-go can inject golang support
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle', 'for': [ 'go' ] }
+Plug 'junegunn/vim-easy-align'
+Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ], 'do': 'npm install' }
+Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+Plug 'moll/vim-bbye'
+Plug 'niklasl/vim-rdf'
+Plug 'rking/ag.vim'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'suy/vim-context-commentstring'
+Plug 'tfnico/vim-gradle'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'dhruvasagar/vim-prosession'
+Plug 'vim-coffee-script', { 'for': 'coffeescript' }
+Plug 'vim-tmuxify'
+Plug 'wavded/vim-stylus', { 'for': 'stylus' }
+Plug 'tpope/vim-vinegar'
+Plug 'Valloric/YouCompleteMe'
+
+if executable('go')
+	Plug 'fatih/vim-go', { 'for': 'go' }
+	let g:go_fmt_command = "goimports"
+	" let g:go_auto_type_info = 1
+endif
+call plug#end()
+
+" fzf fuzzy finder; FZF_PATH is set via zshrc, and uses the vim files from the
+" homebrew install of fzf
+if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
+	set rtp+=$FZF_PATH
+
+	" maintain a list of active buffers, sorted by most-recently-used
+	let s:fzf_buffers = []
+
+	function! FzfBufEntered()
+		" move the current buffer to the top of the list
+		let l:name = resolve(expand("<afile>"))
+		if name != "" && name !~ "NERD_tree_.*" && name !~ "NetrwTreeListing.*" && &buftype == ''
+			let l:i = index(s:fzf_buffers, name)
+			if i != -1
+				call remove(s:fzf_buffers, i)
+			endif
+			let s:fzf_buffers = insert(s:fzf_buffers, name)
+		endif
+	endfunction
+
+	function! FzfBufDeleted()
+		" remove the buffer being deleted from the list
+		let l:name = resolve(expand("<afile>"))
+		if name != ""
+			let l:idx = index(s:fzf_buffers, name)
+			if idx != -1
+				call remove(s:fzf_buffers, idx)
+			endif
+		endif
+	endfunction
+
+	augroup fzfbuf
+		autocmd!
+		autocmd BufAdd,BufEnter * call FzfBufEntered()
+		autocmd BufDelete * call FzfBufDeleted()
+	augroup END
+
+	command! FZFBuffers call fzf#run({
+		\'source': s:fzf_buffers,
+		\'sink' : 'e',
+		\'down' : 8,
+		\})
+	command! FZFGit call fzf#run({
+		\'source': 'git ls-tree -r --name-only HEAD',
+		\'sink' : 'e',
+		\'options' : '-m',
+		\'down' : 8,
+		\})
+
+	let g:fzf_tmux_height=8
+	map <Leader>f :FZF<CR>
+	map <Leader>b :FZFBuffers<CR>
+	map <Leader>g :FZFGit<CR>
+endif
+
+" load the builting matchit plugin
+runtime! macros/matchit.vim
 
 " == End plugins =============================================
 
@@ -661,23 +654,21 @@ autocmd vimrc BufEnter * :syntax sync fromstart
 " highlight columns past 80
 "let &colorcolumn=join(range(81,999), ",")
 
-" load the builting matchit plugin
-runtime! macros/matchit.vim
-
 " set random filetypes
 autocmd vimrc BufRead .jscsrc set filetype=json
 autocmd vimrc BufRead .tslintrc set filetype=json
 autocmd vimrc BufRead *.textile set filetype=textile
 autocmd vimrc BufRead *.dashtoc set filetype=json
+autocmd vimrc BufRead fish_funced.* set filetype=fish
 
 " update the background if a termbg file exists
 function! RefreshColors()
-	let l:termbg = expand('$CACHEDIR/termbg')
+	let l:termbg=expand('$CACHEDIR/termbg')
 	if filereadable(termbg)
 		let l:lines=readfile(termbg)
 		if lines[0] == 'light'
 			set background=light
-		else
+		elseif lines[0] == 'dark'
 			set background=dark
 		endif
 	endif
@@ -685,6 +676,10 @@ function! RefreshColors()
 	NeomakeRefresh
 endfunction
 command! RefreshColors call RefreshColors()
+
+" tell Neovim.app which Python to use
+let g:python_host_prog='/usr/local/bin/python'
+let g:python3_host_prog='/usr/local/bin/python3'
 
 filetype plugin indent on | syntax on
 
