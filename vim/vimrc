@@ -1,6 +1,10 @@
 set nocompatible
 filetype off
 
+if &shell =~# 'bin/fish$'
+	set shell=/bin/sh
+endif
+
 " general options ------------------------------------------------ {{{
 set encoding=utf-8
 scriptencoding utf-8

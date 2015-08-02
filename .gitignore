@@ -1,3 +1,5 @@
 tmux/plugins/*
 vim/plugged/*
 plug.vim.old
+fish/fishd.*
+fish/fish_history
