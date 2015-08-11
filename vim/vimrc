@@ -551,6 +551,11 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 		autocmd BufDelete * call FzfBufDeleted()
 	augroup END
 
+	command! FZFFiles call fzf#run({
+		\'options': '--tiebreak=end',
+		\'sink' : 'e',
+		\'down' : 8,
+		\})
 	command! FZFBuffers call fzf#run({
 		\'source': s:fzf_buffers,
 		\'sink' : 'e',
