@@ -15,24 +15,29 @@
 	precomposeunicode = true
 	pager = less -F -X
 [alias]
-	st = status --short
-	unstage = reset HEAD
-	staged = diff --staged --name-status
+	cat = show
+	cb = checkout -b
+	co = checkout
+	cp = cherry-pick
+	forget = rm --cached
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
-	cat = show
-	untrack = rm --cached
-	forget = rm --cached
+	ignore = update-index --assume-unchanged
+	last = cat-file commit HEAD
 	lg = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)' --all
 	lgb = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)'
-	co = checkout
-	last = cat-file commit HEAD
-	cb = checkout -b
+
+	# check out a local copy of a PR. https://gist.github.com/gnarf/5406589
+	pr  = !f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f
+	pr-clean = !git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+
 	rb = branch -d
-	cp = cherry-pick
-	update = "!f() { git add --all; git commit -m '[TEMP]'; git pull --rebase; git reset HEAD~1; }; f"
-	ignore = update-index --assume-unchanged
+	st = status --short
+	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
+	unstage = reset HEAD
+	untrack = rm --cached
+	update = "!f() { git add --all; git commit -m '[TEMP]'; git pull --rebase; git reset HEAD~1; }; f"
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
