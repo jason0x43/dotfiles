@@ -665,6 +665,8 @@ autocmd vimrc BufRead .tslintrc set filetype=json
 autocmd vimrc BufRead *.textile set filetype=textile
 autocmd vimrc BufRead *.dashtoc set filetype=json
 autocmd vimrc BufRead fish_funced.* set filetype=fish
+" files loaded from the zsh functions dir should be of type zsh
+autocmd vimrc BufRead */zsh/functions/* set filetype=zsh
 
 " update the background if a termbg file exists
 function! RefreshColors()
