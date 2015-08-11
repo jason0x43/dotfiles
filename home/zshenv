@@ -2,51 +2,44 @@
 # Defines environment variables before .zshrc is sourced
 #
 
-# terminfo ###################################################################
-
-# Tell terminfo to use both the home directory and /usr/share/terminfo to avoid
-# tput missing terminal definition errors.
-if [[ -e ~/.terminfo ]]; then
-	export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
-fi
-
 # DOTFILES ###################################################################
 
 export DOTFILES=~/.dotfiles
-fpath=($DOTFILES/zsh $fpath)
 
 # Editors ####################################################################
 
 export EDITOR='vim'
 export VISUAL='vim'
-export PAGER='less'
 
 # Language ###################################################################
 
-if [[ -z "$LANG" ]]; then
-	eval "$(locale)"
-fi
+[[ -z "$LANG" ]] && eval "$(locale)"
 
 # Less #######################################################################
 
 export LESS='-F -g -i -M -R -w -X -z-4'
+export PAGER='less'
 
-# Paths ######################################################################
+# Cache and temp files #######################################################
+
+export CACHEDIR="$HOME/.cache"
+[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
+
+export ZCACHEDIR="$CACHEDIR/zsh"
+[[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
+
+if [[ -d "$TMPDIR" ]]; then
+	export TMPPREFIX="${TMPDIR%/}/zsh"
+	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
+fi
+
+# General paths ##############################################################
 
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
 # Set the the list of directories that cd searches.
-cdpath=(
-	$cdpath
-)
-
-# Set the list of directories that info searches for manuals.
-infopath=(
-	/usr/local/share/info
-	/usr/share/info
-	$infopath
-)
+cdpath=($cdpath)
 
 # Set the list of directories that man searches for manuals.
 manpath=(
@@ -54,10 +47,7 @@ manpath=(
 	/usr/share/man
 	$manpath
 )
-
-for path_file in /etc/manpaths.d/*(.N); do
-	manpath+=($(<$path_file))
-done
+for path_file in /etc/manpaths.d/*(.N); manpath+=($(<$path_file))
 unset path_file
 
 # Set the list of directories that Zsh searches for programs.
@@ -69,55 +59,35 @@ path=(
 	/usr/local/{bin,sbin}
 	$path
 )
-
-for path_file in /etc/paths.d/*(.N); do
-	path+=($(<$path_file))
-done
+for path_file in /etc/paths.d/*(.N); path+=($(<$path_file))
 unset path_file
 
-# Cache and temp files #######################################################
+fpath=($DOTFILES/zsh/functions $fpath)
 
-export CACHEDIR="$HOME/.cache"
-if [[ ! -d "$CACHEDIR" ]]; then
-	mkdir -p "$CACHEDIR"
-fi
+# terminfo ###################################################################
 
-export ZCACHEDIR="$CACHEDIR/zsh"
-if [[ ! -d "$ZCACHEDIR" ]]; then
-	mkdir -p "$ZCACHEDIR"
-fi
-
-if [[ -d "$TMPDIR" ]]; then
-	export TMPPREFIX="${TMPDIR%/}/zsh"
-	if [[ ! -d "$TMPPREFIX" ]]; then
-		mkdir -p "$TMPPREFIX"
-	fi
-fi
+# Tell terminfo to use both the home directory and /usr/share/terminfo to avoid
+# tput missing terminal definition errors.
+[[ -e ~/.terminfo ]] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
 
 # Java #######################################################################
 
-if [[ -e /usr/libexec/java_home ]]; then
-	export JAVA_HOME=`/usr/libexec/java_home`
-fi
+[[ -e /usr/libexec/java_home ]] && export JAVA_HOME=`/usr/libexec/java_home`
 
 # Python #####################################################################
 
-if (( $+commands[virtualenv] )); then
+if [[ $+commands[virtualenv] ]]; then
 	VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
 	VIRTUAL_ENV_DISABLE_PROMPT=1
 fi
 
-if [[ -e ~/Library/Python/2.7/bin ]]; then
-	export PATH=$PATH:~/Library/Python/2.7/bin
-fi
+[[ -e ~/Library/Python/2.7/bin ]] && export PATH=$PATH:~/Library/Python/2.7/bin
 
 # Go #########################################################################
 
 if (( $+commands[go] )); then
-	GOROOT=$(go env GOROOT 2> /dev/null)
-	if [[ ! -z "$GOROOT" ]]; then
-		path+=$GOROOT/bin
-	fi
+	GOROOT=`go env GOROOT 2> /dev/null`
+	[[ -n "$GOROOT" ]] && path+=$GOROOT/bin
 	case "$OSTYPE" in
 		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
@@ -133,12 +103,12 @@ case "$OSTYPE" in
 esac
 path+=$GEM_HOME/bin
 
+# Android ################################################################
+
+export ANDROID_HOME=`echo $(which android)(:A:h:h)`
+
 # Local config #############################################################
 
-local_config=~/.config/zsh/zshenv
-if [[ -f "$local_config" ]]; then
-	source $local_config
-fi
-unset local_config
+[[ -f ~/.config/zsh/zshenv ]] && source ~/.config/zsh/zshenv
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab

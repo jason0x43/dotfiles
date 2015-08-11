@@ -1,0 +1,11 @@
+# fkill - kill a process
+if [[ ! $+commands[fzf] ]]; then
+	echo "FZF is not installed"
+	return 0
+fi
+
+local pid
+pid=$(ps -ef | sed 1d | fzf -e -m | awk '{print $2}')
+if [ -n "$pid" ]; then
+	kill -${1:-TERM} $pid
+fi

@@ -1,0 +1,8 @@
+# CPU/memory usage
+if [[ $+commands[vtop] ]]; then
+	vtop $*
+elif [[ $+commands[htop] ]]; then
+	htop $*
+else
+	command top $*
+fi

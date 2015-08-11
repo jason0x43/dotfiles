@@ -1,0 +1,5 @@
+# Chrome on Mac
+if [[ "$OSTYPE" == darwin* ]]; then
+	# Open chrome from the command line
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $*
+fi

@@ -1,0 +1,9 @@
+# fvi - load file in vim
+if [[ ! $+commands[fzf] ]]; then
+	echo "FZF is not installed"
+	return 0
+fi
+
+local file
+file=$(fzf)
+[ -n "$file" ] && vi $file

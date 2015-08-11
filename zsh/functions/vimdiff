@@ -1,0 +1,5 @@
+if [[ $+commands[nvim] ]]; then
+	nvim -d $*
+elif [[ $+commands[vim] ]]; then
+	vim -d $*
+fi

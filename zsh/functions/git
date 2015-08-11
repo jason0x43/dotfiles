@@ -1,0 +1,5 @@
+if [[ $+commands[hub] ]]; then
+	hub $*
+else
+	command git $*
+fi

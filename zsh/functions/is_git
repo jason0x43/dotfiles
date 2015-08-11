@@ -1,0 +1,2 @@
+# Indicate whether we're in a git repo
+[[ -d .git ]] || [[ -n "$(git rev-parse --is-inside-work-tree 2> /dev/null)" ]]

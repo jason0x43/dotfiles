@@ -1,0 +1,12 @@
+# Open a manpage in Dash.app
+if [[ "$OSTYPE" == darwin* ]]; then
+	if (( $# > 0 )); then
+		open "dash://man:$1" 2>/dev/null
+		if (( $? != 0 )); then
+			print "$0: Dash is not installed" >&2
+			break
+		fi
+	else
+		print 'What manual page do you want?' >&2
+	fi
+fi

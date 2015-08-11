@@ -1,0 +1,15 @@
+# fbr - checkout git branch
+if [[ ! $+commands[fzf] ]]; then
+	echo "FZF is not installed"
+	return 0
+fi
+
+if ! is_git; then
+	echo "Not a git repo"
+	return 0
+fi
+
+local branches branch
+branches=$(git branch --all | grep -v HEAD) &&
+	branch=$(echo "$branches" | fzf -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+	git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
