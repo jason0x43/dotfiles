@@ -39,5 +39,5 @@ function fish_prompt --description 'Write out the prompt'
 
 	end
 
-	echo -n -s (set_color $color_cwd) (prompt_pwd) (set_color $fish_color_status) (__fish_git_prompt " [%s]") $normal $caret $normal
+	echo -n -s (set_color $color_cwd) (prompt_pwd) (set_color $fish_color_status) (__fish_git_prompt " git:%s") $normal $caret $normal
 end

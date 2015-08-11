@@ -20,9 +20,11 @@ def gen_script():
     old_env = os.popen('/bin/bash -c "env"', 'r').read().splitlines()
 
     command = '{}; echo "{}"; env'.format(' '.join(sys.argv[1:]), divider)
+    sys.stderr.write(command + '\n')
     stdout, new_env = (subprocess
                        .check_output(['bash', '-c', command])
                        .split(divider, 1))
+    sys.stderr.write(new_env + '\n')
     new_env = new_env.lstrip().splitlines()
 
     old_env = dict([line.split('=', 1) for line in old_env])

@@ -1,5 +1,3 @@
-set -U fish_user_paths ./node_modules/.bin $HOME/Applications
-
 set -x CACHEDIR $HOME/.cache
 set -x DOTFILES $HOME/.dotfiles
 set -x EDITOR vim
@@ -7,6 +5,7 @@ set -x GOPATH $HOME/Documents/Programming/go
 set -x JAVA_HOME /Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 set -x LESS '-F -g -i -M -R -w -X -z-4'
 
+set -U fish_user_paths ./node_modules/.bin $HOME/Applications $GOPATH/bin
 set -U fish_color_status green 
 set -U fish_color_cwd cyan 
 
