@@ -5,7 +5,6 @@ if [[ -d $DOTFILES/zsh/functions ]]; then
 	for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
-
 # Color ##################################################################
 
 # Turn on color for everything
@@ -95,6 +94,7 @@ if [[ $TERM_PROGRAM == iTerm.app ]]; then
 		set_color 'j' "$PALETTE[base2]"
 		set_color 'k' "$PALETTE[base00]"
 		for callback in $on_scheme_change; eval $callback 'light'
+		[[ $1 != "norefresh" ]] && notify_theme
 	}
 
 	# Enable Solarized Dark
@@ -106,9 +106,26 @@ if [[ $TERM_PROGRAM == iTerm.app ]]; then
 		set_color 'j' "$PALETTE[base02]"
 		set_color 'k' "$PALETTE[base0]"
 		for callback in $on_scheme_change; eval $callback 'dark'
+		[[ $1 != "norefresh" ]] && notify_theme
 	}
 
+	# Setup a signal trap; when this signal is seen the shell will update its
+	# theme-related environment variables
+	function TRAPUSR2() {
+		local theme
+		[ -f ~/.cache/termbg ] && theme=$(cat ~/.cache/termbg)
+		if [[ $theme == "light" ]] || [[ $theme == "dark" ]]; then
+			for callback in $on_scheme_change; eval $callback $theme
+		fi
+	}
 
+	# Send a USR2 signal to every zsh instance under the same parent as this
+	# instance, causing them to run the TRAPUSR2 function above
+	function notify_theme() {
+		local -a pids
+		pids=($(pgrep -P $PPID zsh))
+		kill -USR2 $pids
+	}
 fi
 
 # Completions ############################################################
