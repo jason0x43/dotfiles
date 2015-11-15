@@ -9,7 +9,7 @@
 [difftool]
 	prompt = false
 [core]
-	excludesfile = ~/.gitignore
+	excludesfile = /Users/jason/.gitignore
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
@@ -64,3 +64,10 @@
 	insteadOf = gist:
 	pushInsteadOf = gist:
 	pushInsteadOf = git://gist.github.com/
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true

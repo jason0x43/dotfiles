@@ -1,3 +1,6 @@
 [submodule "zsh/autosuggestions"]
 	path = zsh/autosuggestions
 	url = https://github.com/tarruda/zsh-autosuggestions
+[submodule "tmux/plugins/tpm"]
+	path = tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

@@ -2,26 +2,21 @@
 # Defines environment variables before .zshrc is sourced
 #
 
-# DOTFILES ###################################################################
-
+# Dotfiles
+# ----------------------------------------------------------------------------
 export DOTFILES=~/.dotfiles
 
-# Editors ####################################################################
-
+# Editors
+# ----------------------------------------------------------------------------
 export EDITOR='vim'
 export VISUAL='vim'
 
-# Language ###################################################################
-
+# Language
+# ----------------------------------------------------------------------------
 [[ -z "$LANG" ]] && eval "$(locale)"
 
-# Less #######################################################################
-
-export LESS='-F -g -i -M -R -w -X -z-4'
-export PAGER='less'
-
-# Cache and temp files #######################################################
-
+# Cache and temp files
+# ----------------------------------------------------------------------------
 export CACHEDIR="$HOME/.cache"
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
 
@@ -33,8 +28,8 @@ if [[ -d "$TMPDIR" ]]; then
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
-# General paths ##############################################################
-
+# General paths
+# ----------------------------------------------------------------------------
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
@@ -47,7 +42,9 @@ manpath=(
 	/usr/share/man
 	$manpath
 )
-for path_file in /etc/manpaths.d/*(.N); manpath+=($(<$path_file))
+for path_file in /etc/manpaths.d/*(.N); do
+	manpath+=($(<$path_file))
+done
 unset path_file
 
 # Set the list of directories that Zsh searches for programs.
@@ -59,32 +56,33 @@ path=(
 	/usr/local/{bin,sbin}
 	$path
 )
-for path_file in /etc/paths.d/*(.N); path+=($(<$path_file))
+for path_file in /etc/paths.d/*(.N); do
+	path+=($(<$path_file))
+done
 unset path_file
 
 fpath=($DOTFILES/zsh/functions $fpath)
 
-# terminfo ###################################################################
+# Java
+# ----------------------------------------------------------------------------
+JAVA_HOME=`/usr/libexec/java_home 2> /dev/null`
+if (( $? )); then
+	unset JAVA_HOME
+else
+	export JAVA_HOME
+fi
 
-# Tell terminfo to use both the home directory and /usr/share/terminfo to avoid
-# tput missing terminal definition errors.
-[[ -e ~/.terminfo ]] && export TERMINFO_DIRS=~/.terminfo:/usr/share/terminfo
-
-# Java #######################################################################
-
-[[ -e /usr/libexec/java_home ]] && export JAVA_HOME=`/usr/libexec/java_home`
-
-# Python #####################################################################
-
-if [[ $+commands[virtualenv] ]]; then
+# Python
+# ----------------------------------------------------------------------------
+if (( $+commands[virtualenv] )); then
 	VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
 	VIRTUAL_ENV_DISABLE_PROMPT=1
 fi
 
-[[ -e ~/Library/Python/2.7/bin ]] && export PATH=$PATH:~/Library/Python/2.7/bin
+[[ -e ~/Library/Python/2.7/bin ]] && path+=~/Library/Python/2.7/bin
 
-# Go #########################################################################
-
+# Go
+# ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
 	GOROOT=`go env GOROOT 2> /dev/null`
 	[[ -n "$GOROOT" ]] && path+=$GOROOT/bin
@@ -95,20 +93,30 @@ if (( $+commands[go] )); then
 	path+=$GOPATH/bin
 fi
 
-# Ruby #######################################################################
+# Ruby
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
+	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
+	path+=$GEM_HOME/bin
+fi
 
-case "$OSTYPE" in
-	darwin*) export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0 ;;
-	linux*)  export GEM_HOME=$HOME/.gem/ruby/1.9.1 ;;
-esac
-path+=$GEM_HOME/bin
+# Node
+# ----------------------------------------------------------------------------
+nvmsh="$(brew --prefix nvm)/nvm.sh"
+if [[ -e "$nvmsh" ]]; then
+	export NVM_DIR=~/.nvm
+	source $nvmsh
+fi
+unset nvmsh
 
-# Android ################################################################
+# Android
+# ------------------------------------------------------------------------
+if (( $+commands[android] )); then
+	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
+fi
 
-export ANDROID_HOME=`echo $(which android)(:A:h:h)`
-
-# Local config #############################################################
-
+# Local config
+# --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshenv ]] && source ~/.config/zsh/zshenv
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab

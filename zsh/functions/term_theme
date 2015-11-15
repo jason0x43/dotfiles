@@ -1,0 +1,13 @@
+if (( $# == 1 )); then
+	theme=$1
+
+	if [[ $theme == "dark" ]]; then
+		theme="Solarized Dark"
+	elif [[ $theme == "light" ]]; then
+		theme="Solarized Light"
+	fi
+
+	osascript -e "tell application \"Terminal\" to set current settings of first tab of first window to (settings set \"$theme\")"
+else
+	osascript -e 'tell application "Terminal" to get name of (current settings of first tab of first window) as string'
+fi

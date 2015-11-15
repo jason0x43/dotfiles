@@ -94,14 +94,14 @@ function node-info() {
 	unset node_info
 	typeset -gA node_info
 
-	if [[ $+functions[nvm_version] ]]; then
-	  version="${$(nvm_version)#v}"
-	fi
+	if (( $+functions[nvm_version] )); then
+		version="${$(nvm_version)#v}"
 
-	if [[ "$version" != "system" ]]; then
-	  zstyle -s ':zconf:module:node:info:version' format 'version_format'
-	  zformat -f version_formatted "$version_format" "v:$version"
-	  node_info[version]=" %F{blue}node:%f$version_formatted"
+		if [[ -n "$version" && "$version" != "system" ]]; then
+			zstyle -s ':zconf:module:node:info:version' format 'version_format'
+			zformat -f version_formatted "$version_format" "v:$version"
+			node_info[version]=" %F{blue}node:%f$version_formatted"
+		fi
 	fi
 }
 

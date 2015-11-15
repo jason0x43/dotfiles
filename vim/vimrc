@@ -1,530 +1,78 @@
-set nocompatible
-filetype off
+" Put all swap and undo files in a central location
+if exists('$CACHEDIR')
+	set directory=$CACHEDIR/vim/swap
+	set undodir=$CACHEDIR/vim/undo
+	set backupdir=$CACHEDIR/vim/backup
 
-if &shell =~# 'bin/fish$'
-	set shell=/bin/sh
+	" Prosession sessions
+	let g:prosession_dir = expand('$CACHEDIR/vim/session/')
 endif
 
-" general options ------------------------------------------------ {{{
-set encoding=utf-8
-scriptencoding utf-8
+" Set the leader character
+let mapleader=';'
 
-set autoindent
-set background=dark
-set backspace=indent,eol,start
+set clipboard+=unnamed   " Yank to the system clipboard
+set cmdheight=2          " Keep vim from saying 'Press Enter to continue'
+set undofile             " Use undo files for persistent undo
+set fillchars+=vert:\│   " Make the vertical split bar solid
+set hidden               " Use hidden buffers
+set ignorecase           " Ignore case when searching...
+set smartcase            " ...unless the search is mixed case
+set nojoinspaces         " Only insert 1 space after a period when joining lines
+set nostartofline        " Don't move to the beginning of a line when jumping
+set number               " Show line numbers
+set scrolloff=5          " Give the cursor a 5 line margin when scrolling
+set shiftwidth=4         " Indent in 4-character wide chunks
+set showcmd              " Show commands in the cmd area
+set tabstop=4            " Tabs are only 4 characters wide
+set formatoptions+=ron   " Automatically format comments and numbered lists
+set ruler				 " Show location info in statusline
+set nowrap				 " Don't wrap text by default
+set wildignorecase       " Case insensitive filename completion
 
-" yank to system clipboard
-set clipboard+=unnamed
+" Toggle cursor crosshairs
+map <silent> # :set cursorcolumn! cursorline!<CR>
 
-" keep vim from asking you to hit Enter all the time
-set cmdheight=2
-
-set completeopt-=preview
-
-" only conceal text in normal mode
-set concealcursor=n
-set conceallevel=0
-set cursorline
-
-" use vertical splits for diff mode
-set diffopt+=vertical
-
-" put all swap files in a central location
-set directory=$CACHEDIR/vim/swap
-
-" make vertical split bar solid
-set fillchars+=vert:\│
-
-set foldlevelstart=1
-set foldmethod=marker
-set grepformat=%f:%l:%m
-set hidden
-set hlsearch
-set ignorecase
-set incsearch
-set laststatus=2
+" Show markers at the beginning and end of non-wrapped lines
 set listchars+=precedes:^,extends:$
-set modelines=1
-set nobackup
-set nocompatible
 
-" don't insert 2 spaces after periods when joining lines
-set nojoinspaces
+" Ignore binary files in the standard vim file finder
+set wildignore+=*.pyc,*.obj,*.bin,a.out
 
-" don't move to the start of a line when jumping (like with Ctrl-F)
-set nostartofline
-set nowrap
-set nowritebackup
-
-" don't treat numbers starting with a 0 as octal
-set nrformats-=octal
-set number
-set omnifunc=syntaxcomplete#Complete
-set scrolloff=5
-set shiftwidth=4
-set showcmd
-set smartcase
-set smarttab
-set tabstop=4
-
-" put all undo files in a central location
-set undodir=~/.cache/vim/undo
-
-" check a bit more frequently
-set updatetime=2000
-
-" use undo files for persistent undo
-set undofile
-set virtualedit=
-set visualbell
-
-" make find more useful
-set wildignore+=*.pyc,*.obj,*.bin
-set wildmenu
-set path=**
-" }}}
-
-" leader mappings ------------------------------------------------ {{{
-let g:mapleader=";"
-
-map <Leader>f :find 
-
-" <leader>w to write
+" <Leader>w to write
 map <silent> <Leader>w :w<CR>
 map <silent> <Leader>W :w!<CR>
 
-" <leader>q or <leader>c to close a pane or quit
+" <Leader>q to quit
 map <silent> <Leader>q :qall<CR>
 map <silent> <Leader>Q :qall!<CR>
 
-" <leader>c to close a pane
+" <Leader>c to close a window
 map <silent> <Leader>c :close<CR>
 
-" <leader>d to delete a buffer
+" <Leader>k to kill a buffer (Bd comes from vim-bbye)
 map <silent> <Leader>k :Bd<CR>
-map <silent> <Leader>K :bd<CR>
+map <silent> <Leader>K :bd!<CR>
 
-" highlight the cursor column for alignment help
-map <silent> <Leader>hc :set cursorcolumn!<CR>
-map <silent> <Leader>hl :set cursorline!<CR>
+" Show the syntax status of the character under the cursor
+map <silent> <Leader>h :echo "hi<" . 
+	\ synIDattr(synID(line("."),col("."),1),"name") 
+	\ . '> trans<'
+	\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-" make ctrl-q always close the location list
-map <silent> ctrl-q :lclose<CR>
-
-" toggle paste mode
-map <silent> <Leader>v :set paste!<CR>
-
-" alternate redraw since C-L is taken
-map <leader>r :redraw!<CR>
-
-tnoremap <leader>e <C-\><C-n>
-
-" bind ctrl-n and ctrl-p to step through location list results
-map <silent> <C-N> :cn<CR>
-map <silent> <C-P> :cp<CR>
-" }}}
-
-" intialize the autocommand group for vimrc-defined autocommands
-augroup vimrc
-	autocmd!
-augroup END
-
-" == Plugins =================================================
-
-" a -------------------------------------------------------------- {{{
-let g:alternateExtensions_coffee = 'js'
-let g:alternateExtensions_styl = 'css'
-let g:alternateExtensions_css = 'styl'
-let g:alternateExtensions_ts = 'js'
-let g:alternateExtensions_js = 'ts'
-" }}}
-
-" airline -------------------------------------------------------- {{{
-let g:airline_left_sep=''
-let g:airline_right_sep=''
-let g:airline_section_warning=''
-let g:airline_section_z='%p%% %l %c'
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-" }}}
-
-" bookmarks ------------------------------------------------------ {{{
-let g:simple_bookmarks_filename = expand('$CACHEDIR~/vim/bookmarks')
-let g:simple_bookmarks_signs = 1
-let g:simple_bookmarks_sign_text = '>'
-" }}}
-
-" easy-align ----------------------------------------------------- {{{
-map <silent> <Leader>a <Plug>(EasyAlign)
-" }}}
-
-" indentLine ----------------------------------------------------- {{{
-let g:indentLine_enabled = 0
-let g:indentLine_char = '┊'
-let g:indentLine_color_term = 236
-
-" show or hide indent guide lines
-function! ToggleIndentGuides()
-	if &expandtab
-		IndentLinesToggle
-	else
-		if &list
-			set nolist
-		else
-			set list lcs=tab:\┊\ 
-		endif
-	endif
-endfunction
-command! ToggleIndentGuides call ToggleIndentGuides()
-
-map <silent> <Leader>ig :ToggleIndentGuides<CR>
-" }}}
-
-" javascript ----------------------------------------------------- {{{
-let g:html_indent_script1 = 'inc'
-let g:html_indent_style1 = 'inc'
-let g:js_indent_flat_switch = 1
-" }}}
-
-" json ----------------------------------------------------------- {{{
-let g:vim_json_syntax_conceal = 0
-" }}}
-
-" lightline ------------------------------------------------------ {{{
-let g:lightline = {
-	\ 'colorscheme': 'solarized',
-	\ 'active': {
-	\   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-	\   'right': [ [ 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
-	\ },
-	\ 'component': {
-	\   'absolutepath': '%F',
-	\   'bufnum': '%n',
-	\   'charvalue': '%b',
-	\   'charvaluehex': '%B',
-	\   'close': '%999X X ',
-	\   'column': '%c',
-	\   'fileencoding': '%{strlen(&fenc)?&fenc:&enc}',
-	\   'fileformat': '%{&fileformat}',
-	\   'filename': '%t',
-	\   'filetype': '%{strlen(&filetype)?&filetype:"no ft"}',
-	\   'line': '%l',
-	\   'lineinfo': '%l:%v',
-	\   'mode': '%{lightline#mode()}',
-	\   'modified': '%M',
-	\   'paste': '%{&paste?"PASTE":""}',
-	\   'percent': '%p%%',
-	\   'percentwin': '%P',
-	\   'readonly': '%R',
-	\   'relativepath': '%f',
-	\   'spell': '%{&spell?&spelllang:"no spell"}'
-	\ },
-	\ 'component_function': {
-	\   'fugitive': 'LightlineFugitive',
-	\   'filename': 'LightlineFilename',
-	\   'fileformat': 'LightlineFileformat',
-	\   'filetype': 'LightlineFiletype',
-	\   'fileencoding': 'LightlineFileencoding',
-	\   'mode': 'LightlineMode',
-	\ },
-	\ 'subseparator': { 'left': '│', 'right': '│' }
-	\ }
-
-function! LightlineModified()
-  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-endfunction
-
-function! LightlineReadonly()
-  return &ft !~? 'help' && &readonly ? 'RO' : ''
-endfunction
-
-function! LightlineFilename()
-  let fname = expand('%:t')
-  return fname == 'ControlP' ? g:lightline.ctrlp_item :
-	  \ fname == '__Tagbar__' ? 'TagBar' :
-	  \ fname =~ '__Gundo\|NERD_tree' ? '' :
-	  \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-	  \ &ft == 'unite' ? unite#get_status_string() :
-	  \ &ft == 'vimshell' ? vimshell#get_status_string() :
-	  \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-	  \ ('' != fname ? fname : '[No Name]') .
-	  \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
-endfunction
-
-function! LightlineFugitive()
-	try
-		if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-			let l:mark = ''  " edit here for cool mark
-			let l:_ = fugitive#head()
-			return strlen(_) ? mark._ : ''
-		endif
-	catch
-	endtry
-	return ''
-endfunction
-
-function! LightlineFileformat()
-	return winwidth(0) > 70 ? &fileformat : ''
-endfunction
-
-function! LightlineFiletype()
-	return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightlineFileencoding()
-	return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
-endfunction
-
-function! LightlineMode()
-	let fname = expand('%:t')
-	return fname == '__Tagbar__' ? 'Tagbar' :
-		\ fname == 'ControlP' ? 'CtrlP' :
-		\ fname == '__Gundo__' ? 'Gundo' :
-		\ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-		\ fname =~ 'NERD_tree' ? 'NERDTree' :
-		\ &ft == 'unite' ? 'Unite' :
-		\ &ft == 'vimfiler' ? 'VimFiler' :
-		\ &ft == 'vimshell' ? 'VimShell' :
-		\ winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-let g:ctrlp_status_func = {
-	\   'main': 'LightlineCtrlPStatus_1',
-	\   'prog': 'LightlineCtrlPStatus_2',
-	\ }
-
-function! LightlineCtrlPStatus_1(focus, byfname, regex, prev, item, next, marked)
-	let g:lightline.ctrlp_regex = a:regex
-	let g:lightline.ctrlp_prev = a:prev
-	let g:lightline.ctrlp_item = a:item
-	let g:lightline.ctrlp_next = a:next
-	return lightline#statusline(0)
-endfunction
-
-function! LightlineCtrlPStatus_2(str)
-	return lightline#statusline(0)
-endfunction
-
-function! LightlineRefresh()
-	if !exists('g:loaded_lightline')
-		return
-	endif
-	let g:lightline.colorscheme = 'solarized_' . &background
-	call lightline#init()
-	call lightline#colorscheme()
-	call lightline#update()
-endfunction
-command! LightlineRefresh :call LightlineRefresh()
-" }}}
-
-" neomake -------------------------------------------------------- {{{
-augroup load_neomake
-	autocmd!
-	autocmd BufRead * call NeomakeInit()
-	autocmd BufWrite * call NeomakeInit()
-augroup END
-function! NeomakeInit()
-	autocmd! load_neomake
-	call plug#load('neomake')
-
-	let g:neomake_go_maker = neomake#makers#ft#go#go()
-	" let g:neomake_go_enabled_makers = ['golint']
-	let g:neomake_go_enabled_makers = []
-
-	" let g:neomake_open_list = 1
-	let g:neomake_error_sign = {
-				\ 'text': '>>',
-				\ 'texthl': 'NeomakeError',
-				\ }
-	let g:neomake_warning_sign = {
-				\ 'text': '>>',
-				\ 'texthl': 'NeomakeWarning',
-				\ }
-
-	let g:neomake_tsc_maker = {
-				\ 'errorformat': '%E%f(%l\,%c): error %m'
-				\ }
-	let g:neomake_typescript_tslint_maker = {
-				\ 'exe': 'tslint',
-				\ 'args': [ '-f' ],
-				\ 'errorformat': '%W%f[%l\, %c]: %m'
-				\ }
-	let g:neomake_typescript_enabled_makers = [ 'tslint' ]
-
-	let g:neomake_javascript_enabled_makers = [ 'jshint' ]
-
-	autocmd vimrc BufWritePost *.ts Neomake! tsc
-	autocmd vimrc BufWritePost *.go Neomake! go
-	autocmd vimrc BufWritePost *.js Neomake
-endfunction
-
-" This function is called by UpdateBackground to ensure that
-" the Neomake styles are refreshed whenever the color scheme
-" is updated.
-function! NeomakeRefresh()
-	if &background == 'dark'
-		hi NeomakeError ctermfg=1 ctermbg=0 cterm=bold
-		hi NeomakeWarning ctermfg=3 ctermbg=0 cterm=bold
-	else
-		hi NeomakeError ctermfg=1 ctermbg=7 cterm=bold
-		hi NeomakeWarning ctermfg=3 ctermbg=7 cterm=bold
-	endif
-endfunction
-command! NeomakeRefresh :call NeomakeRefresh()
-
-map <silent> <Leader>e :cwindow<CR>
-
-" }}}
-
-" NERDTree ------------------------------------------------------- {{{
-let g:NERDTreeHijackNetrw = 0
-let g:NERDTreeMinimalUI   = 1
-" disable C-K and C-J mappings; wasn't using, and they break tmux-navigator
-let g:NERDTreeMapJumpPrevSibling = ''
-let g:NERDTreeMapJumpNextSibling = ''
-map <silent> <Leader>n :NERDTreeToggle<CR>
-" }}}
-
-" netrw ---------------------------------------------------------- {{{
-" don't load gitignore rules until netrw is actually loaded the first time
-let g:netrw_home = expand('$CACHEDIR/vim/')
-" default to tree listing
-let g:netrw_liststyle = 3
-augroup netrw
-	autocmd!
-	autocmd FileType netrw call NetrwInit()
-augroup END
-function! NetrwInit()
-	autocmd! netrw
-	if exists('g:loaded_vinegar')
-		let g:netrw_list_hide=join([g:netrw_list_hide, netrw_gitignore#Hide()], ',')
-	endif
-endfunction
-" }}}
-
-" prosession ----------------------------------------------------- {{{
-let g:prosession_dir = expand('$CACHEDIR/vim/session/')
-" }}}
-
-" solarized ------------------------------------------------------ {{{
-let g:solarized_italic = 1
-let g:solarized_terms_italic = ['iTerm.app']
-let g:solarized_menu = 0
-" }}}
-
-" Tagbar --------------------------------------------------------- {{{
-map <silent> <Leader>t :TagbarToggle<CR>
-" }}}
-
-" tern ----------------------------------------------------------- {{{
-let g:tern_show_signature_in_pum = 1
-" }}}
-
-" Tsuquyomi ------------------------------------------------------ {{{
-" Override Tsuquyomi reference key mapping
-augroup tsuq
-	autocmd!
-	autocmd FileType typescript map <buffer> <Leader>r <Plug>(TsuquyomiReferences)
-augroup END
-let g:tsuquyomi_disable_quickfix = 1
-" }}}
-
-" typescript ----------------------------------------------------- {{{
-let g:TSSshowErrors = 0
-command! TSSkeymap call TSSkeymap()
-
-" disable typescript-vim's indenter
-let g:typescript_indent_disable = 1
-
-" }}}
-
-" undotree ------------------------------------------------------- {{{
-nnoremap <Leader>u :UndotreeToggle<CR>
-" }}}
-
-" UltiSnips ------------------------------------------------------ {{{
-let g:UltiSnipsExpandTrigger = "<c-k>"
-augroup load_us
-	autocmd!
-	autocmd InsertEnter * call plug#load('ultisnips', 'vim-snippets') | autocmd! load_us
-augroup END
-" }}}
-
-" YouCompleteMe -------------------------------------------------- {{{
-if !exists("g:ycm_semantic_triggers")
-   let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers['typescript'] = ['.']
-" }}}
-
-call plug#begin('~/.vim/plugged')
-
-Plug '1995eaton/vim-better-javascript-completion', { 'for': [ 'javascript', 'html' ] }
-Plug 'AndrewRadev/linediff.vim'
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'SirVer/ultisnips', { 'on': [] }
-Plug 'honza/vim-snippets', { 'on': [] }
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'Quramy/tsuquyomi', { 'for': 'typescript', 'do': 'npm install' }
-Plug 'Textile-for-VIM', { 'for': 'textile' }
-Plug 'a.vim'
-Plug 'applescript.vim', { 'for': 'applescript' }
-Plug 'benekastah/neomake', { 'on': [] }
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'dag/vim-fish'
-Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'elzr/vim-json', { 'for': 'json' }
-Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'gregsexton/gitv'
-Plug 'gorkunov/smartpairs.vim'
-Plug 'hail2u/vim-css3-syntax', { 'for': [ 'css', 'html' ] }
-Plug 'itchyny/lightline.vim'
-Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'jason0x43/vim-colors-solarized'
-Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
-Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
-" Start tagbar for go files so vim-go can inject golang support
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle', 'for': [ 'go' ] }
-Plug 'junegunn/vim-easy-align'
-Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ], 'do': 'npm install' }
-Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
-Plug 'moll/vim-bbye'
-Plug 'niklasl/vim-rdf'
-Plug 'rking/ag.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'suy/vim-context-commentstring'
-Plug 'tfnico/vim-gradle'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-Plug 'tpope/vim-obsession'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'dhruvasagar/vim-prosession'
-Plug 'vim-coffee-script', { 'for': 'coffeescript' }
-Plug 'vim-tmuxify'
-Plug 'wavded/vim-stylus', { 'for': 'stylus' }
-Plug 'tpope/vim-vinegar'
-Plug 'Valloric/YouCompleteMe'
-
-if executable('go')
-	Plug 'fatih/vim-go', { 'for': 'go' }
-	let g:go_fmt_command = "goimports"
-	" let g:go_auto_type_info = 1
-endif
-call plug#end()
-
-" fzf fuzzy finder; FZF_PATH is set via zshrc, and uses the vim files from the
-" homebrew install of fzf
-if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
-	set rtp+=$FZF_PATH
+" FZF for selecting files and buffers, regular vim find otherwise
+" (https://github.com/junegunn/fzf)
+if executable('fzf') && has('nvim') && !has('gui_running')
+	set runtimepath+=$FZF_PATH
 
 	" maintain a list of active buffers, sorted by most-recently-used
 	let s:fzf_buffers = []
 
-	function! FzfBufEntered()
-		" move the current buffer to the top of the list
+	function! FzfBufAdded()
 		let l:name = resolve(expand("<afile>"))
+		" Move the current buffer to the top of the list if it's a type we're
+		" paying attention to
 		if name != "" && name !~ "NERD_tree_.*" && name !~ "NetrwTreeListing.*" && &buftype == ''
 			let l:i = index(s:fzf_buffers, name)
 			if i != -1
@@ -535,7 +83,7 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 	endfunction
 
 	function! FzfBufDeleted()
-		" remove the buffer being deleted from the list
+		" Remove the buffer being deleted from the list
 		let l:name = resolve(expand("<afile>"))
 		if name != ""
 			let l:idx = index(s:fzf_buffers, name)
@@ -547,7 +95,7 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 
 	augroup fzfbuf
 		autocmd!
-		autocmd BufAdd,BufEnter * call FzfBufEntered()
+		autocmd BufAdd,BufEnter * call FzfBufAdded()
 		autocmd BufDelete * call FzfBufDeleted()
 	augroup END
 
@@ -569,130 +117,171 @@ if executable('fzf') && $FZF_PATH != "" && !has("gui_running")
 		\})
 
 	let g:fzf_tmux_height=8
-	map <Leader>f :FZF<CR>
-	map <Leader>b :FZFBuffers<CR>
-	map <Leader>g :FZFGit<CR>
+	map <silent> <Leader>f :FZF<CR>
+	map <silent> <Leader>b :FZFBuffers<CR>
+	map <silent> <Leader>g :FZFGit<CR>
+else
+	map <Leader>f :find 
+	map <silent> <Leader>b :ls<CR> 
 endif
 
-" load the builting matchit plugin
+" Ag for grepping (https://github.com/ggreer/the_silver_searcher)
+if executable('ag')
+	set grepprg=ag\ --nogroup\ --nocolor
+endif
+
+" Better start/end atching
 runtime! macros/matchit.vim
 
-" == End plugins =============================================
+" Easier navigation of text files
+function! TextMode()
+	setlocal wrap linebreak nolist display+=lastline
+	map <buffer> <silent> k gk
+	map <buffer> <silent> j gj
+	map <buffer> <silent> 0 g0
+	map <buffer> <silent> $ g$
+endfunction
 
-" use a better grep ---------------------------------------------- {{{
-if executable('ag')
-	" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-	set grepprg=ag\ --nogroup\ --nocolor
-elseif executable('ack')
-	" use ack
-	set grepprg=ack\ -a
+" General autocommands
+augroup vimrc
+	autocmd!
+
+	" Make text files easier to work with
+	autocmd FileType text call TextMode()
+	autocmd FileType textile call TextMode()
+
+	" Automatically close preview windows after autocompletion
+	autocmd CompleteDone * pclose
+
+	" Identify files in a zsh/functions directory as zsh scripts
+	autocmd BufRead */zsh/functions/* set filetype=zsh
+
+	" When editing a file, jump back to the last edited line if it makes sense
+	" to do so
+	autocmd BufReadPost *
+		\ if line("'\"") > 1 && line("'\"") <= line("$") |
+		\     execute "normal! g'\"" |
+		\ endif
+augroup END
+
+" EasyAlign
+" ---------------------------------------------------------------------
+" To align end-of-line comments, do <Leader>a-<space>
+map <silent> <Leader>a <Plug>(EasyAlign)
+
+" Flagship
+" ---------------------------------------------------------------------
+" Don't show the tabline when using Flagship
+let g:tablabel=''
+
+" Go
+" ---------------------------------------------------------------------
+let g:go_fmt_command = "goimports"
+let g:go_fmt_fail_silently = 1
+
+" JavaScript
+" ---------------------------------------------------------------------
+let g:html_indent_script1 = 'inc'
+let g:html_indent_style1 = 'inc'
+let g:js_indent_flat_switch = 1
+
+" json
+" ---------------------------------------------------------------------
+" Don't conceal quotes around JSON properties
+let g:vim_json_syntax_conceal = 0
+
+" NERDTree
+" ---------------------------------------------------------------------
+let g:NERDTreeAutoDeleteBuffer=1
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows=1
+map <silent> <Leader>n :NERDTreeToggle<CR>
+
+" Neovim
+" ---------------------------------------------------------------------
+if has('nvim')
+	" <Leader>e to escape into command mode in an nvim terminal
+	tnoremap <Leader>e <C-\><C-n>
+
+	" Tell Neovim.app which Python to use
+	if exists('/usr/local/bin/python')
+		let g:python_host_prog='/usr/local/bin/python'
+	endif
+	if exists('/usr/local/bin/python3')
+		let g:python3_host_prog='/usr/local/bin/python3'
+	endif
 endif
-" }}}
 
-" show changes in a buffer since it was opened ------------------- {{{
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-	\ | wincmd p | diffthis
-" }}}
+" Neomake
+" ---------------------------------------------------------------------
+" Better highlighting for signs
+let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
+let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
+" let g:neomake_open_list = 2
+let g:neomake_list_height = 5
 
-" always go to the last accessed line when a file is opened ------ {{{
-autocmd vimrc BufReadPost *
-	\ if line("'\"") > 1 && line("'\"") <= line("$") |
-	\   exe "normal! g`\"" |
-	\ endif
-" }}}
+augroup neomake_write
+	autocmd!
+	autocmd BufWritePost * Neomake
+augroup END
 
-" better navigation when line wrapping is on --------------------- {{{
-function! ToggleWrap()
-	if &wrap
-		echo "Wrap OFF"
-		setlocal nowrap
-		silent! nunmap <buffer> k
-		silent! nunmap <buffer> j
-		silent! nunmap <buffer> 0
-		silent! nunmap <buffer> $
-	else
-		echo "Wrap ON"
-		setlocal wrap linebreak nolist
-		setlocal display+=lastline
-		map <buffer> <silent> k gk
-		map <buffer> <silent> j gj
-		map <buffer> <silent> 0 g0
-		map <buffer> <silent> $ g$
-	endif
-endfunction
-command! ToggleWrap call TogglWrap()
-" }}}
+" Supertab
+" ---------------------------------------------------------------------
+let g:SuperTabDefaultCompletionType = 'context'
 
-" toggle conceal mode -------------------------------------------- {{{
-map <silent> <Leader>o :call ConcealToggle()<CR>
-function! ConcealToggle()
-	if &conceallevel
-		setlocal conceallevel=0
-	else
-		setlocal conceallevel=2
-	endif
-endfunction
-" }}}
+" undotree
+" --------------------------------------------------------------------- 
+nnoremap <Leader>u :UndotreeToggle<CR>
 
-" make escape leave insert mode immediately ---------------------- {{{
-if ! has('gui_running')
-	set ttimeoutlen=10
-	augroup FastEscape
-		autocmd!
-		autocmd InsertEnter * set timeoutlen=0
-		autocmd InsertLeave * set timeoutlen=1000
-	augroup END
+" Plugins
+" ---------------------------------------------------------------------
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-commentary'           " gc for commenting code blocks
+Plug 'tpope/vim-flagship'             " Status line configuration
+Plug 'tpope/vim-fugitive'             " Git utilities
+Plug 'tpope/vim-vinegar'              " Netrw enhancments
+Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
+Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
+Plug 'benekastah/neomake'             " Asynchronous make and error highlighter
+Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
+Plug 'ervandew/supertab'              " Use tab for autocompletion
+Plug 'mbbill/undotree'                " Visualize the undo tree
+
+" File browsing
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+
+" Snippet management
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+
+" Session management
+Plug 'tpope/vim-obsession' | Plug 'dhruvasagar/vim-prosession'
+
+" Filetype plugins
+Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+Plug 'Quramy/tsuquyomi', { 'for': 'typescript', 'do': 'npm install' }
+Plug 'applescript.vim', { 'for': 'applescript' }
+Plug 'Textile-for-VIM', { 'for': 'textile' }
+Plug 'dag/vim-fish', { 'for': 'fish' }
+Plug 'elzr/vim-json', { 'for': 'json' }
+Plug 'groenewege/vim-less', { 'for': 'less' }
+Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
+Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-classpath', { 'for': 'java' }
+Plug 'wavded/vim-stylus', { 'for': 'stylus' }
+Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ], 'do': 'npm install' }
+
+" Load the go plugin if go is available
+if executable('go')
+	Plug 'fatih/vim-go', { 'for': 'go' }
 endif
-" }}}
 
-" show the syntax status of the character under the cursor ------- {{{
-map <silent> <Leader>h :echo "hi<" . 
-	\ synIDattr(synID(line("."),col("."),1),"name") 
-	\ . '> trans<'
-	\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-" }}}
+" Load all the plugins
+call plug#end()
 
-" more accurate syntax highlighting
-autocmd vimrc BufEnter * :syntax sync fromstart
-
-" highlight columns past 80
-"let &colorcolumn=join(range(81,999), ",")
-
-" set random filetypes
-autocmd vimrc BufRead .jscsrc set filetype=json
-autocmd vimrc BufRead .tslintrc set filetype=json
-autocmd vimrc BufRead *.textile set filetype=textile
-autocmd vimrc BufRead *.dashtoc set filetype=json
-autocmd vimrc BufRead fish_funced.* set filetype=fish
-" files loaded from the zsh functions dir should be of type zsh
-autocmd vimrc BufRead */zsh/functions/* set filetype=zsh
-
-" update the background if a termbg file exists
-function! RefreshColors()
-	let l:termbg=expand('$CACHEDIR/termbg')
-	if filereadable(termbg)
-		let l:lines=readfile(termbg)
-		if lines[0] == 'light'
-			set background=light
-		elseif lines[0] == 'dark'
-			set background=dark
-		endif
-	endif
-	LightlineRefresh
-	NeomakeRefresh
-endfunction
-command! RefreshColors call RefreshColors()
-
-" tell Neovim.app which Python to use
-let g:python_host_prog='/usr/local/bin/python'
-let g:python3_host_prog='/usr/local/bin/python3'
-
-filetype plugin indent on | syntax on
-
+" Turn on all the filetype goodness
+" ---------------------------------------------------------------------
+filetype plugin indent on
+syn on
 colorscheme solarized
-
-" process the termbg file if one exists
-call RefreshColors()
-
-" vim:tabstop=4:shiftwidth=4:noexpandtab

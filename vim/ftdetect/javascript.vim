@@ -1,4 +1,3 @@
-au BufNewFile,BufRead *.js set filetype=javascript
 au BufRead * call s:DetectJavaScript()
 
 function! s:DetectJavaScript()

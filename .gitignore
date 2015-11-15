@@ -1,5 +1,7 @@
 tmux/plugins/*
 vim/plugged/*
+vim/spell/*.spl
+vim/.netrwhist
 plug.vim.old
 fish/fishd.*
 fish/fish_history

@@ -1,135 +1,16 @@
-# Functions ##############################################################
-
 # Autoload all user shell functions, following symlinks
+# ------------------------------------------------------------------------
 if [[ -d $DOTFILES/zsh/functions ]]; then
 	for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
-# Color ##################################################################
-
 # Turn on color for everything
+# ------------------------------------------------------------------------
 zstyle ':zconf:*:*' color 'yes'
 autoload -Uz colors && colors
 
-# Terminal theme
-if [[ $TERM_PROGRAM == iTerm.app ]]; then
-	termbg=$CACHEDIR/termbg
-
-	# Commands to be run when the colorscheme is changed
-	set -A on_scheme_change
-
-	# Set a color in the color palette. The first arg is the cell to set
-	# (foreground, background, ANSI0, ANSI1, etc.), the second is the color as
-	# a 6-digit hex value. More information about iTerm2's proprietary codes is
-	# at https://iterm2.com/documentation-escape-codes.html.
-	if [[ -n "$TMUX" ]]; then
-		# The escape codes must be prefixed when running in tmux
-		function set_color() {
-			echo -ne "\033Ptmux;\033\033]P${1}${2}\033\\"
-		}
-
-		function set_tmux_theme() {
-			tmux source-file $DOTFILES/tmux/$1.conf > /dev/null
-		}
-		on_scheme_change+=set_tmux_theme
-	else
-		function set_color() {
-			echo -ne "\033]P${1}${2}\033\\"
-		}
-	fi
-
-	# Set the active color scheme
-	function set_scheme() {
-		echo $1 >! $termbg
-	}
-	on_scheme_change+=set_scheme
-
-	# Solarized palette
-	typeset -A PALETTE
-	PALETTE=(
-		base03  "002b36"
-		base02  "073642"
-		base01  "586e75"
-		base00  "657b83"
-		base0   "839496"
-		base1   "93a1a1"
-		base2   "eee8d5"
-		base3   "fdf6e3"
-		yellow  "b58900"
-		orange  "cb4b16"
-		red     "dc322f"
-		magenta "d33682"
-		violet  "6c71c4"
-		blue    "268bd2"
-		cyan    "2aa198"
-		green   "859900"
-	)
-
-	# Setup the palette
-	function set_palette() {
-		set_color '0' "$PALETTE[base02]"
-		set_color '1' "$PALETTE[red]"
-		set_color '2' "$PALETTE[green]"
-		set_color '3' "$PALETTE[yellow]"
-		set_color '4' "$PALETTE[blue]"
-		set_color '5' "$PALETTE[magenta]"
-		set_color '6' "$PALETTE[cyan]"
-		set_color '7' "$PALETTE[base2]"
-		set_color '8' "$PALETTE[base03]"
-		set_color '9' "$PALETTE[orange]"
-		set_color 'A' "$PALETTE[base01]"
-		set_color 'B' "$PALETTE[base00]"
-		set_color 'C' "$PALETTE[base0]"
-		set_color 'D' "$PALETTE[violet]"
-		set_color 'E' "$PALETTE[base1]"
-		set_color 'F' "$PALETTE[base3]"
-	}
-
-	# Enable Solarized Light
-	function light() {
-		set_palette
-		set_color 'g' "$PALETTE[base00]"
-		set_color 'h' "$PALETTE[base3]"
-		set_color 'i' "$PALETTE[base01]"
-		set_color 'j' "$PALETTE[base2]"
-		set_color 'k' "$PALETTE[base00]"
-		for callback in $on_scheme_change; eval $callback 'light'
-		[[ $1 != "norefresh" ]] && notify_theme
-	}
-
-	# Enable Solarized Dark
-	function dark() {
-		set_palette
-		set_color 'g' "$PALETTE[base0]"
-		set_color 'h' "$PALETTE[base03]"
-		set_color 'i' "$PALETTE[base1]"
-		set_color 'j' "$PALETTE[base02]"
-		set_color 'k' "$PALETTE[base0]"
-		for callback in $on_scheme_change; eval $callback 'dark'
-		[[ $1 != "norefresh" ]] && notify_theme
-	}
-
-	# Setup a signal trap; when this signal is seen the shell will update its
-	# theme-related environment variables
-	function TRAPUSR2() {
-		local theme
-		[ -f ~/.cache/termbg ] && theme=$(cat ~/.cache/termbg)
-		if [[ $theme == "light" ]] || [[ $theme == "dark" ]]; then
-			for callback in $on_scheme_change; eval $callback $theme
-		fi
-	}
-
-	# Send a USR2 signal to every zsh instance under the same parent as this
-	# instance, causing them to run the TRAPUSR2 function above
-	function notify_theme() {
-		local -a pids
-		pids=($(pgrep -P $PPID zsh))
-		kill -USR2 $pids
-	}
-fi
-
-# Completions ############################################################
-
+# Completions
+# ------------------------------------------------------------------------
 # Load and initialize the completion system, ignoring insecure directories
 fpath=($fpath /usr/local/share/zsh-completions)
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
@@ -143,22 +24,22 @@ zstyle ':completion:*' cache-path "${ZCACHEDIR}"
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Group matches and describe
-zstyle ':completion:*:*:*:*:*' menu select
-zstyle ':completion:*:matches' group 'yes'
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
-zstyle ':completion:*:corrections' format ' %F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:*:*:*:*'      menu select
+zstyle ':completion:*:matches'      group 'yes'
+zstyle ':completion:*:options'      description 'yes'
+zstyle ':completion:*:options'      auto-description '%d'
+zstyle ':completion:*:corrections'  format ' %F{green}-- %d (errors: %e) --%f'
 zstyle ':completion:*:descriptions' format ' %F{yellow}-- %d --%f'
-zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
-zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
-zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-zstyle ':completion:*' format ' %F{yellow}-- %d --%f'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' verbose yes
+zstyle ':completion:*:messages'     format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:warnings'     format ' %F{red}-- no matches found --%f'
+zstyle ':completion:*:default'      list-prompt '%S%M matches%s'
+zstyle ':completion:*'              format ' %F{yellow}-- %d --%f'
+zstyle ':completion:*'              group-name ''
+zstyle ':completion:*'              verbose yes
 
 # Fuzzy match mistyped completions
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
+zstyle ':completion:*'               completer _complete _match _approximate
+zstyle ':completion:*:match:*'       original only
 zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
 # Increase the number of errors based on the length of the typed word
@@ -171,11 +52,11 @@ zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
 
 # Directories
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+zstyle ':completion:*:default'                list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:*:cd:*'                 tag-order local-directories directory-stack path-directories
 zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
-zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
-zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*:-tilde-:*'              group-order 'named-directories' 'path-directories' 'users' 'expand'
+zstyle ':completion:*'                        squeeze-slashes true
 
 # History
 zstyle ':completion:*:history-words' stop yes
@@ -211,27 +92,27 @@ zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
 zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 
 # kill
-zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm -w'
+zstyle ':completion:*:*:*:*:processes'    command 'ps -u $USER -o pid,user,comm -w'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;36=0=01'
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:*:kill:*' force-list always
-zstyle ':completion:*:*:kill:*' insert-ids single
+zstyle ':completion:*:*:kill:*'           menu yes select
+zstyle ':completion:*:*:kill:*'           force-list always
+zstyle ':completion:*:*:kill:*'           insert-ids single
 
 # man
-zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*:manuals'       separate-sections true
 zstyle ':completion:*:manuals.(^1*)' insert-sections true
 
 # SSH/SCP/RSYNC
-zstyle ':completion:*:(scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
-zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-domain hosts-host hosts-ipaddr
-zstyle ':completion:*:ssh:*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
-zstyle ':completion:*:ssh:*' group-order users hosts-domain hosts-host users hosts-ipaddr
-zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(scp|rsync):*'                  tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(scp|rsync):*'                  group-order users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*'                          tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:ssh:*'                          group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host'   ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-# Key bindings ###########################################################
-
+# Key bindings
+# ------------------------------------------------------------------------
 # Define friendly names for keycodes
 typeset -gA key_info
 key_info=(
@@ -277,8 +158,8 @@ for keymap in 'viins'; do
 	bindkey -M "$keymap" "$key_info[Down]" history-substring-search-down
 done
 
-# Aliases ################################################################
-
+# Aliases
+# ------------------------------------------------------------------------
 # Clear existing aliases
 unalias -m '*'
 
@@ -313,6 +194,8 @@ alias gd='git diff'
 alias gdh='git diff HEAD'
 alias gds='git diff --stat'
 alias gdv='git difftool'
+alias gf='git fetch'
+alias gfp='git fetch --prune'
 alias gg='git grep'
 alias ggi='git grep --ignore-case'
 alias ggil='git grep --ignore-case --files-with-matches'
@@ -323,6 +206,7 @@ alias glb='git lgb'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
 alias gls='git ls-files'
 alias grc='git rebase --continue'
+alias grm='git rm'
 alias grv='git remote -v'
 alias gs='git st'
 alias tiga='tig --all'
@@ -348,7 +232,6 @@ alias jake="nocorrect ${aliases[jake]:-jake}"
 # Disable globbing for some commands
 alias bower="noglob ${aliases[bower]:-bower}"
 alias find="noglob ${aliases[find]:-find}"
-alias find="noglob ${aliases[ff]:-ff}"
 alias ftp="noglob ${aliases[ftp]:-ftp}"
 alias history="noglob ${aliases[history]:-history}"
 alias rsync="noglob ${aliases[rsync]:-rsync}"
@@ -377,8 +260,13 @@ alias la='ll -A'         # Lists human readable sizes, hidden files
 alias df='df -kh'
 alias du='du -kh'
 
-# Shell options ##########################################################
+# Prefer hub to git
+if (( $+commands[hub] )); then
+	alias git=hub
+fi
 
+# Shell options
+# ------------------------------------------------------------------------
 # Navigation
 setopt   AUTO_CD                # Change to a directory without typing cd
 setopt   AUTO_NAME_DIRS         # Auto add variable-stored paths to ~ list
@@ -431,8 +319,8 @@ unsetopt CASE_GLOB              # Make globbing case insensitive
 unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
 unsetopt MENU_COMPLETE          # Do not autoselect the first completion entry
 
-# History ################################################################
-
+# History
+# ------------------------------------------------------------------------
 HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"  # The path to the history file
 HISTSIZE=10000                # The maximum number of events to save in the internal history
 SAVEHIST=10000                # The maximum number of events to save in the history file
@@ -440,10 +328,10 @@ SAVEHIST=10000                # The maximum number of events to save in the hist
 # Lists the ten most used commands
 alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
 
-# Node ###################################################################
-
+# Node
+# ------------------------------------------------------------------------
 # Load NPM completion
-if [[ $+commands[npm] ]]; then
+if (( $+commands[npm] )); then
 	cache_file="$ZCACHEDIR/npm.zsh"
 
 	if [[ "$commands[npm]" -nt "$cache_file" || ! -s "$cache_file" ]]; then
@@ -455,63 +343,13 @@ if [[ $+commands[npm] ]]; then
 	unset cache_file
 fi
 
-# nvm
-nvmsh="$(brew --prefix nvm)/nvm.sh"
-if [[ -e "$nvmsh" ]]; then
-	export NVM_DIR=~/.nvm
-	source $nvmsh
-fi
-unset nvmsh
+# Less
+# ----------------------------------------------------------------------------
+export LESS='-F -g -i -M -R -w -X -z-4'
+export PAGER='less'
 
-# Neovim #################################################################
-
-if is_callable 'nvim'; then
-	# Automatically run vim's refreshColors.py when the colorscheme is changed
-	if [[ -e "$HOME/.vim/refreshColors.py" ]]; then
-		on_scheme_change+='python ~/.vim/refreshColors.py'
-	fi
-fi
-
-# fzf ####################################################################
-
-if is_callable 'fzf'; then
-	# Setup
-	if [[ -z "$FZF_DEFAULT_OPTS" ]]; then
-		export FZF_DEFAULT_OPTS=--no-color
-	fi
-	export FZF_PATH=`echo $(which fzf)(:A:h:h)`
-
-	# Completion (this doesn't work well with autosuggestions at the moment)
-	# source $FZF_PATH/shell/completion.zsh
-
-	# Key bindings
-	source $FZF_PATH/shell/key-bindings.zsh
-	bindkey '^P' fzf-file-widget
-	bindkey '^G' fzf-cd-widget
-
-	if [[ $TERM_PROGRAM == iTerm.app ]]; then
-		function config_fzf() {
-			if [[ $1 == 'light' ]]; then
-				export FZF_DEFAULT_OPTS=--color=light,bg+:7
-			else
-				export FZF_DEFAULT_OPTS=--color=dark,bg+:0
-			fi
-		}
-		on_scheme_change+=config_fzf
-	fi
-fi
-
-# direnv -- https://github.com/direnv/direnv #############################
-#
-eval "$(direnv hook $SHELL)"
-
-# Prompt #################################################################
-
-autoload -Uz promptinit && promptinit
-prompt 'jason0x43'
-
-# Line editor ############################################################
-
+# Line editor
+# ------------------------------------------------------------------------
 # Syntax highlighting -- load this *before* history-substring-search
 if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
 	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -552,32 +390,43 @@ if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-searc
 fi
 
 # autosuggest -- load this *after* history substring search
+# (https://github.com/tarruda/zsh-autosuggestions)
 if [[ -f $DOTFILES/zsh/autosuggest ]]; then
 	source $DOTFILES/zsh/autosuggest
 	export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
-
-	if [[ $TERM_PROGRAM == iTerm.app ]]; then
-		function config_autosuggest() {
-			if [[ $1 == 'light' ]]; then
-				export AUTOSUGGESTION_HIGHLIGHT_COLOR=fg=14
-			else
-				export AUTOSUGGESTION_HIGHLIGHT_COLOR=fg=10
-			fi
-		}
-		on_scheme_change+=config_autosuggest
-	fi
+	export AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=14'
 fi
 
-# Apply the proper color theme
-if [[ $TERM_PROGRAM == iTerm.app ]]; then
-	# If a termbg file exists, set the theme
-	if [[ -e $termbg ]]; then
-		# Use a case rather than eval so we don't execute random stuff
-		case $(cat $termbg) in
-			light) light;;
-			dark) dark;;
-		esac
-	fi
+# fzf (https://github.com/junegunn/fzf)
+# ------------------------------------------------------------------------
+if (( $+commands[fzf] )); then
+	export FZF_PATH=`echo $(which fzf)(:A:h:h)`
+
+	# Use -1 for the bg color to specify 'none'
+	export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
+
+	# Completion (this doesn't work well with autosuggestions at the moment)
+	# source $FZF_PATH/shell/completion.zsh
+
+	# Key bindings
+	source $FZF_PATH/shell/key-bindings.zsh
+	bindkey '^P' fzf-file-widget
+	bindkey '^G' fzf-cd-widget
 fi
 
-# vim:shiftwidth=4:tabstop=4:noexpandtab:foldmethod=marker
+# direnv (https://github.com/direnv/direnv)
+# ------------------------------------------------------------------------
+if (( $+commands[direnv] )); then
+	eval "$(direnv hook $SHELL)"
+fi
+
+# Prompt
+# ------------------------------------------------------------------------
+autoload -Uz promptinit && promptinit
+prompt 'jason0x43'
+
+# Local config
+# --------------------------------------------------------------------------
+[[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+
+# vim:shiftwidth=4:tabstop=4:noexpandtab

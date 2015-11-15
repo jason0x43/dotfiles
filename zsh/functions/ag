@@ -1,0 +1,5 @@
+if (($+commands[ag])); then
+	command ag $*
+else
+	grep $*
+fi
