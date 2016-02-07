@@ -219,7 +219,6 @@ endif
 " Better highlighting for signs
 let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
 let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
-" let g:neomake_open_list = 2
 let g:neomake_list_height = 5
 
 augroup neomake_write
