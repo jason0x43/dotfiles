@@ -207,6 +207,7 @@ Plug 'Valloric/YouCompleteMe', { 'do':
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
 
 " Snippet management
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
