@@ -65,61 +65,7 @@ map <silent> <Leader>h :echo "hi<" .
 " (https://github.com/junegunn/fzf)
 if executable('fzf') && has('nvim') && !has('gui_running')
 	set runtimepath+=$FZF_PATH
-
-	" maintain a list of active buffers, sorted by most-recently-used
-	let s:fzf_buffers = []
-
-	function! FzfBufAdded()
-		let l:name = resolve(expand("<afile>"))
-		" Move the current buffer to the top of the list if it's a type we're
-		" paying attention to
-		if name != "" && name !~ "NERD_tree_.*" && name !~ "NetrwTreeListing.*" && &buftype == ''
-			let l:i = index(s:fzf_buffers, name)
-			if i != -1
-				call remove(s:fzf_buffers, i)
-			endif
-			let s:fzf_buffers = insert(s:fzf_buffers, name)
-		endif
-	endfunction
-
-	function! FzfBufDeleted()
-		" Remove the buffer being deleted from the list
-		let l:name = resolve(expand("<afile>"))
-		if name != ""
-			let l:idx = index(s:fzf_buffers, name)
-			if idx != -1
-				call remove(s:fzf_buffers, idx)
-			endif
-		endif
-	endfunction
-
-	augroup fzfbuf
-		autocmd!
-		autocmd BufAdd,BufEnter * call FzfBufAdded()
-		autocmd BufDelete * call FzfBufDeleted()
-	augroup END
-
-	command! FZFFiles call fzf#run({
-		\'options': '--tiebreak=end',
-		\'sink' : 'e',
-		\'down' : 8,
-		\})
-	command! FZFBuffers call fzf#run({
-		\'source': s:fzf_buffers,
-		\'sink' : 'e',
-		\'down' : 8,
-		\})
-	command! FZFGit call fzf#run({
-		\'source': 'git ls-tree -r --name-only HEAD',
-		\'sink' : 'e',
-		\'options' : '-m',
-		\'down' : 8,
-		\})
-
 	let g:fzf_tmux_height=8
-	map <silent> <Leader>f :FZF<CR>
-	map <silent> <Leader>b :FZFBuffers<CR>
-	map <silent> <Leader>g :FZFGit<CR>
 else
 	map <Leader>f :find 
 	map <silent> <Leader>b :ls<CR> 
@@ -280,6 +226,17 @@ Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 " Load the go plugin if go is available
 if executable('go')
 	Plug 'fatih/vim-go', { 'for': 'go' }
+endif
+
+if executable('fzf') && has('nvim') && !has('gui_running')
+	Plug 'junegunn/fzf.vim'
+
+	" These mappings depend on the FZF plugin being loaded
+	map <silent> <Leader>f :Files<CR>
+	map <silent> <Leader>b :Buffers<CR>
+	map <silent> <Leader>g :GitFiles<CR>
+	map <silent> <Leader>l :Lines<CR>
+	map <silent> <Leader>s :Snippets<CR>
 endif
 
 " Load all the plugins
