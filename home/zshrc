@@ -149,14 +149,6 @@ key_info=(
 
 # VI keybindings
 bindkey -v
-bindkey -M vicmd "k" history-substring-search-up
-bindkey -M vicmd "j" history-substring-search-down
-
-# Make the up and down arrows do history searching
-for keymap in 'viins'; do
-	bindkey -M "$keymap" "$key_info[Up]" history-substring-search-up
-	bindkey -M "$keymap" "$key_info[Down]" history-substring-search-down
-done
 
 # Aliases
 # ------------------------------------------------------------------------
@@ -348,15 +340,62 @@ fi
 export LESS='-F -g -i -M -R -w -X -z-4'
 export PAGER='less'
 
+# fzf (https://github.com/junegunn/fzf)
+# ------------------------------------------------------------------------
+if (( $+commands[fzf] )); then
+	export FZF_PATH=`echo $(which fzf)(:A:h:h)`
+
+	# Use -1 for the bg color to specify 'none'
+	export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
+
+	# Hmmm...not too sure about this
+	# source $FZF_PATH/shell/completion.zsh
+
+	# Key bindings
+	source $FZF_PATH/shell/key-bindings.zsh
+	bindkey '^P' fzf-file-widget
+	bindkey '^G' fzf-cd-widget
+fi
+
+# direnv (https://github.com/direnv/direnv)
+# ------------------------------------------------------------------------
+if (( $+commands[direnv] )); then
+	eval "$(direnv hook $SHELL)"
+fi
+
 # Line editor
 # ------------------------------------------------------------------------
-# Syntax highlighting -- load this *before* history-substring-search
+# autosuggest -- load this before zsh-syntax-highlighting
+# (https://github.com/tarruda/zsh-autosuggestions)
+if [[ -d $DOTFILES/zsh/autosuggestions ]]; then
+	source $DOTFILES/zsh/autosuggestions/zsh-autosuggestions.zsh
+
+	# Let vi keys jump through the suggestion
+	bindkey '^f' vi-forward-word
+	bindkey '^b' vi-forward-blank-word
+	bindkey '^e' vi-end-of-line
+
+	# Use a solarized-friendly background color
+	export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+
+	# Configure autosuggest to work properly with history substring search;
+	# without this, trying to history-substring-search with an empty line will
+	# hang zsh
+	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+	ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+fi
+
+# Syntax highlighting -- this should be near the end (preferably at the end) of the zshrc
+# https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
 	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+else
+	echo "zsh-syntax-highlighting missing"
 fi
 
-# History substring search
+# History substring search -- load this after zsh-syntax-highlighting
+# https://github.com/zsh-users/zsh-history-substring-search
 if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
 	source /usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh
 
@@ -387,37 +426,12 @@ if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-searc
 	if ! zstyle -t ':zconf:module:history-substring-search' color; then
 	  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
 	fi
-fi
 
-# autosuggest -- load this *after* history substring search
-# (https://github.com/tarruda/zsh-autosuggestions)
-if [[ -f $DOTFILES/zsh/autosuggest ]]; then
-	source $DOTFILES/zsh/autosuggest
-	export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
-	export AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=14'
-fi
-
-# fzf (https://github.com/junegunn/fzf)
-# ------------------------------------------------------------------------
-if (( $+commands[fzf] )); then
-	export FZF_PATH=`echo $(which fzf)(:A:h:h)`
-
-	# Use -1 for the bg color to specify 'none'
-	export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
-
-	# Completion (this doesn't work well with autosuggestions at the moment)
-	# source $FZF_PATH/shell/completion.zsh
-
-	# Key bindings
-	source $FZF_PATH/shell/key-bindings.zsh
-	bindkey '^P' fzf-file-widget
-	bindkey '^G' fzf-cd-widget
-fi
-
-# direnv (https://github.com/direnv/direnv)
-# ------------------------------------------------------------------------
-if (( $+commands[direnv] )); then
-	eval "$(direnv hook $SHELL)"
+	# Make history keybindings search
+	bindkey -M vicmd "k" history-substring-search-up
+	bindkey -M vicmd "j" history-substring-search-down
+else
+	echo "zsh-history-substring-search missing"
 fi
 
 # Prompt
