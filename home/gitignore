@@ -33,6 +33,7 @@ intern-local.js
 selftest.local.sh
 html-report
 local.intern.js
+sauce.intern.js
 
 # TypeScript
 tscommand-*.txt
