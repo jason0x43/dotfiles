@@ -149,6 +149,8 @@ augroup vimrc
 	" Make text files easier to work with
 	autocmd FileType text call TextMode()
 	autocmd FileType textile call TextMode()
+	autocmd FileType markdown call TextMode()
+	autocmd FileType html call TextMode()
 
 	" Automatically close preview windows after autocompletion
 	autocmd CompleteDone * pclose
