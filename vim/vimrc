@@ -217,7 +217,7 @@ Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html' ] }
+Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
