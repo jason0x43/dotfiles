@@ -249,6 +249,10 @@ Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
 
+" Completion
+Plug 'Valloric/YouCompleteMe', { 'do': 
+	\ './install.py --clang-completer --tern-completer --gocode-completer' }
+
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 
@@ -260,7 +264,8 @@ Plug 'tpope/vim-obsession' | Plug 'dhruvasagar/vim-prosession'
 
 " Filetype plugins
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'Quramy/tsuquyomi', { 'for': 'typescript', 'do': 'npm install' }
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript' }
 Plug 'applescript.vim', { 'for': 'applescript' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
@@ -271,7 +276,6 @@ Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
-Plug 'marijnh/tern_for_vim', { 'for': [ 'javascript', 'html' ], 'do': 'npm install' }
 
 " Load the go plugin if go is available
 if executable('go')
