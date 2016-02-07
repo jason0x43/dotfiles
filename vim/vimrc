@@ -98,6 +98,8 @@ augroup vimrc
 	autocmd FileType markdown call TextMode()
 	autocmd FileType html call TextMode()
 
+	autocmd BufEnter * syntax sync fromstart
+
 	" Automatically close preview windows after autocompletion
 	autocmd CompleteDone * pclose
 
