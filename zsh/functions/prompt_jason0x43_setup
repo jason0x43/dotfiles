@@ -60,14 +60,27 @@ function git-info() {
 			zformat -f reference "$branch_format" "b:$branch"
 		fi
 	else
-		local commit_format
-		# Format commit
-		zstyle -s ':zconf:module:git:info:commit' format 'commit_format'
-		if [[ -n "$commit_format" ]]; then
-			local commit
-			commit="$(git rev-parse HEAD 2> /dev/null)"
-			if [[ -n "$commit" ]]; then
-				zformat -f reference "$commit_format" "c:$commit"
+		local tag
+		local tag_format
+		zstyle -s ':zconf:module:git:info:tag' format 'tag_format'
+		if [[ -n "$tag_format" ]]; then
+			tag="$(git describe --tags --exact-match 2> /dev/null)"
+
+			if [[ -n "$tag" ]]; then
+				zformat -f reference "$tag_format" "t:$tag"
+			fi
+		fi
+
+		if [[ -z "$tag" ]]; then
+			local commit_format
+			# Format commit
+			zstyle -s ':zconf:module:git:info:commit' format 'commit_format'
+			if [[ -n "$commit_format" ]]; then
+				local commit
+				commit="$(git rev-parse HEAD 2> /dev/null)"
+				if [[ -n "$commit" ]]; then
+					zformat -f reference "$commit_format" "c:$commit"
+				fi
 			fi
 		fi
 	fi
@@ -165,6 +178,7 @@ zstyle ':zconf:module:editor:info:keymap:alternate' format ' %B%F{yellow}❮%f%b
 # Set git-info formats
 zstyle ':zconf:module:git:info'        verbose 'yes'
 zstyle ':zconf:module:git:info:branch' format  ':%F{green}%b%f'
+zstyle ':zconf:module:git:info:tag'    format  ':#%F{green}%t%f'
 zstyle ':zconf:module:git:info:commit' format  ':%F{green}%.7c%f'
 zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%s'
 
