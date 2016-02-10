@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Git fetch name branch from named remote and reset local branch to point to it
+
+local remote
+local branch
+
+if [[ $1 == "" ]]; then
+	echo Must provide a remote
+	exit 1
+fi
+
+remote=$1
+
+if [[ $2 != "" ]]; then
+	branch=$2
+else
+	branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
+fi
+
+git fetch $remote $branch && git reset --hard $remote/$branch

@@ -53,6 +53,7 @@ path=(
 	$HOME/Applications
 	$HOME/Dropbox/Bin
 	$HOME/bin
+	$DOTFILES/bin
 	/usr/local/{bin,sbin}
 	$path
 )

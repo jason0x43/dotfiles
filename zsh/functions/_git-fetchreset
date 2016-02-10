@@ -1,0 +1,35 @@
+#compdef git-fetchreset
+#description fetch a branch from a remote and reset the local branch to point to it
+
+__git_branch_names () {
+	local expl remote
+	declare -a branch_names
+
+    remote=${words[CURRENT-1]}
+	branch_names=(${(f)"$(_call_program branchrefs git for-each-ref --format='"%(refname)"' refs/remotes/$remote | xargs basename | awk '!x[$0]++' | grep -v HEAD 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted branch-names expl branch-name compadd $* - $branch_names
+}
+
+__git_remote_names () {
+	local expl
+	declare -a remote_names
+
+	remote_names=(${(f)"$(_call_program remotenames git remote 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted remote-names expl remote-name compadd $* - $remote_names
+}
+
+__git_command_successful () {
+	if (( ${#pipestatus:#0} > 0 )); then
+		_message 'not a git repository'
+		return 1
+	fi
+	return 0
+}
+
+_arguments \
+	':remote:__git_remote_names' \
+	':branch:__git_branch_names'

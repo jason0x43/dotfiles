@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Git remove a branch from everywhere
+
+if [[ $1 == "" ]]; then
+	echo Must provide a branch name
+	exit 1
+fi
+
+local branch=$1
+
+git branch -D $branch
+
+for r in $(git remote); do
+	git push $r :$branch
+done
