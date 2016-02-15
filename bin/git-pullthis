@@ -7,8 +7,7 @@ if [[ $1 == "" ]]; then
 	exit 1
 fi
 
-local branch remote
-branch=$(git rev-parse --abbrev-ref HEAD)
 remote=$1
+branch=$(git rev-parse --abbrev-ref HEAD)
 
 git pull --ff-only $remote $branch
