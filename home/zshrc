@@ -368,26 +368,6 @@ fi
 
 # Line editor
 # ------------------------------------------------------------------------
-# autosuggest -- load this before zsh-syntax-highlighting
-# (https://github.com/tarruda/zsh-autosuggestions)
-if [[ -d $DOTFILES/zsh/autosuggestions ]]; then
-	source $DOTFILES/zsh/autosuggestions/zsh-autosuggestions.zsh
-
-	# Let vi keys jump through the suggestion
-	bindkey '^f' vi-forward-word
-	bindkey '^b' vi-forward-blank-word
-	bindkey '^e' vi-end-of-line
-
-	# Use a solarized-friendly background color
-	export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
-
-	# Configure autosuggest to work properly with history substring search;
-	# without this, trying to history-substring-search with an empty line will
-	# hang zsh
-	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-	ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-fi
-
 # Syntax highlighting -- this should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
@@ -435,6 +415,28 @@ if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-searc
 	bindkey -M vicmd "j" history-substring-search-down
 else
 	echo "zsh-history-substring-search missing"
+fi
+
+# autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
+# (https://github.com/tarruda/zsh-autosuggestions)
+if [[ -d $DOTFILES/zsh/autosuggestions ]]; then
+	source $DOTFILES/zsh/autosuggestions/zsh-autosuggestions.zsh
+
+	# Let vi keys jump through the suggestion
+	bindkey '^f' vi-forward-word
+	bindkey '^b' vi-forward-blank-word
+	bindkey '^e' vi-end-of-line
+
+	# Use a solarized-friendly background color
+	export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+
+	# Configure autosuggest to work properly with history substring search;
+	# without this, trying to history-substring-search with an empty line will
+	# hang zsh
+	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+	ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+else
+	echo "zsh-autosuggestions missing"
 fi
 
 # Prompt
