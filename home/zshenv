@@ -66,18 +66,20 @@ fpath=($DOTFILES/zsh/functions $fpath)
 
 # Java
 # ----------------------------------------------------------------------------
-JAVA_HOME=`/usr/libexec/java_home 2> /dev/null`
-if (( $? )); then
-	unset JAVA_HOME
-else
-	export JAVA_HOME
+if [[ -z "$JAVA_HOME" ]]; then
+	JAVA_HOME=`/usr/libexec/java_home 2> /dev/null`
+	if (( $? )); then
+		unset JAVA_HOME
+	else
+		export JAVA_HOME
+	fi
 fi
 
 # Python
 # ----------------------------------------------------------------------------
 if (( $+commands[virtualenv] )); then
-	VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
-	VIRTUAL_ENV_DISABLE_PROMPT=1
+	export VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
+	export VIRTUAL_ENV_DISABLE_PROMPT=1
 fi
 
 [[ -e ~/Library/Python/2.7/bin ]] && path+=~/Library/Python/2.7/bin
@@ -103,12 +105,14 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-nvmsh="$(brew --prefix nvm)/nvm.sh"
-if [[ -e "$nvmsh" ]]; then
-	export NVM_DIR=~/.nvm
-	source $nvmsh
+if [[ -z "$NVM_DIR" ]]; then
+	nvmsh="$(brew --prefix nvm)/nvm.sh"
+	if [[ -e "$nvmsh" ]]; then
+		export NVM_DIR=~/.nvm
+		source $nvmsh
+	fi
+	unset nvmsh
 fi
-unset nvmsh
 
 # Android
 # ------------------------------------------------------------------------
