@@ -11,8 +11,12 @@
 "   call plug#begin('~/.vim/plugged')
 "
 "   " Make sure you use single quotes
-"   Plug 'junegunn/seoul256.vim'
+"
+"   " Shorthand notation; fetches https://github.com/junegunn/vim-easy-align
 "   Plug 'junegunn/vim-easy-align'
+"
+"   " Any valid git URL is allowed
+"   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 "
 "   " Group dependencies, vim-snippets depends on ultisnips
 "   Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -20,9 +24,6 @@
 "   " On-demand loading
 "   Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 "   Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
-"
-"   " Using git URL
-"   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 "
 "   " Using a non-master branch
 "   Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
@@ -40,7 +41,21 @@
 "   call plug#end()
 "
 " Then reload .vimrc and :PlugInstall to install plugins.
-" Visit https://github.com/junegunn/vim-plug for more information.
+"
+" Plug options:
+"
+"| Option                  | Description                                      |
+"| ----------------------- | ------------------------------------------------ |
+"| `branch`/`tag`/`commit` | Branch/tag/commit of the repository to use       |
+"| `rtp`                   | Subdirectory that contains Vim plugin            |
+"| `dir`                   | Custom directory for the plugin                  |
+"| `as`                    | Use different name for the plugin                |
+"| `do`                    | Post-update hook (string or funcref)             |
+"| `on`                    | On-demand loading: Commands or `<Plug>`-mappings |
+"| `for`                   | On-demand loading: File types                    |
+"| `frozen`                | Do not update unless explicitly specified        |
+"
+" More information: https://github.com/junegunn/vim-plug
 "
 "
 " Copyright (c) 2015 Junegunn Choi
@@ -113,7 +128,7 @@ function! plug#begin(...)
 endfunction
 
 function! s:define_commands()
-  command! -nargs=+ -bar Plug call s:add(<args>)
+  command! -nargs=+ -bar Plug call s:Plug(<args>)
   if !executable('git')
     return s:err('`git` executable not found. Most commands will not be available. To suppress this message, prepend `silent!` to `call plug#begin(...)`.')
   endif
@@ -443,7 +458,7 @@ function! s:lod_map(map, names, prefix)
   call feedkeys(a:prefix . substitute(a:map, '^<Plug>', "\<Plug>", '') . extra)
 endfunction
 
-function! s:add(repo, ...)
+function! s:Plug(repo, ...)
   if a:0 > 1
     return s:err('Invalid number of arguments (1..2)')
   endif
