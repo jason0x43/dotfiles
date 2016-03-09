@@ -1,3 +1,4 @@
+setlocal textwidth=100
 if filereadable("pom.xml")
 	let g:neomake_java_maven_maker = {
 		\ 'exe': 'mvn',
