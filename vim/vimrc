@@ -152,7 +152,20 @@ let g:vim_json_syntax_conceal = 0
 let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1
+let g:NERDTreeWinSize=40
 map <silent> <Leader>n :NERDTreeToggle<CR>
+
+" Neomake
+" ---------------------------------------------------------------------
+" Better highlighting for signs
+let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
+let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
+let g:neomake_list_height = 5
+
+augroup neomake_write
+	autocmd!
+	autocmd BufWritePost * Neomake
+augroup END
 
 " Neovim
 " ---------------------------------------------------------------------
@@ -169,17 +182,10 @@ if has('nvim')
 	endif
 endif
 
-" Neomake
+" netrw
 " ---------------------------------------------------------------------
-" Better highlighting for signs
-let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
-let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
-let g:neomake_list_height = 5
-
-augroup neomake_write
-	autocmd!
-	autocmd BufWritePost * Neomake
-augroup END
+" Use tree-style listings by default
+let g:netrw_liststyle = 3
 
 " Prosession
 " ---------------------------------------------------------------------
