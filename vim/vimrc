@@ -198,7 +198,10 @@ let g:SuperTabDefaultCompletionType = 'context'
 " UltiSnips
 " --------------------------------------------------------------------- 
 augroup ultisnips
-	function OnCompleteDone()
+	function! OnCompleteDone()
+		if !exists('v:completed_item')
+			return
+		endif
 		if v:completed_item['menu'] =~ '^<snip> '
 			" Completed item was a snippet -- expand it
 			call UltiSnips#ExpandSnippet()
@@ -222,7 +225,7 @@ augroup END
 " indicating that completion was ended and send a C-Y key to perform
 " completion.
 let s:completed_with_enter = 0
-function CompletedWithEnter()
+function! CompletedWithEnter()
 	let s:completed_with_enter = 1
 	return "\<C-Y>"
 endfunction
