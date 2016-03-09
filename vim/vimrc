@@ -114,6 +114,10 @@ augroup vimrc
 		\ endif
 augroup END
 
+" Dirvish
+" ---------------------------------------------------------------------
+map <silent> <Leader>d :Dirvish<CR>
+
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
@@ -229,7 +233,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-commentary'           " gc for commenting code blocks
 Plug 'tpope/vim-flagship'             " Status line configuration
 Plug 'tpope/vim-fugitive'             " Git utilities
-Plug 'tpope/vim-vinegar'              " Netrw enhancments
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'benekastah/neomake'             " Asynchronous make and error highlighter
@@ -244,6 +247,7 @@ Plug 'Valloric/YouCompleteMe', { 'do':
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
+Plug 'justinmk/vim-dirvish'
 
 " Snippet management
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
