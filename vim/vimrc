@@ -98,6 +98,9 @@ augroup vimrc
 	autocmd FileType markdown call TextMode()
 	autocmd FileType html call TextMode()
 
+	" Close help files on 'q'
+	autocmd FileType help nnoremap q :bd<CR>
+
 	autocmd BufEnter * syntax sync fromstart
 
 	" Automatically close preview windows after autocompletion
