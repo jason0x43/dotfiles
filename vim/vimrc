@@ -202,7 +202,7 @@ augroup ultisnips
 		if !exists('v:completed_item')
 			return
 		endif
-		if v:completed_item['menu'] =~ '^<snip> '
+		if has_key(v:completed_item, 'menu') && v:completed_item['menu'] =~ '^<snip> '
 			" Completed item was a snippet -- expand it
 			call UltiSnips#ExpandSnippet()
 		else
