@@ -209,6 +209,9 @@ alias tiga='tig --all'
 # Pretty print json
 alias json='python -m json.tool'
 
+# Tree
+alias t1='tree -L 1'
+
 # Disable correction for some commands
 alias cd="nocorrect ${aliases[cd]:-cd}"
 alias cp="nocorrect ${aliases[cp]:-cp}"
