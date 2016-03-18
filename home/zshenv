@@ -48,6 +48,10 @@ done
 unset path_file
 
 # Set the list of directories that Zsh searches for programs.
+path=(/usr/local/{bin,sbin} $path)
+
+[[ -e ~/Library/Python/2.7/bin ]] && path=(~/Library/Python/2.7/bin $path)
+
 path=(
 	./node_modules/.bin
 	$HOME/Applications
@@ -81,8 +85,6 @@ if (( $+commands[virtualenv] )); then
 	export VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
 	export VIRTUAL_ENV_DISABLE_PROMPT=1
 fi
-
-[[ -e ~/Library/Python/2.7/bin ]] && path+=~/Library/Python/2.7/bin
 
 # Go
 # ----------------------------------------------------------------------------
