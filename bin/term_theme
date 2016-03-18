@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if (( $# == 1 )); then
+	theme=$1
+
+	if [[ $theme == "dark" ]]; then
+		theme="Solarized Dark"
+	elif [[ $theme == "light" ]]; then
+		theme="Solarized Light"
+	fi
+
+	if [[ $TERM_PROGRAM =~ ^iTerm ]]; then 
+		if [[ -z $TMUX ]]; then 
+			echo -e "\033]50;SetProfile=$theme\a"
+		else
+			echo "Can't change iTerm profile from tmux"
+		fi
+	else
+		osascript -e "tell application \"Terminal\" to set current settings of first tab of first window to (settings set \"$theme\")"
+	fi
+else
+	if [[ $TERM_PROGRAM =~ ^Apple ]]; then 
+		osascript -e 'tell application "Terminal" to get name of (current settings of first tab of first window) as string'
+	fi
+fi
