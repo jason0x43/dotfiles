@@ -4,7 +4,7 @@
 	threads = 0
 [diff]
 	renamelimit = 0
-	tool = vimdiff
+	tool = nvimdiff
 	renames = true
 [difftool]
 	prompt = false
@@ -41,12 +41,19 @@
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
+[difftool "nvimdiff"]
+	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
+	path = 
+[difftool "sdiff"]
+	cmd = sdiff \"$LOCAL\" \"$REMOTE\"
+	path = 
 [credential]
 	helper = osxkeychain
 [push]
-	default = simple
+	default = current
 [tig]
 	line-graphics = utf-8
+	vertical-split = no
 [tig "color"]
 	cursor = white 237
 	title-focus = white blue
@@ -73,3 +80,6 @@
 	trustExitCode = true
 [rebase]
 	instructionFormat = [%an @ %ar] %s
+[pager]
+	diff = diff-so-fancy | less --tabs=4 -RFX
+	show = diff-so-fancy | less --tabs=4 -RFX
