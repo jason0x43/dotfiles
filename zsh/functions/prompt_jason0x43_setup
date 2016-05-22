@@ -186,12 +186,13 @@ zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%s'
 zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
 
 # Regular prompt
-PROMPT='%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
+PROMPT='[%*] %F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
 
 # Correction prompt
 SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 
 # Undefine and reload add-zsh-hook
 add-zsh-hook precmd prompt_jason_precmd
+add-zsh-hook chpwd prompt_jason_precmd
 
 # vim:filetype=zsh:shiftwidth=4:tabstop=4:noexpandtab
