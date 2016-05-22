@@ -422,8 +422,8 @@ fi
 
 # autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
 # (https://github.com/tarruda/zsh-autosuggestions)
-if [[ -d $DOTFILES/zsh/autosuggestions ]]; then
-	source $DOTFILES/zsh/autosuggestions/zsh-autosuggestions.zsh
+if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+	source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 	# Let vi keys jump through the suggestion
 	bindkey '^f' vi-forward-word
