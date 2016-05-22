@@ -207,6 +207,9 @@ alias grc='git rebase --continue'
 alias grm='git rm'
 alias grv='git remote -v'
 alias gs='git st'
+alias gwa='git worktree add'
+alias gwl='git worktree list'
+alias gwp='git worktree prune'
 alias tiga='tig --all'
 
 # Pretty print json
