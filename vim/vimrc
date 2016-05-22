@@ -195,6 +195,15 @@ let g:prosession_per_branch = 1
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
 
+" tmux-navigator
+" ---------------------------------------------------------------------
+" Disable tmux-navigator's own mappings to avoid its neovim compatibility
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+
 " UltiSnips
 " --------------------------------------------------------------------- 
 augroup ultisnips
