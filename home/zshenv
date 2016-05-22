@@ -2,6 +2,10 @@
 # Defines environment variables before .zshrc is sourced
 #
 
+if [[ -o interactive && -z "$ZSHRC_LOADED" ]]; then 
+	return
+fi
+
 # Dotfiles
 # ----------------------------------------------------------------------------
 export DOTFILES=~/.dotfiles
@@ -33,24 +37,29 @@ fi
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
-# Set the the list of directories that cd searches.
-cdpath=($cdpath)
-
 # Set the list of directories that man searches for manuals.
-manpath=(
-	/usr/local/share/man
-	/usr/share/man
-	$manpath
-)
 for path_file in /etc/manpaths.d/*(.N); do
 	manpath+=($(<$path_file))
 done
 unset path_file
 
+manpath=(
+	/usr/local/share/man
+	/usr/share/man
+	$manpath
+)
+
 # Set the list of directories that Zsh searches for programs.
+for path_file in /etc/paths.d/*(.N); do
+	path+=($(<$path_file))
+done
+unset path_file
+
 path=(/usr/local/{bin,sbin} $path)
 
-[[ -e ~/Library/Python/2.7/bin ]] && path=(~/Library/Python/2.7/bin $path)
+if [[ -e ~/Library/Python/2.7/bin ]]; then 
+	path=(~/Library/Python/2.7/bin $path)
+fi
 
 path=(
 	./node_modules/.bin
@@ -58,15 +67,11 @@ path=(
 	$HOME/Dropbox/Bin
 	$HOME/bin
 	$DOTFILES/bin
-	/usr/local/{bin,sbin}
 	$path
 )
-for path_file in /etc/paths.d/*(.N); do
-	path+=($(<$path_file))
-done
-unset path_file
 
-fpath=($DOTFILES/zsh/functions $fpath)
+# Set the list of directories that Zsh searches for function scripts.
+fpath=($DOTFILES/zsh/functions /usr/local/share/zsh-completions $fpath)
 
 # Java
 # ----------------------------------------------------------------------------

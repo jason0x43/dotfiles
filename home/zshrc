@@ -1,3 +1,7 @@
+# zshenv is setup to skip loading in interactive shells unless ZSHRC_LOADED is defined. This lets us ensure that zshenv is run after any system setup.
+export ZSHRC_LOADED=1
+source ~/.zshenv
+
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
 if [[ -d $DOTFILES/zsh/functions ]]; then
@@ -12,7 +16,6 @@ autoload -Uz colors && colors
 # Completions
 # ------------------------------------------------------------------------
 # Load and initialize the completion system, ignoring insecure directories
-fpath=($fpath /usr/local/share/zsh-completions)
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 autoload -Uz compinit && compinit -i -d $ZCOMPFILE
 
