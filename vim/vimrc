@@ -98,6 +98,9 @@ augroup vimrc
 	autocmd FileType markdown call TextMode()
 	autocmd FileType html call TextMode()
 
+	" Always start at the top of git commit messages
+	autocmd FileType gitcommit call setpos('.', [0, 1, 1, 0])
+
 	" Close help files on 'q'
 	autocmd FileType help nnoremap q :bd<CR>
 
