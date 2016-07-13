@@ -19,4 +19,4 @@ __git_command_successful () {
 	return 0
 }
 
-_arguments ':branch:__git_branch_names'
+_arguments '*:branch:__git_branch_names'
