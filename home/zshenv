@@ -62,7 +62,6 @@ if [[ -e ~/Library/Python/2.7/bin ]]; then
 fi
 
 path=(
-	./node_modules/.bin
 	$HOME/Applications
 	$HOME/Dropbox/Bin
 	$HOME/bin
