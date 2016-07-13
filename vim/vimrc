@@ -265,6 +265,7 @@ Plug 'benekastah/neomake'             " Asynchronous make and error highlighter
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
+Plug 'keith/swift.vim'                " Swift
 
 " Completion
 Plug 'Valloric/YouCompleteMe', { 'do': 

@@ -242,6 +242,9 @@ alias rsync="noglob ${aliases[rsync]:-rsync}"
 alias scp="noglob ${aliases[scp]:-scp}"
 alias sftp="noglob ${aliases[sftp]:-sftp}"
 
+# Default swift compilation options
+alias swiftc="xcrun -sdk macosx swiftc"
+
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
 	# Define colors for BSD ls
