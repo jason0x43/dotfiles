@@ -64,6 +64,7 @@
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line
 	status = C !git commit --verbose
+	status = S !?git stash save --keep-index %(prompt)
 [url "git@github.com:"]
 	insteadOf = gh:
 	pushInsteadOf = gh:
