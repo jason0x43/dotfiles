@@ -1,11 +1,10 @@
+let g:js_indent_logging = 1
+
 " Put all swap and undo files in a central location
 if exists('$CACHEDIR')
 	set directory=$CACHEDIR/vim/swap
 	set undodir=$CACHEDIR/vim/undo
 	set backupdir=$CACHEDIR/vim/backup
-
-	" Prosession sessions
-	let g:prosession_dir = expand('$CACHEDIR/vim/session/')
 endif
 
 " Set the leader character
@@ -29,6 +28,7 @@ set formatoptions+=ron   " Automatically format comments and numbered lists
 set ruler				 " Show location info in statusline
 set nowrap				 " Don't wrap text by default
 set wildignorecase       " Case insensitive filename completion
+" set shortmess+=A		 " Use brief message when a swap file exists
 
 " Toggle cursor crosshairs
 map <silent> # :set cursorcolumn! cursorline!<CR>
@@ -120,10 +120,6 @@ augroup vimrc
 		\ endif
 augroup END
 
-" Dirvish
-" ---------------------------------------------------------------------
-map <silent> <Leader>d :Dirvish<CR>
-
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
@@ -190,22 +186,9 @@ endif
 " Use tree-style listings by default
 let g:netrw_liststyle = 3
 
-" Prosession
-" ---------------------------------------------------------------------
-let g:prosession_per_branch = 1
-
 " Supertab
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
-
-" tmux-navigator
-" ---------------------------------------------------------------------
-" Disable tmux-navigator's own mappings to avoid its neovim compatibility
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 
 " UltiSnips
 " --------------------------------------------------------------------- 
@@ -268,19 +251,17 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'keith/swift.vim'                " Swift
 
 " Completion
-Plug 'Valloric/YouCompleteMe', { 'do': 
-	\ './install.py --clang-completer --tern-completer --gocode-completer' }
+Plug 'Valloric/YouCompleteMe'
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
-Plug 'justinmk/vim-dirvish'
 
 " Snippet management
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
 " Session management
-Plug 'tpope/vim-obsession' | Plug 'dhruvasagar/vim-prosession'
+Plug 'tpope/vim-obsession'
 
 " Filetype plugins
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
@@ -291,8 +272,11 @@ Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
+
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
+
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
@@ -302,6 +286,7 @@ if executable('go')
 	Plug 'fatih/vim-go', { 'for': 'go' }
 endif
 
+" Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim') && !has('gui_running')
 	Plug 'junegunn/fzf.vim'
 
