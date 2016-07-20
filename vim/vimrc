@@ -1,4 +1,4 @@
-let g:js_indent_logging = 1
+" let g:js_indent_logging = 1
 
 " Put all swap and undo files in a central location
 if exists('$CACHEDIR')
@@ -61,15 +61,9 @@ map <silent> <Leader>h :echo "hi<" .
 	\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-" FZF for selecting files and buffers, regular vim find otherwise
-" (https://github.com/junegunn/fzf)
-if executable('fzf') && has('nvim') && !has('gui_running')
-	set runtimepath+=$FZF_PATH
-	let g:fzf_tmux_height=8
-else
-	map <Leader>f :find 
-	map <silent> <Leader>b :ls<CR> 
-endif
+" Files and buffers
+map <Leader>f :find 
+map <silent> <Leader>b :ls<CR> 
 
 " Ag for grepping (https://github.com/ggreer/the_silver_searcher)
 if executable('ag')
@@ -129,6 +123,10 @@ map <silent> <Leader>a <Plug>(EasyAlign)
 " ---------------------------------------------------------------------
 " Don't show the tabline when using Flagship
 let g:tablabel=''
+
+" fzf
+" ---------------------------------------------------------------------
+let g:fzf_layout = { 'down': 10 }
 
 " Go
 " ---------------------------------------------------------------------
@@ -272,6 +270,7 @@ Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
+Plug 'rust-lang/rust.vim'
 
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
@@ -288,13 +287,13 @@ endif
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim') && !has('gui_running')
+	Plug $FZF_PATH
 	Plug 'junegunn/fzf.vim'
 
 	" These mappings depend on the FZF plugin being loaded
 	map <silent> <Leader>f :Files<CR>
 	map <silent> <Leader>b :Buffers<CR>
-	map <silent> <Leader>g :GitFiles<CR>
-	map <silent> <Leader>l :Lines<CR>
+	map <silent> <Leader>g :GFiles<CR>
 	map <silent> <Leader>s :Snippets<CR>
 endif
 
