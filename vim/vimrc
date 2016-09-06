@@ -20,6 +20,7 @@ set smartcase            " ...unless the search is mixed case
 set nojoinspaces         " Only insert 1 space after a period when joining lines
 set nostartofline        " Don't move to the beginning of a line when jumping
 set number               " Show line numbers
+set completeopt-=preview " Don't show the preview window when completing		     
 set scrolloff=5          " Give the cursor a 5 line margin when scrolling
 set shiftwidth=4         " Indent in 4-character wide chunks
 set showcmd              " Show commands in the cmd area
