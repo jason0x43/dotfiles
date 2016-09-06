@@ -32,7 +32,7 @@
 	"multistr": false,
 	"newcap": true,
 	"noarg": true,
-	"node": false,
+	"node": true,
 	"noempty": false,
 	"nonew": true,
 	"nonstandard": false,
