@@ -150,7 +150,7 @@ let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1
 let g:NERDTreeWinSize=40
-map <silent> <Leader>n :NERDTreeToggle<CR>
+map <silent> <Leader>n :NERDTreeFind<CR>
 
 " Neomake
 " ---------------------------------------------------------------------
@@ -252,8 +252,8 @@ Plug 'keith/swift.vim'                " Swift
 Plug 'Valloric/YouCompleteMe'
 
 " File browsing
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 
 " Snippet management
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
