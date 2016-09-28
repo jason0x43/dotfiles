@@ -1,63 +1,35 @@
 #!/bin/bash
 
-function makeRelative {
-	source=$1
-	target=$2
-	prefix=$source
-	relative=""
+dotfiles=$HOME/.dotfiles
+configdir=$HOME/.config
+cachedir=$HOME/.local/share
+cd $HOME
 
-	while [[ "${target#$prefix}" == "${target}" ]]; do
-		# no match, means that candidate common part is not correct
-		# go up one level (reduce common part)
-		prefix="$(dirname $prefix)"
-		# and record that we went back, with correct / handling
-		if [[ -z $relative ]]; then
-			relative=".."
-		else
-			relative="../$relative"
-		fi
-	done
-
-	if [[ $prefix == "/" ]]; then
-		# special case for root (no common path)
-		relative="$relative/"
-	fi
-
-	# Compute the non-common part
-	forward_part="${target#$prefix}"
-
-	# Combine everything
-	if [[ -n $relative ]] && [[ -n $forward_part ]]; then
-		relative="$relative$forward_part"
-	elif [[ -n $forward_part ]]; then
-		# extra slash removal
-		relative="${forward_part:1}"
-	fi
-
-	echo $relative
-}
-
-cd $(dirname $BASH_SOURCE)
-dotfiles=$(makeRelative $HOME `pwd`)
-cachedir=~/.cache
-
-# Support a '-t' command line argument that runs the script in test mode (i.e.,
-# no changes are made to the filesystem)
-test=0
-if [[ "$1" == "-t" ]]; then
-	test=1
-fi
-
-if [[ "$1" == "-h" ]]; then
-	echo "usage: $0 [-t] [-h]"
-	echo "   -t   test mode (just show what would be done)"
-	echo "   -h   show this message"
-	echo
+# By default, the script only outputs what it *would* do. Use the '-g' ("go")
+# option to actually perform the initialization steps.
+if [[ "$1" != "-g" ]]; then
 	echo "This script creates cache directories and links dotfiles into your home directory."
-	exit 0
+	echo "This is a dry run. Use '-g' to actually initialize."
 fi
 
-if [[ $test == 1 ]]; then
+if [[ "$1" == "-g" ]]; then
+	# Create a directory
+	function makedir {
+		[[ ! -d $1 ]] && mkdir -p $1
+	}
+
+	# Create a symlink
+	function link {
+		[[ ! -r $2 ]] && run ln -s $1 $2
+	}
+
+	# Fix terminal definition so C-H works properly in neovim
+	function fixterm {
+		infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
+		tic /tmp/$TERM.ti
+		rm /tmp/$TERM.ti
+	}
+else
 	function makedir {
 		echo "mkdir $1"
 	}
@@ -65,22 +37,27 @@ if [[ $test == 1 ]]; then
 	function link {
 		echo "ln -s $1 -> $2"
 	}
-else
-	function makedir {
-		[[ ! -d $1 ]] && mkdir -p $1
-	}
 
-	function link {
-		[[ ! -r $2 ]] && run ln -s $1 $2
+	function fixterm {
+		echo "infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti"
+		echo "tic /tmp/$TERM.ti"
+		echo "rm /tmp/$TERM.ti"
 	}
 fi
 
 for f in $(ls home/*); do
-	link $dotfiles/$f ~/.$(basename $f)
+	link $dotfiles/$f $HOME/.$(basename $f)
 done
 
-link $dotfiles/vim ~/.vim
+link $dotfiles/vim $HOME/.vim
 
 makedir $cachedir/tmux/resurrect
 makedir $cachedir/vim/session
 makedir $cachedir/zsh
+
+makedir $configdir
+link $dotfiles/vim $configdir/nvim
+
+# Fix the terminal definition so that C-H works properly in neovim. This
+# function may also need to be run for the tmux terminal type.
+fixterm

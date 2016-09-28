@@ -5,6 +5,10 @@ if exists('$CACHEDIR')
 	set directory=$CACHEDIR/vim/swap
 	set undodir=$CACHEDIR/vim/undo
 	set backupdir=$CACHEDIR/vim/backup
+
+	if !has('nvim')
+		set viminfo+=n$CACHEDIR/vim/viminfo
+	endif
 endif
 
 " Set the leader character

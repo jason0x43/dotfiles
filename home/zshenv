@@ -17,7 +17,7 @@ export VISUAL='vim'
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
-export CACHEDIR="$HOME/.cache"
+export CACHEDIR="$HOME/.local/share"
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
 
 export ZCACHEDIR="$CACHEDIR/zsh"
@@ -34,24 +34,9 @@ typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
 # Set the list of directories that man searches for manuals.
-for path_file in /etc/manpaths.d/*(.N); do
-	manpath+=($(<$path_file))
-done
-unset path_file
-
-manpath=(
-	/usr/local/share/man
-	/usr/share/man
-	$manpath
-)
-
-# Set the list of directories that Zsh searches for programs.
-for path_file in /etc/paths.d/*(.N); do
-	path+=($(<$path_file))
-done
-unset path_file
-
-path=(/usr/local/{bin,sbin} $path)
+while read line; do 
+	manpath+=$line
+done < /etc/manpaths
 
 if [[ -e ~/Library/Python/2.7/bin ]]; then 
 	path=(~/Library/Python/2.7/bin $path)
@@ -59,9 +44,6 @@ fi
 
 path=(
 	$HOME/Applications
-	$HOME/Dropbox/Bin
-	$HOME/bin
-	$DOTFILES/bin
 	$path
 )
 
@@ -79,18 +61,9 @@ if [[ -z "$JAVA_HOME" ]]; then
 	fi
 fi
 
-# Python
-# ----------------------------------------------------------------------------
-if (( $+commands[virtualenv] )); then
-	export VIRTUAL_ENV_PROJECT_ENV_NAME="venv"
-	export VIRTUAL_ENV_DISABLE_PROMPT=1
-fi
-
 # Go
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
-	GOROOT=`go env GOROOT 2> /dev/null`
-	[[ -n "$GOROOT" ]] && path+=$GOROOT/bin
 	case "$OSTYPE" in
 		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
@@ -107,14 +80,13 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-if [[ -z "$NVM_DIR" ]]; then
-	nvmsh="$(brew --prefix nvm)/nvm.sh"
-	if [[ -e "$nvmsh" ]]; then
-		export NVM_DIR=~/.nvm
-		source $nvmsh
-	fi
-	unset nvmsh
-fi
+# if [[ -z "$NVM_DIR" ]]; then
+# 	nvmsh="$(brew --repo nvm)/nvm.sh"
+# 	if [[ -e "$nvmsh" ]]; then
+# 		export NVM_DIR=~/.nvm
+# 	fi
+# 	unset nvmsh
+# fi
 
 # Android
 # ------------------------------------------------------------------------
