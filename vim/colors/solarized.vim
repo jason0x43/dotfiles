@@ -41,9 +41,11 @@ if !exists('g:solarized_italic')
 	let g:solarized_italic = 1
 endif
 
+let s:use_gui_colors = has("gui_running") || &termguicolors
+
 " GUI & CSApprox hexadecimal palettes"
 " ---------------------------------------------------------------------
-if has("gui_running")
+if s:use_gui_colors
     let s:vmode       = "gui"
     let s:base03      = "#002b36"
     let s:base02      = "#073642"
@@ -90,7 +92,7 @@ let s:s    = ",standout"
 
 " Background value in terminal is managed by the terminal
 " ---------------------------------------------------------------------
-if has("gui_running")
+if s:use_gui_colors
     let s:back = s:base3
 else
     let s:back = "NONE"
@@ -172,7 +174,7 @@ let s:fmt_revr   = ' '.s:vmode.'=NONE'.s:r.    ' term=NONE'.s:r
 let s:fmt_revb   = ' '.s:vmode.'=NONE'.s:r.s:b.' term=NONE'.s:r.s:b
 
 " Special colors are for the undercurl
-if has("gui_running")
+if s:use_gui_colors
     let s:sp_none    = ' guisp='.s:none
     let s:sp_back    = ' guisp='.s:back
     let s:sp_base03  = ' guisp='.s:base03
@@ -316,7 +318,7 @@ exe "hi! Visual"       .s:fmt_none .s:fg_base1  .s:bg_base2
 exe "hi! WarningMsg"   .s:fmt_bold .s:fg_red    .s:bg_none
 exe "hi! WildMenu"     .s:fmt_none .s:fg_base02 .s:bg_base2
 
-if has("gui_running")
+if s:use_gui_colors
 	exe "hi! VertSplit"  .s:fmt_none .s:fg_base0  .s:none
 	exe "hi! DiffAdd"    .s:fmt_bold .s:fg_green  .s:bg_base2 .s:sp_green
 	exe "hi! DiffChange" .s:fmt_bold .s:fg_yellow .s:bg_base2 .s:sp_yellow
@@ -334,3 +336,22 @@ endif
 " ---------------------------------------------------------------------
 exe "hi! WarningSign"  .s:fmt_none .s:fg_yellow .s:bg_base2
 exe "hi! ErrorSign"    .s:fmt_none .s:fg_red    .s:bg_base2
+
+" Neovim terminal palette
+" ---------------------------------------------------------------------
+let g:terminal_color_0  = s:base02
+let g:terminal_color_1  = s:red
+let g:terminal_color_2  = s:green
+let g:terminal_color_3  = s:yellow
+let g:terminal_color_4  = s:blue
+let g:terminal_color_5  = s:magenta
+let g:terminal_color_6  = s:cyan
+let g:terminal_color_7  = s:base2
+let g:terminal_color_8  = s:base03
+let g:terminal_color_9  = s:orange
+let g:terminal_color_10 = s:base01
+let g:terminal_color_11 = s:base00
+let g:terminal_color_12 = s:base0
+let g:terminal_color_13 = s:violet
+let g:terminal_color_14 = s:base1
+let g:terminal_color_15 = s:base3
