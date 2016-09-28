@@ -508,14 +508,17 @@ function! s:lod_map(map, names, prefix)
     endif
     let extra .= nr2char(c)
   endwhile
-  if v:count
-    call feedkeys(v:count, 'n')
-  endif
-  call feedkeys('"'.v:register, 'n')
+
+  let prefix = v:count ? v:count : ''
+  let prefix .= '"'.v:register.a:prefix
   if mode(1) == 'no'
-    call feedkeys(v:operator)
+    if v:operator == 'c'
+      let prefix = "\<esc>" . prefix
+    endif
+    let prefix .= v:operator
   endif
-  call feedkeys(a:prefix . substitute(a:map, '^<Plug>', "\<Plug>", '') . extra)
+  call feedkeys(prefix, 'n')
+  call feedkeys(substitute(a:map, '^<Plug>', "\<Plug>", '') . extra)
 endfunction
 
 function! plug#(repo, ...)
@@ -1044,14 +1047,14 @@ function! s:update_finish()
         call s:log4(name, 'Updating submodules. This may take a while.')
         let out .= s:bang('git submodule update --init --recursive 2>&1', spec.dir)
       endif
-      let msg = printf('%s %s: %s', v:shell_error ? 'x': '-', name, s:lastline(out))
+      let msg = s:format_message(v:shell_error ? 'x': '-', name, out)
       if v:shell_error
         call add(s:update.errors, name)
         call s:regress_bar()
         silent execute pos 'd _'
         call append(4, msg) | 4
       elseif !empty(out)
-        call setline(pos, msg)
+        call setline(pos, msg[0])
       endif
       redraw
     endfor
@@ -1086,7 +1089,7 @@ function! s:job_handler(job_id, data, event) abort
 
   if a:event == 'stdout'
     let complete = empty(a:data[-1])
-    let lines = map(filter(a:data, 'len(v:val) > 0'), 'split(v:val, "[\r\n]")[-1]')
+    let lines = map(filter(a:data, 'v:val =~ "[^\r\n]"'), 'split(v:val, "[\r\n]")[-1]')
     call extend(self.lines, lines)
     let self.result = join(self.lines, "\n")
     if !complete
