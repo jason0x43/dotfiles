@@ -2,10 +2,6 @@
 # Defines environment variables before .zshrc is sourced
 #
 
-if [[ -o interactive && -z "$ZSHRC_LOADED" ]]; then 
-	return
-fi
-
 # Dotfiles
 # ----------------------------------------------------------------------------
 export DOTFILES=~/.dotfiles
