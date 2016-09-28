@@ -1,5 +1,5 @@
 let g:neomake_typescript_tsc_maker = {
-        \ 'args': [ '-m', 'commonjs', '--noEmit' ],
+        \ 'args': [ '--noEmit' ],
         \ 'append_file': 0,
         \ 'errorformat':
             \ '%E%f %#(%l\,%c): error %m,' .
