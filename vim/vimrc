@@ -153,9 +153,19 @@ let g:vim_json_syntax_conceal = 0
 " ---------------------------------------------------------------------
 let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=1
 let g:NERDTreeWinSize=40
-map <silent> <Leader>n :NERDTreeFind<CR>
+let g:NERDTreeDirArrowExpandable = '▷'
+let g:NERDTreeDirArrowCollapsible = '▼'
+
+function! ToggleNerdTree()
+	if !exists("g:NERDTree") || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen())
+		:NERDTreeFind
+	else 
+		:NERDTreeToggle
+	endif
+endfunction
+
+map <silent> <Leader>n :call ToggleNerdTree()<CR>
 
 " Neomake
 " ---------------------------------------------------------------------
