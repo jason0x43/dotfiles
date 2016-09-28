@@ -14,6 +14,7 @@ endif
 " Set the leader character
 let mapleader=';'
 
+set breakindent          " When lines are broken by linebreak, maintain indent
 set clipboard+=unnamed   " Yank to the system clipboard
 set cmdheight=2          " Keep vim from saying 'Press Enter to continue'
 set undofile             " Use undo files for persistent undo
