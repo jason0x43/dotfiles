@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ -n "$TMUX" ]]; then
+	reattach-to-user-namespace /bin/launchctl $@
+else
+	/bin/launchctl $@
+fi

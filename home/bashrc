@@ -52,7 +52,6 @@ export RUBYOPT=rubygems
 pathinsert /usr/local/bin
 pathinsert /usr/local/sbin
 pathadd ~/Applications
-pathadd ~/Dropbox/Bin
 pathadd ~/Applications/android/tools
 pathadd ~/Applications/android/platform-tools
 
