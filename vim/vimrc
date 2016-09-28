@@ -305,7 +305,8 @@ if executable('go')
 endif
 
 " Load the fzf plugin if fzf is available
-if executable('fzf') && has('nvim') && !has('gui_running')
+" if executable('fzf') && has('nvim') && !has('gui_running')
+if executable('fzf') && has('nvim')
 	Plug $FZF_PATH
 	Plug 'junegunn/fzf.vim'
 
@@ -314,6 +315,7 @@ if executable('fzf') && has('nvim') && !has('gui_running')
 	map <silent> <Leader>b :Buffers<CR>
 	map <silent> <Leader>g :GFiles<CR>
 	map <silent> <Leader>s :Snippets<CR>
+	map <silent> <Leader>l :Lines<CR>
 endif
 
 " Load all the plugins
