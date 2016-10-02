@@ -10,10 +10,12 @@ if (( $# == 1 )); then
 	fi
 
 	if [[ $TERM_PROGRAM =~ ^iTerm ]]; then 
+		cmd="\e]1337;SetProfile=$theme\007"
+
 		if [[ -z $TMUX ]]; then 
-			echo -e "\033]50;SetProfile=$theme\a"
+			printf cmd
 		else
-			echo "Can't change iTerm profile from tmux"
+			printf "\ePtmux;\e$cmd\e\\"
 		fi
 	else
 		osascript -e "tell application \"Terminal\" to set current settings of first tab of first window to (settings set \"$theme\")"
