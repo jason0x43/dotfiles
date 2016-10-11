@@ -80,13 +80,8 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-# if [[ -z "$NVM_DIR" ]]; then
-# 	nvmsh="$(brew --repo nvm)/nvm.sh"
-# 	if [[ -e "$nvmsh" ]]; then
-# 		export NVM_DIR=~/.nvm
-# 	fi
-# 	unset nvmsh
-# fi
+export NVM_NO_USE=true
+source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
 
 # Android
 # ------------------------------------------------------------------------
