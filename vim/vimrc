@@ -102,6 +102,9 @@ augroup vimrc
 	autocmd FileType markdown call TextMode()
 	autocmd FileType html call TextMode()
 
+	" Wrap lines in quickfix windows
+	autocmd FileType qf setlocal wrap linebreak nolist breakindent breakindentopt=shift:2
+
 	" Always start at the top of git commit messages
 	autocmd FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
