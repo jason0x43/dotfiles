@@ -245,6 +245,8 @@ alias sftp="noglob ${aliases[sftp]:-sftp}"
 # Default swift compilation options
 alias swiftc="xcrun -sdk macosx swiftc"
 
+alias npmv="npm --loglevel error"
+
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
 	# Define colors for BSD ls
