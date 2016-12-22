@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [[ -n "$TMUX" ]]; then
-	reattach-to-user-namespace /usr/bin/pbpaste $@
-else
-	/usr/bin/pbpaste $@
-fi
