@@ -216,6 +216,11 @@ let g:netrw_liststyle = 3
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
 
+" Tsuquyomi
+" ---------------------------------------------------------------------
+let g:tsuquyomi_disable_quickfix = 1
+let g:tsuquyomi_disable_default_mappings = 1
+
 " UltiSnips
 " --------------------------------------------------------------------- 
 augroup ultisnips
@@ -292,7 +297,7 @@ Plug 'tpope/vim-obsession'
 " Filetype plugins
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'clausreinke/typescript-tools.vim', { 'for': 'typescript' }
+Plug 'Quramy/tsuquyomi', { 'for': 'typescript' } | Plug 'Shougo/vimproc.vim', { 'do': 'make -f make_mac.mak' }
 Plug 'applescript.vim', { 'for': 'applescript' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
