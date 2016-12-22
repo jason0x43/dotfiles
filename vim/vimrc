@@ -275,7 +275,7 @@ Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " gc for commenting code blocks
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
-Plug 'benekastah/neomake'             " Asynchronous make and error highlighter
+Plug 'neomake/neomake'                " Asynchronous make and error highlighter
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
