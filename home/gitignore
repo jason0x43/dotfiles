@@ -16,7 +16,6 @@
 # OS folders
 .DS_Store
 .cache
-Icon?
 
 # Other folders
 .hg
