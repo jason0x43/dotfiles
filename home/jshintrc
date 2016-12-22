@@ -3,7 +3,7 @@
 	"bitwise": false,
 	"boss": false,
 	"browser": true,
-	"camelcase": true,
+	"camelcase": false,
 	"couch": false,
 	"curly": true,
 	"debug": false,
