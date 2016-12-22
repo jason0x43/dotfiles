@@ -1,9 +1,10 @@
 #!/bin/sh
 
 commit=$1
+shift
 
 if [[ $commit == "" ]]; then
 	commit=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
 fi
 
-git diff ${commit}^ $commit
+git diff $* ${commit}^ $commit
