@@ -216,11 +216,6 @@ let g:netrw_liststyle = 3
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
 
-" Tsuquyomi
-" ---------------------------------------------------------------------
-let g:tsuquyomi_disable_quickfix = 1
-let g:tsuquyomi_disable_default_mappings = 1
-
 " UltiSnips
 " --------------------------------------------------------------------- 
 augroup ultisnips
@@ -264,6 +259,11 @@ let g:UltiSnipsExpandTrigger = "<C-J>"
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
 
+" vim-tss
+" --------------------------------------------------------------------- 
+let g:tss_verbose = 0
+let g:tss_format_on_save = 0
+
 " Plugins
 " ---------------------------------------------------------------------
 call plug#begin('~/.vim/plugged')
@@ -297,7 +297,6 @@ Plug 'tpope/vim-obsession'
 " Filetype plugins
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'Quramy/tsuquyomi', { 'for': 'typescript' } | Plug 'Shougo/vimproc.vim', { 'do': 'make -f make_mac.mak' }
 Plug 'applescript.vim', { 'for': 'applescript' }
 Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
@@ -305,6 +304,7 @@ Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim'
 
+Plug 'jason0x43/vim-tss', { 'for': [ 'typescript', 'javascript' ] }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
