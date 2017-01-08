@@ -56,10 +56,7 @@
 	line-graphics = utf-8
 	vertical-split = no
 [tig "color"]
-	cursor = white 237
-	title-focus = white blue
-	author = 61 default
-	date = 240 default
+	cursor = white yellow normal
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line
