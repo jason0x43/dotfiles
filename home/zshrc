@@ -269,11 +269,6 @@ alias la='ll -A'         # Lists human readable sizes, hidden files
 alias df='df -kh'
 alias du='du -kh'
 
-# Prefer hub to git
-if (( $+commands[hub] )); then
-	alias git=hub
-fi
-
 # Shell options
 # ------------------------------------------------------------------------
 # Navigation
