@@ -21,3 +21,8 @@ API
 plugin
 WCAG
 inline
+tsserver
+Neomake
+TypeScript
+stdin
+stdout
