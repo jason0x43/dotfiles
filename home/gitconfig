@@ -7,6 +7,7 @@
 	tool = nvimdiff
 	renames = true
 	compactionHeuristic = true
+	indentHeuristic = true
 [difftool]
 	prompt = false
 [core]
@@ -60,7 +61,6 @@
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line
-	status = C !git commit --verbose
 	status = S !?git stash save --keep-index %(prompt)
 [url "git@github.com:"]
 	insteadOf = gh:
@@ -79,9 +79,16 @@
 	trustExitCode = true
 [rebase]
 	instructionFormat = [%an @ %ar] %s
+	autostash = true
 [pager]
 	diff = diff-so-fancy | less --tabs=4 -RFX
 	show = diff-so-fancy | less --tabs=4 -RFX
 	log = diff-so-fancy | less --tabs=4 -RFX
 [interactive]
 	diffFilter = diff-so-fancy
+[commit]
+	verbose = true
+[submodule]
+	fetchJobs = 4
+[stash]
+	showPatch = true
