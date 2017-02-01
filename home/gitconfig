@@ -17,29 +17,28 @@
 	precomposeunicode = true
 	pager = less -F -X
 [alias]
-	cat = show
+	bd = branch -d
+	bD = branch -D
 	cb = checkout -b
 	co = checkout
 	cp = cherry-pick
+	dp = show
 	forget = rm --cached
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
 	ignore = update-index --assume-unchanged
-	last = cat-file commit HEAD
-	lg = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)' --all
-	lgb = log --graph --abbrev-commit --decorate --date-order --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %s - %an%C(bold yellow)%d%C(reset)'
-
-	# check out a local copy of a PR. https://gist.github.com/gnarf/5406589
-	pr  = !f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f
-	pr-clean = !git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
-
-	rb = branch -d
-	st = status --short
+	lg = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset %C(bold red)%d%Creset %s %Cgreen(%ar)%Creset' --all
+	lgb = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset %C(bold red)%d%Creset %s %Cgreen(%ar)%Creset'
+	lgs = log --all --date-order --decorate --graph --oneline
+	s = status --short
 	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
 	unstage = reset HEAD
 	untrack = rm --cached
-	update = "!f() { git add --all; git commit -m '[TEMP]'; git pull --rebase; git reset HEAD~1; }; f"
+
+	# check out a local copy of a PR. https://gist.github.com/gnarf/5406589
+	pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
