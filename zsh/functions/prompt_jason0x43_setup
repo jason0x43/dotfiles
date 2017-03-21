@@ -46,6 +46,12 @@ function git-info() {
 		return 1
 	fi
 
+	local modified
+	git diff --quiet
+	if (( $? )); then
+		modified="*"
+	fi
+
 	local reference
 
 	# Get the branch
@@ -90,7 +96,7 @@ function git-info() {
 	local info_format
 	zstyle -a ':zconf:module:git:info:keys' format 'info_formats'
 	for info_format in ${(k)info_formats}; do
-		zformat -f REPLY "$info_formats[$info_format]" "r:$reference"
+		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "m:$modified"
 		git_info[$info_format]="$REPLY"
 	done
 
@@ -180,7 +186,7 @@ zstyle ':zconf:module:git:info'        verbose 'yes'
 zstyle ':zconf:module:git:info:branch' format  ':%F{green}%b%f'
 zstyle ':zconf:module:git:info:tag'    format  ':#%F{green}%t%f'
 zstyle ':zconf:module:git:info:commit' format  ':%F{green}%.7c%f'
-zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%s'
+zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%F{red}%m%f%s'
 
 # Set node-info formats
 zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
