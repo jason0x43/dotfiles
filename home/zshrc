@@ -200,6 +200,7 @@ alias gkb='git killbranch'
 alias gl='git lg'
 alias glb='git lgb'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
+alias gln='git lg -n'
 alias gls='git ls-files'
 alias gp='git pullthis'
 alias gr='git rebase'
@@ -366,7 +367,9 @@ if (( $+commands[fzf] )); then
 
 	# Key bindings
 	source $FZF_PATH/shell/key-bindings.zsh
-	bindkey '^P' fzf-file-widget
+
+	# bindkey '^P' fzf-file-widget
+	bindkey -s '^P' 'vi $(fzf)\n'
 	bindkey '^G' fzf-cd-widget
 
 	if (( $+commands[rg] )); then
@@ -479,3 +482,6 @@ prompt 'jason0x43'
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab
+
+# added by travis gem
+[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
