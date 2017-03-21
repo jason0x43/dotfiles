@@ -1,2 +1,5 @@
 # Better find(1)
-find . -iname "*${1:-}*"
+term=$1
+shift
+
+find . -iname "*${term:-}*" $*
