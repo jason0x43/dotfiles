@@ -48,18 +48,32 @@ if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
 	cd $HOME/.vim/plugged
 	for plugin in *; do
 		cd $plugin 
-		head=$(git rev-parse HEAD)
-		git pull -q --recurse-submodules
-		if [[ "$?" != "0" ]]; then 
-			printf "   problem updating $plugin\n"
+		head_name=$(git symbolic-ref HEAD --short)
+		if [[ $head_name != "master" ]]; then
+			printf "   skipping $plugin (not on master)\n";
 		else
-			git submodule update
-			if [[ $(git rev-parse HEAD) != $head ]]; then 
-				printf "   $plugin\n"
+			head=$(git rev-parse HEAD)
+			git pull -q --recurse-submodules
+			if [[ "$?" != "0" ]]; then 
+				printf "   problem updating $plugin\n"
+			else
+				git submodule update
+				if [[ $(git rev-parse HEAD) != $head ]]; then 
+					printf "   $plugin\n"
+				fi
 			fi
 		fi
 		cd ..
 	done
+fi
+
+if [[ -a $HOME/.dotfiles/zsh/zsh-nvm ]]; then
+	printf ">> Updating zsh-nvm...\n"
+	cd $HOME/.dotfiles/zsh/zsh-nvm
+	git pull -q
+	if [[ "$?" != "0" ]]; then 
+		printf "   problem updating zsh-nvm\n"
+	fi
 fi
 
 printf ">> Done\n"
