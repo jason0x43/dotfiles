@@ -180,6 +180,7 @@ let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
 let g:NERDTreeDirArrowExpandable = '▷'
 let g:NERDTreeDirArrowCollapsible = '▼'
+let g:NERDTreeRespectWildIgnore = 1
 
 function! ToggleNerdTree()
 	if @% != "" && (!exists("g:NERDTree") || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen()))
@@ -278,6 +279,8 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 " vim-tss
 " --------------------------------------------------------------------- 
 let g:tss_verbose = 0
+let g:tss_auto_open_loclist = 0
+let g:tss_js = 0
 let g:tss_format_on_save = 0
 
 " Plugins
@@ -290,6 +293,8 @@ Plug 'tpope/vim-eunuch'               " POSIX command wrappers
 Plug 'tpope/vim-flagship'             " Status line configuration
 Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " gc for commenting code blocks
+Plug 'tpope/vim-repeat'               " support for repeating mapped commands
+Plug 'tpope/vim-surround'             " for manipulating parens and such
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'neomake/neomake'                " Asynchronous make and error highlighter
@@ -304,6 +309,7 @@ Plug 'Valloric/YouCompleteMe'
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
+Plug 'jason0x43/vim-wildgitignore'
 
 " Snippet management
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
