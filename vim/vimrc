@@ -325,7 +325,7 @@ Plug 'Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
 Plug 'jason0x43/vim-tss', { 'for': [ 'typescript', 'javascript' ] }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
