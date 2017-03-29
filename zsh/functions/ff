@@ -2,4 +2,8 @@
 term=$1
 shift
 
-find . -iname "*${term:-}*" $*
+if (( $+commands[rg] )); then
+	rg --files --glob "*${term:-}*" $*
+else 
+	find . -iname "*${term:-}*" $*
+fi
