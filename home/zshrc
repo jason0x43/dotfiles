@@ -368,8 +368,7 @@ if (( $+commands[fzf] )); then
 	# Key bindings
 	source $FZF_PATH/shell/key-bindings.zsh
 
-	# bindkey '^P' fzf-file-widget
-	bindkey -s '^P' 'vi $(fzf)\n'
+	bindkey '^P' fzf-file-widget
 	bindkey '^G' fzf-cd-widget
 
 	if (( $+commands[rg] )); then
