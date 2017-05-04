@@ -18,9 +18,9 @@ endif
 
 " Put all swap and undo files in a central location
 if exists('$CACHEDIR')
-	set directory=$CACHEDIR/vim/swap
-	set undodir=$CACHEDIR/vim/undo
-	set backupdir=$CACHEDIR/vim/backup
+	set directory=$CACHEDIR/vim/swap//
+	set undodir=$CACHEDIR/vim/undo//
+	set backupdir=$CACHEDIR/vim/backup//
 
 	if !has('nvim')
 		set viminfo+=n$CACHEDIR/vim/viminfo
@@ -30,6 +30,7 @@ endif
 " Set the leader character
 let mapleader=';'
 
+set backupcopy=yes       " Overwrite the original file when saving
 set breakindent          " When lines are broken by linebreak, maintain indent
 set clipboard+=unnamed   " Yank to the system clipboard
 set cmdheight=2          " Keep vim from saying 'Press Enter to continue'
