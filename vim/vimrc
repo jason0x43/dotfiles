@@ -242,42 +242,42 @@ let g:SuperTabDefaultCompletionType = 'context'
 
 " UltiSnips
 " --------------------------------------------------------------------- 
-augroup ultisnips
-	function! OnCompleteDone()
-		if !exists('v:completed_item')
-			return
-		endif
-		if has_key(v:completed_item, 'menu') && v:completed_item['menu'] =~ '^<snip> '
-			" Completed item was a snippet -- expand it
-			call UltiSnips#ExpandSnippet()
-		else
-			if s:completed_with_enter
-				" User pressed enter to end completion, but selection wasn't a
-				" snippet, so send an Enter keypress
-				execute "normal i \<CR>"
-			endif
-		endif
+" augroup ultisnips
+" 	function! OnCompleteDone()
+" 		if !exists('v:completed_item')
+" 			return
+" 		endif
+" 		if has_key(v:completed_item, 'menu') && v:completed_item['menu'] =~ '^<snip> '
+" 			" Completed item was a snippet -- expand it
+" 			call UltiSnips#ExpandSnippet()
+" 		else
+" 			if s:completed_with_enter
+" 				" User pressed enter to end completion, but selection wasn't a
+" 				" snippet, so send an Enter keypress
+" 				execute "normal i \<CR>"
+" 			endif
+" 		endif
 
-		" Always clear the completed_with_enter flag
-		let s:completed_with_enter = 0
-	endfunction
+" 		" Always clear the completed_with_enter flag
+" 		let s:completed_with_enter = 0
+" 	endfunction
 
-	autocmd!
-	autocmd CompleteDone * call OnCompleteDone()
-augroup END
+" 	autocmd!
+" 	autocmd CompleteDone * call OnCompleteDone()
+" augroup END
 
 " When Enter is pressed and the completion popup is visible, set a flag
 " indicating that completion was ended and send a C-Y key to perform
 " completion.
-let s:completed_with_enter = 0
-function! CompletedWithEnter()
-	let s:completed_with_enter = 1
-	return "\<C-Y>"
-endfunction
-inoremap <expr> <CR> pumvisible() ? CompletedWithEnter() : "\<CR>"
+" let s:completed_with_enter = 0
+" function! CompletedWithEnter()
+" 	let s:completed_with_enter = 1
+" 	return "\<C-Y>"
+" endfunction
+" inoremap <expr> <CR> pumvisible() ? CompletedWithEnter() : "\<CR>"
 
 " Set C-J as a backup for snippet expansion
-let g:UltiSnipsExpandTrigger = "<C-J>"
+" let g:UltiSnipsExpandTrigger = "<C-J>"
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -320,7 +320,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ]
 Plug 'jason0x43/vim-wildgitignore'
 
 " Snippet management
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
 " Session management
 Plug 'tpope/vim-obsession'
