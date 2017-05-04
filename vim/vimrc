@@ -365,7 +365,7 @@ if executable('fzf') && has('nvim')
 	map <silent> <Leader>b :Buffers<CR>
 	map <silent> <Leader>g :GFiles<CR>
 	map <silent> <Leader>s :Snippets<CR>
-	map <silent> <Leader>l :Lines<CR>
+	map <silent> <Leader>l :BLines<CR>
 endif
 
 " Load all the plugins
