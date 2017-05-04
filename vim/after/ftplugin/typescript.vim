@@ -18,3 +18,9 @@ endfunction
 command! TsTags call s:ts_tags()
 
 map <silent> <Leader>t :TsTags<CR>
+
+let g:neomake_typescript_tslint_maker = {
+	\ 'exe': 'tslint',
+	\ 'args': [ '%:p' ],
+	\ 'errorformat': '%EERROR: %f[%l\, %c]: %m'
+	\ }
