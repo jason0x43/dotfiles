@@ -299,9 +299,10 @@ Plug 'tpope/vim-commentary'           " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'               " POSIX command wrappers
 Plug 'tpope/vim-flagship'             " Status line configuration
 Plug 'tpope/vim-fugitive'             " Git utilities
-Plug 'tpope/vim-unimpaired'           " gc for commenting code blocks
+Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
+Plug 'tpope/vim-vinegar'              " netrw improvements
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 "Plug 'neomake/neomake'                " Asynchronous make and error highlighter
@@ -309,7 +310,6 @@ Plug 'w0rp/ale'                		  " Asynchronous linting
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
-Plug 'keith/swift.vim'                " Swift
 
 " Completion
 Plug 'Valloric/YouCompleteMe'
@@ -326,10 +326,11 @@ Plug 'jason0x43/vim-wildgitignore'
 Plug 'tpope/vim-obsession'
 
 " Filetype plugins
+Plug 'keith/swift.vim', { 'for': 'swift' }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'applescript.vim', { 'for': 'applescript' }
-Plug 'Textile-for-VIM', { 'for': 'textile' }
+Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
+Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
