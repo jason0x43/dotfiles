@@ -1,0 +1,17 @@
+local tmpdir=$(mktemp -d)
+local parts=("${(@s/:/)1}")
+local file=${parts[2]}
+local tmpfile=$tmpdir/${file:t}
+
+git show $1 > $tmpfile
+
+local other=$2
+if [[ -z $other ]]; then
+	other=$file
+fi
+
+if (( $? == 0 )); then
+	vimdiff -R $other $tmpfile
+fi
+
+rm -rf $tmpdir

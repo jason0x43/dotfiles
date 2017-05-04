@@ -1,0 +1,11 @@
+local tmpdir=$(mktemp -d)
+local parts=("${(@s/:/)1}")
+local file=$tmpdir/${parts[2]:t}
+
+git show $1 > $file
+
+if (( $? == 0 )); then
+	vi -R $file
+fi
+
+rm -rf $tmpdir

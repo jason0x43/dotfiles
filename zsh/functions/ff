@@ -1,5 +1,5 @@
 # Better find(1)
-term=$1
+local term=$1
 shift
 
 if (( $+commands[rg] )); then
