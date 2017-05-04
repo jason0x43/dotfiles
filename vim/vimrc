@@ -143,6 +143,10 @@ augroup vimrc
 		\ endif
 augroup END
 
+" Ale
+" ---------------------------------------------------------------------
+let g:ale_sign_column_always = 1
+
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
@@ -199,10 +203,10 @@ let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
 let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
 let g:neomake_list_height = 5
 
-augroup neomake_write
-	autocmd!
-	autocmd BufWritePost * Neomake
-augroup END
+" augroup neomake_write
+" 	autocmd!
+" 	autocmd BufWritePost * Neomake
+" augroup END
 
 " Neovim
 " ---------------------------------------------------------------------
@@ -297,7 +301,8 @@ Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
-Plug 'neomake/neomake'                " Asynchronous make and error highlighter
+"Plug 'neomake/neomake'                " Asynchronous make and error highlighter
+Plug 'w0rp/ale'                		  " Asynchronous linting
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree

@@ -280,43 +280,43 @@ exe "hi! Todo"           .s:fmt_none   .s:fg_magenta  .s:bg_none
 " ---------------------------------------------------------------------
 hi! link lCursor Cursor
 
-exe "hi! ColorColumn"  .s:fmt_none .s:fg_none   .s:bg_base2
-exe "hi! Conceal"      .s:fmt_none .s:fg_blue   .s:bg_none
-exe "hi! Cursor"       .s:fmt_none .s:fg_base3  .s:bg_base00
-exe "hi! CursorColumn" .s:fmt_none .s:fg_none   .s:bg_base2
-exe "hi! CursorLine"   .s:fmt_uopt .s:fg_none   .s:bg_base2   .s:sp_base01
-exe "hi! CursorLineNr" .s:fmt_bold .s:fg_none   .s:bg_base2   .s:sp_base01
-exe "hi! Directory"    .s:fmt_none .s:fg_blue   .s:bg_none
-exe "hi! ErrorMsg"     .s:fmt_revr .s:fg_red    .s:bg_none
-exe "hi! FoldColumn"   .s:fmt_none .s:fg_base1  .s:bg_base2
-exe "hi! Folded"       .s:fmt_undb .s:fg_base1  .s:bg_base2   .s:sp_base3
-exe "hi! IncSearch"    .s:fmt_stnd .s:fg_orange .s:bg_none
-exe "hi! LineNr"       .s:fmt_none .s:fg_base1  .s:bg_base2
-exe "hi! MatchParen"   .s:fmt_bold .s:fg_red    .s:bg_base1
-exe "hi! ModeMsg"      .s:fmt_none .s:fg_blue   .s:bg_none
-exe "hi! MoreMsg"      .s:fmt_none .s:fg_blue   .s:bg_none
-exe "hi! NonText"      .s:fmt_bold .s:fg_base0  .s:bg_none
-exe "hi! Pmenu"        .s:fmt_none .s:fg_base00 .s:bg_base2
-exe "hi! PmenuSbar"    .s:fmt_none .s:fg_base02 .s:bg_base00
-exe "hi! PmenuSel"     .s:fmt_none .s:fg_base1  .s:bg_base02
-exe "hi! PmenuThumb"   .s:fmt_none .s:fg_base00 .s:bg_base3
-exe "hi! Question"     .s:fmt_bold .s:fg_cyan   .s:bg_none
-exe "hi! Search"       .s:fmt_revr .s:fg_yellow .s:bg_none
-exe "hi! SignColumn"   .s:fmt_none .s:fg_base00 .s:bg_base2
-exe "hi! SpecialKey"   .s:fmt_bold .s:fg_base0  .s:bg_base2
-exe "hi! SpellBad"     .s:fmt_curl .s:fg_none   .s:bg_none    .s:sp_red
-exe "hi! SpellCap"     .s:fmt_curl .s:fg_none   .s:bg_none    .s:sp_violet
-exe "hi! SpellLocal"   .s:fmt_curl .s:fg_none   .s:bg_none    .s:sp_yellow
-exe "hi! SpellRare"    .s:fmt_curl .s:fg_none   .s:bg_none    .s:sp_cyan
-exe "hi! StatusLine"   .s:fmt_none .s:fg_base01 .s:bg_base2
-exe "hi! StatusLineNC" .s:fmt_none .s:fg_base0  .s:bg_base2
-exe "hi! TabLine"      .s:fmt_undr .s:fg_base00 .s:bg_base2   .s:sp_base00
-exe "hi! TabLineFill"  .s:fmt_undr .s:fg_base00 .s:bg_base2   .s:sp_base00
-exe "hi! TabLineSel"   .s:fmt_undr .s:fg_base1  .s:bg_none
-exe "hi! Title"        .s:fmt_bold .s:fg_orange .s:bg_none
-exe "hi! Visual"       .s:fmt_none .s:fg_base1  .s:bg_base2
-exe "hi! WarningMsg"   .s:fmt_bold .s:fg_red    .s:bg_none
-exe "hi! WildMenu"     .s:fmt_none .s:fg_base02 .s:bg_base2
+exe "hi! ColorColumn"  .s:fmt_none .s:fg_none    .s:bg_base2
+exe "hi! Conceal"      .s:fmt_none .s:fg_blue    .s:bg_none
+exe "hi! Cursor"       .s:fmt_none .s:fg_base3   .s:bg_base00
+exe "hi! CursorColumn" .s:fmt_none .s:fg_none    .s:bg_base2
+exe "hi! CursorLine"   .s:fmt_uopt .s:fg_none    .s:bg_base2   .s:sp_base01
+exe "hi! CursorLineNr" .s:fmt_bold .s:fg_none    .s:bg_base2   .s:sp_base01
+exe "hi! Directory"    .s:fmt_none .s:fg_blue    .s:bg_none
+exe "hi! ErrorMsg"     .s:fmt_revr .s:fg_red     .s:bg_none
+exe "hi! FoldColumn"   .s:fmt_none .s:fg_base1   .s:bg_base2
+exe "hi! Folded"       .s:fmt_undb .s:fg_base1   .s:bg_base2   .s:sp_base3
+exe "hi! IncSearch"    .s:fmt_stnd .s:fg_orange  .s:bg_none
+exe "hi! LineNr"       .s:fmt_none .s:fg_base1   .s:bg_base2
+exe "hi! MatchParen"   .s:fmt_bold .s:fg_red     .s:bg_base1
+exe "hi! ModeMsg"      .s:fmt_none .s:fg_blue    .s:bg_none
+exe "hi! MoreMsg"      .s:fmt_none .s:fg_blue    .s:bg_none
+exe "hi! NonText"      .s:fmt_bold .s:fg_base0   .s:bg_none
+exe "hi! Pmenu"        .s:fmt_none .s:fg_base00  .s:bg_base2
+exe "hi! PmenuSbar"    .s:fmt_none .s:fg_base02  .s:bg_base00
+exe "hi! PmenuSel"     .s:fmt_none .s:fg_base1   .s:bg_base02
+exe "hi! PmenuThumb"   .s:fmt_none .s:fg_base00  .s:bg_base3
+exe "hi! Question"     .s:fmt_bold .s:fg_cyan    .s:bg_none
+exe "hi! Search"       .s:fmt_revr .s:fg_yellow  .s:bg_none
+exe "hi! SignColumn"   .s:fmt_none .s:fg_base00  .s:bg_none
+exe "hi! SpecialKey"   .s:fmt_bold .s:fg_base0   .s:bg_base2
+exe "hi! SpellBad"     .s:fmt_curl .s:fg_magenta .s:bg_none    .s:sp_red
+exe "hi! SpellCap"     .s:fmt_curl .s:fg_none    .s:bg_none    .s:sp_violet
+exe "hi! SpellLocal"   .s:fmt_curl .s:fg_none    .s:bg_none    .s:sp_yellow
+exe "hi! SpellRare"    .s:fmt_curl .s:fg_none    .s:bg_none    .s:sp_cyan
+exe "hi! StatusLine"   .s:fmt_none .s:fg_base01  .s:bg_base2
+exe "hi! StatusLineNC" .s:fmt_none .s:fg_base0   .s:bg_base2
+exe "hi! TabLine"      .s:fmt_undr .s:fg_base00  .s:bg_base2   .s:sp_base00
+exe "hi! TabLineFill"  .s:fmt_undr .s:fg_base00  .s:bg_base2   .s:sp_base00
+exe "hi! TabLineSel"   .s:fmt_undr .s:fg_base1   .s:bg_none
+exe "hi! Title"        .s:fmt_bold .s:fg_orange  .s:bg_none
+exe "hi! Visual"       .s:fmt_none .s:fg_base1   .s:bg_base2
+exe "hi! WarningMsg"   .s:fmt_bold .s:fg_red     .s:bg_none
+exe "hi! WildMenu"     .s:fmt_none .s:fg_base02  .s:bg_base2
 
 if s:use_gui_colors
 	exe "hi! VertSplit"  .s:fmt_none .s:fg_base0  .s:none
