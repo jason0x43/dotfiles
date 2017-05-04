@@ -166,6 +166,7 @@ let g:fzf_layout = { 'down': 10 }
 " ---------------------------------------------------------------------
 let g:go_fmt_command = "goimports"
 let g:go_fmt_fail_silently = 1
+let g:go_metalinter_excludes = ['errcheck']
 
 " JavaScript
 " ---------------------------------------------------------------------
@@ -203,6 +204,7 @@ map <silent> <Leader>n :call ToggleNerdTree()<CR>
 let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
 let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
 let g:neomake_list_height = 5
+let g:neomake_go_gometalinter_args = ['--disable-all', '--enable=gosimple', '--enable=staticcheck', '--enable=unused']
 
 " augroup neomake_write
 " 	autocmd!
