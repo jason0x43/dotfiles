@@ -290,6 +290,10 @@ let g:tss_auto_open_loclist = 0
 let g:tss_js = 0
 let g:tss_format_on_save = 0
 
+" YouCompleteMe
+" --------------------------------------------------------------------- 
+let g:ycm_always_populate_location_list = 1
+
 " Plugins
 " ---------------------------------------------------------------------
 call plug#begin('~/.vim/plugged')
