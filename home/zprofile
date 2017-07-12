@@ -1,8 +1,0 @@
-# We only use zprofile for setting the path to override Apple's path-setting code in /etc/zprofile
-
-path=(
-	$DOTFILES/bin
-	$path
-)
-
-# vim:shiftwidth=4:tabstop=4:noexpandtab

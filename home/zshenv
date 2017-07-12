@@ -42,10 +42,9 @@ if [[ -e ~/Library/Python/2.7/bin ]]; then
 	path=(~/Library/Python/2.7/bin $path)
 fi
 
-path=(
-	$HOME/Applications
-	$path
-)
+if [ -x /usr/libexec/path_helper ]; then
+	eval `/usr/libexec/path_helper -s`
+fi
 
 # Set the list of directories that Zsh searches for function scripts.
 fpath=($DOTFILES/zsh/functions /usr/local/share/zsh-completions $fpath)
@@ -68,20 +67,27 @@ if (( $+commands[go] )); then
 		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
 	esac
-	path+=$GOPATH/bin
+	path=(
+		$GOPATH/bin
+		$path
+	)
 fi
 
 # Ruby
 # ----------------------------------------------------------------------------
 if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
 	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
-	path+=$GEM_HOME/bin
+	path=(
+		$GEM_HOME/bin
+		$path
+	)
 fi
 
 # Node
 # ----------------------------------------------------------------------------
-export NVM_NO_USE=true
-source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
+# export NVM_NO_USE=true
+# source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
+source <(/usr/local/bin/npx --shell-auto-fallback zsh)
 
 # Android
 # ------------------------------------------------------------------------
@@ -89,8 +95,19 @@ if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
 fi
 
+# Path
+# ------------------------------------------------------------------------
+path=(
+	$HOME/Applications
+	$DOTFILES/bin
+	$path
+)
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshenv ]] && source ~/.config/zsh/zshenv
+
+# Disable global zprofile, which messes with the path
+unsetopt GLOBAL_RCS
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab
