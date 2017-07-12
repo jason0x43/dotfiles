@@ -91,3 +91,7 @@
 	fetchJobs = 4
 [stash]
 	showPatch = true
+[rerere]
+	enabled = true
+[includeIf "gitdir:~/Documents/Work/projects/"]
+	path = ~/.gitconfig-work
