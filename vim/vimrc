@@ -1,5 +1,3 @@
-" let g:js_indent_logging = 1
-
 " Check for vim-plug; install if missing
 let plugpath = expand('<sfile>:p:h') . '/autoload/plug.vim'
 if !filereadable(plugpath)
@@ -53,6 +51,9 @@ set ruler				 " Show location info in statusline
 set nowrap				 " Don't wrap text by default
 set wildignorecase       " Case insensitive filename completion
 set lazyredraw           " Redraw less frequently
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+  \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+  \,sm:block-blinkwait175-blinkoff150-blinkon175
 
 " Toggle cursor crosshairs
 map <silent> # :set cursorcolumn! cursorline!<CR>
@@ -125,8 +126,9 @@ augroup vimrc
 	" Always start at the top of git commit messages
 	autocmd FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
-	" Close help files on 'q'
-	autocmd FileType help nnoremap q :bd<CR>
+	" Close help files and quickfix panes on 'q'
+	autocmd FileType help nnoremap <silent> q :bd<CR>
+	autocmd FileType qf nnoremap <silent> q :bd<CR>
 
 	autocmd BufEnter * syntax sync fromstart
 
@@ -146,7 +148,15 @@ augroup END
 
 " Ale
 " ---------------------------------------------------------------------
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\   'typescript': [],
+\   'go': ['gometalinter', 'gofmt']
+\}
+let g:ale_change_sign_column_color = 1
 let g:ale_sign_column_always = 1
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -179,6 +189,11 @@ let g:js_indent_flat_switch = 1
 " Don't conceal quotes around JSON properties
 let g:vim_json_syntax_conceal = 0
 
+" miniyank
+" ---------------------------------------------------------------------
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
+
 " NERDTree
 " ---------------------------------------------------------------------
 let g:NERDTreeAutoDeleteBuffer=1
@@ -198,24 +213,14 @@ endfunction
 
 map <silent> <Leader>n :call ToggleNerdTree()<CR>
 
-" Neomake
-" ---------------------------------------------------------------------
-" Better highlighting for signs
-let g:neomake_warning_sign = { 'texthl': 'WarningSign' }
-let g:neomake_error_sign = { 'texthl': 'ErrorSign' }
-let g:neomake_list_height = 5
-let g:neomake_go_gometalinter_args = ['--disable-all', '--enable=gosimple', '--enable=staticcheck', '--enable=unused']
-
-" augroup neomake_write
-" 	autocmd!
-" 	autocmd BufWritePost * Neomake
-" augroup END
-
 " Neovim
 " ---------------------------------------------------------------------
 if has('nvim')
 	" <Leader>e to escape into command mode in an nvim terminal
-	tnoremap <Leader>e <C-\><C-n>
+	tnoremap <leader>e <C-\><C-n>
+
+	" Always enter insert mode when switching to a terminal
+	autocmd BufWinEnter,WinEnter term://* startinsert
 
 	" Tell Neovim.app which Python to use
 	if exists('/usr/local/bin/python')
@@ -231,53 +236,9 @@ if has('nvim')
 	" things like tmux pane focus dimming.
 endif
 
-" netrw
-" ---------------------------------------------------------------------
-" Use tree-style listings by default
-let g:netrw_liststyle = 3
-
 " Supertab
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
-
-" UltiSnips
-" --------------------------------------------------------------------- 
-" augroup ultisnips
-" 	function! OnCompleteDone()
-" 		if !exists('v:completed_item')
-" 			return
-" 		endif
-" 		if has_key(v:completed_item, 'menu') && v:completed_item['menu'] =~ '^<snip> '
-" 			" Completed item was a snippet -- expand it
-" 			call UltiSnips#ExpandSnippet()
-" 		else
-" 			if s:completed_with_enter
-" 				" User pressed enter to end completion, but selection wasn't a
-" 				" snippet, so send an Enter keypress
-" 				execute "normal i \<CR>"
-" 			endif
-" 		endif
-
-" 		" Always clear the completed_with_enter flag
-" 		let s:completed_with_enter = 0
-" 	endfunction
-
-" 	autocmd!
-" 	autocmd CompleteDone * call OnCompleteDone()
-" augroup END
-
-" When Enter is pressed and the completion popup is visible, set a flag
-" indicating that completion was ended and send a C-Y key to perform
-" completion.
-" let s:completed_with_enter = 0
-" function! CompletedWithEnter()
-" 	let s:completed_with_enter = 1
-" 	return "\<C-Y>"
-" endfunction
-" inoremap <expr> <CR> pumvisible() ? CompletedWithEnter() : "\<CR>"
-
-" Set C-J as a backup for snippet expansion
-" let g:UltiSnipsExpandTrigger = "<C-J>"
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -287,12 +248,16 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 " --------------------------------------------------------------------- 
 let g:tss_verbose = 0
 let g:tss_auto_open_loclist = 0
-let g:tss_js = 0
+let g:tss_js = 1
 let g:tss_format_on_save = 0
 
 " YouCompleteMe
 " --------------------------------------------------------------------- 
 let g:ycm_always_populate_location_list = 1
+map <Leader>e :YcmDiags<CR> 
+" disable YCMs diagnostic signs
+" let g:ycm_enable_diagnostic_signs = 0
+" let g:ycm_enable_diagnostic_highlighting = 0
 
 " Plugins
 " ---------------------------------------------------------------------
@@ -306,14 +271,13 @@ Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
-Plug 'tpope/vim-vinegar'              " netrw improvements
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
-"Plug 'neomake/neomake'                " Asynchronous make and error highlighter
 Plug 'w0rp/ale'                		  " Asynchronous linting
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
+Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
 " Completion
 Plug 'Valloric/YouCompleteMe'
@@ -322,9 +286,6 @@ Plug 'Valloric/YouCompleteMe'
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'jason0x43/vim-wildgitignore'
-
-" Snippet management
-" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
 " Session management
 Plug 'tpope/vim-obsession'
@@ -339,13 +300,12 @@ Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-
 Plug 'jason0x43/vim-tss', { 'for': [ 'typescript', 'javascript' ] }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
-
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 
