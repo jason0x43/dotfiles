@@ -488,6 +488,18 @@ zle -N down-line-or-local-history
 bindkey "${key_info[Up]}" up-line-or-local-history
 bindkey "${key_info[Down]}" down-line-or-local-history
 
+# Setup a precmd to let Terminal.app know the CWD
+if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
+	update_cwd () {
+		local SEARCH=' '
+		local REPLACE='%20'
+		local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+		printf '\e]7;%s\a' "$PWD_URL"
+	}
+	[[ -z $precmd_functions ]] && precmd_functions=()
+	precmd_functions=($precmd_functions update_cwd)
+fi
+
 # Prompt
 # ------------------------------------------------------------------------
 autoload -Uz promptinit && promptinit
