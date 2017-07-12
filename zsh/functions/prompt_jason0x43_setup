@@ -192,7 +192,13 @@ zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%F{red}
 zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
 
 # Regular prompt
-PROMPT='[%*] %F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
+remote=""
+
+if [[ -n $SSH_CONNECTION ]]; then
+	remote=" ✆"
+fi
+
+PROMPT='[%*]$remote %F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
 
 # Correction prompt
 SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
