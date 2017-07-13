@@ -500,6 +500,14 @@ if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
 	precmd_functions=($precmd_functions update_cwd)
 fi
 
+# Node
+# ----------------------------------------------------------------------------
+export NVM_NO_USE=true
+source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
+if (( $+commands[npx] )); then
+	source <(/usr/local/bin/npx --shell-auto-fallback zsh)
+fi
+
 # Prompt
 # ------------------------------------------------------------------------
 autoload -Uz promptinit && promptinit

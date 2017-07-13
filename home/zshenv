@@ -1,6 +1,9 @@
 #
 # Defines environment variables before .zshrc is sourced
 #
+# This file should be kept light and fast. Anything that's slow or involves
+# user interaction should go in zshrc.
+#
 
 # Dotfiles
 # ----------------------------------------------------------------------------
@@ -81,14 +84,6 @@ if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
 		$GEM_HOME/bin
 		$path
 	)
-fi
-
-# Node
-# ----------------------------------------------------------------------------
-# export NVM_NO_USE=true
-# source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
-if (( $+commands[npx] )); then
-	source <(/usr/local/bin/npx --shell-auto-fallback zsh)
 fi
 
 # Android
