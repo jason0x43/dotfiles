@@ -28,29 +28,29 @@ endif
 " Set the leader character
 let mapleader=';'
 
-set backupcopy=yes       " Overwrite the original file when saving
-set breakindent          " When lines are broken by linebreak, maintain indent
-set clipboard+=unnamed   " Yank to the system clipboard
-set cmdheight=2          " Keep vim from saying 'Press Enter to continue'
-set undofile             " Use undo files for persistent undo
-set fillchars+=vert:\│   " Make the vertical split bar solid
-set hidden               " Use hidden buffers
-set inccommand=nosplit   " Show live substitutions
-set ignorecase           " Ignore case when searching...
-set smartcase            " ...unless the search is mixed case
-set nojoinspaces         " Only insert 1 space after a period when joining lines
-set nostartofline        " Don't move to the beginning of a line when jumping
-set number               " Show line numbers
-set completeopt-=preview " Don't show the preview window when completing		     
-set scrolloff=5          " Give the cursor a 5 line margin when scrolling
-set shiftwidth=4         " Indent in 4-character wide chunks
-set showcmd              " Show commands in the cmd area
-set tabstop=4            " Tabs are only 4 characters wide
-set formatoptions+=ron   " Automatically format comments and numbered lists
-set ruler				 " Show location info in statusline
-set nowrap				 " Don't wrap text by default
-set wildignorecase       " Case insensitive filename completion
-set lazyredraw           " Redraw less frequently
+set backupcopy=yes           " Overwrite the original file when saving
+set breakindent              " When lines are broken by linebreak, maintain indent
+set clipboard+=unnamedplus   " Yank to the system clipboard
+set cmdheight=2              " Keep vim from saying 'Press Enter to continue'
+set undofile                 " Use undo files for persistent undo
+set fillchars+=vert:\│       " Make the vertical split bar solid
+set hidden                   " Use hidden buffers
+set inccommand=nosplit       " Show live substitutions
+set ignorecase               " Ignore case when searching...
+set smartcase                " ...unless the search is mixed case
+set nojoinspaces             " Only insert 1 space after a period when joining lines
+set nostartofline            " Don't move to the beginning of a line when jumping
+set number                   " Show line numbers
+set completeopt-=preview     " Don't show the preview window when completing		     
+set scrolloff=5              " Give the cursor a 5 line margin when scrolling
+set shiftwidth=4             " Indent in 4-character wide chunks
+set showcmd                  " Show commands in the cmd area
+set tabstop=4                " Tabs are only 4 characters wide
+set formatoptions+=ron       " Automatically format comments and numbered lists
+set ruler				     " Show location info in statusline
+set nowrap				     " Don't wrap text by default
+set wildignorecase           " Case insensitive filename completion
+set lazyredraw               " Redraw less frequently
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
   \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
   \,sm:block-blinkwait175-blinkoff150-blinkon175
@@ -144,6 +144,16 @@ augroup vimrc
 		\ if line("'\"") > 1 && line("'\"") <= line("$") |
 		\     execute "normal! g'\"" |
 		\ endif
+
+	" move line mappings
+	" ∆ is <A-j> on macOS
+	" ˚ is <A-k> on macOS
+	nnoremap ∆ :m .+1<cr>==
+	nnoremap ˚ :m .-2<cr>==
+	inoremap ∆ <Esc>:m .+1<cr>==gi
+	inoremap ˚ <Esc>:m .-2<cr>==gi
+	vnoremap ∆ :m '>+1<cr>gv=gv
+	vnoremap ˚ :m '<-2<cr>gv=gv
 augroup END
 
 " Ale
