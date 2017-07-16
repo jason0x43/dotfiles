@@ -317,13 +317,13 @@ setopt   SHARE_HISTORY          # Share history between all sessions
 # Completion
 setopt   ALWAYS_TO_END          # Move cursor to the end of a completed word
 setopt   AUTO_LIST              # Automatically list choices on ambiguous completion
-setopt   AUTO_MENU              # Show completion menu on a succesive tab press
+#setopt   AUTO_MENU              # Show completion menu on a succesive tab press
 setopt   AUTO_PARAM_SLASH       # If completed parameter is a directory, add a trailing slash
 setopt   COMPLETE_IN_WORD       # Complete from both ends of a word
 setopt   PATH_DIRS              # Perform path search even on command names with slashes
 unsetopt CASE_GLOB              # Make globbing case insensitive
 unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
-unsetopt MENU_COMPLETE          # Do not autoselect the first completion entry
+setopt   MENU_COMPLETE          # Autoselect the first completion entry
 
 # History
 # ------------------------------------------------------------------------
@@ -460,6 +460,8 @@ if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
 
 	# Use a solarized-friendly background color
 	export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+
+	export ZSH_AUTOSUGGEST_USE_ASYNC=1
 
 	# Configure autosuggest to work properly with history substring search;
 	# without this, trying to history-substring-search with an empty line will
