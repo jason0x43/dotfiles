@@ -55,6 +55,7 @@
 [tig]
 	line-graphics = utf-8
 	vertical-split = no
+	commit-order = default
 [tig "color"]
 	cursor = white yellow normal
 [tig "bind"]
@@ -95,3 +96,14 @@
 	enabled = true
 [includeIf "gitdir:~/Documents/Work/projects/"]
 	path = ~/.gitconfig-work
+[color "diff-highlight"]
+	oldNormal = red
+	oldHighlight = red white
+	newNormal = green
+	newHighlight = green white
+[color "diff"]
+	meta = 10 
+	commit = 9 
+	old = red
+	new = green
+	whitespace = red reverse
