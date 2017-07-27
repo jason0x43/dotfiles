@@ -485,8 +485,8 @@ down-line-or-local-history() {
     zle set-local-history 0
 }
 zle -N down-line-or-local-history
-bindkey "${key_info[Up]}" up-line-or-local-history
-bindkey "${key_info[Down]}" down-line-or-local-history
+bindkey '^[[A' up-line-or-local-history
+bindkey '^[[B' down-line-or-local-history
 
 # Setup a precmd to let Terminal.app know the CWD
 if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
