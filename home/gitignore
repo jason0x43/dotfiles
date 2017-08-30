@@ -32,6 +32,7 @@
 # Intern files
 .internrc
 intern-local.js
+intern-local.ts
 selftest.local.sh
 html-report
 local.intern.js
