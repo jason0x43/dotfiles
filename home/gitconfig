@@ -85,7 +85,7 @@
 	autostash = true
 [pager]
 	diff = diff-so-fancy | less --tabs=4 -RFX
-	difftool = true
+	difftool =
 	show = diff-so-fancy | less --tabs=4 -RFX
 	log = diff-so-fancy | less --tabs=4 -RFX
 [interactive]
