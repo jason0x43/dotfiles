@@ -138,6 +138,9 @@ augroup vimrc
 	" Identify files in a zsh/functions directory as zsh scripts
 	autocmd BufRead */zsh/functions/* set filetype=zsh
 
+	" ejs is HTML
+	autocmd BufRead *.ejs set filetype=html
+
 	" When editing a file, jump back to the last edited line if it makes sense
 	" to do so
 	autocmd BufReadPost *
@@ -163,10 +166,16 @@ let g:ale_linters = {
 \   'typescript': ['tslint'],
 \   'go': ['gofmt', 'golint', 'go vet']
 \}
+let g:ale_fixers = {
+	\   'typescript': [ 'prettier' ],
+	\   'javascript': [ 'prettier' ],
+	\}
+let g:ale_javascript_prettier_use_local_config = 1
+
 let g:ale_change_sign_column_color = 1
-" let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
+map <silent> <Leader>t :ALEFix<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -255,18 +264,6 @@ if has('nvim')
 	" things like tmux pane focus dimming.
 endif
 
-" Prettier
-" ---------------------------------------------------------------------
-let g:prettier#config#print_width = 80
-let g:prettier#config#tab_width = 4
-let g:prettier#config#use_tabs = 'true'
-let g:prettier#config#semi = 'true'
-let g:prettier#config#single_quote = 'true' 
-let g:prettier#config#bracket_spacing = 'true' 
-let g:prettier#config#jsx_bracket_same_line = 'false' 
-let g:prettier#config#trailing_comma = 'none'
-"let g:prettier#config#parser = 'babylon'
-
 " Supertab
 " ---------------------------------------------------------------------
 let g:SuperTabDefaultCompletionType = 'context'
@@ -312,11 +309,6 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 
 " Completion
 Plug 'Valloric/YouCompleteMe'
-
-" Code cleanup
-Plug 'mitermayer/vim-prettier', { 
-	\ 'do': 'npm install', 
-	\ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql'] } 
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
