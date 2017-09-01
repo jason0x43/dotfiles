@@ -169,6 +169,9 @@ let g:ale_linters = {
 let g:ale_fixers = {
 	\   'typescript': [ 'prettier' ],
 	\   'javascript': [ 'prettier' ],
+	\   'json': [ 'prettier' ],
+	\   'scss': [ 'prettier' ],
+	\   'stylus': [ 'prettier' ],
 	\}
 let g:ale_javascript_prettier_use_local_config = 1
 
