@@ -275,13 +275,6 @@ let g:SuperTabDefaultCompletionType = 'context'
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
 
-" vim-tss
-" --------------------------------------------------------------------- 
-let g:tss_verbose = 0
-let g:tss_auto_open_loclist = 0
-let g:tss_js = 1
-let g:tss_format_on_save = 0
-
 " YouCompleteMe
 " --------------------------------------------------------------------- 
 let g:ycm_always_populate_location_list = 1
@@ -331,7 +324,6 @@ Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-Plug 'jason0x43/vim-tss', { 'for': [ 'typescript', 'javascript' ] }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
