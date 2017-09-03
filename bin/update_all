@@ -15,7 +15,35 @@ fi
 
 if type npm > /dev/null 2>&1; then
 	printf ">> Updating global npm modules...\n"
-	npm update -g
+	# get list of outdated global packages
+	mods=$(npm outdated -g --parseable | cut -d : -f 2,3,4)
+	for mod in $mods; do
+		# extract current and latest fields
+		IFS=':' read -r -a array <<< "$mod"
+		currentPkg=${array[1]}
+		latestPkg=${array[2]}
+
+		# extract current and latest versions, minus any prerelease tags
+		currentVer=$(echo $currentPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
+		latestVer=$(echo $latestPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
+
+		# read versions into arrays
+		IFS='.' read -r -a current <<< "$currentVer"
+		IFS='.' read -r -a latest <<< "$latestVer"
+
+		# if latest is newer than current, install latest
+		if [ ${latest[0]} -gt ${current[0]} ] || {
+			[ ${latest[0]} -eq ${current[0]} ] &&
+			[ ${latest[1]} -gt ${current[1]} ] || {
+				[ ${latest[0]} -eq ${current[0]} ] &&
+				[ ${latest[1]} -eq ${current[1]} ] &&
+				[ ${latest[2]} -gt ${current[2]} ];
+			};
+		}; then
+			npm install --progress=false -g $latestPkg > /dev/null
+			echo "   $latestPkg"
+		fi
+	done
 fi
 
 if [[ -n $TMUX_PLUGIN_MANAGER_PATH ]]; then
