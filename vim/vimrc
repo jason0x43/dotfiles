@@ -346,7 +346,8 @@ if executable('fzf') && has('nvim')
 	" These mappings depend on the FZF plugin being loaded
 	map <silent> <Leader>f :Files<CR>
 	map <silent> <Leader>b :Buffers<CR>
-	map <silent> <Leader>g :GFiles<CR>
+	" Show untracked files, too
+	map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
 	map <silent> <Leader>s :Snippets<CR>
 	map <silent> <Leader>l :BLines<CR>
 endif
