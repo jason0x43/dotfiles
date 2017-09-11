@@ -268,9 +268,7 @@ if has('nvim')
 	" things like tmux pane focus dimming.
 endif
 
-" Supertab
 " ---------------------------------------------------------------------
-let g:SuperTabDefaultCompletionType = 'context'
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -299,7 +297,6 @@ Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'w0rp/ale'                		  " Asynchronous linting
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
-Plug 'ervandew/supertab'              " Use tab for autocompletion
 Plug 'mbbill/undotree'                " Visualize the undo tree
 " Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
