@@ -268,7 +268,24 @@ if has('nvim')
 	" things like tmux pane focus dimming.
 endif
 
+" tig
 " ---------------------------------------------------------------------
+if has('nvim')
+	function! s:tig()
+		let s:callback = {}
+		let current = expand('%')
+
+		function! s:callback.on_exit(job_id, code, event)
+			bw!
+		endfunction
+
+		below new
+		call termopen('tig status', s:callback)
+		startinsert
+	endfunction
+
+	command! Tig call s:tig()
+endif
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -280,6 +297,10 @@ let g:ycm_always_populate_location_list = 1
 map <Leader>e :YcmDiags<CR> 
 let g:ycm_error_symbol = '✖'
 let g:ycm_warning_symbol = '!!'
+function! s:CustomizeYcmLocationWindow()
+	10wincmd _
+endfunction
+autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
 
 " Plugins
 " ---------------------------------------------------------------------
