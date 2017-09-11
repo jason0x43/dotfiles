@@ -161,9 +161,10 @@ augroup END
 
 " Ale
 " ---------------------------------------------------------------------
+"  Rely on YCM for typescript linting
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['tslint'],
+\   'typescript': [],
 \   'go': ['gofmt', 'golint', 'go vet']
 \}
 let g:ale_fixers = {
@@ -279,9 +280,8 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 " --------------------------------------------------------------------- 
 let g:ycm_always_populate_location_list = 1
 map <Leader>e :YcmDiags<CR> 
-" disable YCMs diagnostic signs
-" let g:ycm_enable_diagnostic_signs = 0
-" let g:ycm_enable_diagnostic_highlighting = 0
+let g:ycm_error_symbol = '✖'
+let g:ycm_warning_symbol = '!!'
 
 " Plugins
 " ---------------------------------------------------------------------
