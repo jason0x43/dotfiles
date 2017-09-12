@@ -27,6 +27,11 @@ if type npm > /dev/null 2>&1; then
 		currentVer=$(echo $currentPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
 		latestVer=$(echo $latestPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
 
+		if [ $latestVer == 'linked' ]; then
+			echo "   skipping $latestPkg"
+			continue
+		fi
+
 		# read versions into arrays
 		IFS='.' read -r -a current <<< "$currentVer"
 		IFS='.' read -r -a latest <<< "$latestVer"
