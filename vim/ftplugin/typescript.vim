@@ -8,7 +8,6 @@ if !get(s:, 'ts_init', 0)
 
 	function s:prettierCheck(job_id, code, event)
 		if a:code == 0
-			echom 'set has_prettier'
 			let b:has_prettier = 1
 		endif
 	endfunction
@@ -17,6 +16,11 @@ if !get(s:, 'ts_init', 0)
 		if !get(b:, 'has_prettier', 0)
 			return
 		endif
+
+		" Maintains cursor position when undoing a prettification
+		" See http://vim.wikia.com/wiki/Restore_the_cursor_position_after_undoing_text_change_made_by_a_script
+		normal! ix
+		normal! x
 
 		let l:view = winsaveview()
 		execute "%! prettier --stdin --stdin-filepath %"
@@ -28,10 +32,14 @@ endif
 if !get(b:, 'ts_init', 0)
 	let b:ts_init = 1
 
-	command -buffer Definition :YcmCompleter GoToDefinition
+	command -buffer Def :YcmCompleter GoToDefinition
+	command -buffer Refs :YcmCompleter GoToReferences
 	command -buffer -nargs=1 -complete=custom,s:completeCursorWord Rename :YcmCompleter RefactorRename <args>
 
-	autocmd BufWritePre <buffer> call s:prettierSave()
+	augroup TsCmds
+		autocmd! * <buffer>
+		autocmd BufWritePre <buffer> call s:prettierSave()
+	augroup END
 
 	let job = jobstart(['prettier', '--find-config-path', expand('<afile>')], {
 		\ 'on_exit': function('s:prettierCheck')
