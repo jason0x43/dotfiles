@@ -319,20 +319,21 @@ autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
 " ---------------------------------------------------------------------
 call plug#begin('~/.vim/plugged')
 
-Plug 'sgur/vim-editorconfig'          " EditorConfig
-Plug 'tpope/vim-commentary'           " gc for commenting code blocks
-Plug 'tpope/vim-eunuch'               " POSIX command wrappers
-Plug 'tpope/vim-flagship'             " Status line configuration
-Plug 'tpope/vim-fugitive'             " Git utilities
-Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
-Plug 'tpope/vim-repeat'               " support for repeating mapped commands
-Plug 'tpope/vim-surround'             " for manipulating parens and such
-Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
-Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
-Plug 'w0rp/ale'                		  " Asynchronous linting
-Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
-Plug 'junegunn/limelight.vim'         " Easy vertical alignment of code elements
-Plug 'mbbill/undotree'                " Visualize the undo tree
+Plug 'sgur/vim-editorconfig'               " EditorConfig
+Plug 'tpope/vim-commentary'                " gc for commenting code blocks
+Plug 'tpope/vim-eunuch'                    " POSIX command wrappers
+Plug 'tpope/vim-flagship'                  " Status line configuration
+Plug 'tpope/vim-fugitive'                  " Git utilities
+Plug 'tpope/vim-unimpaired'                " useful pairs of mappings
+Plug 'tpope/vim-repeat'                    " support for repeating mapped commands
+Plug 'tpope/vim-surround'                  " for manipulating parens and such
+Plug 'moll/vim-bbye'                       " Preserve layout when closing buffers
+Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
+Plug 'w0rp/ale'                            " Asynchronous linting
+Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
+Plug 'junegunn/limelight.vim'              " Easy vertical alignment of code elements
+Plug 'mbbill/undotree'                     " Visualize the undo tree
+Plug 'tmux-plugins/vim-tmux-focus-events'  "Emit focus events in console vim
 " Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
 " Completion
