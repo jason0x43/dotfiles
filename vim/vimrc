@@ -296,6 +296,14 @@ endif
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
 
+" vim-autoprettier
+" --------------------------------------------------------------------- 
+let g:autoprettier_types = [
+	\ 'typescript',
+	\ 'javascript',
+	\ 'json'
+	\ ]
+
 " YouCompleteMe
 " --------------------------------------------------------------------- 
 let g:ycm_always_populate_location_list = 1
@@ -350,6 +358,7 @@ Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+Plug 'jason0x43/vim-autoprettier'
 Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
