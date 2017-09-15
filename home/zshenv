@@ -43,10 +43,6 @@ while read line; do
 	manpath+=$line
 done < /etc/manpaths
 
-if [[ -e ~/Library/Python/2.7/bin ]]; then 
-	path=(~/Library/Python/2.7/bin $path)
-fi
-
 if [ -x /usr/libexec/path_helper ]; then
 	eval `/usr/libexec/path_helper -s`
 fi
@@ -65,6 +61,35 @@ if [[ -z "$JAVA_HOME" ]]; then
 	fi
 fi
 
+# Ruby
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
+	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
+	path=(
+		$GEM_HOME/bin
+		$path
+	)
+fi
+
+# Rust
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/.cargo/bin ]]; then
+	path=(
+		$HOME/.cargo/bin
+		$path
+	)
+fi
+
+# Python
+# ----------------------------------------------------------------------------
+if [[ -e $HOME/Library/Python/2.7/bin ]]; then 
+	path=(
+		$HOME/Library/Python/2.7/bin
+		$path
+	)
+fi
+
+
 # Go
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
@@ -74,16 +99,6 @@ if (( $+commands[go] )); then
 	esac
 	path=(
 		$GOPATH/bin
-		$path
-	)
-fi
-
-# Ruby
-# ----------------------------------------------------------------------------
-if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
-	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
-	path=(
-		$GEM_HOME/bin
 		$path
 	)
 fi
