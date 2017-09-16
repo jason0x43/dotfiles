@@ -2,6 +2,14 @@
 " terminal mode, it assumes that the terminal palette will be adjusted for
 " light vs dark modes, so the color palette here will not need to be updated.
 
+hi clear
+
+if exists('syntax_on')
+	syntax reset
+endif
+
+let colors_name = 'solarized'
+
 " ---------------------------------------------------------------------
 " COLOR VALUES
 " ---------------------------------------------------------------------
