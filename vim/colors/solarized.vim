@@ -35,7 +35,7 @@ let colors_name = 'solarized'
 " green     | #859900 |  2 | green     | 133 153   0 |  68 100  60
 
 " Configure a highlight group
-function s:highlight(group, style, fg, bg)
+function! s:highlight(group, style, fg, bg)
 	let l:guifg = eval('s:gui_' . a:fg)
 	let l:guibg = eval('s:gui_' . a:bg)
 	let l:ctermfg = eval('s:cterm_' . a:fg)
@@ -108,22 +108,20 @@ let g:terminal_color_13 = s:gui_violet
 let g:terminal_color_14 = s:gui_base1
 let g:terminal_color_15 = s:gui_base3
 
-" Basic highlighting
+" Group links
 " ---------------------------------------------------------------------
-call s:highlight('Comment',      'italic',    'base1',   'NONE')
-call s:highlight('Constant',     'NONE',      'cyan',    'NONE')
-call s:highlight('Error',        'NONE',      'red',     'NONE')
-call s:highlight('Identifier',   'NONE',      'blue',    'NONE')
-call s:highlight('Ignore',       'NONE',      'NONE',    'NONE')
-call s:highlight('Normal',       'NONE',      'base00',  'base3')
-call s:highlight('PreProc',      'NONE',      'orange',  'NONE')
-call s:highlight('Special',      'NONE',      'red',     'NONE')
-call s:highlight('Statement',    'NONE',      'green',   'NONE')
-call s:highlight('Todo',         'NONE',      'magenta', 'NONE')
-call s:highlight('Type',         'NONE',      'yellow',  'NONE')
-call s:highlight('Underlined',   'underline', 'violet',  'NONE')
+hi link lCursor           Cursor
 
-" Extended highlighting
+hi link vimFunc           Function
+hi link vimUserFunc       Function
+hi link vipmVar           Identifier
+
+hi link diffAdded         Statement
+hi link diffLine          Identifier
+
+hi link helpHyperTextJump Underlined
+
+" Extended colors
 " ---------------------------------------------------------------------
 call s:highlight('ColorColumn',  'NONE',      'NONE',    'base2')
 call s:highlight('Conceal',      'NONE',      'blue',    'NONE')
@@ -170,15 +168,43 @@ call s:highlight('WarningMsg',   'NONE',      'orange',  'NONE')
 call s:highlight('WarningSign',  'NONE',      'yellow',  'base2')
 call s:highlight('WildMenu',     'NONE',      'base02',  'base2')
 
-" Group links
-" ---------------------------------------------------------------------
-hi link lCursor           Cursor
+" Enable the solarized palette
+function! s:solarize(bang)
+	if a:bang == ""
+		let l:normal_bg = 'NONE'
+		if has("gui")
+			let l:normal_bg = 'base3'
+		endif
 
-hi link vimFunc           Function
-hi link vimUserFunc       Function
-hi link vipmVar           Identifier
+		call s:highlight('Comment',      'italic',    'base1',   'NONE')
+		call s:highlight('Constant',     'NONE',      'cyan',    'NONE')
+		call s:highlight('Error',        'NONE',      'red',     'NONE')
+		call s:highlight('Identifier',   'NONE',      'blue',    'NONE')
+		call s:highlight('Ignore',       'NONE',      'NONE',    'NONE')
+		call s:highlight('Normal',       'NONE',      'base00',  l:normal_bg)
+		call s:highlight('PreProc',      'NONE',      'orange',  'NONE')
+		call s:highlight('Special',      'NONE',      'red',     'NONE')
+		call s:highlight('Statement',    'NONE',      'green',   'NONE')
+		call s:highlight('Todo',         'NONE',      'magenta', 'NONE')
+		call s:highlight('Type',         'NONE',      'yellow',  'NONE')
+		call s:highlight('Underlined',   'underline', 'violet',  'NONE')
+	else
+		" Dim the palette
+		call s:highlight('Comment',    'italic',    'base1', 'NONE')
+		call s:highlight('Constant',   'NONE',      'base1', 'NONE')
+		call s:highlight('Error',      'NONE',      'base1', 'NONE')
+		call s:highlight('Identifier', 'NONE',      'base1', 'NONE')
+		call s:highlight('Ignore',     'NONE',      'base1', 'NONE')
+		call s:highlight('Normal',     'NONE',      'base1', 'NONE')
+		call s:highlight('PreProc',    'NONE',      'base1', 'NONE')
+		call s:highlight('Special',    'NONE',      'base1', 'NONE')
+		call s:highlight('Statement',  'NONE',      'base1', 'NONE')
+		call s:highlight('Todo',       'NONE',      'base1', 'NONE')
+		call s:highlight('Type',       'NONE',      'base1', 'NONE')
+		call s:highlight('Underlined', 'underline', 'base1', 'NONE')
+	endif
+endfunction
 
-hi link diffAdded         Statement
-hi link diffLine          Identifier
+command! -bang Solarize call s:solarize('<bang>')
 
-hi link helpHyperTextJump Underlined
+call s:solarize("")

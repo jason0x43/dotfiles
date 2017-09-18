@@ -395,19 +395,6 @@ filetype plugin indent on
 syn on
 colorscheme solarized
 
-function s:focusLost()
-	let s:syn_state = &syntax
-	set syntax=off
-	hi Normal ctermfg=14
-endfunction
-
-function s:focusGained()
-	if exists('s:syn_state') && s:syn_state != ''
-		set syntax=on
-	endif
-	hi Normal ctermfg=11
-endfunction
-
 " Dim text when vim loses focus
-autocmd FocusLost * call s:focusLost()
-autocmd FocusGained * call s:focusGained()
+autocmd FocusLost * Solarize!
+autocmd FocusGained * Solarize
