@@ -333,7 +333,6 @@ Plug 'w0rp/ale'                            " Asynchronous linting
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'junegunn/limelight.vim'              " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
-Plug 'tmux-plugins/vim-tmux-focus-events'  "Emit focus events in console vim
 " Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
 " Completion
@@ -394,7 +393,3 @@ call plug#end()
 filetype plugin indent on
 syn on
 colorscheme solarized
-
-" Dim text when vim loses focus
-autocmd FocusLost * Solarize!
-autocmd FocusGained * Solarize

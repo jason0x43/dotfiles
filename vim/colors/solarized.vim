@@ -171,37 +171,41 @@ call s:highlight('WildMenu',     'NONE',      'base02',  'base2')
 " Enable the solarized palette
 function! s:solarize(bang)
 	if a:bang == ""
+		" The gui needs to explicitly set fg/bg colors, but terminal mode
+		" should just use the defaults from the terminal
 		let l:normal_bg = 'NONE'
+		let l:normal_fg = 'NONE'
 		if has("gui")
 			let l:normal_bg = 'base3'
+			let l:normal_fg = 'base00'
 		endif
 
-		call s:highlight('Comment',      'italic',    'base1',   'NONE')
-		call s:highlight('Constant',     'NONE',      'cyan',    'NONE')
-		call s:highlight('Error',        'NONE',      'red',     'NONE')
-		call s:highlight('Identifier',   'NONE',      'blue',    'NONE')
-		call s:highlight('Ignore',       'NONE',      'NONE',    'NONE')
-		call s:highlight('Normal',       'NONE',      'base00',  l:normal_bg)
-		call s:highlight('PreProc',      'NONE',      'orange',  'NONE')
-		call s:highlight('Special',      'NONE',      'red',     'NONE')
-		call s:highlight('Statement',    'NONE',      'green',   'NONE')
-		call s:highlight('Todo',         'NONE',      'magenta', 'NONE')
-		call s:highlight('Type',         'NONE',      'yellow',  'NONE')
-		call s:highlight('Underlined',   'underline', 'violet',  'NONE')
+		call s:highlight('Comment',    'italic',    'base1',     'NONE')
+		call s:highlight('Constant',   'NONE',      'cyan',      'NONE')
+		call s:highlight('Error',      'NONE',      'red',       'NONE')
+		call s:highlight('Identifier', 'NONE',      'blue',      'NONE')
+		call s:highlight('Ignore',     'NONE',      'NONE',      'NONE')
+		call s:highlight('Normal',     'NONE',      l:normal_fg, l:normal_bg)
+		call s:highlight('PreProc',    'NONE',      'orange',    'NONE')
+		call s:highlight('Special',    'NONE',      'red',       'NONE')
+		call s:highlight('Statement',  'NONE',      'green',     'NONE')
+		call s:highlight('Todo',       'NONE',      'magenta',   'NONE')
+		call s:highlight('Type',       'NONE',      'yellow',    'NONE')
+		call s:highlight('Underlined', 'underline', 'violet',    'NONE')
 	else
 		" Dim the palette
-		call s:highlight('Comment',    'italic',    'base1', 'NONE')
-		call s:highlight('Constant',   'NONE',      'base1', 'NONE')
-		call s:highlight('Error',      'NONE',      'base1', 'NONE')
-		call s:highlight('Identifier', 'NONE',      'base1', 'NONE')
-		call s:highlight('Ignore',     'NONE',      'base1', 'NONE')
-		call s:highlight('Normal',     'NONE',      'base1', 'NONE')
-		call s:highlight('PreProc',    'NONE',      'base1', 'NONE')
-		call s:highlight('Special',    'NONE',      'base1', 'NONE')
-		call s:highlight('Statement',  'NONE',      'base1', 'NONE')
-		call s:highlight('Todo',       'NONE',      'base1', 'NONE')
-		call s:highlight('Type',       'NONE',      'base1', 'NONE')
-		call s:highlight('Underlined', 'underline', 'base1', 'NONE')
+		call s:highlight('Comment',    'italic',    'base1',     'NONE')
+		call s:highlight('Constant',   'NONE',      'base1',     'NONE')
+		call s:highlight('Error',      'NONE',      'base1',     'NONE')
+		call s:highlight('Identifier', 'NONE',      'base1',     'NONE')
+		call s:highlight('Ignore',     'NONE',      'base1',     'NONE')
+		call s:highlight('Normal',     'NONE',      'base1',     'NONE')
+		call s:highlight('PreProc',    'NONE',      'base1',     'NONE')
+		call s:highlight('Special',    'NONE',      'base1',     'NONE')
+		call s:highlight('Statement',  'NONE',      'base1',     'NONE')
+		call s:highlight('Todo',       'NONE',      'base1',     'NONE')
+		call s:highlight('Type',       'NONE',      'base1',     'NONE')
+		call s:highlight('Underlined', 'underline', 'base1',     'NONE')
 	endif
 endfunction
 
