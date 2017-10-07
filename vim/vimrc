@@ -127,8 +127,8 @@ augroup vimrc
 	autocmd FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
 	" Close help files and quickfix panes on 'q'
-	autocmd FileType help nnoremap <silent> q :bd<CR>
-	autocmd FileType qf nnoremap <silent> q :bd<CR>
+	autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
+	autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
 
 	autocmd BufEnter * syntax sync fromstart
 
