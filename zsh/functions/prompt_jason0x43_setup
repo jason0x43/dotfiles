@@ -195,7 +195,7 @@ zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
 remote=""
 
 if [[ -n $SSH_CONNECTION ]]; then
-	remote=" ✆"
+	remote=" <$HOST>"
 fi
 
 PROMPT='[%*]$remote %F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
