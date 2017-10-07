@@ -401,9 +401,14 @@ fi
 # https://github.com/zsh-users/zsh-syntax-highlighting
 if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
 	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+elif [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+	source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else
 	echo "zsh-syntax-highlighting missing"
+fi
+
+if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
+	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 fi
 
 # History substring search -- load this after zsh-syntax-highlighting
