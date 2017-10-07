@@ -130,6 +130,7 @@ augroup vimrc
 	autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
 	autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
 
+	" More predictable syntax highlighting
 	autocmd BufEnter * syntax sync fromstart
 
 	" Automatically close preview windows after autocompletion
@@ -342,7 +343,9 @@ Plug 'mbbill/undotree'                     " Visualize the undo tree
 " Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
 " Completion
-Plug 'Valloric/YouCompleteMe'
+if has('python') || has('python3')
+	Plug 'Valloric/YouCompleteMe'
+endif
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
