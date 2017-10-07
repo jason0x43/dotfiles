@@ -5,7 +5,7 @@
 remote=$1
 branch=$(git rev-parse --abbrev-ref HEAD)
 
-if [[ -z $remote ]]; then 
+if [ -z $remote ]; then 
 	remote="origin"
 fi
 
