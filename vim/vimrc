@@ -304,6 +304,7 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 let g:autoprettier_types = [
 	\ 'typescript',
 	\ 'javascript',
+	\ 'jsoncfg',
 	\ 'json'
 	\ ]
 
