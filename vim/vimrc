@@ -318,6 +318,8 @@ function! s:CustomizeYcmLocationWindow()
 	10wincmd _
 endfunction
 autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
+" auto-close the quickfix window when YCM opens it
+autocmd User YcmQuickFixOpened q
 
 " Plugins
 " ---------------------------------------------------------------------
