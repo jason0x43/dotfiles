@@ -4,3 +4,4 @@
 [submodule "zsh/zsh-nvm"]
 	path = zsh/zsh-nvm
 	url = https://github.com/lukechilds/zsh-nvm.git
+	branch = master

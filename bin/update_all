@@ -58,7 +58,7 @@ if [[ -n $TMUX_PLUGIN_MANAGER_PATH ]]; then
 		cd $plugin 
 		head=$(git rev-parse HEAD)
 		git pull -q --recurse-submodules
-		git submodule update
+		git submodule update --remote
 		if [[ $(git rev-parse HEAD) != $head ]]; then 
 			printf "   $plugin\n"
 		fi
