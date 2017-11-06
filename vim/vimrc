@@ -373,6 +373,7 @@ Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
+Plug 'prettier/vim-prettier'
 
 " Load the go plugin if go is available
 if executable('go')
