@@ -6,26 +6,35 @@ git_clone_error_msg() {
 }
 
 # Simplest dependency fetcher known to mankind
-if [[ "$1" == "update" ]]; then
+if [[ $1 == "update" ]]; then
+  for name in ${(@k)plugins}; do
+    local cwd=$(pwd)
+    local dest=$plugins[$name]
+    cd $dest/$name
+    echo -e "${Yel}Updating${Rst} ${Green}${name}${Rst}..."
+    git pull --quiet --recurse-submodules
+    cd $cwd
+  done
+elif [[ $1 == "ls" ]]; then
+  for name in ${(@k)plugins}; do
+    echo -e "${name}: ${Yel}$plugins[$name]${Rst}"
+  done
+else
+  local dest="$1"
   local name="$2"
   local cwd=$(pwd)
-  cd $ZPLUGDIR/$name
-  echo -e "${Yel}Updating${Rst} ${Green}${name}${Rst}..."
-  git pull --recurse-submodules
-  cd $cwd
-else
-  local name="$1"
-  local cwd=$(pwd)
-  cd $ZPLUGDIR
+  plugins[$name]=$dest
+  cd $dest
   if [[ ! -d $name ]]; then
     local url=https://github.com/$name
-    local ref=$2
+    local ref=$3
     echo -e "Missing plugin ${Yel}${name}${Rst}"
     echo -e "  Cloning from ${Blu}${url}${Rst}..."
     if [[ -n $ref ]]; then
       git clone --quiet $url $name
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
+        cd $cwd
         return $?
       fi
 
@@ -35,6 +44,7 @@ else
       git clone --quiet --depth 1 $url $name
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
+        cd $cwd
         return $?
       fi
       echo -e "  Checked out master"

@@ -4,6 +4,10 @@ if [[ -d $DOTFILES/zsh/functions ]]; then
 	for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
+# Create an array to hold plugin references
+# ------------------------------------------------------------------------
+typeset -A plugins
+
 # Turn on color for everything
 # ------------------------------------------------------------------------
 zstyle ':zconf:*:*' color 'yes'
@@ -412,7 +416,7 @@ fi
 # ------------------------------------------------------------------------
 # Syntax highlighting -- this should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
-zfetch zdharma/fast-syntax-highlighting
+zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 if [[ $? == 0 ]]; then
 	source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 	if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
@@ -422,7 +426,7 @@ fi
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
-zfetch zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 if [[ $? == 0 ]]; then
 	source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 	# Color for found substrings
@@ -460,7 +464,7 @@ fi
 
 # autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
 # (https://github.com/tarruda/zsh-autosuggestions)
-zfetch zsh-users/zsh-autosuggestions
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 if [[ $? == 0 ]]; then
 	source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
@@ -518,11 +522,18 @@ fi
 # Node
 # ----------------------------------------------------------------------------
 export NVM_NO_USE=true
-zfetch lukechilds/zsh-nvm
+zfetch $ZPLUGDIR lukechilds/zsh-nvm
 source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
 if (( $+commands[npx] )); then
 	source <(npx --shell-auto-fallback zsh)
 fi
+
+# TPM
+# ------------------------------------------------------------------------
+if [[ ! -d ~/.tmux ]]; then
+	mkdir ~/.tmux
+fi
+zfetch ~/.tmux tmux-plugins/tpm
 
 # Prompt
 # ------------------------------------------------------------------------
