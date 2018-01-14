@@ -348,14 +348,15 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 # ------------------------------------------------------------------------
 # Load NPM completion
 if (( $+commands[npm] )); then
-	cache_file="$ZCACHEDIR/npm.zsh"
+	npm_completer="$DOTFILES/zsh/npm.zsh"
 
-	if [[ "$commands[npm]" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+	if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
+		echo "npm has been upgraded; update npm.zsh"
 		# npm is slow; cache its output.
-		npm completion >! "$cache_file" 2> /dev/null
+		# npm completion >! "$cache_file" 2> /dev/null
 	fi
 
-	source "$cache_file"
+	source "$npm_completer"
 	unset cache_file
 fi
 
