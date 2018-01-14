@@ -9,6 +9,18 @@ fi
 zstyle ':zconf:*:*' color 'yes'
 autoload -Uz colors && colors
 
+# Terminal colors
+TC='\e['
+Rst="${TC}0m"
+Blk="${TC}30m";
+Red="${TC}31m";
+Grn="${TC}32m";
+Yel="${TC}33m";
+Blu="${TC}34m";
+Prp="${TC}35m";
+Cyn="${TC}36m";
+Wht="${TC}37m";
+
 # Completions
 # ------------------------------------------------------------------------
 # Load and initialize the completion system, ignoring insecure directories
@@ -399,23 +411,19 @@ fi
 # ------------------------------------------------------------------------
 # Syntax highlighting -- this should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
-if [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-	source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else
-	echo "zsh-syntax-highlighting missing"
-fi
-
-if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
-	ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+zfetch zdharma/fast-syntax-highlighting
+if [[ $? == 0 ]]; then
+	source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+	if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
+		ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+	fi
 fi
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
-if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
-	source /usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh
-
+zfetch zsh-users/zsh-history-substring-search
+if [[ $? == 0 ]]; then
+	source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 	# Color for found substrings
 	zstyle -s ':zconf:module:history-substring-search:color' \
 		found \
@@ -447,14 +455,13 @@ if [[ -f /usr/local/opt/zsh-history-substring-search/zsh-history-substring-searc
 	# Make history keybindings search
 	bindkey -M vicmd "k" history-substring-search-up
 	bindkey -M vicmd "j" history-substring-search-down
-else
-	echo "zsh-history-substring-search missing"
 fi
 
 # autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
 # (https://github.com/tarruda/zsh-autosuggestions)
-if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-	source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+zfetch zsh-users/zsh-autosuggestions
+if [[ $? == 0 ]]; then
+	source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 	# Let vi keys jump through the suggestion
 	bindkey '^f' vi-forward-word
@@ -471,8 +478,6 @@ if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
 	# hang zsh
 	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 	ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-else
-	echo "zsh-autosuggestions missing"
 fi
 
 # History key bindings
@@ -512,7 +517,8 @@ fi
 # Node
 # ----------------------------------------------------------------------------
 export NVM_NO_USE=true
-source $DOTFILES/zsh/zsh-nvm/zsh-nvm.plugin.zsh
+zfetch lukechilds/zsh-nvm
+source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
 if (( $+commands[npx] )); then
 	source <(npx --shell-auto-fallback zsh)
 fi

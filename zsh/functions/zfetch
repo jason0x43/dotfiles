@@ -1,0 +1,44 @@
+# This code was originally from
+# https://github.com/ninrod/dotfiles/boot/functions.zsh
+
+git_clone_error_msg() {
+  echo -e "  ${Red}[ERROR]${Rst} git clone errored: ${Red}${1}${Rst}. ${Yel}aborting...${Rst}"
+}
+
+# Simplest dependency fetcher known to mankind
+if [[ "$1" == "update" ]]; then
+  local name="$2"
+  local cwd=$(pwd)
+  cd $ZPLUGDIR/$name
+  echo -e "${Yel}Updating${Rst} ${Green}${name}${Rst}..."
+  git pull --recurse-submodules
+  cd $cwd
+else
+  local name="$1"
+  local cwd=$(pwd)
+  cd $ZPLUGDIR
+  if [[ ! -d $name ]]; then
+    local url=https://github.com/$name
+    local ref=$2
+    echo -e "Missing plugin ${Yel}${name}${Rst}"
+    echo -e "  Cloning from ${Blu}${url}${Rst}..."
+    if [[ -n $ref ]]; then
+      git clone --quiet $url $name
+      if [[ $? != 0 ]]; then
+        git_clone_error_msg $?
+        return $?
+      fi
+
+      git checkout --quiet $ref
+      echo -e "  Checked out branch ${ref}"
+    else
+      git clone --quiet --depth 1 $url $name
+      if [[ $? != 0 ]]; then
+        git_clone_error_msg $?
+        return $?
+      fi
+      echo -e "  Checked out master"
+    fi
+  fi
+  cd $cwd
+fi

@@ -28,6 +28,9 @@ export CACHEDIR="$HOME/.local/share"
 export ZCACHEDIR="$CACHEDIR/zsh"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+[[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
+
 if [[ -d "$TMPDIR" ]]; then
 	export TMPPREFIX="${TMPDIR%/}/zsh"
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
