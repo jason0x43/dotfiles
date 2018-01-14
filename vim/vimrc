@@ -171,19 +171,19 @@ let g:ale_linters = {
 \   'typescript': [],
 \   'go': ['gofmt', 'golint', 'go vet']
 \}
-let g:ale_fixers = {
-	\   'typescript': [ 'prettier' ],
-	\   'javascript': [ 'prettier' ],
-	\   'json': [ 'prettier' ],
-	\   'scss': [ 'prettier' ],
-	\   'stylus': [ 'prettier' ],
-	\}
-let g:ale_javascript_prettier_use_local_config = 1
+" let g:ale_fixers = {
+" 	\   'typescript': [ 'prettier' ],
+" 	\   'javascript': [ 'prettier' ],
+" 	\   'json': [ 'prettier' ],
+" 	\   'scss': [ 'prettier' ],
+" 	\   'stylus': [ 'prettier' ],
+" 	\}
+" let g:ale_javascript_prettier_use_local_config = 1
 
 let g:ale_change_sign_column_color = 1
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
-map <silent> <Leader>t :ALEFix<cr>
+" map <silent> <Leader>t :ALEFix<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -305,8 +305,8 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 let g:autoprettier_types = [
 	\ 'typescript',
 	\ 'javascript',
-	\ 'jsoncfg',
-	\ 'json'
+	\ ]
+let g:autoprettier_exclude = [
 	\ ]
 
 " YouCompleteMe
