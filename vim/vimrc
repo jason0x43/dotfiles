@@ -373,8 +373,9 @@ Plug 'dag/vim-fish', { 'for': 'fish' }
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
-Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+" Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
+" Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
+Plug 'pangloss/vim-javascript', { 'for':  [ 'javascript', 'javascript.jsx', 'markdown' ] }
 Plug 'mxw/vim-jsx', {'for': [ 'javascript.jsx', 'markdown' ] } 
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
