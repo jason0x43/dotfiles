@@ -91,6 +91,9 @@ if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
 				printf "   problem updating $plugin\n"
 			else
 				if [[ $(git rev-parse HEAD) != $head ]]; then 
+					if [[ -e package.json ]]; then
+						npm install --silent
+					fi
 					printf "   $plugin\n"
 				fi
 			fi
