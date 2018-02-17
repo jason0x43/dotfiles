@@ -227,7 +227,10 @@ let g:markdown_fenced_languages = [
 \	'html',
 \	'python',
 \	'sh',
-\	'js=javascript'
+\	'js=javascript',
+\	'jsx=javascript.jsx',
+\	'ts=typescript',
+\	'tsx=typescript.tsx',
 \ ]
 
 " miniyank
@@ -358,7 +361,8 @@ Plug 'tpope/vim-obsession'
 " Filetype plugins
 Plug 'keith/swift.vim', { 'for': 'swift' }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'leafgarland/typescript-vim', { 'for': [ 'typescript', 'markdown' ] }
+Plug 'ianks/vim-tsx', { 'for': [ 'typescript', 'markdown' ] }
 Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
 Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
@@ -368,7 +372,7 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
 Plug 'jason0x43/vim-autoprettier'
-Plug 'mxw/vim-jsx', {'for': 'javascript.jsx'} 
+Plug 'mxw/vim-jsx', {'for': [ 'javascript.jsx', 'markdown' ] } 
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
