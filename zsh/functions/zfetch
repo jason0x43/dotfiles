@@ -10,8 +10,8 @@ if [[ $1 == "update" ]]; then
   for name in ${(@k)plugins}; do
     local cwd=$(pwd)
     local dest=$plugins[$name]
-    cd $dest/$name
-    echo -e "${Yel}Updating${Rst} ${Green}${name}${Rst}..."
+    cd $dest
+    echo -e "Updating ${Yel}${name}${Rst}..."
     git pull --quiet --recurse-submodules
     cd $cwd
   done
@@ -20,18 +20,26 @@ elif [[ $1 == "ls" ]]; then
     echo -e "${name}: ${Yel}$plugins[$name]${Rst}"
   done
 else
+  # where the repo is going
   local dest="$1"
+  # the short name of the repo (org/repo)
   local name="$2"
+
+  # if the dest dir ends with /, append the name to it to get the real dest dir
+  if [[ $dest == */ ]]; then
+	  dest=$dest$name
+  fi
+
   local cwd=$(pwd)
   plugins[$name]=$dest
-  cd $dest
-  if [[ ! -d $name ]]; then
+
+  if [[ ! -d $dest ]]; then
     local url=https://github.com/$name
     local ref=$3
     echo -e "Missing plugin ${Yel}${name}${Rst}"
     echo -e "  Cloning from ${Blu}${url}${Rst}..."
     if [[ -n $ref ]]; then
-      git clone --quiet $url $name
+      git clone --quiet $url $dest
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
         cd $cwd
@@ -41,7 +49,7 @@ else
       git checkout --quiet $ref
       echo -e "  Checked out branch ${ref}"
     else
-      git clone --quiet --depth 1 $url $name
+      git clone --quiet --depth 1 $url $dest
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
         cd $cwd

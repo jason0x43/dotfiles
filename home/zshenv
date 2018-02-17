@@ -7,7 +7,7 @@
 
 # Dotfiles
 # ----------------------------------------------------------------------------
-export DOTFILES=~/.dotfiles
+export DOTFILES=$HOME/.dotfiles
 
 # Editors
 # ----------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export CACHEDIR="$HOME/.local/share"
 export ZCACHEDIR="$CACHEDIR/zsh"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+export ZPLUGDIR="$CACHEDIR/zsh/plugins/"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -94,7 +94,6 @@ if [[ -e $HOME/Library/Python/2.7/bin ]]; then
 	)
 fi
 
-
 # Go
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
@@ -124,7 +123,7 @@ path=(
 
 # Local config
 # --------------------------------------------------------------------------
-[[ -f ~/.config/zsh/zshenv ]] && source ~/.config/zsh/zshenv
+[[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
 
 # Disable global zprofile, which messes with the path
 unsetopt GLOBAL_RCS
