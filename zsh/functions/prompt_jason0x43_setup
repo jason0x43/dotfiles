@@ -53,12 +53,18 @@ function git-info() {
 	fi
 
 	local reference
+	local stash
 
 	# Get the branch
 	local branch
 	branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
 
 	if [[ -n "$branch" ]]; then
+		git stash list | grep ": WIP on $branch:" > /dev/null
+		if (( !$? )); then
+			stash="+"
+		fi
+
 		# Format branch
 		local branch_format
 		zstyle -s ':zconf:module:git:info:branch' format 'branch_format'
@@ -96,7 +102,7 @@ function git-info() {
 	local info_format
 	zstyle -a ':zconf:module:git:info:keys' format 'info_formats'
 	for info_format in ${(k)info_formats}; do
-		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "m:$modified"
+		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "m:$modified" "s:$stash"
 		git_info[$info_format]="$REPLY"
 	done
 
@@ -186,7 +192,7 @@ zstyle ':zconf:module:git:info'        verbose 'yes'
 zstyle ':zconf:module:git:info:branch' format  ':%F{green}%b%f'
 zstyle ':zconf:module:git:info:tag'    format  ':#%F{green}%t%f'
 zstyle ':zconf:module:git:info:commit' format  ':%F{green}%.7c%f'
-zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%F{red}%m%f%s'
+zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%F{red}%m%f%F{blue}%s%f'
 
 # Set node-info formats
 zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
