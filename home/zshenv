@@ -113,6 +113,15 @@ if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
 fi
 
+# TeX
+# ------------------------------------------------------------------------
+if [[ -e /usr/local/texlive ]]; then 
+	path=(
+		/usr/local/texlive/2017/bin/x86_64-darwin
+		$path
+	)
+fi
+
 # Path
 # ------------------------------------------------------------------------
 path=(
