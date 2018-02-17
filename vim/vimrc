@@ -308,6 +308,9 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 let g:autoprettier_types = [
 	\ 'typescript',
 	\ 'javascript',
+	\ 'css',
+	\ 'markdown',
+	\ 'scss',
 	\ ]
 let g:autoprettier_exclude = [
 	\ ]
@@ -343,6 +346,7 @@ Plug 'w0rp/ale'                            " Asynchronous linting
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'junegunn/limelight.vim'              " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
+Plug 'jason0x43/vim-autoprettier'
 " Plug 'bfredl/nvim-miniyank'           " Block Cut-and-paste
 
 " Completion
@@ -371,7 +375,6 @@ Plug 'groenewege/vim-less', { 'for': 'less' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'jason0x43/vim-js-indent', { 'for':  [ 'javascript', 'typescript', 'html', 'jsp' ] }
 Plug 'jason0x43/vim-js-syntax', { 'for':  [ 'javascript', 'html' ] }
-Plug 'jason0x43/vim-autoprettier'
 Plug 'mxw/vim-jsx', {'for': [ 'javascript.jsx', 'markdown' ] } 
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
