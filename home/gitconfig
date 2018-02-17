@@ -59,6 +59,8 @@
 	line-graphics = utf-8
 	vertical-split = no
 	commit-order = default
+	main-view-id = yes
+	main-view-date = relative-compact
 [tig "color"]
 	cursor = white yellow normal
 [tig "bind"]
