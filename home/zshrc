@@ -27,6 +27,18 @@ Wht="${TC}37m";
 
 # Completions
 # ------------------------------------------------------------------------
+# Docker completions
+if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
+	for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
+		dest=$ZCOMPDIR/_$(basename -s .zsh-completion $f)
+		if [[ ! -f $dest || $f -nt $dest ]]; then
+			cp $f $dest
+			chmod a-x $dest
+		fi
+	done
+	unset dest
+fi
+
 # Load and initialize the completion system, ignoring insecure directories
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 autoload -Uz compinit && compinit -i -d $ZCOMPFILE
