@@ -31,6 +31,9 @@ export ZCACHEDIR="$CACHEDIR/zsh"
 export ZPLUGDIR="$CACHEDIR/zsh/plugins/"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
 
+export ZCOMPDIR="$CACHEDIR/zsh/completions/"
+[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+
 if [[ -d "$TMPDIR" ]]; then
 	export TMPPREFIX="${TMPDIR%/}/zsh"
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
@@ -53,7 +56,7 @@ if [ -x /usr/libexec/path_helper ]; then
 fi
 
 # Set the list of directories that Zsh searches for function scripts.
-fpath=($DOTFILES/zsh/functions /usr/local/share/zsh-completions $fpath)
+fpath=($ZCOMPDIR $DOTFILES/zsh/functions /usr/local/share/zsh-completions $fpath)
 
 # Java
 # ----------------------------------------------------------------------------
