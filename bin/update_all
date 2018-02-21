@@ -78,7 +78,7 @@ if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
 	fi
 
 	printf ">> Updating vim plugins...\n"
-	cd $HOME/.vim/plugged
+	cd $CACHEDIR/vim/plugins
 	for plugin in *; do
 		cd $plugin 
 		head_name=$(git symbolic-ref HEAD --short)
