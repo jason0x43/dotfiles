@@ -330,7 +330,7 @@ autocmd User YcmQuickFixOpened q
 
 " Plugins
 " ---------------------------------------------------------------------
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.local/share/vim/plugins')
 
 Plug 'sgur/vim-editorconfig'               " EditorConfig
 Plug 'tpope/vim-commentary'                " gc for commenting code blocks
