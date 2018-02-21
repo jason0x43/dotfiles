@@ -8,6 +8,18 @@ fi
 # ------------------------------------------------------------------------
 typeset -A plugins
 
+# Start SSH agent if it's not already running
+# ------------------------------------------------------------------------
+if [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
+	if [[ -e $HOME/.ssh/env ]]; then
+		. $HOME/.ssh/env
+	fi
+	if [[ ! -a $SSH_AUTH_SOCK ]]; then
+		eval `ssh-agent` > /dev/null
+		echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >! $HOME/.ssh/env
+	fi
+fi
+
 # Turn on color for everything
 # ------------------------------------------------------------------------
 zstyle ':zconf:*:*' color 'yes'
