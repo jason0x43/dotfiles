@@ -47,7 +47,7 @@ function git-info() {
 	fi
 
 	local modified
-	git diff --quiet
+	git diff --quiet 2> /dev/null
 	if (( $? )); then
 		modified="*"
 	fi
@@ -60,7 +60,7 @@ function git-info() {
 	branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
 
 	if [[ -n "$branch" ]]; then
-		git stash list | grep ": WIP on $branch:" > /dev/null
+		git stash list  2> /dev/null | grep ": WIP on $branch:"
 		if (( !$? )); then
 			stash="+"
 		fi

@@ -35,7 +35,6 @@ set cmdheight=2              " Keep vim from saying 'Press Enter to continue'
 set undofile                 " Use undo files for persistent undo
 set fillchars+=vert:\│       " Make the vertical split bar solid
 set hidden                   " Use hidden buffers
-set inccommand=nosplit       " Show live substitutions
 set ignorecase               " Ignore case when searching...
 set smartcase                " ...unless the search is mixed case
 set nojoinspaces             " Only insert 1 space after a period when joining lines
@@ -260,6 +259,8 @@ map <silent> <Leader>n :call ToggleNerdTree()<CR>
 " Neovim
 " ---------------------------------------------------------------------
 if has('nvim')
+	set inccommand=nosplit       " Show live substitutions
+
 	" <Leader>e to escape into command mode in an nvim terminal
 	tnoremap <leader>e <C-\><C-n>
 
