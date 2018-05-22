@@ -14,5 +14,8 @@ if !get(b:, 'ts_init', 0)
 	command -buffer Def :YcmCompleter GoToDefinition
 	command -buffer Refs :YcmCompleter GoToReferences
 	command -buffer -nargs=1 -complete=custom,s:completeCursorWord Rename :YcmCompleter RefactorRename <args>
-	map <silent> <C-]> :Def<CR>
+	map <buffer> <silent> <C-]> :Def<CR>
+
+	" map <buffer> <silent> <C-]> :call LanguageClient_textDocument_definition()<CR>
+	" command -buffer Rename :call LanguageClient_textDocument_rename()<CR>
 endif
