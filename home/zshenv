@@ -116,6 +116,10 @@ if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
 fi
 
+# Node
+# ------------------------------------------------------------------------
+export npm_config_python=/usr/bin/python
+
 # TeX
 # ------------------------------------------------------------------------
 if [[ -e /usr/local/texlive ]]; then 
