@@ -557,7 +557,13 @@ export NVM_NO_USE=true
 zfetch $ZPLUGDIR lukechilds/zsh-nvm
 source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
 if (( $+commands[npx] )); then
-	source <(npx --shell-auto-fallback zsh)
+    npx_fallback="$DOTFILES/zsh/npx.zsh"
+
+    if [[ "$commands[npx]" -nt "$npx_fallback" || ! -s "$npx_fallback" ]]; then
+        echo "npx has been upgraded; update npx.zsh"
+    fi
+
+    source "$npx_fallback"
 fi
 
 # TPM
