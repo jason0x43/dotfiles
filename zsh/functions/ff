@@ -2,7 +2,9 @@
 local term=$1
 shift
 
-if (( $+commands[rg] )); then
+if (( $+commands[fd] )); then
+	fd $term $*
+elif (( $+commands[rg] )); then
 	rg --files --glob "*${term:-}*" $*
 else 
 	find . -iname "*${term:-}*" $*
