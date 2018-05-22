@@ -1,113 +1,128 @@
 #!/bin/bash
 
-printf ">> Updating homebrew apps...\n"
-brew update && brew upgrade && brew cleanup
+group=$1
+shift
 
-if type pip3 > /dev/null 2>&1; then
-	printf ">> Updating python3 packages...\n"
-	pip3 install -U pip setuptools neovim > /dev/null
+if [[ -z $group || $group == "brew" ]]; then
+	printf ">> Updating homebrew apps...\n"
+	brew update && brew upgrade && brew cleanup
 fi
 
-if type pip2 > /dev/null 2>&1; then
-	printf ">> Updating python2 packages...\n"
-	pip2 install -U pip setuptools neovim > /dev/null
-fi
-
-if type npm > /dev/null 2>&1; then
-	printf ">> Updating global npm modules...\n"
-	# get list of outdated global packages
-	mods=$(npm outdated -g --parseable | cut -d : -f 2,3,4)
-	for mod in $mods; do
-		# extract current and latest fields
-		IFS=':' read -r -a array <<< "$mod"
-		currentPkg=${array[1]}
-		latestPkg=${array[2]}
-
-		# extract current and latest versions, minus any prerelease tags
-		currentVer=$(echo $currentPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
-		latestVer=$(echo $latestPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
-
-		if [ $latestVer == 'linked' ]; then
-			echo "   skipping $latestPkg"
-			continue
-		fi
-
-		# read versions into arrays
-		IFS='.' read -r -a current <<< "$currentVer"
-		IFS='.' read -r -a latest <<< "$latestVer"
-
-		# if latest is newer than current, install latest
-		if [ ${latest[0]} -gt ${current[0]} ] || {
-			[ ${latest[0]} -eq ${current[0]} ] &&
-			[ ${latest[1]} -gt ${current[1]} ] || {
-				[ ${latest[0]} -eq ${current[0]} ] &&
-				[ ${latest[1]} -eq ${current[1]} ] &&
-				[ ${latest[2]} -gt ${current[2]} ];
-			};
-		}; then
-			npm install --progress=false -g $latestPkg > /dev/null
-			echo "   $latestPkg"
-		fi
-	done
-fi
-
-if [[ -n $TMUX_PLUGIN_MANAGER_PATH ]]; then
-	printf ">> Updating tmux plugins...\n"
-	cd $TMUX_PLUGIN_MANAGER_PATH
-	for plugin in *; do
-		cd $plugin 
-		head=$(git rev-parse HEAD)
-		git pull -q --recurse-submodules
-		git submodule update --remote
-		if [[ $(git rev-parse HEAD) != $head ]]; then 
-			printf "   $plugin\n"
-		fi
-		cd ..
-	done
-fi
-
-if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
-	printf ">> Updating vim-plug...\n"
-	cd $HOME/.vim/autoload
-	existing=$(<plug.vim)
-	current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
-	if [[ "$existing" != "$current" ]]; then
-		mv plug.vim plug.old
-		echo "$current" > plug.vim
-		printf "   updated\n"
+if [[ -z $group || $group == "python" ]]; then
+	if type pip3 > /dev/null 2>&1; then
+		printf ">> Updating python3 packages...\n"
+		pip3 install -U pip setuptools neovim > /dev/null
 	fi
 
-	printf ">> Updating vim plugins...\n"
-	cd $CACHEDIR/vim/plugins
-	for plugin in *; do
-		cd $plugin 
-		head_name=$(git symbolic-ref HEAD --short)
-		if [[ $head_name != "master" ]]; then
-			printf "   skipping $plugin (not on master)\n";
-		else
-			head=$(git rev-parse HEAD)
-			git pull -q --recurse-submodules
-			if [[ "$?" != "0" ]]; then 
-				printf "   problem updating $plugin\n"
-			else
-				if [[ $(git rev-parse HEAD) != $head ]]; then 
-					if [[ -e package.json ]]; then
-						npm install --silent
-					fi
-					printf "   $plugin\n"
-				fi
-			fi
-		fi
-		cd ..
-	done
+	if type pip2 > /dev/null 2>&1; then
+		printf ">> Updating python2 packages...\n"
+		pip2 install -U pip setuptools neovim > /dev/null
+	fi
 fi
 
-if [[ -a $HOME/.dotfiles/zsh/zsh-nvm ]]; then
-	printf ">> Updating zsh-nvm...\n"
-	cd $HOME/.dotfiles/zsh/zsh-nvm
-	git pull -q
-	if [[ "$?" != "0" ]]; then 
-		printf "   problem updating zsh-nvm\n"
+if [[ -z $group || $group == "npm" ]]; then
+	if type npm > /dev/null 2>&1; then
+		printf ">> Updating global npm modules...\n"
+		# get list of outdated global packages
+		mods=$(npm --registry=https://registry.npmjs.org outdated -g --parseable | cut -d : -f 2,3,4)
+		for mod in $mods; do
+			# extract current and latest fields
+			IFS=':' read -r -a array <<< "$mod"
+			currentPkg=${array[1]}
+			latestPkg=${array[2]}
+
+			# extract current and latest versions, minus any prerelease tags
+			currentVer=$(echo $currentPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
+			latestVer=$(echo $latestPkg | cut -c2- | cut -d@ -f 2 | cut -d- -f 1)
+
+			if [ $latestVer == 'linked' ]; then
+				echo "   skipping $latestPkg"
+				continue
+			fi
+
+			# read versions into arrays
+			IFS='.' read -r -a current <<< "$currentVer"
+			IFS='.' read -r -a latest <<< "$latestVer"
+
+			# if latest is newer than current, install latest
+			if [ ${latest[0]} -gt ${current[0]} ] || {
+				[ ${latest[0]} -eq ${current[0]} ] &&
+				[ ${latest[1]} -gt ${current[1]} ] || {
+					[ ${latest[0]} -eq ${current[0]} ] &&
+					[ ${latest[1]} -eq ${current[1]} ] &&
+					[ ${latest[2]} -gt ${current[2]} ];
+				};
+			}; then
+				echo "   $latestPkg..."
+				npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+			fi
+		done
+	fi
+fi
+
+if [[ -z $group || $group == "tmux" ]]; then
+	if [[ -n $TMUX_PLUGIN_MANAGER_PATH ]]; then
+		printf ">> Updating tmux plugins...\n"
+		cd $TMUX_PLUGIN_MANAGER_PATH
+		for plugin in *; do
+			cd $plugin 
+			head=$(git rev-parse HEAD)
+			git pull -q --recurse-submodules
+			git submodule update --remote
+			if [[ $(git rev-parse HEAD) != $head ]]; then 
+				printf "   $plugin\n"
+			fi
+			cd ..
+		done
+	fi
+fi
+
+if [[ -z $group || $group == "vim" ]]; then
+	if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
+		printf ">> Updating vim-plug...\n"
+		cd $HOME/.vim/autoload
+		existing=$(<plug.vim)
+		current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
+		if [[ "$existing" != "$current" ]]; then
+			mv plug.vim plug.old
+			echo "$current" > plug.vim
+			printf "   updated\n"
+		fi
+
+		printf ">> Updating vim plugins...\n"
+		cd $CACHEDIR/vim/plugins
+		for plugin in *; do
+			cd $plugin 
+			head_name=$(git symbolic-ref HEAD --short)
+			if [[ $head_name != "master" ]]; then
+				printf "   skipping $plugin (not on master)\n";
+			else
+				head=$(git rev-parse HEAD)
+				git pull -q --recurse-submodules
+				if [[ "$?" != "0" ]]; then 
+					printf "   problem updating $plugin\n"
+				else
+					if [[ $(git rev-parse HEAD) != $head ]]; then 
+						if [[ -e package.json ]]; then
+							npm install --registry=https://registry.npmjs.org --silent
+						fi
+						printf "   $plugin\n"
+					fi
+				fi
+			fi
+			cd ..
+		done
+	fi
+fi
+
+if [[ -z $group || $group == "nvm" ]]; then
+	if [[ -a $HOME/.dotfiles/zsh/zsh-nvm ]]; then
+		printf ">> Updating zsh-nvm...\n"
+		cd $HOME/.dotfiles/zsh/zsh-nvm
+		git pull -q
+		if [[ "$?" != "0" ]]; then 
+			printf "   problem updating zsh-nvm\n"
+		fi
 	fi
 fi
 
