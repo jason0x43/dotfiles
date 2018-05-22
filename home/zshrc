@@ -9,7 +9,7 @@ fi
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
 if [[ -d $DOTFILES/zsh/functions ]]; then
-	for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
+    for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
 # Create an array to hold plugin references
@@ -19,13 +19,13 @@ typeset -A plugins
 # Start SSH agent if it's not already running
 # ------------------------------------------------------------------------
 if [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
-	if [[ -e $HOME/.ssh/env ]]; then
-		. $HOME/.ssh/env
-	fi
-	if [[ ! -a $SSH_AUTH_SOCK ]]; then
-		eval `ssh-agent` > /dev/null
-		echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >! $HOME/.ssh/env
-	fi
+    if [[ -e $HOME/.ssh/env ]]; then
+        . $HOME/.ssh/env
+    fi
+    if [[ ! -a $SSH_AUTH_SOCK ]]; then
+        eval `ssh-agent` > /dev/null
+        echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >! $HOME/.ssh/env
+    fi
 fi
 
 # Turn on color for everything
@@ -49,14 +49,14 @@ Wht="${TC}37m";
 # ------------------------------------------------------------------------
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
-	for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
-		dest=$ZCOMPDIR/_$(basename -s .zsh-completion $f)
-		if [[ ! -f $dest || $f -nt $dest ]]; then
-			cp $f $dest
-			chmod a-x $dest
-		fi
-	done
-	unset dest
+    for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
+        dest=$ZCOMPDIR/_$(basename -s .zsh-completion $f)
+        if [[ ! -f $dest || $f -nt $dest ]]; then
+            cp $f $dest
+            chmod a-x $dest
+        fi
+    done
+    unset dest
 fi
 
 # Load and initialize the completion system, ignoring insecure directories
@@ -116,20 +116,20 @@ zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-va
 
 # Populate hostname completion
 zstyle -e ':completion:*:hosts' hosts 'reply=(
-	${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
-	${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
-	${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
+    ${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
+    ${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
+    ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
 )'
 
 # Don't complete uninteresting users...
 zstyle ':completion:*:*:*:users' ignored-patterns \
-	adm amanda apache avahi beaglidx bin cacti canna clamav daemon \
-	dbus distcache dovecot fax ftp games gdm gkrellmd gopher \
-	hacluster haldaemon halt hsqldb ident junkbust ldap lp mail \
-	mailman mailnull mldonkey mysql nagios \
-	named netdump news nfsnobody nobody nscd ntp nut nx openvpn \
-	operator pcap postfix postgres privoxy pulse pvm quagga radvd \
-	rpc rpcuser rpm shutdown squid sshd sync uucp vcsa xfs '_*'
+    adm amanda apache avahi beaglidx bin cacti canna clamav daemon \
+    dbus distcache dovecot fax ftp games gdm gkrellmd gopher \
+    hacluster haldaemon halt hsqldb ident junkbust ldap lp mail \
+    mailman mailnull mldonkey mysql nagios \
+    named netdump news nfsnobody nobody nscd ntp nut nx openvpn \
+    operator pcap postfix postgres privoxy pulse pvm quagga radvd \
+    rpc rpcuser rpm shutdown squid sshd sync uucp vcsa xfs '_*'
 
 # ... unless we really want to
 zstyle '*' single-ignored show
@@ -163,35 +163,35 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 # Define friendly names for keycodes
 typeset -gA key_info
 key_info=(
-	'Control'      '\C-'
-	'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
-	'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
-	'Escape'       '\e'
-	'Meta'         '\M-'
-	'Backspace'    "^?"
-	'Delete'       "^[[3~"
-	'F1'           "$terminfo[kf1]"
-	'F2'           "$terminfo[kf2]"
-	'F3'           "$terminfo[kf3]"
-	'F4'           "$terminfo[kf4]"
-	'F5'           "$terminfo[kf5]"
-	'F6'           "$terminfo[kf6]"
-	'F7'           "$terminfo[kf7]"
-	'F8'           "$terminfo[kf8]"
-	'F9'           "$terminfo[kf9]"
-	'F10'          "$terminfo[kf10]"
-	'F11'          "$terminfo[kf11]"
-	'F12'          "$terminfo[kf12]"
-	'Insert'       "$terminfo[kich1]"
-	'Home'         "$terminfo[khome]"
-	'PageUp'       "$terminfo[kpp]"
-	'End'          "$terminfo[kend]"
-	'PageDown'     "$terminfo[knp]"
-	'Up'           "$terminfo[kcuu1]"
-	'Left'         "$terminfo[kcub1]"
-	'Down'         "$terminfo[kcud1]"
-	'Right'        "$terminfo[kcuf1]"
-	'BackTab'      "$terminfo[kcbt]"
+    'Control'      '\C-'
+    'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
+    'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
+    'Escape'       '\e'
+    'Meta'         '\M-'
+    'Backspace'    "^?"
+    'Delete'       "^[[3~"
+    'F1'           "$terminfo[kf1]"
+    'F2'           "$terminfo[kf2]"
+    'F3'           "$terminfo[kf3]"
+    'F4'           "$terminfo[kf4]"
+    'F5'           "$terminfo[kf5]"
+    'F6'           "$terminfo[kf6]"
+    'F7'           "$terminfo[kf7]"
+    'F8'           "$terminfo[kf8]"
+    'F9'           "$terminfo[kf9]"
+    'F10'          "$terminfo[kf10]"
+    'F11'          "$terminfo[kf11]"
+    'F12'          "$terminfo[kf12]"
+    'Insert'       "$terminfo[kich1]"
+    'Home'         "$terminfo[khome]"
+    'PageUp'       "$terminfo[kpp]"
+    'End'          "$terminfo[kend]"
+    'PageDown'     "$terminfo[knp]"
+    'Up'           "$terminfo[kcuu1]"
+    'Left'         "$terminfo[kcub1]"
+    'Down'         "$terminfo[kcud1]"
+    'Right'        "$terminfo[kcuf1]"
+    'BackTab'      "$terminfo[kcbt]"
 )
 
 # VI keybindings
@@ -248,6 +248,7 @@ alias gkb='git killbranch'
 alias gl='git lg'
 alias gl1='git log -1'
 alias glb='git lgb'
+alias glbn='git lgb -n'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
 alias gln='git lg -n'
 alias gls='git ls-files'
@@ -298,18 +299,19 @@ alias sftp="noglob ${aliases[sftp]:-sftp}"
 alias swiftc="xcrun -sdk macosx swiftc"
 
 alias npmv="npm --loglevel error"
+alias npmr="npm --registry=https://registry.npmjs.org"
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
-	# Define colors for BSD ls
-	export LSCOLORS='exfxcxdxbxGxDxabagacad'
+    # Define colors for BSD ls
+    export LSCOLORS='exfxcxdxbxGxDxabagacad'
 
-	# Define colors for the completion system
-	export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+    # Define colors for the completion system
+    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
 
-	alias ls='ls -G -F'
+    alias ls='ls -G -F'
 else
-	alias ls='ls -F'
+    alias ls='ls -F'
 fi
 
 # Other ls aliases
@@ -384,16 +386,13 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 # ------------------------------------------------------------------------
 # Load NPM completion
 if (( $+commands[npm] )); then
-	npm_completer="$DOTFILES/zsh/npm.zsh"
+    npm_completer="$DOTFILES/zsh/npm.zsh"
 
-	if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
-		echo "npm has been upgraded; update npm.zsh"
-		# npm is slow; cache its output.
-		# npm completion >! "$cache_file" 2> /dev/null
-	fi
+    if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
+        echo "npm has been upgraded; update npm.zsh"
+    fi
 
-	source "$npm_completer"
-	unset cache_file
+    source "$npm_completer"
 fi
 
 # Less
@@ -404,44 +403,44 @@ export PAGER='less'
 # fzf (https://github.com/junegunn/fzf)
 # ------------------------------------------------------------------------
 if (( $+commands[fzf] )); then
-	export FZF_PATH=`echo $(which fzf)(:A:h:h)`
+    export FZF_PATH=`echo $(which fzf)(:A:h:h)`
 
-	# Use -1 for the bg color to specify 'none'
-	export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
+    # Use -1 for the bg color to specify 'none'
+    export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
 
-	# Add fzf completion to shell
-	source $FZF_PATH/shell/completion.zsh
+    # Add fzf completion to shell
+    source $FZF_PATH/shell/completion.zsh
 
-	# Key bindings
-	source $FZF_PATH/shell/key-bindings.zsh
+    # Key bindings
+    source $FZF_PATH/shell/key-bindings.zsh
 
-	bindkey '^P' fzf-file-widget
-	bindkey '^G' fzf-cd-widget
+    bindkey '^P' fzf-file-widget
+    bindkey '^G' fzf-cd-widget
 
-	if (( $+commands[rg] )); then
-		export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-	elif (( $+commands[ag] )); then
-		export FZF_DEFAULT_COMMAND='ag -g ""'
-	fi
+    if (( $+commands[rg] )); then
+        export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+    elif (( $+commands[ag] )); then
+        export FZF_DEFAULT_COMMAND='ag -g ""'
+    fi
 
-	# Use rg instead of the default find command for listing candidates.
-	# - The first argument to the function is the base path to start traversal
-	# - Note that ag only lists files not directories
-	# - See the source code (completion.{bash,zsh}) for the details.
-	_fzf_compgen_path() {
-		rg -g "" "$1"
-	}
+    # Use rg instead of the default find command for listing candidates.
+    # - The first argument to the function is the base path to start traversal
+    # - Note that ag only lists files not directories
+    # - See the source code (completion.{bash,zsh}) for the details.
+    _fzf_compgen_path() {
+        rg -g "" "$1"
+    }
 fi
 
 # direnv (https://github.com/direnv/direnv)
 # ------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
-	eval "$(direnv hook $SHELL)"
+    eval "$(direnv hook $SHELL)"
 fi
 
 # Veertu
 if [[ -x /Applications/Veertu.app/Contents/SharedSupport/VeertuManage ]]; then 
-	alias veertu=/Applications/Veertu.app/Contents/SharedSupport/VeertuManage
+    alias veertu=/Applications/Veertu.app/Contents/SharedSupport/VeertuManage
 fi
 
 # Line editor
@@ -450,71 +449,71 @@ fi
 # https://github.com/zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 if [[ $? == 0 ]]; then
-	source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-	if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
-		ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-	fi
+    source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+    if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
+        ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+    fi
 fi
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 if [[ $? == 0 ]]; then
-	source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
-	# Color for found substrings
-	zstyle -s ':zconf:module:history-substring-search:color' \
-		found \
-		'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND' \
-		|| HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
+    source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+    # Color for found substrings
+    zstyle -s ':zconf:module:history-substring-search:color' \
+        found \
+        'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND' \
+        || HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
 
-	# Color for not-found substrings
-	zstyle -s ':zconf:module:history-substring-search:color' \
-		not-found \
-		'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND' \
-		|| HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+    # Color for not-found substrings
+    zstyle -s ':zconf:module:history-substring-search:color' \
+        not-found \
+        'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND' \
+        || HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 
-	# Default globbing flags
-	zstyle -s ':zconf:module:history-substring-search' \
-		globbing-flags \
-		'HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS' \
-		|| HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+    # Default globbing flags
+    zstyle -s ':zconf:module:history-substring-search' \
+        globbing-flags \
+        'HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS' \
+        || HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
-	# Check if case-sensitive is in the substring search style
-	if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
-	  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
-	fi
+    # Check if case-sensitive is in the substring search style
+    if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
+      HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
+    fi
 
-	# Check if color is disabled
-	if ! zstyle -t ':zconf:module:history-substring-search' color; then
-	  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
-	fi
+    # Check if color is disabled
+    if ! zstyle -t ':zconf:module:history-substring-search' color; then
+      unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
+    fi
 
-	# Make history keybindings search
-	bindkey -M vicmd "k" history-substring-search-up
-	bindkey -M vicmd "j" history-substring-search-down
+    # Make history keybindings search
+    bindkey -M vicmd "k" history-substring-search-up
+    bindkey -M vicmd "j" history-substring-search-down
 fi
 
 # autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
 # (https://github.com/tarruda/zsh-autosuggestions)
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 if [[ $? == 0 ]]; then
-	source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-	# Let vi keys jump through the suggestion
-	bindkey '^f' vi-forward-word
-	bindkey '^b' vi-forward-blank-word
-	bindkey '^e' vi-end-of-line
+    # Let vi keys jump through the suggestion
+    bindkey '^f' vi-forward-word
+    bindkey '^b' vi-forward-blank-word
+    bindkey '^e' vi-end-of-line
 
-	# Use a solarized-friendly background color
-	export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+    # Use a solarized-friendly background color
+    export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
 
-	export ZSH_AUTOSUGGEST_USE_ASYNC=1
+    export ZSH_AUTOSUGGEST_USE_ASYNC=1
 
-	# Configure autosuggest to work properly with history substring search;
-	# without this, trying to history-substring-search with an empty line will
-	# hang zsh
-	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-	ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+    # Configure autosuggest to work properly with history substring search;
+    # without this, trying to history-substring-search with an empty line will
+    # hang zsh
+    ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+    ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 fi
 
 # History key bindings
@@ -537,18 +536,18 @@ bindkey '^[[B' down-line-or-local-history
 
 # Setup a precmd to let Terminal.app know the CWD
 if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
-	update_cwd () {
-		local SEARCH=' '
-		local REPLACE='%20'
-		local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-		printf '\e]7;%s\a' "$PWD_URL"
-	}
-	[[ -z $precmd_functions ]] && precmd_functions=()
-	precmd_functions=($precmd_functions update_cwd)
+    update_cwd () {
+        local SEARCH=' '
+        local REPLACE='%20'
+        local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+        printf '\e]7;%s\a' "$PWD_URL"
+    }
+    [[ -z $precmd_functions ]] && precmd_functions=()
+    precmd_functions=($precmd_functions update_cwd)
 
-	if [[ "$TERM" == "xterm-256color" ]]; then
-		export TERM=xterm-256color-italic
-	fi
+    if [[ "$TERM" == "xterm-256color" ]]; then
+        export TERM=xterm-256color-italic
+    fi
 fi
 
 # Node
@@ -569,7 +568,7 @@ fi
 # TPM
 # ------------------------------------------------------------------------
 if [[ ! -d ~/.tmux/plugins ]]; then
-	mkdir ~/.tmux/plugins
+    mkdir ~/.tmux/plugins
 fi
 zfetch ~/.tmux/plugins/tpm tmux-plugins/tpm
 
