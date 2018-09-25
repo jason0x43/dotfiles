@@ -99,3 +99,6 @@ UI
 websocket
 CanJS
 dev
+offscreen
+dialogs
+deterministically

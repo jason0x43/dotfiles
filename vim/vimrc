@@ -142,9 +142,13 @@ augroup vimrc
     " Always start at the top of git commit messages
     autocmd FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
-    " Close help files and quickfix panes on 'q'
+    " Close help files and quickfix panes on 'q' or Escape
     autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
     autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
+
+    " Can't do this because it breaks vim's standard go-to-tag
+    " autocmd FileType help nnoremap <buffer> <silent>  :bd<CR>
+    " autocmd FileType qf nnoremap <buffer> <silent>  :bd<CR>
 
     " More predictable syntax highlighting
     autocmd BufEnter * syntax sync fromstart
@@ -178,28 +182,6 @@ augroup vimrc
     " Use ;; to go to previous buffer
     nnoremap <leader><leader> <C-^>
 augroup END
-
-" Ale
-" ---------------------------------------------------------------------
-"  Rely on YCM for typescript linting
-" let g:ale_linters = {
-" \   'javascript': ['eslint'],
-" \   'typescript': [],
-" \   'go': ['gofmt', 'golint', 'go vet']
-" \}
-" let g:ale_fixers = {
-"     \   'typescript': [ 'prettier' ],
-"     \   'javascript': [ 'prettier' ],
-"     \   'json': [ 'prettier' ],
-"     \   'scss': [ 'prettier' ],
-"     \   'stylus': [ 'prettier' ],
-"     \}
-" let g:ale_javascript_prettier_use_local_config = 1
-
-" let g:ale_change_sign_column_color = 1
-" let g:ale_sign_error = '✖'
-" let g:ale_sign_warning = '⚠'
-" map <silent> <Leader>t :ALEFix<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -251,6 +233,8 @@ let g:markdown_fenced_languages = [
 \    'python',
 \    'sh',
 \    'json',
+\    'xml',
+\    'json5=javascript',
 \    'js=javascript',
 \    'jsx=javascript.jsx',
 \    'ts=typescript',
@@ -301,6 +285,10 @@ if has('nvim')
     " things like tmux pane focus dimming.
 endif
 
+" Prettier
+" ---------------------------------------------------------------------
+let g:prettier#exec_cmd_async = 1
+
 " tig
 " ---------------------------------------------------------------------
 if has('nvim')
@@ -328,7 +316,11 @@ nnoremap <Leader>u :UndotreeToggle<CR>
 " --------------------------------------------------------------------- 
 let g:autoprettier_types = [
     \ 'typescript',
+    \ 'typescript.tsx',
     \ 'javascript',
+    \ 'javascript.jsx',
+    \ 'json',
+    \ 'jsoncfg',
     \ 'css',
     \ 'markdown',
     \ 'scss',
@@ -394,7 +386,6 @@ Plug 'tpope/vim-repeat'                    " support for repeating mapped comman
 Plug 'tpope/vim-surround'                  " for manipulating parens and such
 Plug 'moll/vim-bbye'                       " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
-" Plug 'w0rp/ale'                            " Asynchronous linting
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'junegunn/limelight.vim'              " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
@@ -419,8 +410,8 @@ Plug 'tpope/vim-obsession'
 " Filetype plugins
 Plug 'keith/swift.vim', { 'for': 'swift' }
 Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'leafgarland/typescript-vim', { 'for': [ 'typescript', 'markdown' ] }
-Plug 'ianks/vim-tsx', { 'for': [ 'typescript', 'markdown' ] }
+Plug 'leafgarland/typescript-vim', { 'for': [ 'typescript', 'typescript.tsx', 'markdown' ] }
+Plug 'ianks/vim-tsx', { 'for': [ 'typescript', 'typescript.tsx', 'markdown' ] }
 Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
 Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
 Plug 'dag/vim-fish', { 'for': 'fish' }
@@ -435,6 +426,8 @@ Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 Plug 'dmix/elvish.vim'
 Plug 'vmchale/ion-vim'
+" Plug 'mhartington/nvim-typescript', { 'do': './install.sh' }
+" Plug 'Shougo/deoplete.nvim'
 
 " Load the go plugin if go is available
 if executable('go')
