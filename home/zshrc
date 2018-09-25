@@ -219,7 +219,13 @@ alias help='run-help'
 # Disable certificate check for wget
 alias wget='wget --no-check-certificate'
 
-# Git short-cuts
+# Docker shortcuts
+alias dk='docker kill'
+alias dl='docker logs'
+alias dlf='docker logs -f'
+alias dps='docker ps --format "{{.Names}}"'
+
+# Git shortcuts
 alias ga='git add'
 alias gb='git branch'
 alias gba='git branch -a'
@@ -245,13 +251,16 @@ alias ggil='git grep --ignore-case --files-with-matches'
 alias ggl='git grep --files-with-matches'
 alias gid='git rev-parse HEAD'
 alias gkb='git killbranch'
-alias gl='git lg'
+alias gl='git lg -n 20'
+alias gla='git lg'
 alias gl1='git log -1'
-alias glb='git lgb'
+alias glb='git lgb -n 20'
+alias glba='git lgb'
 alias glbn='git lgb -n'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
 alias gln='git lg -n'
 alias gls='git ls-files'
+alias gmb='git merge-base'
 alias gp='git pullthis'
 alias gr='git rebase'
 alias gri='git rebase -i'
@@ -404,6 +413,10 @@ export PAGER='less'
 # ------------------------------------------------------------------------
 if (( $+commands[fzf] )); then
     export FZF_PATH=`echo $(which fzf)(:A:h:h)`
+
+    # Make FZF respond more quickly when hitting escape
+    # https://github.com/junegunn/fzf.vim/issues/248
+    export ESCDELAY=10
 
     # Use -1 for the bg color to specify 'none'
     export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:7,spinner:14,info:14,fg+:12,hl+:8,hl:8
