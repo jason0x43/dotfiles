@@ -24,6 +24,7 @@
 	cp = cherry-pick
 	dp = show
 	forget = rm --cached
+	ia = !git add $(git ls-files --modified --others --exclude-standard | fzf -m)
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
 	ignore = update-index --assume-unchanged
