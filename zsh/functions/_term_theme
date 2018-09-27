@@ -1,0 +1,25 @@
+#compdef term_theme
+# ------------------------------------------------------------------------------
+# Description
+# -----------
+#
+#  Completion script for term_theme
+#
+# ------------------------------------------------------------------------------
+# Authors
+# -------
+#
+#  * Jason Cheatham (https://github.com/jason0x43)
+#
+# ------------------------------------------------------------------------------
+
+local cmds
+local -a base_commands
+
+cmds=`term_theme -l`
+base_commands=("${(f)cmds}")
+_describe -t base_commands 'COMMANDS' base_commands
+
+return 0
+
+# vim: ft=zsh sw=4 ts=4 noet

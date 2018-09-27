@@ -1,88 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-if (( $# != 1 )); then
-	echo "usage: $0 {light | dark}"
-	exit
-fi
+from sys import argv
+from subprocess import check_output, call
 
-theme=$1
+theme = argv[1]
 
-if [[ $TERM_PROGRAM =~ ^iTerm ]]; then 
-	# palette
-	base03='002b36'
-	base02='073642'
-	base01='586e75'
-	base00='657b83'
-	base0='839496'
-	base1='93a1a1'
-	base2='eee8d5'
-	base3='fdf6e3'
-	yellow='b58900'
-	orange='cb4b16'
-	red='dc322f'
-	magenta='d33682'
-	violet='6c71c4'
-	blue='268bd2'
-	cyan='2aa198'
-	green='859900'
-
-	if [[ -z $TMUX ]]; then 
-		function emit() {
-			printf "\e]P$1$2\e\\"
-		}
-	else
-		function emit() {
-			printf "\ePtmux;\e\e]P$1$2\e\\"
-		}
-	fi
-
-	emit 1 $red
-	emit 2 $green
-	emit 3 $yellow
-	emit 4 $blue
-	emit 5 $magenta
-	emit 6 $cyan
-	emit 9 $orange
-	emit d $violet
-
-	if [[ "dark" =~ $theme ]]; then 
-		emit 0 $base2
-		emit 7 $base02
-		emit 8 $base3
-		emit a $base1
-		emit b $base0
-		emit c $base00
-		emit e $base01
-		emit f $base03
-		emit g $base0
-		emit h $base03
-	else
-		emit 0 $base02
-		emit 7 $base2
-		emit 8 $base03
-		emit a $base01
-		emit b $base00
-		emit c $base0
-		emit e $base1
-		emit f $base3
-		emit g $base00
-		emit h $base3
-	fi
-
-	# Alternate method -- set the TMUX profile. This changes the font size,
-	# too, which may be undesirable.
-	# cmd="\e]1337;SetProfile=$theme\007"
-	# if [[ -z $TMUX ]]; then 
-	# 	printf cmd
-	# else
-	# 	printf "\ePtmux;\e$cmd\e\\"
-	# fi
-else
-	if [[ $theme == "dark" ]]; then
-		theme="Solarized Dark"
-	elif [[ $theme == "light" ]]; then
-		theme="Solarized Light"
-	fi
-
-	osascript -e "tell application \"Terminal\" to set current settings of first tab of first window to (settings set \"$theme\")"
-fi
+if theme in ['--help', '-h']:
+    print('usage: term_theme [options] [theme]')
+    print()
+    print('options:')
+    print('  -h, --help   print this message ')
+    print('  -l, --list   list available themes ')
+    print()
+elif theme in ['--list', '-l']:
+    out = check_output([
+        'osascript',
+        '-e',
+        '''set names to {}
+           tell application "Terminal"
+               repeat with i from 1 to count settings set
+                   set end of names to settings set i's name
+               end repeat
+               names
+           end tell'''],
+           universal_newlines=True)
+    names = sorted([name.strip() for name in out.split(',')])
+    for name in names:
+        print(name)
+else:
+    call([
+        'osascript',
+        '-e',
+        '''tell application "Terminal"
+               set current settings of tabs of windows to settings set "{0}"
+           end tell'''.format(theme)])

@@ -63,7 +63,12 @@
 	main-view-id = yes
 	main-view-date = relative-compact
 [tig "color"]
-	cursor = white yellow normal
+	cursor = color0 color2 normal
+	default = color7 default normal
+	diff-del = color8 default normal
+	diff-add = color11 default normal
+	title-focus = color0 color1 normal
+	title-blur = color0 color6 normal
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line

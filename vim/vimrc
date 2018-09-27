@@ -455,4 +455,4 @@ call plug#end()
 " ---------------------------------------------------------------------
 filetype plugin indent on
 syn on
-colorscheme solarized
+colorscheme base16
