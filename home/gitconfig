@@ -90,12 +90,12 @@
 	instructionFormat = [%an @ %ar] %s
 	autostash = true
 [pager]
-	diff = diff-so-fancy | less --tabs=4 -RFX
+	#diff = diff-so-fancy | less --tabs=4 -RFX
 	difftool =
-	show = diff-so-fancy | less --tabs=4 -RFX
-	log = diff-so-fancy | less --tabs=4 -RFX
+	#show = diff-so-fancy | less --tabs=4 -RFX
+	#log = diff-so-fancy | less --tabs=4 -RFX
 [interactive]
-	diffFilter = diff-so-fancy
+	#diffFilter = diff-so-fancy
 [commit]
 	verbose = true
 [submodule]

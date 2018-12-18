@@ -9,11 +9,6 @@
 # ----------------------------------------------------------------------------
 export DOTFILES=$HOME/.dotfiles
 
-# Editors
-# ----------------------------------------------------------------------------
-export EDITOR='vi'
-export VISUAL='vi'
-
 # Language
 # ----------------------------------------------------------------------------
 [[ -z "$LANG" ]] && eval "$(locale)"
@@ -27,6 +22,9 @@ export CACHEDIR="$HOME/.local/share"
 
 export ZCACHEDIR="$CACHEDIR/zsh"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
+
+export ZFUNCDIR="$CACHEDIR/zsh/functions"
+[[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
@@ -45,7 +43,14 @@ typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
 # Set the list of directories that Zsh searches for function scripts.
-fpath=($ZCOMPDIR $DOTFILES/zsh/functions $fpath)
+fpath=(
+    $ZCOMPDIR
+    $ZFUNCDIR
+    $DOTFILES/zsh/functions
+    /usr/local/share/zsh-completions
+    $fpath
+)
+
 
 # Set the list of directories that man searches for manuals.
 if [ -e /etc/manpaths ]; then
