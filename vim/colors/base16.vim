@@ -40,7 +40,7 @@ function! s:Base16hi(group, ctermfg, ctermbg, attr)
 endfunction
 
 
-fun s:hi(group, ctermfg, ctermbg, attr)
+function! s:hi(group, ctermfg, ctermbg, attr)
   call s:Base16hi(a:group, a:ctermfg, a:ctermbg, a:attr)
 endfun
 
@@ -57,7 +57,7 @@ call s:hi("Folded",                     s:base3, s:base1, "")
 call s:hi("IncSearch",                  s:base1, s:base9, "none")
 call s:hi("Italic",                     "",      "",      "none")
 call s:hi("Macro",                      s:base8, "",      "")
-call s:hi("MatchParen",                 "",      s:base3, "")
+call s:hi("MatchParen",                 s:base0, s:baseC, "")
 call s:hi("ModeMsg",                    s:baseB, "",      "")
 call s:hi("MoreMsg",                    s:baseB, "",      "")
 call s:hi("Question",                   s:baseD, "",      "")
@@ -250,7 +250,7 @@ call s:hi("SignifySignChange",          s:baseD, s:base1, "")
 call s:hi("SignifySignDelete",          s:base8, s:base1, "")
 
 " Spelling highlighting
-call s:hi("SpellBad",                   "",      "",      "undercurl")
+call s:hi("SpellBad",                   s:base8, "none",  "undercurl")
 call s:hi("SpellLocal",                 "",      "",      "undercurl")
 call s:hi("SpellCap",                   "",      "",      "undercurl")
 call s:hi("SpellRare",                  "",      "",      "undercurl")
@@ -269,3 +269,6 @@ call s:hi("StartifySpecial",            s:base3, "",      "")
 
 " Java highlighting
 call s:hi("javaOperator",               s:baseD, "",      "")
+
+" ALE
+call s:hi("ALEErrorSign",               s:base8, s:base1, "bold")
