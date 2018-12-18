@@ -617,11 +617,19 @@ zfetch ~/.tmux/plugins/tpm tmux-plugins/tpm
 
 # Prompt
 # ------------------------------------------------------------------------
-zfetch $ZPLUGDIR sindresorhus/pure
+zfetch $ZPLUGDIR jason0x43/pure
 if [[ $? == 0 ]]; then
+	if [[ \
+		-h $ZFUNCDIR/prompt_pure_setup \
+		&& $(link_target $ZFUNCDIR/prompt_pure_setup) != $ZPLUGDIR/jason0x43/pure/pure.zsh \
+	]]; then
+		echo removing
+        rm $ZFUNCDIR/prompt_pure_setup
+        rm $ZFUNCDIR/async
+	fi
     if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
-        ln -s $ZPLUGDIR/sindresorhus/pure/pure.zsh $ZFUNCDIR/prompt_pure_setup
-        ln -s $ZPLUGDIR/sindresorhus/pure/async.zsh $ZFUNCDIR/async
+        ln -s $ZPLUGDIR/jason0x43/pure/pure.zsh $ZFUNCDIR/prompt_pure_setup
+        ln -s $ZPLUGDIR/jason0x43/pure/async.zsh $ZFUNCDIR/async
     fi
 fi
 autoload -Uz promptinit && promptinit
