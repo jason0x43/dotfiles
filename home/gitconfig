@@ -30,7 +30,6 @@
 	ignore = update-index --assume-unchanged
 	lg = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset' --all
 	lgb = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'
-	lgs = log --all --date-order --decorate --graph --oneline
 	s = status --short
 	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
@@ -111,12 +110,16 @@
 	path = ~/.gitconfig-work
 [color "diff-highlight"]
 	oldNormal = red
-	oldHighlight = red white
+	oldHighlight = red 10
 	newNormal = green
-	newHighlight = green white
+	newHighlight = green 10
 [color "diff"]
-	meta = 10 
+	meta = 11 
 	commit = 9 
 	old = red
 	new = green
 	whitespace = red reverse
+[help]
+	autoCorrect = 20
+[advice]
+	detachedHead = false
