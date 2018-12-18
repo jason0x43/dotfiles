@@ -44,6 +44,9 @@ fi
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
+# Set the list of directories that Zsh searches for function scripts.
+fpath=($ZCOMPDIR $DOTFILES/zsh/functions $fpath)
+
 # Set the list of directories that man searches for manuals.
 if [ -e /etc/manpaths ]; then
 	while read line; do 
@@ -55,13 +58,11 @@ if [ -x /usr/libexec/path_helper ]; then
 	eval `/usr/libexec/path_helper -s`
 fi
 
-# Set the list of directories that Zsh searches for function scripts.
-fpath=($ZCOMPDIR $DOTFILES/zsh/functions /usr/local/share/zsh-completions $fpath)
-
 # Java
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
-	JAVA_HOME=`/usr/libexec/java_home 2> /dev/null`
+	# Use java 1.8 by default
+	JAVA_HOME=`/usr/libexec/java_home -v 1.8 2> /dev/null`
 	if (( $? )); then
 		unset JAVA_HOME
 	else
@@ -123,6 +124,7 @@ export npm_config_python=/usr/bin/python
 # PHP
 # ------------------------------------------------------------------------
 path=(
+	$HOME/.composer/vendor/bin
 	/usr/local/opt/php@7.1/bin
 	/usr/local/opt/php@7.1/sbin
 	$path
@@ -133,7 +135,7 @@ path=(
 # ------------------------------------------------------------------------
 if [[ -e /usr/local/texlive ]]; then 
 	path=(
-		/usr/local/texlive/2017/bin/x86_64-darwin
+		/usr/local/texlive/2018/bin/x86_64-darwin
 		$path
 	)
 fi
