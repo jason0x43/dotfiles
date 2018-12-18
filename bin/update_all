@@ -6,6 +6,11 @@ shift
 if [[ -z $group || $group == "brew" ]]; then
 	printf ">> Updating homebrew apps...\n"
 	brew update && brew upgrade && brew cleanup
+
+	if [[ -h /usr/local/share/zsh/site-functions/_git ]]; then
+		rm /usr/local/share/zsh/site-functions/_git
+		printf ">> Removed git zsh completions\n"
+	fi
 fi
 
 if [[ -z $group || $group == "python" ]]; then
