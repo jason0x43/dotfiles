@@ -623,9 +623,8 @@ if [[ $? == 0 ]]; then
 		-h $ZFUNCDIR/prompt_pure_setup \
 		&& $(link_target $ZFUNCDIR/prompt_pure_setup) != $ZPLUGDIR/jason0x43/pure/pure.zsh \
 	]]; then
-		echo removing
-        rm $ZFUNCDIR/prompt_pure_setup
-        rm $ZFUNCDIR/async
+        rm -f $ZFUNCDIR/prompt_pure_setup
+        rm -f $ZFUNCDIR/async
 	fi
     if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
         ln -s $ZPLUGDIR/jason0x43/pure/pure.zsh $ZFUNCDIR/prompt_pure_setup
