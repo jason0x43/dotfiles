@@ -25,5 +25,6 @@ END
 osascript <<END
   tell application "Terminal"
     set current settings of tabs of windows to settings set "$term_theme"
+    set default settings to settings set "$term_theme"
   end tell
 END
