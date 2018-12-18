@@ -99,20 +99,16 @@ if [[ -z $group || $group == "vim" ]]; then
 		for plugin in *; do
 			cd $plugin 
 			head_name=$(git symbolic-ref HEAD --short)
-			if [[ $head_name != "master" ]]; then
-				printf "   skipping $plugin (not on master)\n";
+			head=$(git rev-parse HEAD)
+			git pull -q --recurse-submodules
+			if [[ "$?" != "0" ]]; then 
+				printf "   problem updating $plugin\n"
 			else
-				head=$(git rev-parse HEAD)
-				git pull -q --recurse-submodules
-				if [[ "$?" != "0" ]]; then 
-					printf "   problem updating $plugin\n"
-				else
-					if [[ $(git rev-parse HEAD) != $head ]]; then 
-						if [[ -e package.json ]]; then
-							npm install --registry=https://registry.npmjs.org --silent
-						fi
-						printf "   $plugin\n"
+				if [[ $(git rev-parse HEAD) != $head ]]; then 
+					if [[ -e package.json ]]; then
+						npm install --registry=https://registry.npmjs.org --silent
 					fi
+					printf "   $plugin\n"
 				fi
 			fi
 			cd ..
