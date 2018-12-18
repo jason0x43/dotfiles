@@ -25,7 +25,6 @@ if exists('$CACHEDIR')
     endif
 endif
 
-
 " If we're in a git project and there's a node_modules/.bin in the project
 " root, add it to the beginning of the path so that it's apps will be used for
 " commands started by vim. In particular this is useful for YCM + TypeScript
@@ -39,7 +38,7 @@ if !empty(project_root)
     endif
 endif
 
-" Set the leader character
+colorscheme base16
 let mapleader=';'
 
 set backupcopy=yes           " Overwrite the original file when saving
@@ -54,7 +53,9 @@ set smartcase                " ...unless the search is mixed case
 set nojoinspaces             " Only insert 1 space after a period when joining lines
 set nostartofline            " Don't move to the beginning of a line when jumping
 set number                   " Show line numbers
-set completeopt-=preview     " Don't show the preview window when completing             
+set completeopt+=noinsert
+set completeopt+=menuone
+set completeopt+=noselect
 set scrolloff=5              " Give the cursor a 5 line margin when scrolling
 set shiftwidth=4             " Indent in 4-character wide chunks
 set showcmd                  " Show commands in the cmd area
@@ -106,6 +107,11 @@ map <silent> <Leader>h :echo "hi<" .
 " Files and buffers
 map <Leader>f :find 
 map <silent> <Leader>b :ls<CR> 
+
+" Use Tab for cycling through matches in a completion popup
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 
 " Ag for grepping (https://github.com/ggreer/the_silver_searcher)
 if executable('rg')
@@ -183,6 +189,48 @@ augroup vimrc
     nnoremap <leader><leader> <C-^>
 augroup END
 
+" Setup a Tig command that opens tig in a terminal
+if has('nvim')
+    function! s:tig()
+        let s:callback = {}
+        let current = expand('%')
+
+        function! s:callback.on_exit(job_id, code, event)
+            bw!
+        endfunction
+
+        below new
+        call termopen('tig status', s:callback)
+        startinsert
+    endfunction
+
+    command! Tig call s:tig()
+endif
+
+
+" =====================================================================
+" Plugin config
+" =====================================================================
+
+" ALE
+" ---------------------------------------------------------------------
+let g:ale_linters = {
+    \ 'typescript': ['tslint'],
+    \ 'typescript.tsx': ['tslint'],
+    \ }
+let g:ale_pattern_options = {
+    \ 'node_modules/': { 'ale_enabled': 0 }
+    \ }
+let g:ale_completion_enabled = 0
+" let g:ale_tex_chktex_options = "-I -x"
+" map <Leader>e :lope<CR> 
+" map <Leader>i :ALEHover<CR> 
+
+" asyncomplete
+" ---------------------------------------------------------------------
+let g:asyncomplete_smart_completion = 1
+let g:asyncomplete_remove_duplicates = 1
+
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
@@ -220,11 +268,6 @@ let g:js_indent_flat_switch = 1
 " ---------------------------------------------------------------------
 " Don't conceal quotes around JSON properties
 let g:vim_json_syntax_conceal = 0
-
-" limelight
-" ---------------------------------------------------------------------
-let g:limelight_conceal_ctermfg = 252
-let g:limelight_paragraph_span = 1
 
 " markdown
 " ---------------------------------------------------------------------
@@ -288,25 +331,7 @@ endif
 " Prettier
 " ---------------------------------------------------------------------
 let g:prettier#exec_cmd_async = 1
-
-" tig
-" ---------------------------------------------------------------------
-if has('nvim')
-    function! s:tig()
-        let s:callback = {}
-        let current = expand('%')
-
-        function! s:callback.on_exit(job_id, code, event)
-            bw!
-        endfunction
-
-        below new
-        call termopen('tig status', s:callback)
-        startinsert
-    endfunction
-
-    command! Tig call s:tig()
-endif
+let g:prettier#config#parser = 'babylon'
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -326,50 +351,48 @@ let g:autoprettier_types = [
     \ 'scss',
     \ ]
 let g:autoprettier_exclude = [
+    \ 'package.json',
+    \ 'package-lock.json',
+    \ 'public/app/**/*.ts',
+    \ 'public/app/**/*.tsx',
     \ ]
 
+" vim-lsc
+" ---------------------------------------------------------------------
+let g:lsc_trace_level = 'verbose'
+let g:lsc_server_commands = {
+    \ 'typescript': {
+    \   'name': 'typescript',
+    \   'command': 'typescript-language-server --stdio',
+    \   'suppress_stderr': 1,
+    \ }
+    \ }
+
 " vim-lsp
-" --------------------------------------------------------------------- 
-if executable('typescript-language-server')
-    au User lsp_setup call lsp#register_server({
-    \ 'name': 'typescript-language-server',
-    \ 'cmd': {
-    \     server_info->[
-    \         &shell,
-    \         &shellcmdflag,
-    \         'typescript-language-server --stdio'
-    \     ]
-    \ },
-    \ 'root_uri':{
-    \     server_info->lsp#utils#path_to_uri(
-    \         lsp#utils#find_nearest_parent_file_directory(
-    \             lsp#utils#get_buffer_path(), 'tsconfig.json'
-    \         )
-    \     )
-    \ },
-    \ 'whitelist': [
-    \     'typescript',
-    \     'typescript.tsx',
-    \     'javascript',
-    \     'javascript.jsx'
-    \ ],
-    \ })
-endif
+" ---------------------------------------------------------------------
+" let g:lsp_log_verbose = 1
+" let g:lsp_log_file = expand('~/vim-lsp.log')
 let g:lsp_signs_enabled = 1
 let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_signs_error = {'text': '✗'}
+let g:lsp_signs_warning = {'text': '!'}
+let g:lsp_signs_information = {'text': '?'}
+let g:lsp_signs_hint = {'text': '$'}
 
-" YouCompleteMe
-" --------------------------------------------------------------------- 
-let g:ycm_always_populate_location_list = 1
-map <Leader>e :YcmDiags<CR> 
-let g:ycm_error_symbol = '✖'
-let g:ycm_warning_symbol = '!!'
-function! s:CustomizeYcmLocationWindow()
-    10wincmd _
-endfunction
-autocmd User YcmLocationOpened call s:CustomizeYcmLocationWindow()
-" auto-close the quickfix window when YCM opens it
-autocmd User YcmQuickFixOpened q
+" vimtex
+" ---------------------------------------------------------------------
+let g:vimtex_indent_lists = [
+    \ 'itemize',
+    \ 'description',
+    \ 'enumerate',
+    \ 'thebibliography',
+    \ 'questions',
+    \ 'answers',
+    \]
+let g:vimtex_indent_ignored_envs = [
+    \ 'code',
+    \ 'question',
+    \]
 
 " Plugins
 " ---------------------------------------------------------------------
@@ -384,20 +407,26 @@ Plug 'tpope/vim-fugitive'                  " Git utilities
 Plug 'tpope/vim-unimpaired'                " useful pairs of mappings
 Plug 'tpope/vim-repeat'                    " support for repeating mapped commands
 Plug 'tpope/vim-surround'                  " for manipulating parens and such
+Plug 'junegunn/gv.vim'                     " a git commit browser
 Plug 'moll/vim-bbye'                       " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
-Plug 'junegunn/limelight.vim'              " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
-Plug 'prettier/vim-prettier'               " Format TS, JS, MD, and others
+Plug 'prettier/vim-prettier', { 'branch': 'release/1.x', 'do': 'npm install' } " Format TS, JS, MD, and others
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'airblade/vim-gitgutter'              " Show diff markers in sign column
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
+Plug 'w0rp/ale'                            " Linting
+
+" LSP
+Plug 'prabirshrestha/async.vim'
+Plug 'jason0x43/vim-lsp', { 'branch': 'jason0x43-updates' }
 
 " Completion
-if has('python') || has('python3')
-    Plug 'Valloric/YouCompleteMe'
-endif
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+" Plug 'prabirshrestha/asyncomplete-buffer.vim'
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -426,8 +455,7 @@ Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'wavded/vim-stylus', { 'for': 'stylus' }
 Plug 'dmix/elvish.vim'
 Plug 'vmchale/ion-vim'
-" Plug 'mhartington/nvim-typescript', { 'do': './install.sh' }
-" Plug 'Shougo/deoplete.nvim'
+Plug 'lervag/vimtex'
 
 " Load the go plugin if go is available
 if executable('go')
@@ -451,8 +479,74 @@ endif
 " Load all the plugins
 call plug#end()
 
-" Turn on all the filetype goodness
+" =====================================================================
+" Post-plugin initialization
+" =====================================================================
+
+" vim-lsp
 " ---------------------------------------------------------------------
-filetype plugin indent on
-syn on
-colorscheme base16
+let s:asyncomplete_blacklist = []
+
+if executable('typescript-language-server')
+    let s:asyncomplete_blacklist += ['typescript']
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'typescript-language-server',
+        \ 'priority': 99,
+        \ 'cmd': {
+        \     server_info -> [&shell, &shellcmdflag, 'typescript-language-server --stdio']
+        \ },
+        \ 'root_uri': {
+        \     server_info->lsp#utils#path_to_uri(
+        \         lsp#utils#find_nearest_parent_file_directory(
+        \             lsp#utils#get_buffer_path(),
+        \             'tsconfig.json'
+        \         )
+        \     )
+        \ },
+        \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
+        \ })
+    autocmd FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
+    autocmd FileType typescript map <buffer> K :LspHover<CR> 
+    autocmd FileType typescript setlocal omnifunc=lsp#complete
+endif
+
+if executable('php-language-server.php')
+    let s:asyncomplete_blacklist += ['php']
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'php-language-server',
+        \ 'priority': 99,
+        \ 'cmd': {
+        \     server_info -> ['php', expand('~/.composer/vendor/bin/php-language-server.php')]
+        \ },
+        \ 'whitelist': ['php'],
+        \ })
+    autocmd FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
+    autocmd FileType php map <buffer> K :LspHover<CR> 
+    autocmd FileType php setlocal omnifunc=lsp#complete
+endif
+
+" asyncomplete
+" ---------------------------------------------------------------------
+" autocmd User asyncomplete_setup call asyncomplete#register_source(
+"     \ asyncomplete#sources#buffer#get_source_options({
+"     \     'name': 'buffer',
+"     \     'whitelist': ['*'],
+"     \     'blacklist': s:asyncomplete_blacklist,
+"     \     'priority': 9,
+"     \     'completor': function('asyncomplete#sources#buffer#completor')
+"     \ }))
+
+autocmd User asyncomplete_setup call asyncomplete#register_source(
+    \ asyncomplete#sources#file#get_source_options({
+    \     'name': 'file',
+    \     'whitelist': ['*'],
+    \     'priority': 10,
+    \     'completor': function('asyncomplete#sources#file#completor')
+    \ }))
+
+" autocmd User asyncomplete_setup call asyncomplete#register_source({
+"     \ 'name': 'tex',
+"     \ 'whitelist': ['tex'],
+"     \ 'completor': 'function

@@ -1,4 +1,5 @@
 setlocal expandtab
+setlocal shiftwidth=4
 
 " If buffer modified, update any 'Last modified: ' in the first 20 lines.
 " 'Last modified: ' can have up to 10 characters before (they are retained).

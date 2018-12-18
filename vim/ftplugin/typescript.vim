@@ -11,11 +11,12 @@ endif
 if !get(b:, 'ts_init', 0)
 	let b:ts_init = 1
 
-	command -buffer Def :YcmCompleter GoToDefinition
-	command -buffer Refs :YcmCompleter GoToReferences
-	command -buffer -nargs=1 -complete=custom,s:completeCursorWord Rename :YcmCompleter RefactorRename <args>
-	map <buffer> <silent> <C-]> :Def<CR>
+	" command -buffer Def :YcmCompleter GoToDefinition
+	" command -buffer Refs :YcmCompleter GoToReferences
+	" command -buffer -nargs=1 -complete=custom,s:completeCursorWord Rename :YcmCompleter RefactorRename <args>
+	" map <buffer> <silent> <C-]> :Def<CR>
 	" map <buffer> <silent> <C-]> :TSDef<CR>
+	" map <buffer> <silent> <C-]> :ALEGoToDefinition<CR>
 
 	" map <buffer> <silent> <C-]> :call LanguageClient_textDocument_definition()<CR>
 	" command -buffer Rename :call LanguageClient_textDocument_rename()<CR>
