@@ -51,8 +51,6 @@
 [difftool "icdiff"]
 	cmd = icdiff --no-bold --line-numbers \"$LOCAL\" \"$REMOTE\"
 	path =
-[credential]
-	helper = osxkeychain
 [push]
 	default = current
 [tig]
