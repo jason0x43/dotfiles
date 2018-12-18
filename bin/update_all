@@ -120,14 +120,24 @@ if [[ -z $group || $group == "vim" ]]; then
 	fi
 fi
 
-if [[ -z $group || $group == "nvm" ]]; then
-	if [[ -a $HOME/.dotfiles/zsh/zsh-nvm ]]; then
-		printf ">> Updating zsh-nvm...\n"
-		cd $HOME/.dotfiles/zsh/zsh-nvm
-		git pull -q
-		if [[ "$?" != "0" ]]; then 
-			printf "   problem updating zsh-nvm\n"
-		fi
+if [[ -z $group || $group == "zsh" ]]; then
+	if [[ -n $ZPLUGDIR ]]; then
+		printf ">> Updating zsh plugins...\n"
+		cd $ZPLUGDIR
+		for org in *; do
+			cd $org 
+			for plugin in *; do
+				cd $plugin
+				head=$(git rev-parse HEAD)
+				git pull -q --recurse-submodules
+				git submodule update --remote
+				if [[ $(git rev-parse HEAD) != $head ]]; then 
+					printf "   $org/$plugin\n"
+				fi
+				cd ..
+			done
+			cd ..
+		done
 	fi
 fi
 
