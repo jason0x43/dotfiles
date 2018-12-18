@@ -46,54 +46,61 @@ function git-info() {
 		return 1
 	fi
 
-	local modified
+	local flags
+
 	git diff --quiet 2> /dev/null
 	if (( $? )); then
-		modified="*"
+		local mod_format
+		zstyle -s ':zconf:module:git:info:mod' format 'mod_format'
+		zformat -f flags "$flags$mod_format" "v:*"
 	fi
 
 	local reference
-	local stash
 
 	# Get the branch
 	local branch
 	branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
 
 	if [[ -n "$branch" ]]; then
-		git stash list  2> /dev/null | grep ": WIP on $branch:"
-		if (( !$? )); then
-			stash="+"
-		fi
-
 		# Format branch
 		local branch_format
 		zstyle -s ':zconf:module:git:info:branch' format 'branch_format'
 		if [[ -n "$branch_format" ]]; then
 			zformat -f reference "$branch_format" "b:$branch"
 		fi
+
+		# Check if there's a stash related to the current branch
+		git stash list 2> /dev/null | grep -q ": WIP on $branch:"
+		if (( !$? )); then
+			local stash_format
+			zstyle -s ':zconf:module:git:info:stash' format 'stash_format'
+			zformat -f flags "$flags$stash_format" "v:+"
+		fi
 	else
 		local tag
-		local tag_format
-		zstyle -s ':zconf:module:git:info:tag' format 'tag_format'
-		if [[ -n "$tag_format" ]]; then
-			tag="$(git describe --tags --exact-match 2> /dev/null)"
+		tag="$(git describe --tags --exact-match 2> /dev/null)"
 
-			if [[ -n "$tag" ]]; then
-				zformat -f reference "$tag_format" "t:$tag"
-			fi
+		if [[ -n "$tag" ]]; then
+			local tag_format
+			zstyle -s ':zconf:module:git:info:tag' format 'tag_format'
+			zformat -f reference "$tag_format" "t:$tag"
 		fi
+
+		local commit
+		commit="$(git rev-parse --short HEAD 2> /dev/null)"
 
 		if [[ -z "$tag" ]]; then
 			local commit_format
-			# Format commit
 			zstyle -s ':zconf:module:git:info:commit' format 'commit_format'
-			if [[ -n "$commit_format" ]]; then
-				local commit
-				commit="$(git rev-parse HEAD 2> /dev/null)"
-				if [[ -n "$commit" ]]; then
-					zformat -f reference "$commit_format" "c:$commit"
-				fi
-			fi
+			zformat -f reference "$commit_format" "c:$commit"
+		fi
+
+		# Check if a stash related to the current commit
+		git stash list 2> /dev/null | grep -q ": WIP on (no branch): $commit"
+		if (( !$? )); then
+			local stash_format
+			zstyle -s ':zconf:module:git:info:stash' format 'stash_format'
+			zformat -f flags "$flags$stash_format" "v:+"
 		fi
 	fi
 
@@ -102,7 +109,7 @@ function git-info() {
 	local info_format
 	zstyle -a ':zconf:module:git:info:keys' format 'info_formats'
 	for info_format in ${(k)info_formats}; do
-		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "m:$modified" "s:$stash"
+		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "g:$flags"
 		git_info[$info_format]="$REPLY"
 	done
 
@@ -119,8 +126,17 @@ function node-info() {
 	unset node_info
 	typeset -gA node_info
 
-	if (( $+functions[nvm_version] )); then
-		version="${$(nvm_version)#v}"
+	#if (( $+functions[nvm_version] )); then
+	#	version="${$(nvm_version)#v}"
+
+	#	if [[ -n "$version" && "$version" != "system" ]]; then
+	#		zstyle -s ':zconf:module:node:info:version' format 'version_format'
+	#		zformat -f version_formatted "$version_format" "v:$version"
+	#		node_info[version]=" %F{blue}node:%f$version_formatted"
+	#	fi
+	#fi
+	if (( $+commands[nodenv] )); then
+		version=${${(z)$(nodenv version)}[1]}
 
 		if [[ -n "$version" && "$version" != "system" ]]; then
 			zstyle -s ':zconf:module:node:info:version' format 'version_format'
@@ -192,7 +208,12 @@ zstyle ':zconf:module:git:info'        verbose 'yes'
 zstyle ':zconf:module:git:info:branch' format  ':%F{green}%b%f'
 zstyle ':zconf:module:git:info:tag'    format  ':#%F{green}%t%f'
 zstyle ':zconf:module:git:info:commit' format  ':%F{green}%.7c%f'
-zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%F{red}%m%f%F{blue}%s%f'
+zstyle ':zconf:module:git:info:mod'    format  '%F{red}%v%f'
+zstyle ':zconf:module:git:info:stash'  format  '%F{blue}%v%f'
+zstyle ':zconf:module:git:info:flags'  format  ' %v'
+
+# Set format for overall git prompt
+zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%g'
 
 # Set node-info formats
 zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
@@ -204,7 +225,8 @@ if [[ -n $SSH_CONNECTION ]]; then
 	remote=" <$HOST>"
 fi
 
-PROMPT='[%*]$remote %F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}${editor_info[keymap]} '
+PROMPT='%B[%*]%f%k$remote${editor_info[keymap]}%b '
+RPROMPT='%B[%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}]%b'
 
 # Correction prompt
 SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
