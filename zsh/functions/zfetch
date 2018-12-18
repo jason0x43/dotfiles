@@ -27,7 +27,9 @@ else
 
   # if the dest dir ends with /, append the name to it to get the real dest dir
   if [[ $dest == */ ]]; then
-	  dest=$dest$name
+    dest=$dest$name
+  else
+    dest=$dest/$name
   fi
 
   local cwd=$(pwd)
