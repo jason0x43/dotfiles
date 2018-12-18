@@ -28,10 +28,10 @@ export CACHEDIR="$HOME/.local/share"
 export ZCACHEDIR="$CACHEDIR/zsh"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 
-export ZPLUGDIR="$CACHEDIR/zsh/plugins/"
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 [[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
 
-export ZCOMPDIR="$CACHEDIR/zsh/completions/"
+export ZCOMPDIR="$CACHEDIR/zsh/completions"
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 
 if [[ -d "$TMPDIR" ]]; then

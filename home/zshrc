@@ -59,6 +59,12 @@ if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     unset dest
 fi
 
+# Extra ZSH completions
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+if [[ $? == 0 ]]; then
+    fpath=($ZPLUGDIR/zsh-users/zsh-completions/src $fpath)
+fi
+
 # Load and initialize the completion system, ignoring insecure directories
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 autoload -Uz compinit && compinit -i -d $ZCOMPFILE
@@ -225,11 +231,16 @@ alias dl='docker logs'
 alias dlf='docker logs -f'
 alias dps='docker ps --format "{{.Names}}"'
 
+# Themes
+alias mtd='mac_theme dark'
+alias mtl='mac_theme light'
+
 # Git shortcuts
 alias ga='git add'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -d'
+alias gbf='git branch --contains'
 alias gc='git commit'
 alias gca='git commit --all'
 alias gcb='git checkout -b'
@@ -257,6 +268,7 @@ alias gl1='git log -1'
 alias glb='git lgb -n 20'
 alias glba='git lgb'
 alias glbn='git lgb -n'
+alias glf='git log-from'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
 alias gln='git lg -n'
 alias gls='git ls-files'
@@ -269,10 +281,16 @@ alias grm='git rm'
 alias grv='git remote -v'
 alias gs='git s'
 alias gsc='git diff --name-only --diff-filter=U'
+alias gsh='git show'
+alias gss='git show --stat'
 alias gwa='git worktree add'
 alias gwl='git worktree list'
 alias gwp='git worktree prune'
 alias tiga='tig --all'
+
+# tmux
+alias tls='tmux list-sessions'
+alias tas='tmux attach -t'
 
 # Pretty print json
 alias json='python -m json.tool'
@@ -391,19 +409,6 @@ SAVEHIST=10000                # The maximum number of events to save in the hist
 # Lists the ten most used commands
 alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
 
-# Node
-# ------------------------------------------------------------------------
-# Load NPM completion
-if (( $+commands[npm] )); then
-    npm_completer="$DOTFILES/zsh/npm.zsh"
-
-    if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
-        echo "npm has been upgraded; update npm.zsh"
-    fi
-
-    source "$npm_completer"
-fi
-
 # Less
 # ----------------------------------------------------------------------------
 export LESS='-F -g -i -M -R -w -X -z-4'
@@ -449,11 +454,6 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
     eval "$(direnv hook $SHELL)"
-fi
-
-# Veertu
-if [[ -x /Applications/Veertu.app/Contents/SharedSupport/VeertuManage ]]; then 
-    alias veertu=/Applications/Veertu.app/Contents/SharedSupport/VeertuManage
 fi
 
 # Line editor
@@ -567,7 +567,11 @@ fi
 # ----------------------------------------------------------------------------
 export NVM_NO_USE=true
 zfetch $ZPLUGDIR lukechilds/zsh-nvm
-source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
+if [[ $? == 0 ]]; then
+    source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
+fi
+
+# Load NPX fallback script
 if (( $+commands[npx] )); then
     npx_fallback="$DOTFILES/zsh/npx.zsh"
 
@@ -576,6 +580,17 @@ if (( $+commands[npx] )); then
     fi
 
     source "$npx_fallback"
+fi
+
+# Load NPM completion
+if (( $+commands[npm] )); then
+    npm_completer="$DOTFILES/zsh/npm.zsh"
+
+    if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
+        echo "npm has been upgraded; update npm.zsh"
+    fi
+
+    source "$npm_completer"
 fi
 
 # TPM
@@ -588,7 +603,7 @@ zfetch ~/.tmux/plugins/tpm tmux-plugins/tpm
 # Prompt
 # ------------------------------------------------------------------------
 autoload -Uz promptinit && promptinit
-prompt 'jason0x43'
+prompt pure
 
 # Local config
 # --------------------------------------------------------------------------
