@@ -234,7 +234,7 @@ alias agl='ag -l'
 alias rgl='rg -l'
 alias back='popd'
 alias help='run-help'
-alias se='sudoedit'
+alias se='sudo -e'
 
 # Disable certificate check for wget
 alias wget='wget --no-check-certificate'
