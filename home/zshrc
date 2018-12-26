@@ -610,10 +610,10 @@ fi
 
 # TPM
 # ------------------------------------------------------------------------
-if [[ ! -d ~/.tmux/plugins ]]; then
-    mkdir ~/.tmux/plugins
+if [[ ! -d ~/.tmux ]]; then
+    mkdir ~/.tmux
 fi
-zfetch ~/.tmux/plugins/tpm tmux-plugins/tpm
+zfetch ~/.tmux tmux-plugins/tpm
 
 # Prompt
 # ------------------------------------------------------------------------
