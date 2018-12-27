@@ -23,7 +23,7 @@ if [[ $name =~ "Ubuntu" ]]; then
     sudo apt-get update
 
     # general utilities
-    sudo apt-get install -y neovim fzf zsh nodejs
+    sudo apt-get install -y neovim fzf zsh nodejs mosh build-essential
 
     z_shell=$(which zsh)
     if [[ -n $z_shell ]]; then
