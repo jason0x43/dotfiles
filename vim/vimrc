@@ -357,16 +357,9 @@ let g:autoprettier_exclude = [
     \ 'public/app/**/*.tsx',
     \ ]
 
-" vim-lsc
+" vim-jsx
 " ---------------------------------------------------------------------
-let g:lsc_trace_level = 'verbose'
-let g:lsc_server_commands = {
-    \ 'typescript': {
-    \   'name': 'typescript',
-    \   'command': 'typescript-language-server --stdio',
-    \   'suppress_stderr': 1,
-    \ }
-    \ }
+let g:jsx_ext_required = 1
 
 " vim-lsp
 " ---------------------------------------------------------------------
