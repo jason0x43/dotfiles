@@ -272,3 +272,9 @@ call s:hi("javaOperator",               s:baseD, "",      "")
 
 " ALE
 call s:hi("ALEErrorSign",               s:base8, s:base1, "bold")
+
+" vim-lsp
+call s:hi("LspErrorSign",               s:base8, s:base1, "bold")
+call s:hi("LspWarningSign",             s:baseA, s:base1, "bold")
+call s:hi("LspInformationSign",         s:baseB, s:base1, "bold")
+call s:hi("LspHintSign",                s:baseE, s:base1, "bold")
