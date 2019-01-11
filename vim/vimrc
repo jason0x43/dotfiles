@@ -229,6 +229,7 @@ let g:ale_completion_enabled = 0
 " asyncomplete
 " ---------------------------------------------------------------------
 let g:asyncomplete_smart_completion = 1
+let g:asyncomplete_auto_popup = 1
 let g:asyncomplete_remove_duplicates = 1
 
 " EasyAlign
@@ -244,13 +245,6 @@ let g:tablabel=''
 " fzf
 " ---------------------------------------------------------------------
 let g:fzf_layout = { 'down': 10 }
-
-" git-gutter
-" ---------------------------------------------------------------------
-map <silent> <Leader>hl :GitGutterLineHighlightsToggle<cr>
-map <silent> <Leader>hs :GitGutterStageHunk<cr>
-map <silent> <Leader>hp :GitGutterPreviewHunk<cr>
-map <silent> <Leader>hn :GitGutterNextHunk<cr>
 
 " Go
 " ---------------------------------------------------------------------
@@ -408,7 +402,6 @@ Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code ele
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'prettier/vim-prettier', { 'branch': 'release/1.x', 'do': 'npm install' } " Format TS, JS, MD, and others
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
-" Plug 'airblade/vim-gitgutter'              " Show diff markers in sign column
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
 
@@ -520,6 +513,26 @@ if executable('php-language-server.php')
     autocmd FileType php map <buffer> K :LspHover<CR> 
     autocmd FileType php setlocal omnifunc=lsp#complete
 endif
+
+"let s:asyncomplete_blacklist += ['java']
+"autocmd User lsp_setup call lsp#register_server({
+"    \ 'name': 'java-language-server',
+"    \ 'priority': 99,
+"    \ 'cmd': {
+"    \     server_info -> [
+"    \         'java',
+"    \         '-jar',
+"    \         expand('~/Downloads/java-langserver/target/java-language-server.jar'),
+"    \         '-l',
+"    \         'INFO'
+"    \     ]
+"    \ },
+"    \ 'whitelist': ['java'],
+"    \ })
+"autocmd FileType java map <buffer> <silent> <C-]> :LspDefinition<CR>
+"autocmd FileType java map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
+"autocmd FileType java map <buffer> K :LspHover<CR> 
+"autocmd FileType java setlocal omnifunc=lsp#complete
 
 " asyncomplete
 " ---------------------------------------------------------------------

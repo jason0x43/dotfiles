@@ -251,9 +251,9 @@ call s:hi("SignifySignDelete",          s:base8, s:base1, "")
 
 " Spelling highlighting
 call s:hi("SpellBad",                   s:base8, "none",  "undercurl")
-call s:hi("SpellLocal",                 "",      "",      "undercurl")
-call s:hi("SpellCap",                   "",      "",      "undercurl")
-call s:hi("SpellRare",                  "",      "",      "undercurl")
+call s:hi("SpellLocal",                 "",      "none",  "undercurl")
+call s:hi("SpellCap",                   "",      "none",  "undercurl")
+call s:hi("SpellRare",                  "",      "none",  "undercurl")
 
 " Startify highlighting
 call s:hi("StartifyBracket",            s:base3, "",      "")
