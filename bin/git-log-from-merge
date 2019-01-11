@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Show descendents from a particular commit. This assumes an 'lg' alias exists.
+
+base="$(git merge-base $@)~1"
+
+git lgb --ancestry-path $base.. $@
