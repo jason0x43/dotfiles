@@ -95,24 +95,7 @@ if [[ -z $group || $group == "vim" ]]; then
 		fi
 
 		printf ">> Updating vim plugins...\n"
-		cd $CACHEDIR/vim/plugins
-		for plugin in *; do
-			cd $plugin 
-			head_name=$(git symbolic-ref HEAD --short)
-			head=$(git rev-parse HEAD)
-			git pull -q --recurse-submodules
-			if [[ "$?" != "0" ]]; then 
-				printf "   problem updating $plugin\n"
-			else
-				if [[ $(git rev-parse HEAD) != $head ]]; then 
-					if [[ -e package.json ]]; then
-						npm install --registry=https://registry.npmjs.org --silent
-					fi
-					printf "   $plugin\n"
-				fi
-			fi
-			cd ..
-		done
+		nvim -c ":PlugUpdate" -c ":qa"
 	fi
 fi
 
