@@ -283,6 +283,7 @@ alias glb='git lgb -n 20'
 alias glba='git lgb'
 alias glbn='git lgb -n'
 alias glf='git log-from'
+alias glfm='git log-from-merge'
 alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
 alias gln='git lg -n'
 alias gls='git ls-files'
@@ -488,23 +489,15 @@ fi
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 if [[ $? == 0 ]]; then
     source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+
     # Color for found substrings
-    zstyle -s ':zconf:module:history-substring-search:color' \
-        found \
-        'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND' \
-        || HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
+	HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
 
     # Color for not-found substrings
-    zstyle -s ':zconf:module:history-substring-search:color' \
-        not-found \
-        'HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND' \
-        || HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
 
     # Default globbing flags
-    zstyle -s ':zconf:module:history-substring-search' \
-        globbing-flags \
-        'HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS' \
-        || HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+    HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
     # Check if case-sensitive is in the substring search style
     if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
