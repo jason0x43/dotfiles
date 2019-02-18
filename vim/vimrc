@@ -372,6 +372,10 @@ let g:lsp_signs_warning = {'text': '!'}
 let g:lsp_signs_information = {'text': '?'}
 let g:lsp_signs_hint = {'text': '$'}
 
+" vim-signify
+" ---------------------------------------------------------------------
+let g:signify_vcs_list = ['git']
+
 " vimtex
 " ---------------------------------------------------------------------
 let g:vimtex_indent_lists = [
@@ -409,6 +413,7 @@ Plug 'prettier/vim-prettier', { 'do': 'npm install' } " Format TS, JS, MD, and o
 " Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
+Plug 'mhinz/vim-signify'                   " Show modified lines
 
 " LSP
 Plug 'prabirshrestha/async.vim'
