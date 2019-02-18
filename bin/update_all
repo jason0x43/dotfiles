@@ -15,7 +15,7 @@ fi
 
 if [[ -z $group || $group == "python" ]]; then
 	if type pip3 > /dev/null 2>&1; then
-		printf ">> Updating python3 packages...\n"
+		printf ">> Updating python packages...\n"
 		pip3 install -U pip setuptools neovim > /dev/null
 	fi
 
