@@ -405,7 +405,7 @@ Plug 'moll/vim-bbye'                       " Preserve layout when closing buffer
 Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
-Plug 'jason0x43/vim-prettier', { 'branch': 'jason0x43-updates', 'do': 'npm install' } " Format TS, JS, MD, and others
+Plug 'prettier/vim-prettier', { 'do': 'npm install' } " Format TS, JS, MD, and others
 " Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
