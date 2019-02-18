@@ -1,3 +1,5 @@
+scriptencoding utf8
+
 " Check for vim-plug; install if missing
 let plugpath = expand('<sfile>:p:h') . '/autoload/plug.vim'
 if !filereadable(plugpath)
@@ -248,7 +250,7 @@ let g:fzf_layout = { 'down': 10 }
 
 " Go
 " ---------------------------------------------------------------------
-let g:go_fmt_command = "goimports"
+let g:go_fmt_command = 'goimports'
 let g:go_fmt_fail_silently = 1
 let g:go_metalinter_excludes = ['errcheck']
 
@@ -288,7 +290,7 @@ let g:NERDTreeDirArrowCollapsible = '▼'
 let g:NERDTreeRespectWildIgnore = 1
 
 function! ToggleNerdTree()
-    if @% != "" && (!exists("g:NERDTree") || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen()))
+    if @% !=# '' && (!exists('g:NERDTree') || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen()))
         :NERDTreeFind
     else 
         :NERDTreeToggle
@@ -306,7 +308,7 @@ if has('nvim')
     tnoremap <leader>e <C-\><C-n>
 
     " Always enter insert mode when switching to a terminal
-    autocmd BufWinEnter,WinEnter term://* startinsert
+    autocmd vimrc BufWinEnter,WinEnter term://* startinsert
 
     " Tell Neovim.app which Python to use
     if executable('/usr/local/bin/python2')
@@ -477,7 +479,7 @@ let s:asyncomplete_blacklist = []
 
 if executable('typescript-language-server')
     let s:asyncomplete_blacklist += ['typescript']
-    autocmd User lsp_setup call lsp#register_server({
+    autocmd vimrc User lsp_setup call lsp#register_server({
         \ 'name': 'typescript-language-server',
         \ 'priority': 99,
         \ 'cmd': {
@@ -493,15 +495,15 @@ if executable('typescript-language-server')
         \ },
         \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
         \ })
-    autocmd FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
-    autocmd FileType typescript map <buffer> K :LspHover<CR> 
-    autocmd FileType typescript setlocal omnifunc=lsp#complete
+    autocmd vimrc FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd vimrc FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
+    autocmd vimrc FileType typescript map <buffer> K :LspHover<CR> 
+    autocmd vimrc FileType typescript setlocal omnifunc=lsp#complete
 endif
 
 if executable('php-language-server.php')
     let s:asyncomplete_blacklist += ['php']
-    autocmd User lsp_setup call lsp#register_server({
+    autocmd vimrc User lsp_setup call lsp#register_server({
         \ 'name': 'php-language-server',
         \ 'priority': 99,
         \ 'cmd': {
@@ -509,10 +511,10 @@ if executable('php-language-server.php')
         \ },
         \ 'whitelist': ['php'],
         \ })
-    autocmd FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
-    autocmd FileType php map <buffer> K :LspHover<CR> 
-    autocmd FileType php setlocal omnifunc=lsp#complete
+    autocmd vimrc FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd vimrc FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
+    autocmd vimrc FileType php map <buffer> K :LspHover<CR> 
+    autocmd vimrc FileType php setlocal omnifunc=lsp#complete
 endif
 
 "let s:asyncomplete_blacklist += ['java']
@@ -546,7 +548,7 @@ endif
 "     \     'completor': function('asyncomplete#sources#buffer#completor')
 "     \ }))
 
-autocmd User asyncomplete_setup call asyncomplete#register_source(
+autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
     \ asyncomplete#sources#file#get_source_options({
     \     'name': 'file',
     \     'whitelist': ['*'],
