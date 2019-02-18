@@ -6,7 +6,13 @@ remote=$1
 branch=$(git rev-parse --abbrev-ref HEAD)
 
 if [ -z $remote ]; then 
-	remote="origin"
+	# If the branch is tracking an upstream branch, use that
+	remote=$(git status -sb | awk '{split($0,a,"\\.\\.\\."); print a[2]}' | cut -d / -f 1)
+fi
+
+if [ -z $remote ]; then 
+	# If there's nothing available, default to 'origin'
+	remote='origin'
 fi
 
 echo "Pulling from $remote..."
