@@ -219,6 +219,7 @@ endif
 let g:ale_linters = {
     \ 'typescript': ['tslint'],
     \ 'typescript.tsx': ['tslint'],
+    \ 'php': [''],
     \ }
 let g:ale_pattern_options = {
     \ 'node_modules/': { 'ale_enabled': 0 }
