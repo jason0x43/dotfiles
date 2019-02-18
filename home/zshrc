@@ -603,10 +603,10 @@ fi
 
 # TPM
 # ------------------------------------------------------------------------
-if [[ ! -d ~/.tmux ]]; then
-    mkdir ~/.tmux
+if [[ ! -d $CACHEDIR/tmux ]]; then
+    mkdir $CACHEDIR/tmux
 fi
-zfetch ~/.tmux tmux-plugins/tpm
+zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Prompt
 # ------------------------------------------------------------------------
