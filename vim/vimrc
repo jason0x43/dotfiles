@@ -503,8 +503,8 @@ if executable('typescript-language-server')
         \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
         \ })
     autocmd vimrc FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
-    autocmd vimrc FileType typescript map <buffer> K :LspHover<CR> 
+    autocmd vimrc FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
+    autocmd vimrc FileType typescript map <buffer> K :LspHover<CR>
     autocmd vimrc FileType typescript setlocal omnifunc=lsp#complete
 endif
 
@@ -519,8 +519,8 @@ if executable('php-language-server.php')
         \ 'whitelist': ['php'],
         \ })
     autocmd vimrc FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
-    autocmd vimrc FileType php map <buffer> K :LspHover<CR> 
+    autocmd vimrc FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
+    autocmd vimrc FileType php map <buffer> K :LspHover<CR>
     autocmd vimrc FileType php setlocal omnifunc=lsp#complete
 endif
 
