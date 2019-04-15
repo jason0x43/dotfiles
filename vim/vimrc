@@ -436,31 +436,28 @@ Plug 'jason0x43/vim-wildgitignore'
 " Session management
 Plug 'tpope/vim-obsession'
 
-" Filetype plugins
-Plug 'keith/swift.vim', { 'for': 'swift' }
-Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
-Plug 'leafgarland/typescript-vim', { 'for': [ 'typescript', 'typescript.tsx', 'markdown' ] }
-Plug 'ianks/vim-tsx', { 'for': [ 'typescript', 'typescript.tsx', 'markdown' ] }
-Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
-Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
-Plug 'dag/vim-fish', { 'for': 'fish' }
-Plug 'elzr/vim-json', { 'for': 'json' }
-Plug 'groenewege/vim-less', { 'for': 'less' }
-Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-Plug 'pangloss/vim-javascript', { 'for':  [ 'javascript', 'javascript.jsx', 'markdown' ] }
-Plug 'mxw/vim-jsx', {'for': [ 'javascript.jsx', 'markdown' ] } 
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
-Plug 'tpope/vim-classpath', { 'for': 'java' }
-Plug 'wavded/vim-stylus', { 'for': 'stylus' }
+" Base filetype plugins (these detect filetypes)
+Plug 'pangloss/vim-javascript'
+Plug 'elzr/vim-json'
+Plug 'mxw/vim-jsx'
+Plug 'digitaltoad/vim-jade'
+Plug 'keith/swift.vim'
+Plug 'leafgarland/typescript-vim'
+Plug 'ianks/vim-tsx'
+Plug 'dag/vim-fish'
+Plug 'groenewege/vim-less'
+Plug 'rust-lang/rust.vim'
+Plug 'tpope/vim-markdown'
+Plug 'wavded/vim-stylus'
 Plug 'dmix/elvish.vim'
 Plug 'vmchale/ion-vim'
-Plug 'lervag/vimtex'
+Plug 'fatih/vim-go'
 
-" Load the go plugin if go is available
-if executable('go')
-    Plug 'fatih/vim-go', { 'for': 'go' }
-endif
+" Filetype plugins
+Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
+Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
+Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
+Plug 'tpope/vim-classpath', { 'for': 'java' }
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
