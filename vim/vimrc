@@ -458,6 +458,7 @@ Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
 Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
 Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
+Plug 'lervag/vimtex', { 'for': ['tex', 'latex'] }
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
@@ -562,8 +563,3 @@ autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
     \     'priority': 10,
     \     'completor': function('asyncomplete#sources#file#completor')
     \ }))
-
-" autocmd User asyncomplete_setup call asyncomplete#register_source({
-"     \ 'name': 'tex',
-"     \ 'whitelist': ['tex'],
-"     \ 'completor': 'function
