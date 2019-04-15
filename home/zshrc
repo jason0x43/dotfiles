@@ -229,6 +229,11 @@ alias mv='mv -i'
 alias rm='rm -i'
 alias type='type -a'
 
+# Let node use local readline setup (vi mode)
+if (( $+commands[rlwrap] )); then
+	alias node='env NODE_NO_READLINE=1 rlwrap node'
+fi
+
 # Shortcuts
 alias agl='ag -l'
 alias rgl='rg -l'
@@ -293,6 +298,7 @@ alias gr='git rebase'
 alias gri='git rebase -i'
 alias grc='git rebase --continue'
 alias grm='git rm'
+alias gro='git rebase --onto'
 alias grv='git remote -v'
 alias gs='git s'
 alias gsc='git diff --name-only --diff-filter=U'
