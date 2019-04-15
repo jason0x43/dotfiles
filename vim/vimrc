@@ -417,6 +417,7 @@ Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
 Plug 'mhinz/vim-signify'                   " Show modified lines
+Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
 " LSP
 Plug 'prabirshrestha/async.vim'
