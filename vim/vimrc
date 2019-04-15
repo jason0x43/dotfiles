@@ -289,8 +289,6 @@ let g:markdown_fenced_languages = [
 let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
-let g:NERDTreeDirArrowExpandable = '▷'
-let g:NERDTreeDirArrowCollapsible = '▼'
 let g:NERDTreeRespectWildIgnore = 1
 
 function! ToggleNerdTree()
