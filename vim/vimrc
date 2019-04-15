@@ -469,6 +469,7 @@ if executable('fzf') && has('nvim')
     map <silent> <Leader>b :Buffers<CR>
     " Show untracked files, too
     map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
+    map <silent> <Leader>m :GFiles?<CR>
     map <silent> <Leader>s :Snippets<CR>
     map <silent> <Leader>l :BLines<CR>
 endif
