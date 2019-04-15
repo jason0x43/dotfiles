@@ -524,25 +524,24 @@ if executable('php-language-server.php')
     autocmd vimrc FileType php setlocal omnifunc=lsp#complete
 endif
 
-"let s:asyncomplete_blacklist += ['java']
-"autocmd User lsp_setup call lsp#register_server({
-"    \ 'name': 'java-language-server',
-"    \ 'priority': 99,
-"    \ 'cmd': {
-"    \     server_info -> [
-"    \         'java',
-"    \         '-jar',
-"    \         expand('~/Downloads/java-langserver/target/java-language-server.jar'),
-"    \         '-l',
-"    \         'INFO'
-"    \     ]
-"    \ },
-"    \ 'whitelist': ['java'],
-"    \ })
-"autocmd FileType java map <buffer> <silent> <C-]> :LspDefinition<CR>
-"autocmd FileType java map <buffer> <Leader>e :LspDocumentDiagnostics<CR> 
-"autocmd FileType java map <buffer> K :LspHover<CR> 
-"autocmd FileType java setlocal omnifunc=lsp#complete
+if executable(expand('~/Applications/java-language-server/bin/launcher'))
+    let s:asyncomplete_blacklist += ['java']
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'java-language-server',
+        \ 'priority': 99,
+        \ 'cmd': {
+        \     server_info -> [
+        \         expand('~/Applications/java-language-server/bin/launcher'),
+        \         '--quiet',
+        \     ]
+        \ },
+        \ 'whitelist': ['java'],
+        \ })
+    autocmd vimrc FileType java map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd vimrc FileType java map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
+    autocmd vimrc FileType java map <buffer> K :LspHover<CR>
+    autocmd vimrc FileType java setlocal omnifunc=lsp#complete
+endif
 
 " asyncomplete
 " ---------------------------------------------------------------------
