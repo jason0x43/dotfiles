@@ -350,11 +350,7 @@ let g:autoprettier_types = [
     \ ]
 let g:autoprettier_exclude = [
     \ 'package.json',
-    \ 'package-lock.json',
-    \ 'public/app/**/*.ts',
-    \ 'public/app/**/*.tsx',
-    \ 'tests/integration/**/*.ts',
-    \ 'tests/pageobjects/**/*.ts',
+    \ 'package-lock.json'
     \ ]
 
 " vim-jsx
@@ -417,7 +413,7 @@ Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux 
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'prettier/vim-prettier', { 'do': 'npm install' } " Format TS, JS, MD, and others
-" Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
+Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
 Plug 'mhinz/vim-signify'                   " Show modified lines
