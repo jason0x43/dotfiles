@@ -426,7 +426,7 @@ Plug 'jason0x43/vim-lsp', { 'branch': 'jason0x43-updates' }
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
-" Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -545,14 +545,14 @@ endif
 
 " asyncomplete
 " ---------------------------------------------------------------------
-" autocmd User asyncomplete_setup call asyncomplete#register_source(
-"     \ asyncomplete#sources#buffer#get_source_options({
-"     \     'name': 'buffer',
-"     \     'whitelist': ['*'],
-"     \     'blacklist': s:asyncomplete_blacklist,
-"     \     'priority': 9,
-"     \     'completor': function('asyncomplete#sources#buffer#completor')
-"     \ }))
+autocmd User asyncomplete_setup call asyncomplete#register_source(
+    \ asyncomplete#sources#buffer#get_source_options({
+    \     'name': 'buffer',
+    \     'whitelist': ['*'],
+    \     'blacklist': s:asyncomplete_blacklist,
+    \     'priority': 9,
+    \     'completor': function('asyncomplete#sources#buffer#completor')
+    \ }))
 
 autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
     \ asyncomplete#sources#file#get_source_options({
