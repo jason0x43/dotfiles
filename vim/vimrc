@@ -376,6 +376,12 @@ let g:lsp_signs_hint = {'text': '$'}
 " vim-signify
 " ---------------------------------------------------------------------
 let g:signify_vcs_list = ['git']
+let s:signify_sign = '┃'
+let g:signify_sign_add = s:signify_sign
+let g:signify_sign_change = s:signify_sign
+let g:signify_sign_changedelete = s:signify_sign
+let g:signify_sign_delete = s:signify_sign
+let g:signify_sign_show_count = 10
 
 " vimtex
 " ---------------------------------------------------------------------
