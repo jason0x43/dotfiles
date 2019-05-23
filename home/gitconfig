@@ -28,6 +28,7 @@
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
 	ignore = update-index --assume-unchanged
+	latest = !git for-each-ref --color=always --sort='-committerdate' --format='%(color:red)%(refname:lstrip=-2)%(color:reset)%09%(committerdate)' refs | less -XFR
 	lg = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset' --all
 	lgb = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'
 	s = status --short
