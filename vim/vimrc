@@ -526,6 +526,21 @@ if executable('php-language-server.php')
     autocmd vimrc FileType php setlocal omnifunc=lsp#complete
 endif
 
+if executable('rls')
+    let s:asyncomplete_blacklist += ['rust']
+    autocmd vimrc User lsp_setup call lsp#register_server({
+        \ 'name': 'rls',
+        \ 'priority': 99,
+        \ 'cmd': { server_info -> ['rls'] },
+        \ 'workspace_config': {'rust': {'clippy_preference': 'on'}},
+        \ 'whitelist': ['rust'],
+        \ })
+    autocmd vimrc FileType rust map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd vimrc FileType rust map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
+    autocmd vimrc FileType rust map <buffer> K :LspHover<CR>
+    autocmd vimrc FileType rust setlocal omnifunc=lsp#complete
+endif
+
 if executable(expand('~/Applications/java-language-server/bin/launcher'))
     let s:asyncomplete_blacklist += ['java']
     autocmd User lsp_setup call lsp#register_server({
