@@ -426,7 +426,7 @@ Plug 'prabirshrestha/vim-lsp'
 " Completion
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
+" Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/asyncomplete-buffer.vim'
 
 " File browsing
@@ -557,10 +557,10 @@ autocmd User asyncomplete_setup call asyncomplete#register_source(
     \     'completor': function('asyncomplete#sources#buffer#completor')
     \ }))
 
-autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
-    \ asyncomplete#sources#file#get_source_options({
-    \     'name': 'file',
-    \     'whitelist': ['*'],
-    \     'priority': 10,
-    \     'completor': function('asyncomplete#sources#file#completor')
-    \ }))
+" autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
+"     \ asyncomplete#sources#file#get_source_options({
+"     \     'name': 'file',
+"     \     'whitelist': ['*'],
+"     \     'priority': 10,
+"     \     'completor': function('asyncomplete#sources#file#completor')
+"     \ }))
