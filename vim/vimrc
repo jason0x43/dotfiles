@@ -488,7 +488,7 @@ call plug#end()
 let s:asyncomplete_blacklist = []
 
 if executable('typescript-language-server')
-    let s:asyncomplete_blacklist += ['typescript']
+    let s:asyncomplete_blacklist += ['typescript', 'javascript']
     autocmd vimrc User lsp_setup call lsp#register_server({
         \ 'name': 'typescript-language-server',
         \ 'priority': 99,
@@ -505,10 +505,10 @@ if executable('typescript-language-server')
         \ },
         \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
         \ })
-    autocmd vimrc FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType typescript map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType typescript setlocal omnifunc=lsp#complete
+    autocmd vimrc FileType typescript,javascript map <buffer> <silent> <C-]> :LspDefinition<CR>
+    autocmd vimrc FileType typescript,javascript map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
+    autocmd vimrc FileType typescript,javascript map <buffer> K :LspHover<CR>
+    autocmd vimrc FileType typescript,javascript setlocal omnifunc=lsp#complete
 endif
 
 if executable('php-language-server.php')
