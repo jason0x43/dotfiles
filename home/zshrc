@@ -312,6 +312,7 @@ alias tiga='tig --all'
 # tmux
 alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
+alias tks='tmux kill-session -t'
 
 # Pretty print json
 alias json='python -m json.tool'
