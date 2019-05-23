@@ -589,22 +589,12 @@ fi
 # Load NPX fallback script
 if (( $+commands[npx] )); then
     npx_fallback="$DOTFILES/zsh/npx.zsh"
-
-    if [[ "$commands[npx]" -nt "$npx_fallback" || ! -s "$npx_fallback" ]]; then
-        echo "npx has been upgraded; update npx.zsh"
-    fi
-
     source "$npx_fallback"
 fi
 
 # Load NPM completion
 if (( $+commands[npm] )); then
     npm_completer="$DOTFILES/zsh/npm.zsh"
-
-    if [[ "$commands[npm]" -nt "$npm_completer" || ! -s "$npm_completer" ]]; then
-        echo "npm has been upgraded; update npm.zsh"
-    fi
-
     source "$npm_completer"
 fi
 
