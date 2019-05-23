@@ -222,15 +222,12 @@ endif
 let g:ale_linters = {
     \ 'typescript': ['tslint'],
     \ 'typescript.tsx': ['tslint'],
-    \ 'php': [''],
     \ }
 let g:ale_pattern_options = {
     \ 'node_modules/': { 'ale_enabled': 0 }
     \ }
 let g:ale_completion_enabled = 0
-" let g:ale_tex_chktex_options = "-I -x"
-" map <Leader>e :lope<CR> 
-" map <Leader>i :ALEHover<CR> 
+let g:ale_disable_lsp = 1
 
 " asyncomplete
 " ---------------------------------------------------------------------
@@ -412,12 +409,14 @@ Plug 'moll/vim-bbye'                       " Preserve layout when closing buffer
 Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
-Plug 'prettier/vim-prettier', { 'do': 'npm install' } " Format TS, JS, MD, and others
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'w0rp/ale'                            " Linting
 Plug 'mhinz/vim-signify'                   " Show modified lines
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
+
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }  " Format TS, JS, MD, and others
+Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
 " LSP
 Plug 'prabirshrestha/async.vim'
