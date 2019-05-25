@@ -1,0 +1,163 @@
+#
+# Defines environment variables before .zshrc is sourced
+#
+# This file should be kept light and fast. Anything that's slow or involves
+# user interaction should go in zshrc.
+#
+
+# Dotfiles
+# ----------------------------------------------------------------------------
+export DOTFILES=$HOME/.dotfiles
+
+# Language
+# ----------------------------------------------------------------------------
+[[ -z "$LANG" ]] && eval "$(locale)"
+[[ -z "$LANG" ]] && export LANG=en_US.UTF-8
+[[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
+
+# Cache and temp files
+# ----------------------------------------------------------------------------
+export CACHEDIR="$HOME/.local/share"
+[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
+
+export ZCACHEDIR="$CACHEDIR/zsh"
+[[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
+
+export ZFUNCDIR="$CACHEDIR/zsh/functions"
+[[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
+
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+[[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
+
+export ZCOMPDIR="$CACHEDIR/zsh/completions"
+[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+
+if [[ -d "$TMPDIR" ]]; then
+	export TMPPREFIX="${TMPDIR%/}/zsh"
+	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
+fi
+
+# General paths
+# ----------------------------------------------------------------------------
+typeset -gU cdpath fpath mailpath manpath path
+typeset -gUT INFOPATH infopath
+
+# Set the list of directories that Zsh searches for function scripts.
+fpath=(
+    $ZCOMPDIR
+    $ZFUNCDIR
+    $DOTFILES/zsh/functions
+    /usr/local/share/zsh-completions
+    $fpath
+)
+
+
+# Set the list of directories that man searches for manuals.
+if [ -e /etc/manpaths ]; then
+	while read line; do 
+		manpath+=$line
+	done < /etc/manpaths
+fi
+
+if [ -x /usr/libexec/path_helper ]; then
+	eval `/usr/libexec/path_helper -s`
+fi
+
+# Java
+# ----------------------------------------------------------------------------
+if [[ -z "$JAVA_HOME" ]]; then
+	# Use java 1.8 by default
+	JAVA_HOME=`/usr/libexec/java_home -v 1.8 2> /dev/null`
+	if (( $? )); then
+		unset JAVA_HOME
+	else
+		export JAVA_HOME
+	fi
+fi
+
+# Ruby
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
+	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
+	path=(
+		$GEM_HOME/bin
+		$path
+	)
+fi
+
+# Rust
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/.cargo/bin ]]; then
+	path=(
+		$HOME/.cargo/bin
+		$path
+	)
+fi
+
+# Python
+# ----------------------------------------------------------------------------
+if [[ -e $HOME/Library/Python/2.7/bin ]]; then 
+	path=(
+		$HOME/Library/Python/2.7/bin
+		$path
+	)
+fi
+
+# Go
+# ----------------------------------------------------------------------------
+if (( $+commands[go] )); then
+	case "$OSTYPE" in
+		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
+		linux*)  export GOPATH=$HOME/go ;;
+	esac
+	path=(
+		$GOPATH/bin
+		$path
+	)
+fi
+
+# Android
+# ------------------------------------------------------------------------
+if (( $+commands[android] )); then
+	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
+fi
+
+# Node
+# ------------------------------------------------------------------------
+export npm_config_python=/usr/bin/python
+
+# PHP
+# ------------------------------------------------------------------------
+path=(
+	$HOME/.composer/vendor/bin
+	/usr/local/opt/php@7.1/bin
+	/usr/local/opt/php@7.1/sbin
+	$path
+)
+
+
+# TeX
+# ------------------------------------------------------------------------
+if [[ -e /usr/local/texlive ]]; then 
+	path=(
+		/usr/local/texlive/2018/bin/x86_64-darwin
+		$path
+	)
+fi
+
+# Path
+# ------------------------------------------------------------------------
+path=(
+	$HOME/Applications
+	$DOTFILES/bin
+	$path
+)
+
+# Local config
+# --------------------------------------------------------------------------
+[[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
+
+# Disable global zprofile, which messes with the path
+unsetopt GLOBAL_RCS
+
+# vim:shiftwidth=4:tabstop=4:noexpandtab

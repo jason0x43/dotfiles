@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ $(uname) =~ Darwin ]]; then
+	stat -f %Y $1
+else
+	readlink -f $1
+fi
