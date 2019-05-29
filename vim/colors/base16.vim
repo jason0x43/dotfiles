@@ -279,3 +279,7 @@ call s:hi('LspWarningSign',             s:baseA, s:base1, 'bold')
 call s:hi('LspInformationSign',         s:baseB, s:base1, 'bold')
 call s:hi('LspHintSign',                s:baseE, s:base1, 'bold')
 call s:hi('LspHintText',                s:base3, s:base1, '')
+
+" coc
+call s:hi('CocErrorHighlight',          s:base8, '',      'underline')
+call s:hi('CocHighlightText',           '',      s:base1, '')

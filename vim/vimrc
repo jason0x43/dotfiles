@@ -229,11 +229,11 @@ let g:ale_pattern_options = {
 let g:ale_completion_enabled = 0
 let g:ale_disable_lsp = 1
 
-" asyncomplete
+" coc
 " ---------------------------------------------------------------------
-let g:asyncomplete_smart_completion = 1
-let g:asyncomplete_auto_popup = 1
-let g:asyncomplete_remove_duplicates = 1
+autocmd vimrc FileType typescript,javascript map <buffer> <silent> <C-]> <Plug>(coc-definition)
+autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
+map <silent> <Leader>e :CocList diagnostics<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -244,6 +244,7 @@ map <silent> <Leader>a <Plug>(EasyAlign)
 " ---------------------------------------------------------------------
 " Don't show the tabline when using Flagship
 let g:tablabel=''
+autocmd User Flags call Hoist("buffer", "coc#status")
 
 " fzf
 " ---------------------------------------------------------------------
@@ -354,28 +355,6 @@ let g:autoprettier_exclude = [
 " ---------------------------------------------------------------------
 let g:jsx_ext_required = 1
 
-" vim-lsp
-" ---------------------------------------------------------------------
-" let g:lsp_log_verbose = 1
-" let g:lsp_log_file = expand('~/vim-lsp.log')
-let g:lsp_signs_enabled = 1
-let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_diagnostics_echo_delay = 100
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_warning = {'text': '!'}
-let g:lsp_signs_information = {'text': '?'}
-let g:lsp_signs_hint = {'text': '$'}
-
-" vim-signify
-" ---------------------------------------------------------------------
-let g:signify_vcs_list = ['git']
-let s:signify_sign = '┃'
-let g:signify_sign_add = s:signify_sign
-let g:signify_sign_change = s:signify_sign
-let g:signify_sign_changedelete = s:signify_sign
-let g:signify_sign_delete = s:signify_sign
-let g:signify_sign_show_count = 10
-
 " vimtex
 " ---------------------------------------------------------------------
 let g:vimtex_indent_lists = [
@@ -411,22 +390,15 @@ Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code ele
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
-Plug 'w0rp/ale'                            " Linting
-Plug 'mhinz/vim-signify'                   " Show modified lines
+" Plug 'w0rp/ale'                            " Linting
+" Plug 'mhinz/vim-signify'                   " Show modified lines
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
 Plug 'prettier/vim-prettier', { 'do': 'npm install' }  " Format TS, JS, MD, and others
 Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
-" LSP
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-
 " Completion
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-" Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -477,104 +449,3 @@ endif
 
 " Load all the plugins
 call plug#end()
-
-" =====================================================================
-" Post-plugin initialization
-" =====================================================================
-
-" vim-lsp
-" ---------------------------------------------------------------------
-let s:asyncomplete_blacklist = []
-
-if executable('typescript-language-server')
-    let s:asyncomplete_blacklist += ['typescript', 'javascript']
-    autocmd vimrc User lsp_setup call lsp#register_server({
-        \ 'name': 'typescript-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> [&shell, &shellcmdflag, 'typescript-language-server --stdio']
-        \ },
-        \ 'root_uri': {
-        \     server_info->lsp#utils#path_to_uri(
-        \         lsp#utils#find_nearest_parent_file_directory(
-        \             lsp#utils#get_buffer_path(),
-        \             'tsconfig.json'
-        \         )
-        \     )
-        \ },
-        \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
-        \ })
-    autocmd vimrc FileType typescript,javascript map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType typescript,javascript map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType typescript,javascript map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType typescript,javascript setlocal omnifunc=lsp#complete
-endif
-
-if executable('php-language-server.php')
-    let s:asyncomplete_blacklist += ['php']
-    autocmd vimrc User lsp_setup call lsp#register_server({
-        \ 'name': 'php-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> ['php', expand('~/.composer/vendor/bin/php-language-server.php')]
-        \ },
-        \ 'whitelist': ['php'],
-        \ })
-    autocmd vimrc FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType php map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType php setlocal omnifunc=lsp#complete
-endif
-
-if executable('rls')
-    let s:asyncomplete_blacklist += ['rust']
-    autocmd vimrc User lsp_setup call lsp#register_server({
-        \ 'name': 'rls',
-        \ 'priority': 99,
-        \ 'cmd': { server_info -> ['rls'] },
-        \ 'workspace_config': {'rust': {'clippy_preference': 'on'}},
-        \ 'whitelist': ['rust'],
-        \ })
-    autocmd vimrc FileType rust map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType rust map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType rust map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType rust setlocal omnifunc=lsp#complete
-endif
-
-if executable(expand('~/Applications/java-language-server/bin/launcher'))
-    let s:asyncomplete_blacklist += ['java']
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'java-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> [
-        \         expand('~/Applications/java-language-server/bin/launcher'),
-        \         '--quiet',
-        \     ]
-        \ },
-        \ 'whitelist': ['java'],
-        \ })
-    autocmd vimrc FileType java map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType java map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType java map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType java setlocal omnifunc=lsp#complete
-endif
-
-" asyncomplete
-" ---------------------------------------------------------------------
-autocmd User asyncomplete_setup call asyncomplete#register_source(
-    \ asyncomplete#sources#buffer#get_source_options({
-    \     'name': 'buffer',
-    \     'whitelist': ['*'],
-    \     'blacklist': s:asyncomplete_blacklist,
-    \     'priority': 9,
-    \     'completor': function('asyncomplete#sources#buffer#completor')
-    \ }))
-
-" autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
-"     \ asyncomplete#sources#file#get_source_options({
-"     \     'name': 'file',
-"     \     'whitelist': ['*'],
-"     \     'priority': 10,
-"     \     'completor': function('asyncomplete#sources#file#completor')
-"     \ }))
