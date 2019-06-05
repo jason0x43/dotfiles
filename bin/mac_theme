@@ -12,7 +12,7 @@ else
   term_theme="Solarized Light"
 fi
 
-osascript -e "tell application \"Alfred 3\" to set theme \"$alfred_theme\""
+osascript -e "tell application \"Alfred 4\" to set theme \"$alfred_theme\""
 
 osascript <<END
   tell application "System Events"
