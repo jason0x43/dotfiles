@@ -66,8 +66,7 @@ fi
 # Java
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
-	# Use java 1.8 by default
-	JAVA_HOME=`/usr/libexec/java_home -v 1.8 2> /dev/null`
+	JAVA_HOME=`/usr/libexec/java_home -v 12 > /dev/null`
 	if (( $? )); then
 		unset JAVA_HOME
 	else
