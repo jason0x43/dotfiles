@@ -232,6 +232,7 @@ let g:ale_disable_lsp = 1
 " coc
 " ---------------------------------------------------------------------
 autocmd vimrc FileType typescript,javascript map <buffer> <silent> <C-]> <Plug>(coc-definition)
+autocmd vimrc FileType typescript,javascript map <buffer> <silent> <leader>r <Plug>(coc-rename)
 autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
 map <silent> <Leader>e :CocList diagnostics<cr>
 
