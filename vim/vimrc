@@ -353,6 +353,7 @@ let g:autoprettier_types = [
     \ 'json',
     \ 'jsoncfg',
     \ 'css',
+    \ 'html',
     \ 'markdown',
     \ 'scss',
     \ ]
@@ -400,8 +401,7 @@ Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code ele
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
-" Plug 'w0rp/ale'                            " Linting
-" Plug 'mhinz/vim-signify'                   " Show modified lines
+Plug 'w0rp/ale'                            " Linting
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
 Plug 'prettier/vim-prettier', { 'do': 'npm install' }  " Format TS, JS, MD, and others
