@@ -231,10 +231,19 @@ let g:ale_disable_lsp = 1
 
 " coc
 " ---------------------------------------------------------------------
-autocmd vimrc FileType typescript,javascript map <buffer> <silent> <C-]> <Plug>(coc-definition)
-autocmd vimrc FileType typescript,javascript map <buffer> <silent> <leader>r <Plug>(coc-rename)
+autocmd vimrc FileType typescript,javascript,python map <buffer> <silent> <C-]> <Plug>(coc-definition)
+autocmd vimrc FileType typescript,javascript,python map <buffer> <silent> <leader>r <Plug>(coc-rename)
 autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
 map <silent> <Leader>e :CocList diagnostics<cr>
+map <silent> <Leader>l :CocList<CR>
+
+" A COC_NODE_PATH env var points to the version of node that should be used by
+" the vim session (particularly coc). Use it to set g:coc_node_path and to
+" update the PATH for this vim session.
+if !empty($COC_NODE_PATH)
+    let g:coc_node_path = $COC_NODE_PATH . '/bin/node'
+    let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
+endif
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -445,7 +454,6 @@ if executable('fzf') && has('nvim')
     map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
     map <silent> <Leader>m :GFiles?<CR>
     map <silent> <Leader>s :Snippets<CR>
-    map <silent> <Leader>l :BLines<CR>
 endif
 
 " Load all the plugins

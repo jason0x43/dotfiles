@@ -6,3 +6,4 @@ vim/spell/*.spl
 vim/.netrwhist
 fish/fishd.*
 fish/fish_history
+.vscode/
