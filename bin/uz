@@ -1,0 +1,3 @@
+#!/bin/bash
+
+unzip $@ -x '__MACOSX/*'
