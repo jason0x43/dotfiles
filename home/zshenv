@@ -66,7 +66,7 @@ fi
 # Java
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
-	JAVA_HOME=`/usr/libexec/java_home -v 12 > /dev/null`
+	JAVA_HOME=`/usr/libexec/java_home -v 12`
 	if (( $? )); then
 		unset JAVA_HOME
 	else
@@ -76,10 +76,15 @@ fi
 
 # Ruby
 # ----------------------------------------------------------------------------
-if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
-	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
+if [[ -d /usr/local/opt/ruby ]]; then
 	path=(
-		$GEM_HOME/bin
+		/usr/local/opt/ruby/bin
+		$path
+	)
+fi
+if [[ -d /usr/local/lib/ruby/gems/2.6.0 ]]; then
+	path=(
+		/usr/local/lib/ruby/gems/2.6.0/bin
 		$path
 	)
 fi
@@ -95,6 +100,12 @@ fi
 
 # Python
 # ----------------------------------------------------------------------------
+if [[ -d /usr/local/opt/python3 ]]; then
+	path=(
+		/usr/local/opt/python3/libexec/bin
+		$path
+	)
+fi
 if [[ -e $HOME/Library/Python/2.7/bin ]]; then 
 	path=(
 		$HOME/Library/Python/2.7/bin
