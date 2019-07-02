@@ -1,10 +1,19 @@
 {
-    "suggest.enablePreview": true,
-    "codeLens.enable": true,
-    "git.addedSign.text": "┃",
-    "git.removedSign.text": "┃",
-    "git.changedSign.text": "┃",
-    "git.changeRemovedSign.text": "┃",
-    "suggest.maxPreviewWidth": 100,
-    "diagnostic.maxWindowHeight": 20
+  "suggest.enablePreview": true,
+  "codeLens.enable": true,
+  "git.addedSign.text": "┃",
+  "git.removedSign.text": "┃",
+  "git.changedSign.text": "┃",
+  "git.changeRemovedSign.text": "┃",
+  "suggest.maxPreviewWidth": 100,
+  "diagnostic.maxWindowHeight": 20,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "languageserver": {
+    "golang": {
+      "command": "gopls",
+      "args": [],
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"]
+    }
+  }
 }

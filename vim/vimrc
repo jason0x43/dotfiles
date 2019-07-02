@@ -60,7 +60,9 @@ set completeopt+=menuone
 set completeopt+=noselect
 set scrolloff=5              " Give the cursor a 5 line margin when scrolling
 set shiftwidth=4             " Indent in 4-character wide chunks
+set shortmess+=c             " Don't give ins-completion-menu messages
 set showcmd                  " Show commands in the cmd area
+set signcolumn=yes           " Always show sign column
 set tabstop=4                " Tabs are only 4 characters wide
 set formatoptions+=ron       " Automatically format comments and numbered lists
 set ruler                    " Show location info in statusline
@@ -71,6 +73,7 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
     \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
     \,sm:block-blinkwait175-blinkoff150-blinkon175
 set updatetime=100           " More responsive UI updates
+set pyxversion=3
 
 " Better diff
 set diffopt+=internal,algorithm:patience
@@ -113,10 +116,31 @@ map <silent> <Leader>h :echo "hi<" .
 map <Leader>f :find 
 map <silent> <Leader>b :ls<CR> 
 
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+
 " Use Tab for cycling through matches in a completion popup
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <CR> (pumvisible() ? (!empty(v:completed_item) ? "\<c-y>" : "\<c-y>\<cr>") : "\<CR>")
+inoremap <silent><expr> <Tab>
+    \ pumvisible() ? "\<C-n>" :
+    \ <SID>check_back_space() ? "\<Tab>" :
+    \ coc#refresh()
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <silent><expr> <CR>
+"     \ pumvisible() ? !empty(v:completed_item) ? "\<c-y>" : "\<c-y>\<cr>" : "\<CR>"
+inoremap <silent><expr> <CR> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
+
+function! s:show_documentation()
+    if (index(['vim', 'help'], &filetype) >= 0)
+        execute 'h ' . expand('<cword>')
+    else
+        call CocAction('doHover')
+    endif
+endfunction
+
+" Use K to show documentation in a preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 " Ag for grepping (https://github.com/ggreer/the_silver_searcher)
 if executable('rg')
@@ -173,6 +197,9 @@ augroup vimrc
     " ejs is HTML
     autocmd BufRead *.ejs set filetype=html
 
+    " intern.json is jsonc
+    autocmd BufRead intern.json,tsconfig.json set filetype=jsonc
+
     " When editing a file, jump back to the last edited line if it makes sense
     " to do so
     autocmd BufReadPost *
@@ -212,6 +239,20 @@ if has('nvim')
     command! Tig call s:tig()
 endif
 
+" Setup 'A' for Angular files
+function! s:AngularAlternate()
+    let l:current_base = expand('%:r')
+    let l:possible_files = glob(l:current_base . '.{ts,html}', 0, 1)
+    if len(l:possible_files) > 1
+        let l:current_file = expand('%')
+        let l:current_index = index(l:possible_files, l:current_file)
+        let l:next_index = (l:current_index + 1) % len(l:possible_files)
+        execute('e ' . l:possible_files[l:next_index])
+    endif
+endfunction
+autocmd vimrc FileType typescript,html,css command! -buffer AngularAlternate :call s:AngularAlternate()
+autocmd vimrc FileType typescript,html,css nnoremap <silent><buffer> A :AngularAlternate<CR>
+
 
 " =====================================================================
 " Plugin config
@@ -231,11 +272,19 @@ let g:ale_disable_lsp = 1
 
 " coc
 " ---------------------------------------------------------------------
-autocmd vimrc FileType typescript,javascript,python map <buffer> <silent> <C-]> <Plug>(coc-definition)
-autocmd vimrc FileType typescript,javascript,python map <buffer> <silent> <leader>r <Plug>(coc-rename)
+autocmd vimrc FileType typescript,javascript,python,html,go map <buffer> <silent> <C-]> <Plug>(coc-definition)
+autocmd vimrc FileType typescript,javascript,python,go map <buffer> <silent> <leader>r <Plug>(coc-rename)
+autocmd vimrc FileType typescript,javascript,python,go map <buffer> <silent> <leader>j <Plug>(coc-references)
+autocmd vimrc FileType typescript,javascript,python,go map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
 autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
+autocmd vimrc User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 map <silent> <Leader>e :CocList diagnostics<cr>
 map <silent> <Leader>l :CocList<CR>
+map <silent> <Leader>x <Plug>(coc-codeaction)
+command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
+
+nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 
 " A COC_NODE_PATH env var points to the version of node that should be used by
 " the vim session (particularly coc). Use it to set g:coc_node_path and to
@@ -272,24 +321,21 @@ let g:html_indent_script1 = 'inc'
 let g:html_indent_style1 = 'inc'
 let g:js_indent_flat_switch = 1
 
-" json
-" ---------------------------------------------------------------------
-" Don't conceal quotes around JSON properties
-let g:vim_json_syntax_conceal = 0
-
 " markdown
 " ---------------------------------------------------------------------
 let g:markdown_fenced_languages = [
+\    'help',
 \    'html',
+\    'js=javascript',
+\    'json',
+\    'json5=javascript',
+\    'jsx=javascript.jsx',
 \    'python',
 \    'sh',
-\    'json',
-\    'xml',
-\    'json5=javascript',
-\    'js=javascript',
-\    'jsx=javascript.jsx',
 \    'ts=typescript',
 \    'tsx=typescript.tsx',
+\    'vim',
+\    'xml',
 \ ]
 
 " NERDTree
@@ -366,6 +412,10 @@ let g:autoprettier_exclude = [
 " ---------------------------------------------------------------------
 let g:jsx_ext_required = 1
 
+" vim-plug
+" ---------------------------------------------------------------------
+" let g:plug_url_format = "git@github.com:%s.git"
+
 " vimtex
 " ---------------------------------------------------------------------
 let g:vimtex_indent_lists = [
@@ -380,6 +430,7 @@ let g:vimtex_indent_ignored_envs = [
     \ 'code',
     \ 'question',
     \]
+let g:vimtex_compiler_progname = 'nvr'
 
 " Plugins
 " ---------------------------------------------------------------------
@@ -401,10 +452,10 @@ Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code ele
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
-Plug 'w0rp/ale'                            " Linting
+" Plug 'w0rp/ale'                            " Linting
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
-Plug 'prettier/vim-prettier', { 'do': 'npm install' }  " Format TS, JS, MD, and others
+Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/1.x' }  " Format TS, JS, MD, and others
 Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
 " Completion
@@ -420,7 +471,8 @@ Plug 'tpope/vim-obsession'
 
 " Base filetype plugins (these detect filetypes)
 Plug 'pangloss/vim-javascript'
-Plug 'elzr/vim-json'
+" Plug 'elzr/vim-json'
+Plug 'neoclide/jsonc.vim'
 Plug 'mxw/vim-jsx'
 Plug 'digitaltoad/vim-jade'
 Plug 'keith/swift.vim'
@@ -433,7 +485,7 @@ Plug 'tpope/vim-markdown'
 Plug 'wavded/vim-stylus'
 Plug 'dmix/elvish.vim'
 Plug 'vmchale/ion-vim'
-Plug 'fatih/vim-go'
+" Plug 'fatih/vim-go'
 
 " Filetype plugins
 Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
