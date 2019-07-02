@@ -12,8 +12,6 @@ else
   term_theme="Solarized Light"
 fi
 
-osascript -e "tell application \"Alfred 4\" to set theme \"$alfred_theme\""
-
 osascript <<END
   tell application "System Events"
     tell appearance preferences
@@ -28,3 +26,5 @@ osascript <<END
     set default settings to settings set "$term_theme"
   end tell
 END
+
+osascript -e "tell application \"Alfred 4\" to set theme \"$alfred_theme\""
