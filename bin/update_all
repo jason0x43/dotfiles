@@ -16,12 +16,12 @@ fi
 if [[ -z $group || $group == "python" ]]; then
 	if type pip3 > /dev/null 2>&1; then
 		printf ">> Updating python packages...\n"
-		pip3 install -U pip setuptools neovim > /dev/null
+		pip3 install -U pip setuptools pynvim > /dev/null
 	fi
 
 	if type pip2 > /dev/null 2>&1; then
 		printf ">> Updating python2 packages...\n"
-		pip2 install -U pip setuptools neovim > /dev/null
+		pip2 install -U pip setuptools pynvim > /dev/null
 	fi
 fi
 
@@ -107,7 +107,11 @@ if [[ -z $group || $group == "vim" ]]; then
 				# check for a package.json
 				if [[ $(git rev-parse HEAD) != $head ]]; then 
 					if [[ -e package.json ]]; then
-						npm install --registry=https://registry.npmjs.org --silent
+						if [[ -e yarn.lock ]]; then
+							yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
+						else
+							npm install --registry=https://registry.npmjs.org --silent
+						fi
 					fi
 					printf "   $plugin\n"
 				fi
