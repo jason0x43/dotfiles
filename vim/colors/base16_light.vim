@@ -3,39 +3,68 @@
 " base16-vim (https://github.com/chriskempson/base16-vim)
 " by Chris Kempson (http://chriskempson.com)
 
-" Terminal color definitions
-let s:base0 = '00'
-let s:base3 = '08'
-let s:base5 = '07'
-let s:base7 = '15'
-let s:base8 = '01'
-let s:baseA = '03'
-let s:baseB = '02'
-let s:baseC = '06'
-let s:baseD = '04'
-let s:baseE = '05'
-let s:base1 = '10'
-let s:base2 = '11'
-let s:base4 = '12'
-let s:base6 = '13'
-let s:base9 = '09'
-let s:baseF = '14'
+" Color definitions
+let s:base0 = ['00', '#fdf6e3']
+let s:base3 = ['08', '#839496']
+let s:base5 = ['07', '#586e75']
+let s:base7 = ['15', '#002b36']
+let s:base8 = ['01', '#dc322f']
+let s:baseA = ['03', '#b58900']
+let s:baseB = ['02', '#859900']
+let s:baseC = ['06', '#2aa198']
+let s:baseD = ['04', '#268bd2']
+let s:baseE = ['05', '#6c71c4']
+let s:base1 = ['10', '#eee8d5']
+let s:base2 = ['11', '#93a1a1']
+let s:base4 = ['12', '#657b83']
+let s:base6 = ['13', '#073642']
+let s:base9 = ['09', '#cb4b16']
+let s:baseF = ['14', '#d33682']
+
+" Neovim terminal
+if has("nvim")
+  let g:terminal_color_0  = s:base0[1]
+  let g:terminal_color_1  = s:base8[1]
+  let g:terminal_color_2  = s:baseB[1]
+  let g:terminal_color_3  = s:baseA[1]
+  let g:terminal_color_4  = s:baseD[1]
+  let g:terminal_color_5  = s:baseE[1]
+  let g:terminal_color_6  = s:baseC[1]
+  let g:terminal_color_7  = s:base5[1]
+  let g:terminal_color_8  = s:base3[1]
+  let g:terminal_color_9  = s:base9[1]
+  let g:terminal_color_10 = s:base1[1]
+  let g:terminal_color_11 = s:base2[1]
+  let g:terminal_color_12 = s:base4[1]
+  let g:terminal_color_13 = s:base6[1]
+  let g:terminal_color_14 = s:baseF[1]
+  let g:terminal_color_15 = s:base7[1]
+
+  let g:terminal_color_background = s:base0[1]
+  let g:terminal_color_foreground = s:base5[1]
+endif
 
 " Theme setup
 hi clear
 syntax reset
-let g:colors_name = 'base16'
+let g:colors_name = 'base16_light'
 
 " Highlighting function
-function! s:Base16hi(group, ctermfg, ctermbg, attr)
-  if a:ctermfg != ''
-    exec 'hi ' . a:group . ' ctermfg=' . a:ctermfg
+function! s:Base16hi(group, fg, bg, attr)
+  if type(a:fg) == v:t_list
+    exec 'hi ' . a:group . ' ctermfg=' . a:fg[0] . ' guifg=' . a:fg[1]
+  elseif !empty(a:fg)
+    exec 'hi ' . a:group . ' ctermfg=' . a:fg . ' guifg=' . a:fg
   endif
-  if a:ctermbg != ''
-    exec 'hi ' . a:group . ' ctermbg=' . a:ctermbg
+
+  if type(a:bg) == v:t_list
+    exec 'hi ' . a:group . ' ctermbg=' . a:bg[0] . ' guibg=' . a:bg[1]
+  elseif !empty(a:bg)
+    exec 'hi ' . a:group . ' ctermbg=' . a:bg . ' guibg=' . a:bg
   endif
-  if a:attr != ''
-    exec 'hi ' . a:group . ' cterm=' . a:attr
+
+  if !empty(a:attr)
+    exec 'hi ' . a:group . ' cterm=' . a:attr . ' gui=' . a:attr
   endif
 endfunction
 

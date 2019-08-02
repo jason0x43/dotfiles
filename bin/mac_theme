@@ -1,30 +1,120 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-theme=$1
+from sys import argv, executable
+from os import environ
+import asyncio
+import iterm2
 
-if [[ $theme == "dark" ]]; then
-  alfred_theme="Minimal Dark"
-  dark_mode="true"
-  term_theme="Ashes"
-else
-  alfred_theme="Minimal"
-  dark_mode="false"
-  term_theme="Solarized Light"
-fi
 
-osascript <<END
-  tell application "System Events"
-    tell appearance preferences
-	  set dark mode to $dark_mode
-	end tell
-  end tell
-END
+theme = argv[1]
+term_program = environ["TERM_PROGRAM"]
 
-osascript <<END
-  tell application "Terminal"
-    set current settings of tabs of windows to settings set "$term_theme"
-    set default settings to settings set "$term_theme"
-  end tell
-END
 
-osascript -e "tell application \"Alfred 4\" to set theme \"$alfred_theme\""
+async def run_applescript(script):
+    proc = await asyncio.create_subprocess_exec(
+        "osascript", "-", stdout=asyncio.subprocess.PIPE, stdin=asyncio.subprocess.PIPE
+    )
+    await proc.communicate(script.encode())
+
+
+async def set_neovim_theme(theme):
+    name = "base16_light" if theme == "light" else "base16_dark"
+    cachedir = environ["CACHEDIR"]
+    with open("%s/vim/colors" % cachedir, mode="w") as f:
+        f.write("%s\n" % name)
+
+    proc = await asyncio.create_subprocess_shell(
+        "nvr --serverlist", stdout=asyncio.subprocess.PIPE
+    )
+    sockets = []
+    data = await proc.stdout.readline()
+    while len(data) > 0:
+        sockets.append(data.decode().strip())
+        data = await proc.stdout.readline()
+
+    child_procs = [proc]
+    for socket in sockets:
+        child_procs.append(
+            await asyncio.create_subprocess_shell(
+                '''nvr --servername %s -c "exec('UpdateScheme')"''' % socket
+            )
+        )
+
+    await asyncio.gather(*[c.wait() for c in child_procs])
+
+
+async def set_apple_theme(name):
+    await run_appescript(
+        """tell application "Terminal"
+           set current settings of tabs of windows to settings set "%s"
+       end tell"""
+        % name
+    )
+
+
+async def set_iterm_theme(name):
+    connection = await iterm2.Connection.async_create()
+
+    async def get_profile():
+        all_profiles = await iterm2.PartialProfile.async_query(connection)
+        for profile in all_profiles:
+            if profile.name == name:
+                return profile
+        return None
+
+    async def get_sessions():
+        app = await iterm2.async_get_app(connection)
+        sessions = []
+        for window in app.terminal_windows:
+            for tab in window.tabs:
+                for session in tab.sessions:
+                    sessions.append(session)
+        return sessions
+
+    profile = await get_profile()
+    sessions = await get_sessions()
+    for session in sessions:
+        await session.async_set_profile(profile)
+
+
+async def set_term_theme(theme):
+    if term_program == "Apple_Terminal":
+        name = "Ashes" if theme == "dark" else "Solarized Light"
+    else:
+        name = "Dark" if theme == "dark" else "Light"
+
+    if term_program == "Apple_Terminal":
+        await set_apple_theme(name)
+    else:
+        await set_iterm_theme(name)
+
+
+async def set_dark_mode(theme):
+    await run_applescript(
+        """tell application "System Events"
+      tell appearance preferences
+	    set dark mode to %s
+	  end tell
+    end tell"""
+        % ("true" if theme == "dark" else "false")
+    )
+
+
+async def set_alfred_theme(theme):
+    if theme == "dark":
+        name = "Minimal Dark"
+    else:
+        name = "Minimal"
+    await run_applescript('''tell application "Alfred 4" to set theme "%s"''' % name)
+
+
+async def main():
+    await asyncio.gather(
+        set_dark_mode(theme),
+        set_term_theme(theme),
+        set_alfred_theme(theme),
+        set_neovim_theme(theme),
+    )
+
+
+asyncio.get_event_loop().run_until_complete(main())

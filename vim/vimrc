@@ -40,7 +40,17 @@ if !empty(project_root)
     endif
 endif
 
-colorscheme base16
+function! s:update_scheme()
+    let scheme_file = expand('$CACHEDIR/vim/colors')
+    let scheme_name = 'base16_' . &background
+    if filereadable(scheme_file)
+        let scheme_name = readfile(scheme_file, '', 1)[0]
+    endif
+    exec('colorscheme ' . scheme_name)
+endfunction
+command! UpdateScheme call s:update_scheme()
+call s:update_scheme()
+
 let mapleader=';'
 
 set backupcopy=yes           " Overwrite the original file when saving
@@ -74,6 +84,10 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
     \,sm:block-blinkwait175-blinkoff150-blinkon175
 set updatetime=100           " More responsive UI updates
 set pyxversion=3
+
+if $TERM_PROGRAM == 'iTerm.app'
+    set termguicolors
+endif
 
 " Better diff
 set diffopt+=internal,algorithm:patience
