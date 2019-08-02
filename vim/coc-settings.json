@@ -1,13 +1,17 @@
 {
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "suggest.enablePreview": true,
   "codeLens.enable": true,
   "git.addedSign.text": "┃",
   "git.removedSign.text": "┃",
   "git.changedSign.text": "┃",
   "git.changeRemovedSign.text": "┃",
+  "git.addGlameToVirtualText": true,
   "suggest.maxPreviewWidth": 100,
   "diagnostic.maxWindowHeight": 20,
   "typescript.preferences.importModuleSpecifier": "relative",
+  "python.jediEnabled": false,
+  "python.formatting.provider": "black",
   "languageserver": {
     "golang": {
       "command": "gopls",

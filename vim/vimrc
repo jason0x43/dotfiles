@@ -292,10 +292,23 @@ autocmd vimrc FileType typescript,javascript,python,go map <buffer> <silent> <le
 autocmd vimrc FileType typescript,javascript,python,go map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
 autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
 autocmd vimrc User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+
 map <silent> <Leader>e :CocList diagnostics<cr>
 map <silent> <Leader>l :CocList<CR>
 map <silent> <Leader>x <Plug>(coc-codeaction)
-command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
+map <silent> <Leader>p <Plug>(coc-format-selected)
+
+" navigate chunks of current buffer
+nmap [g <Plug>(coc-git-prevchunk)
+nmap ]g <Plug>(coc-git-nextchunk)
+" show chunk diff at current position
+nmap gs <Plug>(coc-git-chunkinfo)
+" show commit contains current position
+nmap gl <Plug>(coc-git-commit)
+
+command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+command! -nargs=0 Format :call CocAction('format')
 
 nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
 nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
@@ -317,7 +330,51 @@ map <silent> <Leader>a <Plug>(EasyAlign)
 " ---------------------------------------------------------------------
 " Don't show the tabline when using Flagship
 let g:tablabel=''
-autocmd User Flags call Hoist("buffer", "coc#status")
+
+function! CocCurrentFunction()
+    return '=> ' . get(b:, 'coc_current_function', '')
+endfunction
+
+function! CocGitBufferStatus()
+    return get(b:, 'coc_git_status', '')
+endfunction
+
+function! CocGitProjectStatus()
+    return get(g:, 'coc_git_status', '')
+endfunction
+
+autocmd vimrc User Flags call Hoist("buffer", "CocGitBufferStatus")
+autocmd vimrc User Flags call Hoist("buffer", "CocGitProjectStatus")
+autocmd vimrc User Flags call Hoist("buffer", "CocCurrentFunction")
+autocmd vimrc User Flags call Hoist("buffer", "coc#status")
+
+let g:coc_global_extensions = [
+    \ 'coc-angular',
+    \ 'coc-calc',
+    \ 'coc-css',
+    \ 'coc-emmet',
+    \ 'coc-emoji',
+    \ 'coc-git',
+    \ 'coc-github',
+    \ 'coc-java',
+    \ 'coc-json',
+    \ 'coc-lists',
+    \ 'coc-pairs',
+    \ 'coc-python',
+    \ 'coc-rls',
+    \ 'coc-sh',
+    \ 'coc-svg',
+    \ 'coc-tslint-plugin',
+    \ 'coc-tsserver',
+    \ 'coc-vimlsp',
+    \ 'coc-vimtex',
+    \ 'coc-yaml',
+    \ 'coc-xml',
+    \ 'coc-eslint',
+    \ 'coc-jest',
+    \ 'coc-highlight',
+    \ 'coc-prettier',
+    \ ]
 
 " fzf
 " ---------------------------------------------------------------------
@@ -394,11 +451,6 @@ if has('nvim')
     " things like tmux pane focus dimming.
 endif
 
-" Prettier
-" ---------------------------------------------------------------------
-let g:prettier#exec_cmd_async = 1
-let g:prettier#config#parser = 'babylon'
-
 " undotree
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
@@ -464,12 +516,9 @@ Plug 'moll/vim-bbye'                       " Preserve layout when closing buffer
 Plug 'christoomey/vim-tmux-navigator'      " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                     " Visualize the undo tree
-Plug 'jason0x43/vim-autoprettier'          " Automatically run Prettier
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
-" Plug 'w0rp/ale'                            " Linting
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
-Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/1.x' }  " Format TS, JS, MD, and others
 Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
 " Completion
