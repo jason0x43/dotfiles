@@ -580,10 +580,11 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-export NVM_NO_USE=true
-zfetch $ZPLUGDIR lukechilds/zsh-nvm
+eval "$(nodenv init -)"
+
+zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
 if [[ $? == 0 ]]; then
-    source $ZPLUGDIR/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
+    source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
 # Load NPX fallback script
