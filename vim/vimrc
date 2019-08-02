@@ -55,7 +55,7 @@ let mapleader=';'
 
 set backupcopy=yes           " Overwrite the original file when saving
 set breakindent              " When lines are broken by linebreak, maintain indent
-set clipboard+=unnamed       " Yank to the system clipboard. 'unnamed' works in neovim _and_ MacVim
+"set clipboard+=unnamed       " Yank to the system clipboard. 'unnamed' works in neovim _and_ MacVim
 set cmdheight=2              " Keep vim from saying 'Press Enter to continue'
 set undofile                 " Use undo files for persistent undo
 set fillchars+=vert:\│       " Make the vertical split bar solid
