@@ -25,6 +25,12 @@ if exists('$CACHEDIR')
     if !has('nvim')
         set viminfo+=n$CACHEDIR/vim/viminfo
     endif
+
+    let theme_file = expand('$CACHEDIR/theme')
+    if filereadable(theme_file)
+        let theme = readfile(theme_file, '', 1)[0]
+        let &background = theme
+    endif
 endif
 
 " If we're in a git project and there's a node_modules/.bin in the project
@@ -39,17 +45,6 @@ if !empty(project_root)
         let $PATH=bindir . ':' . $PATH
     endif
 endif
-
-function! s:update_scheme()
-    let scheme_file = expand('$CACHEDIR/vim/colors')
-    let scheme_name = 'base16_' . &background
-    if filereadable(scheme_file)
-        let scheme_name = readfile(scheme_file, '', 1)[0]
-    endif
-    exec('colorscheme ' . scheme_name)
-endfunction
-command! UpdateScheme call s:update_scheme()
-call s:update_scheme()
 
 let mapleader=';'
 
@@ -84,10 +79,18 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
     \,sm:block-blinkwait175-blinkoff150-blinkon175
 set updatetime=100           " More responsive UI updates
 set pyxversion=3
+set noshowmode
 
 if $TERM_PROGRAM == 'iTerm.app'
     set termguicolors
 endif
+
+function! s:update_scheme()
+    let scheme_name = 'base16_' . &background
+    exec('colorscheme ' . scheme_name)
+endfunction
+command! UpdateScheme call s:update_scheme()
+call s:update_scheme()
 
 " Better diff
 set diffopt+=internal,algorithm:patience
@@ -321,33 +324,6 @@ if !empty($COC_NODE_PATH)
     let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
 endif
 
-" EasyAlign
-" ---------------------------------------------------------------------
-" To align end-of-line comments, do <Leader>a-<space>
-map <silent> <Leader>a <Plug>(EasyAlign)
-
-" Flagship
-" ---------------------------------------------------------------------
-" Don't show the tabline when using Flagship
-let g:tablabel=''
-
-function! CocCurrentFunction()
-    return '=> ' . get(b:, 'coc_current_function', '')
-endfunction
-
-function! CocGitBufferStatus()
-    return get(b:, 'coc_git_status', '')
-endfunction
-
-function! CocGitProjectStatus()
-    return get(g:, 'coc_git_status', '')
-endfunction
-
-autocmd vimrc User Flags call Hoist("buffer", "CocGitBufferStatus")
-autocmd vimrc User Flags call Hoist("buffer", "CocGitProjectStatus")
-autocmd vimrc User Flags call Hoist("buffer", "CocCurrentFunction")
-autocmd vimrc User Flags call Hoist("buffer", "coc#status")
-
 let g:coc_global_extensions = [
     \ 'coc-angular',
     \ 'coc-calc',
@@ -376,6 +352,37 @@ let g:coc_global_extensions = [
     \ 'coc-prettier',
     \ ]
 
+" EasyAlign
+" ---------------------------------------------------------------------
+" To align end-of-line comments, do <Leader>a-<space>
+map <silent> <Leader>a <Plug>(EasyAlign)
+
+" Flagship
+" ---------------------------------------------------------------------
+" Don't show the tabline when using Flagship
+"let g:tablabel=''
+"
+"function! CocCurrentFunction()
+"    let l:func = get(b:, 'coc_current_function', '')
+"    if !empty(l:func)
+"        return '=> ' . l:func
+"    endif
+"    return ''
+"endfunction
+"
+"function! CocGitBufferStatus()
+"    return get(b:, 'coc_git_status', '')
+"endfunction
+"
+"function! CocGitProjectStatus()
+"    return get(g:, 'coc_git_status', '')
+"endfunction
+"
+"autocmd vimrc User Flags call Hoist("buffer", "CocGitBufferStatus")
+"autocmd vimrc User Flags call Hoist("buffer", "CocGitProjectStatus")
+"autocmd vimrc User Flags call Hoist("buffer", "CocCurrentFunction")
+"autocmd vimrc User Flags call Hoist("buffer", "coc#status")
+
 " fzf
 " ---------------------------------------------------------------------
 let g:fzf_layout = { 'down': 10 }
@@ -392,22 +399,68 @@ let g:html_indent_script1 = 'inc'
 let g:html_indent_style1 = 'inc'
 let g:js_indent_flat_switch = 1
 
-" markdown
+" lightline
 " ---------------------------------------------------------------------
-let g:markdown_fenced_languages = [
-\    'help',
-\    'html',
-\    'js=javascript',
-\    'json',
-\    'json5=javascript',
-\    'jsx=javascript.jsx',
-\    'python',
-\    'sh',
-\    'ts=typescript',
-\    'tsx=typescript.tsx',
-\    'vim',
-\    'xml',
-\ ]
+let g:lightline = {
+    \ 'colorscheme': 'base16_' . &background,
+    \ 'active': {
+    \   'left': [
+    \     [ 'mode', 'paste' ],
+    \     [ 'gitbranch' ],
+    \     [ 'readonly', 'filename' ]
+    \   ],
+    \   'right': [
+    \     [ 'lineinfo', 'percent' ],
+    \     [ 'cocstatus' ],
+    \     [ 'filetype', 'fileformat', 'fileencoding' ]
+    \   ]
+    \ },
+    \ 'component_type': {
+    \   'readonly': 'error',
+    \   'linter_warnings': 'warning',
+    \   'linter_errors': 'error'
+    \ },
+    \ 'component_function': {
+    \   'cocstatus': 'coc#status',
+    \   'currentfunction': 'CocCurrentFunction',
+    \   'fileencoding': 'LightlineFileEncoding',
+    \   'filename': 'LightlineFileName',
+    \   'fileformat': 'LightlineFileFormat',
+    \   'filetype': 'LightlineFileType',
+    \   'gitbranch': 'LightlineGitBranch'
+    \ },
+    \ 'separator': { 'left': '', 'right': '' },
+    \ 'subseparator': { 'left': '│', 'right': '│' },
+    \ 'enable': {
+    \   'tabline': 0
+    \ }
+    \ }
+
+    function! LightlineFileName() abort
+        let filename = winwidth(0) > 70 ? expand('%') : expand('%:t')
+        if filename =~ 'NERD_tree'
+            return ''
+        endif
+        let modified = &modified ? ' +' : ''
+        return fnamemodify(filename, ":~:.") . modified
+    endfunction
+
+    function! LightlineFileEncoding()
+        " only show the file encoding if it's not 'utf-8'
+        return &fileencoding == 'utf-8' ? '' : &fileencoding
+    endfunction
+
+    function! LightlineFileFormat()
+        return WebDevIconsGetFileFormatSymbol()
+    endfunction
+
+    function! LightlineFileType()
+        return WebDevIconsGetFileTypeSymbol()
+    endfunction
+
+    function! LightlineGitBranch()
+        return "\uE725" . (exists('*fugitive#head') ? ' '. fugitive#head() : '')
+    endfunction
 
 " NERDTree
 " ---------------------------------------------------------------------
@@ -478,6 +531,23 @@ let g:autoprettier_exclude = [
 " ---------------------------------------------------------------------
 let g:jsx_ext_required = 1
 
+" vim-markdown
+" ---------------------------------------------------------------------
+let g:markdown_fenced_languages = [
+\    'help',
+\    'html',
+\    'js=javascript',
+\    'json',
+\    'json5=javascript',
+\    'jsx=javascript.jsx',
+\    'python',
+\    'sh',
+\    'ts=typescript',
+\    'tsx=typescript.tsx',
+\    'vim',
+\    'xml',
+\ ]
+
 " vim-plug
 " ---------------------------------------------------------------------
 " let g:plug_url_format = "git@github.com:%s.git"
@@ -506,7 +576,7 @@ Plug 'sgur/vim-editorconfig'               " EditorConfig
 Plug 'tpope/vim-commentary'                " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'                    " POSIX command wrappers
 Plug 'tpope/vim-sleuth'                    " Setup buffer options based on content
-Plug 'tpope/vim-flagship'                  " Status line configuration
+" Plug 'tpope/vim-flagship'                  " Status line configuration
 Plug 'tpope/vim-fugitive'                  " Git utilities
 Plug 'tpope/vim-unimpaired'                " useful pairs of mappings
 Plug 'tpope/vim-repeat'                    " support for repeating mapped commands
@@ -518,6 +588,8 @@ Plug 'junegunn/vim-easy-align'             " Easy vertical alignment of code ele
 Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
+Plug 'itchyny/lightline.vim'
+Plug 'nicknisi/vim-base16-lightline'
 
 Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
@@ -534,7 +606,6 @@ Plug 'tpope/vim-obsession'
 
 " Base filetype plugins (these detect filetypes)
 Plug 'pangloss/vim-javascript'
-" Plug 'elzr/vim-json'
 Plug 'neoclide/jsonc.vim'
 Plug 'mxw/vim-jsx'
 Plug 'digitaltoad/vim-jade'
@@ -570,6 +641,9 @@ if executable('fzf') && has('nvim')
     map <silent> <Leader>m :GFiles?<CR>
     map <silent> <Leader>s :Snippets<CR>
 endif
+
+" Load devicons last so it can integrate with everything it needs to
+Plug 'ryanoasis/vim-devicons'
 
 " Load all the plugins
 call plug#end()

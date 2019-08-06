@@ -7,8 +7,8 @@ import iterm2
 
 
 theme = argv[1]
-term_program = environ["TERM_PROGRAM"]
-
+term_program = environ['TERM_PROGRAM']
+theme_file = '%s/theme' % environ['CACHEDIR']
 
 async def run_applescript(script):
     proc = await asyncio.create_subprocess_exec(
@@ -19,9 +19,8 @@ async def run_applescript(script):
 
 async def set_neovim_theme(theme):
     name = "base16_light" if theme == "light" else "base16_dark"
-    cachedir = environ["CACHEDIR"]
-    with open("%s/vim/colors" % cachedir, mode="w") as f:
-        f.write("%s\n" % name)
+    with open(theme_file, mode="w") as f:
+        f.write("%s\n" % theme)
 
     proc = await asyncio.create_subprocess_shell(
         "nvr --serverlist", stdout=asyncio.subprocess.PIPE
@@ -44,7 +43,7 @@ async def set_neovim_theme(theme):
 
 
 async def set_apple_theme(name):
-    await run_appescript(
+    await run_applescript(
         """tell application "Terminal"
            set current settings of tabs of windows to settings set "%s"
        end tell"""
