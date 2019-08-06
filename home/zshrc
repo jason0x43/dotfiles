@@ -580,7 +580,9 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-eval "$(nodenv init -)"
+if (( $+commands[nodenv] )); then
+    eval "$(nodenv init -)"
+fi
 
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
 if [[ $? == 0 ]]; then
