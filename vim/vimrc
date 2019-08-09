@@ -630,9 +630,6 @@ Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'jason0x43/vim-wildgitignore'
 
-" Session management
-Plug 'tpope/vim-obsession'
-
 " Base filetype plugins (these detect filetypes)
 Plug 'pangloss/vim-javascript'
 Plug 'neoclide/jsonc.vim'
