@@ -6,10 +6,6 @@ import asyncio
 import iterm2
 
 
-theme = argv[1]
-term_program = environ['TERM_PROGRAM']
-theme_file = '%s/theme' % environ['CACHEDIR']
-
 async def run_applescript(script):
     proc = await asyncio.create_subprocess_exec(
         "osascript", "-", stdout=asyncio.subprocess.PIPE, stdin=asyncio.subprocess.PIPE
@@ -18,10 +14,6 @@ async def run_applescript(script):
 
 
 async def set_neovim_theme(theme):
-    name = "base16_light" if theme == "light" else "base16_dark"
-    with open(theme_file, mode="w") as f:
-        f.write("%s\n" % theme)
-
     proc = await asyncio.create_subprocess_shell(
         "nvr --serverlist", stdout=asyncio.subprocess.PIPE
     )
@@ -35,14 +27,16 @@ async def set_neovim_theme(theme):
     for socket in sockets:
         child_procs.append(
             await asyncio.create_subprocess_shell(
-                '''nvr --servername %s -c "exec('UpdateScheme')"''' % socket
+                '''nvr --servername %s -c "set background=%s"''' % (socket, theme)
             )
         )
 
     await asyncio.gather(*[c.wait() for c in child_procs])
 
 
-async def set_apple_theme(name):
+async def set_apple_term_theme(theme):
+    name = "Ashes" if theme == "dark" else "Solarized Light"
+
     await run_applescript(
         """tell application "Terminal"
            set current settings of tabs of windows to settings set "%s"
@@ -51,7 +45,8 @@ async def set_apple_theme(name):
     )
 
 
-async def set_iterm_theme(name):
+async def set_iterm_theme(theme):
+    name = "Dark" if theme == "dark" else "Light"
     connection = await iterm2.Connection.async_create()
 
     async def get_profile():
@@ -77,15 +72,10 @@ async def set_iterm_theme(name):
 
 
 async def set_term_theme(theme):
-    if term_program == "Apple_Terminal":
-        name = "Ashes" if theme == "dark" else "Solarized Light"
+    if environ["TERM_PROGRAM"] == "Apple_Terminal":
+        await set_apple_term_theme(theme)
     else:
-        name = "Dark" if theme == "dark" else "Light"
-
-    if term_program == "Apple_Terminal":
-        await set_apple_theme(name)
-    else:
-        await set_iterm_theme(name)
+        await set_iterm_theme(theme)
 
 
 async def set_dark_mode(theme):
@@ -108,11 +98,19 @@ async def set_alfred_theme(theme):
 
 
 async def main():
+    theme = argv[1]
+
+    with open("%s/theme" % environ["CACHEDIR"], mode="w") as f:
+        f.write("%s\n" % theme)
+
+    # Set the system dark mode first, otherwise app-level changes don't always
+    # take
+    await set_dark_mode(theme)
+
     await asyncio.gather(
-        set_dark_mode(theme),
-        set_term_theme(theme),
-        set_alfred_theme(theme),
         set_neovim_theme(theme),
+        set_alfred_theme(theme),
+        set_term_theme(theme),
     )
 
 
