@@ -645,7 +645,6 @@ Plug 'tpope/vim-markdown'
 Plug 'wavded/vim-stylus'
 Plug 'dmix/elvish.vim'
 Plug 'vmchale/ion-vim'
-" Plug 'fatih/vim-go'
 
 " Filetype plugins
 Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
