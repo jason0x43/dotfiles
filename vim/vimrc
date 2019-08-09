@@ -421,15 +421,16 @@ let g:lightline = {
     \   ],
     \   'right': [
     \     [ 'lineinfo', 'percent' ],
-    \     [ 'cocstatus' ],
+    \     [ 'cocstatus', 'sleuth' ],
     \     [ 'filetype', 'fileformat', 'fileencoding' ]
     \   ]
     \ },
+    \ 'component': {
+    \   'lineinfo': '%l:%v',
+    \   'percent': '%p%%'
     \ },
     \ 'component_type': {
     \   'readonly': 'error',
-    \   'linter_warnings': 'warning',
-    \   'linter_errors': 'error'
     \ },
     \ 'component_function': {
     \   'cocstatus': 'coc#status',
@@ -438,40 +439,41 @@ let g:lightline = {
     \   'filename': 'LightlineFileName',
     \   'fileformat': 'LightlineFileFormat',
     \   'filetype': 'LightlineFileType',
-    \   'gitbranch': 'LightlineGitBranch'
+    \   'gitbranch': 'LightlineGitBranch',
+    \   'sleuth': 'SleuthIndicator'
     \ },
     \ 'separator': { 'left': '', 'right': '' },
-    \ 'subseparator': { 'left': '│', 'right': '│' },
+    \ 'subseparator': { 'left': '', 'right': '' },
     \ 'enable': {
     \   'tabline': 0
     \ }
     \ }
 
-    function! LightlineFileName() abort
-        let filename = winwidth(0) > 70 ? expand('%') : expand('%:t')
-        if filename =~ 'NERD_tree'
-            return ''
-        endif
-        let modified = &modified ? ' +' : ''
-        return fnamemodify(filename, ":~:.") . modified
-    endfunction
+function! LightlineFileName() abort
+    let filename = winwidth(0) > 70 ? expand('%') : expand('%:t')
+    if filename =~ 'NERD_tree'
+        return ''
+    endif
+    let modified = &modified ? ' +' : ''
+    return fnamemodify(filename, ":~:.") . modified
+endfunction
 
-    function! LightlineFileEncoding()
-        " only show the file encoding if it's not 'utf-8'
-        return &fileencoding == 'utf-8' ? '' : &fileencoding
-    endfunction
+function! LightlineFileEncoding()
+    return &fileencoding == 'utf-8' ? '' : &fileencoding
+endfunction
 
-    function! LightlineFileFormat()
-        return WebDevIconsGetFileFormatSymbol()
-    endfunction
+function! LightlineFileFormat()
+    return WebDevIconsGetFileFormatSymbol()
+endfunction
 
-    function! LightlineFileType()
-        return WebDevIconsGetFileTypeSymbol()
-    endfunction
+function! LightlineFileType()
+    return WebDevIconsGetFileTypeSymbol()
+endfunction
 
-    function! LightlineGitBranch()
-        return "\uE725" . (exists('*fugitive#head') ? ' '. fugitive#head() : '')
-    endfunction
+function! LightlineGitBranch()
+    return get(g:, 'coc_git_status', '')
+endfunction
+
 function! s:lightline_update()
     if !exists('g:loaded_lightline')
         return
