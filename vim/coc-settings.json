@@ -1,6 +1,5 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
-  "session.saveOnVimLeave": false,
   "suggest.enablePreview": true,
   "codeLens.enable": true,
   "git.addedSign.text": "┃",

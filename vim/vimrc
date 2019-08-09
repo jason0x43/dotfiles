@@ -672,3 +672,6 @@ Plug 'ryanoasis/vim-devicons'
 
 " Load all the plugins
 call plug#end()
+
+" Post-plugin initialization
+call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
