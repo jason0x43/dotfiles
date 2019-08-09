@@ -1,5 +1,9 @@
 scriptencoding utf8
 
+augroup vimrc
+    autocmd!
+augroup END
+
 " Check for vim-plug; install if missing
 let plugpath = expand('<sfile>:p:h') . '/autoload/plug.vim'
 if !filereadable(plugpath)
@@ -89,7 +93,11 @@ function! s:update_scheme()
     let scheme_name = 'base16_' . &background
     exec('colorscheme ' . scheme_name)
 endfunction
-command! UpdateScheme call s:update_scheme()
+
+augroup vimrc
+    autocmd OptionSet background call s:update_scheme()
+augroup END
+
 call s:update_scheme()
 
 " Better diff
@@ -180,8 +188,6 @@ endfunction
 
 " General autocommands
 augroup vimrc
-    autocmd!
-
     " Make text files easier to work with
     autocmd FileType text call TextMode()
     autocmd FileType textile call TextMode()
@@ -415,6 +421,7 @@ let g:lightline = {
     \     [ 'filetype', 'fileformat', 'fileencoding' ]
     \   ]
     \ },
+    \ },
     \ 'component_type': {
     \   'readonly': 'error',
     \   'linter_warnings': 'warning',
@@ -461,6 +468,22 @@ let g:lightline = {
     function! LightlineGitBranch()
         return "\uE725" . (exists('*fugitive#head') ? ' '. fugitive#head() : '')
     endfunction
+function! s:lightline_update()
+    if !exists('g:loaded_lightline')
+        return
+    endif
+    try
+        let g:lightline.colorscheme = 'base16_' . &background
+        call lightline#init()
+        call lightline#colorscheme()
+        call lightline#update()
+    catch
+    endtry
+endfunction
+
+augroup vimrc
+    autocmd OptionSet background call s:lightline_update()
+augroup END
 
 " NERDTree
 " ---------------------------------------------------------------------
