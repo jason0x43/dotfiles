@@ -1,6 +1,7 @@
 tmux/plugins/*
 vim/autoload/plug.vim
 vim/autoload/plug.old
+vim/autoload/plug.vim.old
 vim/plugged/*
 vim/spell/*.spl
 vim/.netrwhist
