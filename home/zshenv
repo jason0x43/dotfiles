@@ -26,9 +26,6 @@ export ZCACHEDIR="$CACHEDIR/zsh"
 export ZFUNCDIR="$CACHEDIR/zsh/functions"
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
-[[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
-
 export ZCOMPDIR="$CACHEDIR/zsh/completions"
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 
