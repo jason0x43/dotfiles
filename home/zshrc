@@ -1,22 +1,12 @@
-# Optional profiling
-# --------------------------------------------------------------------------
-PROFILE_STARTUP=false
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
-    PS4=$'%D{%M%S%.} %N:%i> '
-    exec 3>&2 2>$HOME/Temp/startlog.$$
-    setopt xtrace prompt_subst
-fi
+# Enable profiling
+zmodload zsh/zprof
 
-# zplug
-# ----------------------------------------------------------------------------
-if [[ ! -d $HOME/.zplug ]]; then
-	curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+# Plugin init
+# # ----------------------------------------------------------------------------
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+if [[ ! -d "$ZPLUGDIR" ]]; then
+	mkdir -p "$ZPLUGDIR"
 fi
-export ZPLUG_HOME=$HOME/.zplug
-source $ZPLUG_HOME/init.zsh
-
-zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
 # Editors
 # ----------------------------------------------------------------------------
@@ -94,11 +84,15 @@ if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
 fi
 
 # Extra ZSH completions
-zplug "zsh-users/zsh-completions"
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+fpath=(
+	$ZPLUGDIR/zsh-users/zsh-completions/src
+	$fpath
+)
 
 # Load and initialize the completion system, ignoring insecure directories
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
-# autoload -Uz compinit && compinit -i -d $ZCOMPFILE
+autoload -Uz compinit && compinit -i -d $ZCOMPFILE
 
 # Use caching to make completion for commands with many options usable
 zstyle ':completion:*' use-cache on
@@ -454,8 +448,9 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 
 # Colors
 # ----------------------------------------------------------------------------
-zplug "chriskempson/base16-shell"
 BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+zfetch $ZPLUGDIR chriskempson/base16-shell
+source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 
 # Less
 # ----------------------------------------------------------------------------
@@ -509,7 +504,8 @@ fi
 # ------------------------------------------------------------------------
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
-zplug "zsh-users/zsh-history-substring-search"
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
+source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # Color for found substrings
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
@@ -536,7 +532,8 @@ bindkey -M vicmd "j" history-substring-search-down
 
 # autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
 # (https://github.com/tarruda/zsh-autosuggestions)
-zplug "zsh-users/zsh-autosuggestions"
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
+source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Let vi keys jump through the suggestion
 bindkey '^f' vi-forward-word
@@ -600,7 +597,8 @@ fi
 if (( $+commands[npm] )); then
     npm_completer="$DOTFILES/zsh/npm.zsh"
     source "$npm_completer"
-	zplug "lukechilds/zsh-better-npm-completion"
+	zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
+	source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
 # TPM
@@ -612,7 +610,13 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Prompt
 # ------------------------------------------------------------------------
-zplug "jason0x43/pure"
+zfetch $ZPLUGDIR jason0x43/pure
+if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
+	pure_dir=$ZPLUGDIR/jason0x43/pure
+	ln -s $pure_dir/pure.zsh $ZFUNCDIR/prompt_pure_setup
+	ln -s $pure_dir/async.zsh $ZFUNCDIR/async
+	unset pure_dir
+fi
 
 # Virtual envs
 # --------------------------------------------------------------------------
@@ -632,7 +636,8 @@ fi
 # --------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
-zplug "zdharma/fast-syntax-highlighting"
+zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
+source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # Local config
@@ -641,25 +646,13 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # Load plugins
 # --------------------------------------------------------------------------
-if zplug check || zplug install; then
-	zplug load
-fi
+# if zplug check || zplug install; then
+# 	zplug load
+# fi
 
 # Prompt activation
 # --------------------------------------------------------------------------
-if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
-	pure_dir=$(zplug info jason0x43/pure | grep dir | awk -F\" '{ print $2 }')
-	ln -s $pure_dir/pure.zsh $ZFUNCDIR/prompt_pure_setup
-	ln -s $pure_dir/async.zsh $ZFUNCDIR/async
-fi
 autoload -Uz promptinit && promptinit
 prompt pure
-
-# Finish optional profiling
-# --------------------------------------------------------------------------
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    unsetopt xtrace
-    exec 2>&3 3>&-
-fi
 
 # vim:shiftwidth=4:tabstop=4:noexpandtab
