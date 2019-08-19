@@ -1,48 +1,57 @@
-function! lightline#colorscheme#base16#createpalette(palette)
-    let l:base0 = [a:palette['base0']['gui'], a:palette['base0']['cterm']]
-    let l:base1 = [a:palette['base1']['gui'], a:palette['base1']['cterm']]
-    let l:base2 = [a:palette['base2']['gui'], a:palette['base2']['cterm']]
-    let l:base3 = [a:palette['base3']['gui'], a:palette['base3']['cterm']]
-    let l:base4 = [a:palette['base4']['gui'], a:palette['base4']['cterm']]
-    let l:base5 = [a:palette['base5']['gui'], a:palette['base5']['cterm']]
-    let l:base6 = [a:palette['base6']['gui'], a:palette['base6']['cterm']]
-    let l:base7 = [a:palette['base7']['gui'], a:palette['base7']['cterm']]
-    let l:base8 = [a:palette['base8']['gui'], a:palette['base8']['cterm']]
-    let l:base9 = [a:palette['base9']['gui'], a:palette['base9']['cterm']]
-    let l:baseA = [a:palette['baseA']['gui'], a:palette['baseA']['cterm']]
-    let l:baseB = [a:palette['baseB']['gui'], a:palette['baseB']['cterm']]
-    let l:baseC = [a:palette['baseC']['gui'], a:palette['baseC']['cterm']]
-    let l:baseD = [a:palette['baseD']['gui'], a:palette['baseD']['cterm']]
-    let l:baseE = [a:palette['baseE']['gui'], a:palette['baseE']['cterm']]
-    let l:baseF = [a:palette['baseF']['gui'], a:palette['baseF']['cterm']]
+" This function should only be _after_ a base16 vim theme has been loaded
+function lightline#colorscheme#base16#refresh()
+    let s:base0 = [ '#' . g:base16_gui00,  0 ] " black
+    let s:base1 = [ '#' . g:base16_gui01, 18 ]
+    let s:base2 = [ '#' . g:base16_gui02, 19 ]
+    let s:base3 = [ '#' . g:base16_gui03,  8 ]
+    let s:base4 = [ '#' . g:base16_gui04, 20 ]
+    let s:base5 = [ '#' . g:base16_gui05,  7 ]
+    let s:base6 = [ '#' . g:base16_gui06, 21 ]
+    let s:base7 = [ '#' . g:base16_gui07, 15 ] " white
+    let s:base8 = [ '#' . g:base16_gui08,  1 ] " red
+    let s:base9 = [ '#' . g:base16_gui09, 16 ] " orange
+    let s:baseA = [ '#' . g:base16_gui0A,  3 ] " yellow
+    let s:baseB = [ '#' . g:base16_gui0B,  2 ] " green
+    let s:baseC = [ '#' . g:base16_gui0C,  6 ] " teal
+    let s:baseD = [ '#' . g:base16_gui0D,  4 ] " blue
+    let s:baseE = [ '#' . g:base16_gui0E,  5 ] " pink
+    let s:baseF = [ '#' . g:base16_gui0F, 17 ] " brown
 
-    let l:p = {
-        \ 'normal': {},
+    let s:p = {
+        \ 'command': {},
         \ 'inactive': {},
         \ 'insert': {},
+        \ 'normal': {},
         \ 'replace': {},
-        \ 'visual': {},
-        \ 'command': {},
+        \ 'tabline': {},
+        \ 'visual': {}
         \ }
 
-    let l:p.normal.left     = [ [ l:base0, l:base4 ], [ l:base0, l:base2 ] ]
-    let l:p.insert.left     = [ [ l:base0, l:baseB ], [ l:base0, l:base2 ] ]
-    let l:p.command.left    = [ [ l:base0, l:baseD ], [ l:base0, l:base2 ] ]
-    let l:p.visual.left     = [ [ l:base0, l:baseE ], [ l:base0, l:base2 ] ]
-    let l:p.replace.left    = [ [ l:base0, l:base8 ], [ l:base0, l:base2 ] ]
-    let l:p.inactive.left   = [ [ l:base2, l:base1 ] ]
+    let s:p.normal.left     = [ [ s:base0, s:base4 ], [ s:base0, s:base2 ] ]
+    let s:p.insert.left     = [ [ s:base0, s:baseB ], [ s:base0, s:base2 ] ]
+    let s:p.command.left    = [ [ s:base0, s:baseD ], [ s:base0, s:base2 ] ]
+    let s:p.visual.left     = [ [ s:base0, s:baseE ], [ s:base0, s:base2 ] ]
+    let s:p.replace.left    = [ [ s:base0, s:base8 ], [ s:base0, s:base2 ] ]
+    let s:p.inactive.left   = [ [ s:base2, s:base1 ] ]
 
-    let l:p.normal.middle   = [ [ l:base6, l:base1 ] ]
-    let l:p.inactive.middle = [ [ l:base1, l:base1 ] ]
+    let s:p.normal.middle   = [ [ s:base6, s:base1 ] ]
+    let s:p.inactive.middle = [ [ s:base1, s:base1 ] ]
 
-    let l:p.normal.right    = deepcopy(l:p.normal.left)
-    let l:p.insert.right    = deepcopy(l:p.insert.left)
-    let l:p.command.right    = deepcopy(l:p.command.left)
-    let l:p.visual.right    = deepcopy(l:p.visual.left)
-    let l:p.inactive.right  = [ [ l:base1, l:base1 ], [ l:base1, l:base1 ] ]
+    let s:p.normal.right    = deepcopy(s:p.normal.left)
+    let s:p.insert.right    = deepcopy(s:p.insert.left)
+    let s:p.command.right    = deepcopy(s:p.command.left)
+    let s:p.visual.right    = deepcopy(s:p.visual.left)
+    let s:p.inactive.right  = [ [ s:base1, s:base1 ], [ s:base1, s:base1] ]
 
-    let l:p.normal.error    = [ [ l:base1, l:base8 ] ]
-    let l:p.normal.warning  = [ [ l:base1, l:baseA ] ]
+    let s:p.normal.error    = [ [ s:base1, s:base8 ] ]
+    let s:p.normal.warning  = [ [ s:base1, s:baseA ] ]
 
-    return lightline#colorscheme#flatten(l:p)
+    let s:p.tabline.left    = [ [ s:base5, s:base2 ] ]
+    let s:p.tabline.middle  = [ [ s:base5, s:base1 ] ]
+    let s:p.tabline.right   = [ [ s:base5, s:base2 ] ]
+    let s:p.tabline.tabsel  = [ [ s:base2, s:baseC ] ]
+
+    let g:lightline#colorscheme#base16#palette = lightline#colorscheme#flatten(s:p)
 endfunction
+
+call lightline#colorscheme#base16#refresh()

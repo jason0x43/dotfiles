@@ -29,12 +29,6 @@ if exists('$CACHEDIR')
     if !has('nvim')
         set viminfo+=n$CACHEDIR/vim/viminfo
     endif
-
-    let theme_file = expand('$CACHEDIR/theme')
-    if filereadable(theme_file)
-        let theme = readfile(theme_file, '', 1)[0]
-        let &background = theme
-    endif
 endif
 
 " If we're in a git project and there's a node_modules/.bin in the project
@@ -88,17 +82,6 @@ set noshowmode
 if $TERM_PROGRAM == 'iTerm.app'
     set termguicolors
 endif
-
-function! s:update_scheme()
-    let scheme_name = 'base16_' . &background
-    exec('colorscheme ' . scheme_name)
-endfunction
-
-augroup vimrc
-    autocmd OptionSet background call s:update_scheme()
-augroup END
-
-call s:update_scheme()
 
 " Better diff
 set diffopt+=internal,algorithm:patience
@@ -282,6 +265,7 @@ autocmd vimrc FileType typescript,html,css nnoremap <silent><buffer> A :AngularA
 " =====================================================================
 
 " ALE
+" Base16
 " ---------------------------------------------------------------------
 let g:ale_linters = {
     \ 'typescript': ['tslint'],
@@ -292,6 +276,23 @@ let g:ale_pattern_options = {
     \ }
 let g:ale_completion_enabled = 0
 let g:ale_disable_lsp = 1
+function! s:update_colors()
+    if filereadable(expand("~/.vimrc_background"))
+      let base16colorspace=256
+      source ~/.vimrc_background
+    endif
+endfunction
+
+command! UpdateColors call s:update_colors()
+
+function! s:base16_customize()
+    call Base16hi("Normal", g:base16_gui05, 'none', g:base16_cterm05, 'none', "bold,italic", "")
+    call Base16hi("Comment", g:base16_gui03, 'none', g:base16_cterm03, 'none', "italic", "")
+endfunction
+
+augroup vimrc
+    autocmd ColorScheme * call s:base16_customize()
+augroup END
 
 " coc
 " ---------------------------------------------------------------------
@@ -412,7 +413,7 @@ let g:js_indent_flat_switch = 1
 " lightline
 " ---------------------------------------------------------------------
 let g:lightline = {
-    \ 'colorscheme': 'base16_' . &background,
+    \ 'colorscheme': 'base16',
     \ 'active': {
     \   'left': [
     \     [ 'mode', 'paste' ],
@@ -479,16 +480,15 @@ function! s:lightline_update()
         return
     endif
     try
-        let g:lightline.colorscheme = 'base16_' . &background
+        call lightline#colorscheme#base16#refresh()
         call lightline#init()
-        call lightline#colorscheme()
         call lightline#update()
     catch
     endtry
 endfunction
 
 augroup vimrc
-    autocmd OptionSet background call s:lightline_update()
+    autocmd ColorScheme * call s:lightline_update()
 augroup END
 
 " NERDTree
@@ -618,7 +618,7 @@ Plug 'mbbill/undotree'                     " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'                 " RipGrep for file searching
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 Plug 'itchyny/lightline.vim'
-Plug 'nicknisi/vim-base16-lightline'
+Plug 'chriskempson/base16-vim'
 
 Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
 
@@ -675,3 +675,5 @@ call plug#end()
 
 " Post-plugin initialization
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
+
+call s:update_colors()

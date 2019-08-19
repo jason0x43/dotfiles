@@ -431,6 +431,14 @@ SAVEHIST=10000                # The maximum number of events to save in the hist
 # Lists the ten most used commands
 alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
 
+# Colors
+# ----------------------------------------------------------------------------
+zfetch $ZPLUGDIR chriskempson/base16-shell.git
+if [[ $? == 0 ]]; then
+    BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+    source $ZPLUGDIR/chriskempson/base16-shell.git/base16-shell.plugin.zsh
+fi
+
 # Less
 # ----------------------------------------------------------------------------
 export LESS='-F -g -i -M -R -w -X -z-4'
