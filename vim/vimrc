@@ -79,11 +79,17 @@ set pyxversion=3
 set noshowmode
 
 if $TERM_PROGRAM == 'iTerm.app'
+    if !has('nvi')
+        set t_8f=[38;2;%lu;%lu;%lum
+        set t_8b=[48;2;%lu;%lu;%lum
+    endif
     set termguicolors
 endif
 
 " Better diff
-set diffopt+=internal,algorithm:patience
+if has('nvim')
+    set diffopt+=internal,algorithm:patience
+endif
 
 " Toggle cursor crosshairs
 map <silent> # :set cursorcolumn! cursorline!<CR>
@@ -273,8 +279,8 @@ endfunction
 command! UpdateColors call s:update_colors()
 
 function! s:base16_customize()
-    call Base16hi("Normal", g:base16_gui05, 'none', g:base16_cterm05, 'none', "bold,italic", "")
-    call Base16hi("Comment", g:base16_gui03, 'none', g:base16_cterm03, 'none', "italic", "")
+    call Base16hi("Normal", g:base16_gui05, '', g:base16_cterm05, '', "bold,italic", "")
+    call Base16hi("Comment", g:base16_gui03, '', g:base16_cterm03, '', "italic", "")
 endfunction
 
 augroup vimrc
