@@ -33,8 +33,7 @@ endif
 
 " If we're in a git project and there's a node_modules/.bin in the project
 " root, add it to the beginning of the path so that it's apps will be used for
-" commands started by vim. In particular this is useful for YCM + TypeScript
-" since YCM doesn't automatically look for a local TypeScript install.
+" commands started by vim.
 let project_root=system('git rev-parse --show-toplevel 2> /dev/null')
 if !empty(project_root)
     let project_root=substitute(project_root, '\n\+$', '', '')
@@ -150,7 +149,7 @@ endfunction
 " Use K to show documentation in a preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-" Ag for grepping (https://github.com/ggreer/the_silver_searcher)
+" Ripgrep or ag for grepping
 if executable('rg')
     set grepprg=rg\ --no-heading\ --color=never
 elseif executable('ag')
@@ -186,10 +185,6 @@ augroup vimrc
     " Close help files and quickfix panes on 'q' or Escape
     autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
     autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
-
-    " Can't do this because it breaks vim's standard go-to-tag
-    " autocmd FileType help nnoremap <buffer> <silent>  :bd<CR>
-    " autocmd FileType qf nnoremap <buffer> <silent>  :bd<CR>
 
     " More predictable syntax highlighting
     autocmd BufEnter * syntax sync fromstart
@@ -228,7 +223,7 @@ augroup vimrc
 augroup END
 
 " Setup a Tig command that opens tig in a terminal
-if has('nvim')
+if executable('tig') && has('nvim')
     function! s:tig()
         let s:callback = {}
         let current = expand('%')
@@ -256,26 +251,18 @@ function! s:AngularAlternate()
         execute('e ' . l:possible_files[l:next_index])
     endif
 endfunction
-autocmd vimrc FileType typescript,html,css command! -buffer AngularAlternate :call s:AngularAlternate()
-autocmd vimrc FileType typescript,html,css nnoremap <silent><buffer> A :AngularAlternate<CR>
 
+augroup vimrc
+    autocmd FileType typescript,html,css command! -buffer AngularAlternate :call s:AngularAlternate()
+    autocmd FileType typescript,html,css nnoremap <silent><buffer> A :AngularAlternate<CR>
+augroup END
 
 " =====================================================================
 " Plugin config
 " =====================================================================
 
-" ALE
 " Base16
 " ---------------------------------------------------------------------
-let g:ale_linters = {
-    \ 'typescript': ['tslint'],
-    \ 'typescript.tsx': ['tslint'],
-    \ }
-let g:ale_pattern_options = {
-    \ 'node_modules/': { 'ale_enabled': 0 }
-    \ }
-let g:ale_completion_enabled = 0
-let g:ale_disable_lsp = 1
 function! s:update_colors()
     if filereadable(expand("~/.vimrc_background"))
       let base16colorspace=256
@@ -309,7 +296,7 @@ map <silent> <Leader>x <Plug>(coc-codeaction)
 map <silent> <Leader>p <Plug>(coc-format-selected)
 
 " navigate chunks of current buffer
-nmap [g <Plug>(coc-git-prevchunk)
+
 nmap ]g <Plug>(coc-git-nextchunk)
 " show chunk diff at current position
 nmap gs <Plug>(coc-git-chunkinfo)
@@ -367,32 +354,6 @@ let g:coc_status_warning_sign = ' '
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
 map <silent> <Leader>a <Plug>(EasyAlign)
-
-" Flagship
-" ---------------------------------------------------------------------
-" Don't show the tabline when using Flagship
-"let g:tablabel=''
-"
-"function! CocCurrentFunction()
-"    let l:func = get(b:, 'coc_current_function', '')
-"    if !empty(l:func)
-"        return '=> ' . l:func
-"    endif
-"    return ''
-"endfunction
-"
-"function! CocGitBufferStatus()
-"    return get(b:, 'coc_git_status', '')
-"endfunction
-"
-"function! CocGitProjectStatus()
-"    return get(g:, 'coc_git_status', '')
-"endfunction
-"
-"autocmd vimrc User Flags call Hoist("buffer", "CocGitBufferStatus")
-"autocmd vimrc User Flags call Hoist("buffer", "CocGitProjectStatus")
-"autocmd vimrc User Flags call Hoist("buffer", "CocCurrentFunction")
-"autocmd vimrc User Flags call Hoist("buffer", "coc#status")
 
 " fzf
 " ---------------------------------------------------------------------
@@ -508,7 +469,7 @@ endfunction
 
 map <silent> <Leader>n :call ToggleNerdTree()<CR>
 
-" Neovim
+" neovim
 " ---------------------------------------------------------------------
 if has('nvim')
     set inccommand=nosplit       " Show live substitutions
@@ -563,19 +524,19 @@ let g:jsx_ext_required = 1
 " vim-markdown
 " ---------------------------------------------------------------------
 let g:markdown_fenced_languages = [
-\    'help',
-\    'html',
-\    'js=javascript',
-\    'json',
-\    'json5=javascript',
-\    'jsx=javascript.jsx',
-\    'python',
-\    'sh',
-\    'ts=typescript',
-\    'tsx=typescript.tsx',
-\    'vim',
-\    'xml',
-\ ]
+    \ 'help',
+    \ 'html',
+    \ 'js=javascript',
+    \ 'json',
+    \ 'json5=javascript',
+    \ 'jsx=javascript.jsx',
+    \ 'python',
+    \ 'sh',
+    \ 'ts=typescript',
+    \ 'tsx=typescript.tsx',
+    \ 'vim',
+    \ 'xml',
+    \ ]
 
 " vim-plug
 " ---------------------------------------------------------------------
@@ -590,11 +551,11 @@ let g:vimtex_indent_lists = [
     \ 'thebibliography',
     \ 'questions',
     \ 'answers',
-    \]
+    \ ]
 let g:vimtex_indent_ignored_envs = [
     \ 'code',
     \ 'question',
-    \]
+    \ ]
 let g:vimtex_compiler_progname = 'nvr'
 
 " Plugins
@@ -605,7 +566,6 @@ Plug 'sgur/vim-editorconfig'               " EditorConfig
 Plug 'tpope/vim-commentary'                " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'                    " POSIX command wrappers
 Plug 'tpope/vim-sleuth'                    " Setup buffer options based on content
-" Plug 'tpope/vim-flagship'                  " Status line configuration
 Plug 'tpope/vim-fugitive'                  " Git utilities
 Plug 'tpope/vim-unimpaired'                " useful pairs of mappings
 Plug 'tpope/vim-repeat'                    " support for repeating mapped commands
@@ -620,7 +580,8 @@ Plug 'RRethy/vim-hexokinase'               " Show color swatches
 Plug 'itchyny/lightline.vim'
 Plug 'chriskempson/base16-vim'
 
-Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' } " Show version info in package.json files
+ " Show version info in package.json files
+Plug 'meain/vim-package-json', { 'do': 'cd rplugin/node/vim-package-json && npm install' }
 
 " Completion
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}

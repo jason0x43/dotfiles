@@ -9,11 +9,11 @@ fi
 # Editors
 # ----------------------------------------------------------------------------
 if (( $+commands[nvim] )); then
-	export SUDO_EDITOR=nvim
+    export SUDO_EDITOR=nvim
 elif (( $+commands[vim] )); then
-	export SUDO_EDITOR=vim
+    export SUDO_EDITOR=vim
 else
-	export SUDO_EDITOR=vi
+    export SUDO_EDITOR=vi
 fi
 
 export EDITOR=$SUDO_EDITOR
@@ -231,7 +231,7 @@ alias type='type -a'
 
 # Let node use local readline setup (vi mode)
 if (( $+commands[rlwrap] )); then
-	alias node='env NODE_NO_READLINE=1 rlwrap node'
+    alias node='env NODE_NO_READLINE=1 rlwrap node'
 fi
 
 # Shortcuts
@@ -456,12 +456,12 @@ if (( $+commands[fzf] )); then
     # Use -1 for the bg color to specify 'none'
     export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:10,spinner:14,info:14,fg+:12,hl+:8,hl:8
 
-	if [[ -d $FZF_PATH/shell ]]; then
-		source $FZF_PATH/shell/completion.zsh
-		source $FZF_PATH/shell/key-bindings.zsh
-	elif [[ -d /usr/share/doc/fzf ]]; then
-		source /usr/share/doc/fzf/examples/key-bindings.zsh
-	fi
+    if [[ -d $FZF_PATH/shell ]]; then
+        source $FZF_PATH/shell/completion.zsh
+        source $FZF_PATH/shell/key-bindings.zsh
+    elif [[ -d /usr/share/doc/fzf ]]; then
+        source /usr/share/doc/fzf/examples/key-bindings.zsh
+    fi
 
     bindkey '^P' fzf-file-widget
     bindkey '^G' fzf-cd-widget
@@ -506,7 +506,7 @@ if [[ $? == 0 ]]; then
     source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
     # Color for found substrings
-	HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
 
     # Color for not-found substrings
     HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
@@ -588,10 +588,6 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-if (( $+commands[nodenv] )); then
-    eval "$(nodenv init -)"
-fi
-
 # Load NPX fallback script
 if (( $+commands[npx] )); then
     npx_fallback="$DOTFILES/zsh/npx.zsh"
@@ -603,10 +599,10 @@ if (( $+commands[npm] )); then
     npm_completer="$DOTFILES/zsh/npm.zsh"
     source "$npm_completer"
 
-	zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
-	if [[ $? == 0 ]]; then
-		source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
-	fi
+    zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
+    if [[ $? == 0 ]]; then
+        source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
+    fi
 fi
 
 # TPM
@@ -620,13 +616,13 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 # ------------------------------------------------------------------------
 zfetch $ZPLUGDIR jason0x43/pure
 if [[ $? == 0 ]]; then
-	if [[ \
-		-h $ZFUNCDIR/prompt_pure_setup \
-		&& $(link_target $ZFUNCDIR/prompt_pure_setup) != $ZPLUGDIR/jason0x43/pure/pure.zsh \
-	]]; then
+    if [[ \
+        -h $ZFUNCDIR/prompt_pure_setup \
+        && $(link_target $ZFUNCDIR/prompt_pure_setup) != $ZPLUGDIR/jason0x43/pure/pure.zsh \
+    ]]; then
         rm -f $ZFUNCDIR/prompt_pure_setup
         rm -f $ZFUNCDIR/async
-	fi
+    fi
     if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
         ln -s $ZPLUGDIR/jason0x43/pure/pure.zsh $ZFUNCDIR/prompt_pure_setup
         ln -s $ZPLUGDIR/jason0x43/pure/async.zsh $ZFUNCDIR/async
@@ -634,6 +630,17 @@ if [[ $? == 0 ]]; then
 fi
 autoload -Uz promptinit && promptinit
 prompt pure
+
+# Virtual envs
+# --------------------------------------------------------------------------
+if (( $+commands[nodenv] )); then
+    eval "$(nodenv init -)"
+fi
+
+if (( $+commands[pyenv] )); then
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
 
 # Local config
 # --------------------------------------------------------------------------
