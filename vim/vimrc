@@ -273,6 +273,17 @@ function! s:update_colors()
     if filereadable(expand("~/.vimrc_background"))
       let base16colorspace=256
       source ~/.vimrc_background
+
+      " This doesn't currently work
+      " see https://github.com/neovim/neovim/issues/7018
+      if has('nvim')
+          let g:terminal_color_16 = '#' . g:base16_gui09
+          let g:terminal_color_17 = '#' . g:base16_gui0F
+          let g:terminal_color_18 = '#' . g:base16_gui01
+          let g:terminal_color_19 = '#' . g:base16_gui02
+          let g:terminal_color_20 = '#' . g:base16_gui04
+          let g:terminal_color_21 = '#' . g:base16_gui06
+      endif
     endif
 endfunction
 
@@ -360,10 +371,6 @@ let g:coc_status_warning_sign = ' '
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
 map <silent> <Leader>a <Plug>(EasyAlign)
-
-" fzf
-" ---------------------------------------------------------------------
-let g:fzf_layout = { 'down': 10 }
 
 " Go
 " ---------------------------------------------------------------------
@@ -632,6 +639,8 @@ if executable('fzf') && has('nvim')
     map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
     map <silent> <Leader>m :GFiles?<CR>
     map <silent> <Leader>s :Snippets<CR>
+
+    let g:fzf_layout = { 'down': 10 }
 endif
 
 " Load devicons last so it can integrate with everything it needs to
