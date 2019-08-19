@@ -13,69 +13,10 @@ async def run_applescript(script):
     await proc.communicate(script.encode())
 
 
-async def set_neovim_theme(theme):
-    proc = await asyncio.create_subprocess_shell(
-        "nvr --serverlist", stdout=asyncio.subprocess.PIPE
-    )
-    sockets = []
-    data = await proc.stdout.readline()
-    while len(data) > 0:
-        sockets.append(data.decode().strip())
-        data = await proc.stdout.readline()
-
-    child_procs = [proc]
-    for socket in sockets:
-        child_procs.append(
-            await asyncio.create_subprocess_shell(
-                '''nvr --servername %s -c "set background=%s"''' % (socket, theme)
-            )
-        )
-
-    await asyncio.gather(*[c.wait() for c in child_procs])
-
-
-async def set_apple_term_theme(theme):
-    name = "Ashes" if theme == "dark" else "Solarized Light"
-
-    await run_applescript(
-        """tell application "Terminal"
-           set current settings of tabs of windows to settings set "%s"
-       end tell"""
-        % name
-    )
-
-
-async def set_iterm_theme(theme):
-    name = "Dark" if theme == "dark" else "Light"
-    connection = await iterm2.Connection.async_create()
-
-    async def get_profile():
-        all_profiles = await iterm2.PartialProfile.async_query(connection)
-        for profile in all_profiles:
-            if profile.name == name:
-                return profile
-        return None
-
-    async def get_sessions():
-        app = await iterm2.async_get_app(connection)
-        sessions = []
-        for window in app.terminal_windows:
-            for tab in window.tabs:
-                for session in tab.sessions:
-                    sessions.append(session)
-        return sessions
-
-    profile = await get_profile()
-    sessions = await get_sessions()
-    for session in sessions:
-        await session.async_set_profile(profile)
-
-
 async def set_term_theme(theme):
-    if environ["TERM_PROGRAM"] == "Apple_Terminal":
-        await set_apple_term_theme(theme)
-    else:
-        await set_iterm_theme(theme)
+    name = "embers" if theme == "dark" else "atelier-plateau-light"
+    proc = await asyncio.create_subprocess_shell("""zsh -ic base16_%s""" % name)
+    await proc.wait()
 
 
 async def set_dark_mode(theme):
@@ -105,13 +46,9 @@ async def main():
 
     # Set the system dark mode first, otherwise app-level changes don't always
     # take
-    await set_dark_mode(theme)
+    await asyncio.gather(set_dark_mode(theme), set_term_theme(theme))
 
-    await asyncio.gather(
-        set_neovim_theme(theme),
-        set_alfred_theme(theme),
-        set_term_theme(theme),
-    )
+    await set_alfred_theme(theme)
 
 
 asyncio.get_event_loop().run_until_complete(main())
