@@ -41,10 +41,8 @@ typeset -gUT INFOPATH infopath
 
 # Set the list of directories that Zsh searches for function scripts.
 fpath=(
-    $ZCOMPDIR
     $ZFUNCDIR
     $DOTFILES/zsh/functions
-    /usr/local/share/zsh-completions
     $fpath
 )
 

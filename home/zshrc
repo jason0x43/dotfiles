@@ -1,3 +1,5 @@
+# Optional profiling
+# --------------------------------------------------------------------------
 PROFILE_STARTUP=false
 if [[ "$PROFILE_STARTUP" == true ]]; then
     # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
@@ -70,6 +72,15 @@ Wht="${TC}37m";
 
 # Completions
 # ------------------------------------------------------------------------
+export ZCOMPDIR="$CACHEDIR/zsh/completions"
+[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+
+fpath=(
+    $ZCOMPDIR
+    /usr/local/share/zsh-completions
+    $fpath
+)
+
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
@@ -227,6 +238,9 @@ bindkey -v
 # ------------------------------------------------------------------------
 # Clear existing aliases
 unalias -m '*'
+
+# Reload zshrc
+alias reload='source ~/.zshrc'
 
 # Default command options
 alias cp='cp -i'
@@ -458,7 +472,7 @@ if (( $+commands[fzf] )); then
     export ESCDELAY=10
 
     # Use -1 for the bg color to specify 'none'
-    export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:10,spinner:14,info:14,fg+:12,hl+:8,hl:8
+    export FZF_DEFAULT_OPTS=--color=bg:-1,fg:8,bg+:-1,fg+:-1,hl:1,hl+:1,gutter:-1,spinner:14,info:14
 
     if [[ -d $FZF_PATH/shell ]]; then
         source $FZF_PATH/shell/completion.zsh
@@ -611,6 +625,9 @@ if (( $+commands[pyenv] )); then
     eval "$(pyenv virtualenv-init -)"
 fi
 
+# added by travis gem
+[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
+
 # Syntax highlighting
 # --------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
@@ -622,8 +639,6 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
 
-# added by travis gem
-[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
 # Load plugins
 # --------------------------------------------------------------------------
 if zplug check || zplug install; then
@@ -640,6 +655,8 @@ fi
 autoload -Uz promptinit && promptinit
 prompt pure
 
+# Finish optional profiling
+# --------------------------------------------------------------------------
 if [[ "$PROFILE_STARTUP" == true ]]; then
     unsetopt xtrace
     exec 2>&3 3>&-
