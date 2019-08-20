@@ -369,6 +369,15 @@ let g:coc_global_extensions = [
 let g:coc_status_error_sign = ' '
 let g:coc_status_warning_sign = ' '
 
+function! s:coc_customize_colors()
+    exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
+    exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A
+endfunction
+
+augroup vimrc
+    autocmd ColorScheme * call s:coc_customize_colors()
+augroup END
+
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>

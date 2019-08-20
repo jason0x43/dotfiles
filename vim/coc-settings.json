@@ -10,6 +10,8 @@
   "git.branchCharacter": "",
   "suggest.maxPreviewWidth": 100,
   "diagnostic.maxWindowHeight": 20,
+  "diagnostic.errorSign": "",
+  "diagnostic.warningSign": "",
   "typescript.preferences.importModuleSpecifier": "relative",
   "python.jediEnabled": false,
   "python.formatting.provider": "black",
