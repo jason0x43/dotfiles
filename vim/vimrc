@@ -258,29 +258,29 @@ augroup END
 
 " Base16
 " ---------------------------------------------------------------------
-function! s:update_colors()
+function! s:base16_load_theme()
     if filereadable(expand("~/.vimrc_background"))
       let base16colorspace=256
       source ~/.vimrc_background
-
-      " This doesn't currently work
-      " see https://github.com/neovim/neovim/issues/7018
-      if has('nvim')
-          let g:terminal_color_16 = '#' . g:base16_gui09
-          let g:terminal_color_17 = '#' . g:base16_gui0F
-          let g:terminal_color_18 = '#' . g:base16_gui01
-          let g:terminal_color_19 = '#' . g:base16_gui02
-          let g:terminal_color_20 = '#' . g:base16_gui04
-          let g:terminal_color_21 = '#' . g:base16_gui06
-      endif
     endif
 endfunction
 
-command! UpdateColors call s:update_colors()
+command! UpdateColors call s:base16_load_theme()
 
 function! s:base16_customize()
-    call Base16hi("Normal", g:base16_gui05, '', g:base16_cterm05, '', "bold,italic", "")
-    call Base16hi("Comment", g:base16_gui03, '', g:base16_cterm03, '', "italic", "")
+    hi Normal guibg=NONE ctermbg=NONE
+    hi Comment gui=italic
+
+    " This doesn't currently work
+    " see https://github.com/neovim/neovim/issues/7018
+    if has('nvim')
+        let g:terminal_color_16 = '#' . g:base16_gui09
+        let g:terminal_color_17 = '#' . g:base16_gui0F
+        let g:terminal_color_18 = '#' . g:base16_gui01
+        let g:terminal_color_19 = '#' . g:base16_gui02
+        let g:terminal_color_20 = '#' . g:base16_gui04
+        let g:terminal_color_21 = '#' . g:base16_gui06
+    endif
 endfunction
 
 augroup vimrc
@@ -661,4 +661,4 @@ call plug#end()
 " Post-plugin initialization
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 
-call s:update_colors()
+UpdateColors
