@@ -232,20 +232,7 @@ augroup END
 
 " Setup a Tig command that opens tig in a terminal
 if executable('tig') && has('nvim')
-    function! s:tig()
-        let s:callback = {}
-        let current = expand('%')
-
-        function! s:callback.on_exit(job_id, code, event)
-            bw!
-        endfunction
-
-        below new
-        call termopen('tig status', s:callback)
-        startinsert
-    endfunction
-
-    command! Tig call s:tig()
+    command! Tig Term 'tig'
 endif
 
 " Setup 'A' for Angular files
@@ -505,14 +492,15 @@ if has('nvim')
         close
     endfun
 
-    function! s:openTerminal()
+    function! s:openTerminal(...)
+        let l:cmd = empty(a:1) ? $SHELL : a:1
         new
-        call termopen('/bin/zsh', { 'on_exit': function('s:closeTerminal') })
         set nonumber
+        call termopen(l:cmd, { 'on_exit': function('s:closeTerminal') })
         startinsert
     endfunction
 
-    command! Term call s:openTerminal()
+    command! -nargs=? Term call s:openTerminal("<args>")
 
     " Tell Neovim.app which Python to use
     if executable('/usr/local/bin/python2')
