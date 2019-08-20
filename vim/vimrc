@@ -65,6 +65,8 @@ set shiftwidth=4             " Indent in 4-character wide chunks
 set shortmess+=c             " Don't give ins-completion-menu messages
 set showcmd                  " Show commands in the cmd area
 set signcolumn=yes           " Always show sign column
+set splitbelow               " New horiz split is below
+set splitright               " New vert split is to the right
 set tabstop=4                " Tabs are only 4 characters wide
 set formatoptions+=ron       " Automatically format comments and numbered lists
 set ruler                    " Show location info in statusline
@@ -490,8 +492,18 @@ if has('nvim')
     " <Leader>e to escape into command mode in an nvim terminal
     tnoremap <leader>e <C-\><C-n>
 
-    " Always enter insert mode when switching to a terminal
-    autocmd vimrc BufWinEnter,WinEnter term://* startinsert
+    function! s:closeTerminal(job_id, code, event) dict
+        close
+    endfun
+
+    function! s:openTerminal()
+        new
+        call termopen('/bin/zsh', { 'on_exit': function('s:closeTerminal') })
+        set nonumber
+        startinsert
+    endfunction
+
+    command! Term call s:openTerminal()
 
     " Tell Neovim.app which Python to use
     if executable('/usr/local/bin/python2')
