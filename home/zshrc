@@ -234,7 +234,7 @@ bindkey -v
 unalias -m '*'
 
 # Reload zshrc
-alias reload='source ~/.zshrc'
+alias reload='source ~/.zshenv && source ~/.zshrc'
 
 # Default command options
 alias cp='cp -i'

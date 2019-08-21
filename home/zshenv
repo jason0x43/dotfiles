@@ -3,7 +3,6 @@
 #
 # This file should be kept light and fast. Anything that's slow or involves
 # user interaction should go in zshrc.
-#
 
 # Dotfiles
 # ----------------------------------------------------------------------------
@@ -135,10 +134,6 @@ fi
 if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
 fi
-
-# Node
-# ------------------------------------------------------------------------
-export npm_config_python=/usr/bin/python
 
 # PHP
 # ------------------------------------------------------------------------
