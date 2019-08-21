@@ -360,7 +360,11 @@ let g:coc_status_warning_sign = ' '
 
 function! s:coc_customize_colors()
     exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
-    exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A
+    exec 'hi CocErrorVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=NONE'
+    exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=bold'
+    exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=NONE'
+    exec 'hi CocInfoSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=bold'
+    exec 'hi CocInfoVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=NONE'
 endfunction
 
 augroup vimrc
@@ -397,7 +401,7 @@ let g:lightline = {
     \   'right': [
     \     [ 'lineinfo', 'percent' ],
     \     [ 'cocstatus', 'sleuth' ],
-    \     [ 'filetype', 'fileformat', 'fileencoding' ]
+    \     [ 'gitblame', 'filetype', 'fileformat', 'fileencoding' ]
     \   ]
     \ },
     \ 'component': {
@@ -415,6 +419,7 @@ let g:lightline = {
     \   'fileformat': 'LightlineFileFormat',
     \   'filetype': 'LightlineFileType',
     \   'gitbranch': 'LightlineGitBranch',
+    \   'gitblame': 'LightlineGitBlame',
     \   'sleuth': 'SleuthIndicator'
     \ },
     \ 'separator': { 'left': '', 'right': '' },
@@ -447,6 +452,14 @@ endfunction
 
 function! LightlineGitBranch()
     return get(g:, 'coc_git_status', '')
+endfunction
+
+function! LightlineGitBlame()
+    let l:blame = get(b:, 'coc_git_blame', '')
+    if empty(l:blame) || l:blame[0] == 'Not committed yet'
+        return ''
+    endif
+    return matchstr(l:blame, '^\zs([^)]\+)\ze')
 endfunction
 
 function! s:lightline_update()
