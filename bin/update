@@ -1,0 +1,233 @@
+#!/usr/bin/env python3
+
+import asyncio
+from typing import Callable, Dict, List
+from os import environ
+from pathlib import Path
+from curses import setupterm, tparm, tigetstr, tigetnum
+from sys import stdout
+
+
+Printer = Callable[[str], None]
+Env = Dict[str, str]
+statuses = []
+num_cols = 0
+
+
+def format_status(tag: str, status: str) -> str:
+    return "[%4s] %s" % (tag, status)
+
+
+def add_status(tag: str, status: str) -> Callable[[str], None]:
+    index = len(statuses)
+
+    def updater(status: str):
+        update_status(index, status)
+
+    statuses.append(tag)
+    stdout.buffer.write(("%s\n" % format_status(tag, status)).encode("utf-8"))
+    stdout.flush()
+    return updater
+
+
+def update_status(index: int, status: str):
+    tag = statuses[index]
+    stdout.buffer.write(
+        b"".join(
+            [
+                # save cursor position
+                tparm(tigetstr("sc")),
+                # move to proper line
+                tparm(tigetstr("cuu"), len(statuses) - index),
+                # move to first column
+                tparm(tigetstr("cub"), num_cols),
+                # print new status
+                format_status(tag, status).encode("utf-8"),
+                # clear line
+                tparm(tigetstr("el")),
+                # restore cursor position
+                tparm(tigetstr("rc")),
+            ]
+        )
+    )
+    stdout.flush()
+
+
+async def pipe_line(proc: asyncio.subprocess.Process, prn: Printer) -> bool:
+    data = await proc.stdout.readline()
+    if len(data) > 0:
+        prn(data.decode("utf-8").rstrip())
+    return len(data) == 0
+
+
+async def start(cmd: str, **kwargs) -> int:
+    return await asyncio.create_subprocess_shell(
+        cmd, stdout=asyncio.subprocess.PIPE, **kwargs
+    )
+
+
+async def pipe(proc: asyncio.subprocess.Process, prn: Printer = print):
+    done = await pipe_line(proc, prn)
+    while not done:
+        done = await pipe_line(proc, prn)
+    return await proc.wait()
+
+
+async def run(cmd: str, prn: Printer = print, silent=False, **kwargs) -> int:
+    proc = await start(cmd, **kwargs)
+    if silent:
+        await proc.communicate()
+    else:
+        await pipe(proc, prn)
+
+
+async def runget(cmd: str, **kwargs) -> str:
+    proc = await start(cmd, **kwargs)
+    (stdout, _) = await proc.communicate()
+    if stdout != None:
+        return stdout.decode("utf-8").rstrip()
+    return stdout
+
+
+async def get_outdated_brew_modules() -> List[str]:
+    stdout = await runget("brew outdated")
+    lines = stdout.splitlines()[2:]
+    return [l.split()[0] for l in lines]
+
+
+async def update_brew():
+    update_status = add_status("brew", "Updating cache...")
+    await run("brew update", silent=True)
+
+    packages = await get_outdated_brew_modules()
+    if len(packages) > 0:
+        update_status("Upgrading packages...")
+        await run("brew upgrade", silent=True)
+
+        update_status("Cleaning up...")
+        await run("brew cleanup %s" % " ".join(packages), silent=True)
+
+    update_status("Done")
+    return {"name": "brew", "updates": packages}
+
+
+async def get_outdated_py2_modules() -> List[str]:
+    stdout = await runget("pip2 list -o", env={"PYTHONWARNINGS": "ignore:DEPRECATION"})
+    lines = stdout.splitlines()[2:]
+    return [l.split()[0] for l in lines]
+
+
+async def update_python2():
+    update_status = add_status("py2", "Checking for outdated packages...")
+    packages = await get_outdated_py2_modules()
+
+    if len(packages) > 0:
+        update_status("Updating packages...")
+        await run(
+            "pip2 install -U %s" % " ".join(packages),
+            silent=True,
+            env={"PYTHONWARNINGS": "ignore:DEPRECATION"},
+        )
+
+    update_status("Done")
+    return {"name": "python2", "updates": packages}
+
+
+async def get_outdated_py3_modules() -> List[str]:
+    stdout = await runget("pip3 list -o")
+    lines = stdout.splitlines()[2:]
+    return [l.split()[0] for l in lines]
+
+
+async def update_python3():
+    update_status = add_status("py3", "Checking for outdated packages...")
+    packages = await get_outdated_py3_modules()
+
+    if len(packages) > 0:
+        update_status("Updating packages...")
+        await run("pip3 install -U %s" % " ".join(packages), silent=True)
+
+    update_status("Done")
+    return {"name": "python3", "updates": packages}
+
+
+async def get_outdated_npm_modules() -> List[str]:
+    stdout = await runget(
+        "npm --registry=https://registry.npmjs.org outdated -g --parseable"
+    )
+    if stdout != None:
+        lines = stdout.splitlines()
+        return [l.split(":")[-1] for l in lines]
+    return []
+
+
+async def update_npm():
+    update_status = add_status("npm", "Checking for outdated packages...")
+    modules = await get_outdated_npm_modules()
+    updated_modules = []
+
+    if len(modules) > 0:
+        update_status("Updating packages...")
+        for mod in modules:
+            updated_modules.append(mod)
+        await run(
+            "npm install --registry=https://registry.npmjs.org --progress=false -g %s"
+            % " ".join(modules),
+            silent=True,
+        )
+
+    update_status("Done")
+    return {"name": "npm", "updates": updated_modules}
+
+
+async def update_tmux():
+    updated_plugins = []
+
+    async def update_plugin(plugin: str):
+        cwd = plugins_dir / plugin
+
+        head = await runget("git rev-parse HEAD", cwd=cwd)
+        await run("git pull -q --recurse-submodules", silent=True, cwd=cwd)
+        await run("git submodule update --remote", silent=True, cwd=cwd)
+        new_head = await runget("git rev-parse HEAD", cwd=cwd)
+        if new_head != head:
+            updated_plugins.append(plugin)
+
+    plugins_path = environ["TMUX_PLUGIN_MANAGER_PATH"]
+    if plugins_path == None:
+        return
+
+    update_status = add_status("tmux", "Updating plugins...")
+
+    plugins_dir = Path(plugins_path)
+    await asyncio.gather(
+        *[update_plugin(p) for p in [f for f in plugins_dir.iterdir() if f.is_dir()]]
+    )
+
+    update_status("Done")
+    return {"name": "tmux", "updates": updated_plugins}
+
+
+async def update_vim():
+    pass
+
+
+async def update_zsh():
+    pass
+
+
+async def main():
+    tasks = []
+    tasks.append(update_brew())
+    tasks.append(update_python2())
+    tasks.append(update_python3())
+    tasks.append(update_npm())
+    tasks.append(update_tmux())
+    updates = await asyncio.gather(*tasks)
+
+    # TODO: print a summary of updates
+
+
+setupterm()
+num_cols = tigetnum("cols")
+asyncio.run(main())
