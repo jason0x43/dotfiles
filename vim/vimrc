@@ -96,6 +96,9 @@ endif
 " Toggle cursor crosshairs
 map <silent> # :set cursorcolumn! cursorline!<CR>
 
+" Y to yank to the clipboard
+map <silent> Y "*y
+
 " Show markers at the beginning and end of non-wrapped lines
 set listchars+=precedes:^,extends:$
 
@@ -636,13 +639,10 @@ Plug 'digitaltoad/vim-jade'
 Plug 'keith/swift.vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'ianks/vim-tsx'
-Plug 'dag/vim-fish'
 Plug 'groenewege/vim-less'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-markdown'
 Plug 'wavded/vim-stylus'
-Plug 'dmix/elvish.vim'
-Plug 'vmchale/ion-vim'
 
 " Filetype plugins
 Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
