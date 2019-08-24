@@ -15,7 +15,7 @@ async def run_applescript(script):
 
 async def set_term_theme(theme):
     light_theme = "solarized-light"
-    dark_theme = "zenburn"
+    dark_theme = "ashes"
     name = dark_theme if theme == "dark" else light_theme
     proc = await asyncio.create_subprocess_shell("""zsh -ic base16_%s""" % name)
     await proc.wait()
