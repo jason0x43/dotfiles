@@ -182,6 +182,14 @@ async def update_npm():
 
 async def update_tmux():
     updated_plugins = []
+    result = {"name": "tmux", "updates": updated_plugins}
+
+    if not "TMUX_PLUGIN_MANAGER_PATH" in environ:
+        return result
+
+    plugins_path = environ["TMUX_PLUGIN_MANAGER_PATH"]
+    if plugins_path == None:
+        return result
 
     async def update_plugin(plugin: str):
         cwd = plugins_dir / plugin
@@ -193,10 +201,6 @@ async def update_tmux():
         if new_head != head:
             updated_plugins.append(plugin)
 
-    plugins_path = environ["TMUX_PLUGIN_MANAGER_PATH"]
-    if plugins_path == None:
-        return
-
     update_status = add_status("tmux", "Updating plugins...")
 
     plugins_dir = Path(plugins_path)
@@ -205,7 +209,7 @@ async def update_tmux():
     )
 
     update_status("Done")
-    return {"name": "tmux", "updates": updated_plugins}
+    return result
 
 
 async def update_vim():
