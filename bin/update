@@ -54,15 +54,17 @@ def update_status(index: int, status: str):
 
 
 async def pipe_line(proc: asyncio.subprocess.Process, prn: Printer) -> bool:
-    data = await proc.stdout.readline()
-    if len(data) > 0:
-        prn(data.decode("utf-8").rstrip())
-    return len(data) == 0
+    out = await proc.stdout.readline()
+    # TODO: do something more useful with stderr
+    err = await proc.stderr.readline()
+    if len(out) > 0:
+        prn(out.decode("utf-8").rstrip())
+    return len(out) + len(err) == 0
 
 
 async def start(cmd: str, **kwargs) -> int:
     return await asyncio.create_subprocess_shell(
-        cmd, stdout=asyncio.subprocess.PIPE, **kwargs
+        cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, **kwargs
     )
 
 
