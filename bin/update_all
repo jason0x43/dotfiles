@@ -21,7 +21,7 @@ if [[ -z $group || $group == "python" ]]; then
 
 	if type pip2 > /dev/null 2>&1; then
 		printf ">> Updating python2 packages...\n"
-		pip2 install -U pip setuptools pynvim > /dev/null
+		PYTHONWARNINGS=ignore:DEPRECATION pip2 install -U pip setuptools pynvim > /dev/null
 	fi
 fi
 
