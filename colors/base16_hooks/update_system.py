@@ -2,6 +2,7 @@
 
 import asyncio
 import iterm2
+from os import getenv
 
 
 async def intercept_term_theme():
@@ -50,7 +51,12 @@ async def update_neovim_theme():
 
 
 async def main():
-    await asyncio.gather(update_neovim_theme(), update_iterm_sessions())
+    tasks = [update_neovim_theme()]
+
+    if getenv('TERM_PROGRAM') == 'iTerm.app':
+        tasks.append(update_iterm_sessions())
+
+    await asyncio.gather(*tasks)
 
 
 asyncio.get_event_loop().run_until_complete(main())
