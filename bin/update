@@ -23,9 +23,6 @@ progress_width = 20
 progress_format = "[%%-%d.%ds]" % (progress_width, progress_width)
 
 
-# Updaters ----------------------------------------------------------------- {{{
-
-
 class Updater(ABC):
     status_updater: Any
     name: str
@@ -252,12 +249,6 @@ class NpmUpdater(Updater):
         )
 
 
-# }}}
-
-
-# Output and process control ----------------------------------------------- {{{
-
-
 def format_status(tag: str, status: str) -> str:
     return f"[{tag:>4}] {status}"
 
@@ -305,9 +296,6 @@ async def run(cmd: str, **kwargs) -> Output:
     return Output(proc.returncode, stdout, stderr)
 
 
-# }}}
-
-
 async def main():
     parser = ArgumentParser()
     parser.add_argument(
@@ -335,7 +323,7 @@ async def main():
     # If we're updating brew packages, do that first, because later updates may depend
     # on updated brew packages
     if "brew" in groups:
-        groups.remove('brew')
+        groups.remove("brew")
         updater = BrewUpdater()
         if args.dry_run:
             await updater.check_packages()
@@ -386,5 +374,3 @@ async def main():
 setupterm()
 num_cols = tigetnum("cols")
 asyncio.run(main())
-
-# vim:foldmethod=marker:
