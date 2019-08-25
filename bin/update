@@ -4,7 +4,7 @@ import asyncio
 from argparse import ArgumentParser
 from typing import Callable, Dict, List, Optional, Tuple, cast, Any
 from collections import namedtuple
-from os import getenv
+from os import getenv, environ
 from pathlib import Path
 from curses import setupterm, tparm, tigetstr, tigetnum
 from sys import stdout, argv
@@ -51,8 +51,8 @@ class Updater(ABC):
             self.update_progress(0)
 
             for i, pkg in enumerate(packages):
-                await self.update_package(pkg.name)
-                updated.append(pkg)
+                if await self.update_package(pkg.name):
+                    updated.append(pkg)
                 self.update_progress(i + 1)
 
         self.update_status("Done")
@@ -159,23 +159,28 @@ class GitUpdater(Updater):
 
     async def update_package(self, pkg_name: str):
         cwd = self.packages_path / pkg_name
-        await run("git pull -q --recurse-submodules", cwd=cwd)
-        await run("git submodule update --remote", cwd=cwd)
+        out1 = await run("git pull -q --recurse-submodules", cwd=cwd)
+        if out1.exitcode == 0:
+            out2 = await run("git submodule update --remote", cwd=cwd)
+        return out1.exitcode + out2.exitcode == 0
 
 
 class PythonUpdater(Updater):
     name: str
     pip: str
+    env: Dict[str, str]
 
     def __init__(self, name: str, pip: str):
         super().__init__(name)
         self.name = name
         self.pip = pip
+        self.env = environ.copy()
+        self.env['PYTHONWARNINGS'] = 'ignore:DEPRECATION'
 
     async def check_packages(self) -> Updates:
         self.update_status("Checking for outdated packages...")
         output = await run(
-            f"{self.pip} list -o", env={"PYTHONWARNINGS": "ignore:DEPRECATION"}
+            f"{self.pip} list -o", env=self.env
         )
         lines = output.stdout.splitlines()[2:]
         packages: List[Package] = []
@@ -186,10 +191,11 @@ class PythonUpdater(Updater):
         return Updates(self.name, packages)
 
     async def update_package(self, pkg_name: str):
-        await run(
+        out = await run(
             f"{self.pip} install -U {pkg_name}",
-            env={"PYTHONWARNINGS": "ignore:DEPRECATION"},
+            env=self.env
         )
+        return out.exitcode == 0
 
 
 class BrewUpdater(Updater):
@@ -217,8 +223,10 @@ class BrewUpdater(Updater):
         return Updates("brew", packages)
 
     async def update_package(self, pkg_name: str):
-        await run(f"brew upgrade {pkg_name}")
-        await run(f"brew cleanup {pkg_name}")
+        out = await run(f"brew upgrade {pkg_name}")
+        if out.exitcode == 0:
+            await run(f"brew cleanup {pkg_name}")
+        return out.exitcode == 0
 
 
 class NpmUpdater(Updater):
@@ -244,9 +252,10 @@ class NpmUpdater(Updater):
         return Updates("npm", packages)
 
     async def update_package(self, pkg_name: str):
-        await run(
+        out = await run(
             f"npm install --registry=https://registry.npmjs.org --progress=false -g {pkg_name}@latest"
         )
+        return out.exitcode == 0
 
 
 def format_status(tag: str, status: str) -> str:
