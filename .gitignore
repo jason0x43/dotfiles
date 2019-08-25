@@ -8,3 +8,4 @@ vim/.netrwhist
 fish/fishd.*
 fish/fish_history
 .vscode/
+.mypy_cache/
