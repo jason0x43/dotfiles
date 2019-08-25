@@ -190,7 +190,7 @@ class PythonUpdater(Updater):
 
     async def update_package(self, pkg_name: str):
         await run(
-            f"pip2 install -U {pkg_name}",
+            f"{self.pip} install -U {pkg_name}",
             env={"PYTHONWARNINGS": "ignore:DEPRECATION"},
         )
 
