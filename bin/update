@@ -322,11 +322,18 @@ async def main():
     )
     args = parser.parse_args()
 
-    groups = (
-        args.groups
-        if len(args.groups) > 0
-        else ["brew", "npm", "tmux", "vim", "zsh", "py2", "py3"]
-    )
+    groups = args.groups
+    if len(groups) == 0:
+        groups.append("brew")
+        groups.append("npm")
+        groups.append("vim")
+        groups.append("zsh")
+        groups.append("py2")
+        groups.append("py3")
+
+        if getenv("TMUX_PLUGIN_MANAGER_PATH"):
+            groups.append("tmux")
+
     updaters = []
 
     # If we're updating brew packages, do that first, because later updates may depend
