@@ -162,9 +162,8 @@ class GitUpdater(Updater):
 
     async def update_package(self, pkg_name: str):
         cwd = self.packages_path / pkg_name
-        # await run("git pull -q --recurse-submodules", cwd=cwd)
-        # await run("git submodule update --remote", cwd=cwd)
-        await asyncio.sleep(2)
+        await run("git pull -q --recurse-submodules", cwd=cwd)
+        await run("git submodule update --remote", cwd=cwd)
 
 
 class PythonUpdater(Updater):
@@ -190,11 +189,10 @@ class PythonUpdater(Updater):
         return Updates(self.name, packages)
 
     async def update_package(self, pkg_name: str):
-        # await run(
-        #     f"pip2 install -U {pkg.name}",
-        #     env={"PYTHONWARNINGS": "ignore:DEPRECATION"},
-        # )
-        await asyncio.sleep(2)
+        await run(
+            f"pip2 install -U {pkg_name}",
+            env={"PYTHONWARNINGS": "ignore:DEPRECATION"},
+        )
 
 
 class BrewUpdater(Updater):
@@ -222,9 +220,8 @@ class BrewUpdater(Updater):
         return Updates("brew", packages)
 
     async def update_package(self, pkg_name: str):
-        # await run(f"brew upgrade {pkg}")
-        # await run(f"brew cleanup {pkg}")
-        await asyncio.sleep(2)
+        await run(f"brew upgrade {pkg_name}")
+        await run(f"brew cleanup {pkg_name}")
 
 
 class NpmUpdater(Updater):
@@ -250,10 +247,9 @@ class NpmUpdater(Updater):
         return Updates("npm", packages)
 
     async def update_package(self, pkg_name: str):
-        # await run(
-        #     f"npm install --registry=https://registry.npmjs.org --progress=false -g {pkg.name}@latest"
-        # )
-        await asyncio.sleep(2)
+        await run(
+            f"npm install --registry=https://registry.npmjs.org --progress=false -g {pkg_name}@latest"
+        )
 
 
 # }}}
