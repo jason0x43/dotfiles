@@ -262,9 +262,7 @@ augroup END
 " Base16
 " ---------------------------------------------------------------------
 function! s:base16_load_theme()
-    if !empty($BASE16_THEME)
-        execute('colorscheme base16-' . $BASE16_THEME)
-    elseif filereadable(expand("~/.vimrc_background"))
+    if filereadable(expand("~/.vimrc_background"))
       let base16colorspace=256
       source ~/.vimrc_background
     endif
