@@ -5,7 +5,7 @@ zmodload zsh/zprof
 # # ----------------------------------------------------------------------------
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 if [[ ! -d "$ZPLUGDIR" ]]; then
-	mkdir -p "$ZPLUGDIR"
+    mkdir -p "$ZPLUGDIR"
 fi
 
 # Editors
@@ -86,8 +86,8 @@ fi
 # Extra ZSH completions
 zfetch $ZPLUGDIR zsh-users/zsh-completions
 fpath=(
-	$ZPLUGDIR/zsh-users/zsh-completions/src
-	$fpath
+    $ZPLUGDIR/zsh-users/zsh-completions/src
+    $fpath
 )
 
 # Load and initialize the completion system, ignoring insecure directories
@@ -597,8 +597,8 @@ fi
 if (( $+commands[npm] )); then
     npm_completer="$DOTFILES/zsh/npm.zsh"
     source "$npm_completer"
-	zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
-	source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
+    zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
+    source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
 # TPM
@@ -612,10 +612,10 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 # ------------------------------------------------------------------------
 zfetch $ZPLUGDIR jason0x43/pure
 if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
-	pure_dir=$ZPLUGDIR/jason0x43/pure
-	ln -s $pure_dir/pure.zsh $ZFUNCDIR/prompt_pure_setup
-	ln -s $pure_dir/async.zsh $ZFUNCDIR/async
-	unset pure_dir
+    pure_dir=$ZPLUGDIR/jason0x43/pure
+    ln -s $pure_dir/pure.zsh $ZFUNCDIR/prompt_pure_setup
+    ln -s $pure_dir/async.zsh $ZFUNCDIR/async
+    unset pure_dir
 fi
 
 # Virtual envs
@@ -625,6 +625,7 @@ if (( $+commands[nodenv] )); then
 fi
 
 if (( $+commands[pyenv] )); then
+    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi
@@ -644,15 +645,9 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
 
-# Load plugins
-# --------------------------------------------------------------------------
-# if zplug check || zplug install; then
-# 	zplug load
-# fi
-
 # Prompt activation
 # --------------------------------------------------------------------------
 autoload -Uz promptinit && promptinit
 prompt pure
 
-# vim:shiftwidth=4:tabstop=4:noexpandtab
+# vim:shiftwidth=4:tabstop=4:expandtab
