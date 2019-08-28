@@ -43,9 +43,6 @@ async def set_alfred_theme(theme):
 async def main():
     theme = argv[1]
 
-    with open("%s/theme" % environ["CACHEDIR"], mode="w") as f:
-        f.write("%s\n" % theme)
-
     # Set the system dark mode first, otherwise app-level changes don't always
     # take
     await asyncio.gather(set_dark_mode(theme), set_term_theme(theme))
