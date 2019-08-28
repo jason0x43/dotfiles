@@ -607,6 +607,7 @@ let g:vimtex_compiler_progname = 'nvr'
 call plug#begin('~/.local/share/vim/plugins')
 
 Plug 'sgur/vim-editorconfig'               " EditorConfig
+Plug 'mhinz/vim-startify'                  " Useful startup text
 Plug 'tpope/vim-commentary'                " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'                    " POSIX command wrappers
 Plug 'tpope/vim-sleuth'                    " Setup buffer options based on content
