@@ -633,6 +633,18 @@ if (( $+commands[pyenv] )); then
     eval "$(pyenv virtualenv-init -)"
 fi
 
+if (( $+commands[jenv] )); then
+    eval "$(jenv init -)"
+
+    # jenv points JAVA_HOME to ~/.jenv/versions/system when the system Java is
+    # in use, but doesn't create a link for the system Java in versions/. That
+    # makes some tools that pay attention to JAVA_HOME unhappy. Ensure that a
+    # system link exists and points to the current default system Java.
+    sys_home=$(/usr/libexec/java_home)
+    if [[ ! $HOME/.jenv/versions/system -ef $sys_home ]]; then
+        ln -sf $sys_home $HOME/.jenv/versions/system
+    fi
+fi
 # added by travis gem
 [ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
 
