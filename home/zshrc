@@ -71,6 +71,13 @@ fpath=(
     $fpath
 )
 
+# Load and initialize the completion system, ignoring insecure directories
+export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+autoload -Uz compinit && compinit -i -d $ZCOMPFILE
+
+# Kitty completions
+kitty + complete setup zsh | source /dev/stdin
+
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
@@ -89,10 +96,6 @@ fpath=(
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $fpath
 )
-
-# Load and initialize the completion system, ignoring insecure directories
-export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
-autoload -Uz compinit && compinit -i -d $ZCOMPFILE
 
 # Use caching to make completion for commands with many options usable
 zstyle ':completion:*' use-cache on

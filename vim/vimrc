@@ -80,7 +80,7 @@ set updatetime=100           " More responsive UI updates
 set pyxversion=3
 set noshowmode
 
-if $TERM_PROGRAM == 'iTerm.app' || $LC_TERMINAL == 'iTerm2'
+if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty'
     if !has('nvi')
         set t_8f=[38;2;%lu;%lu;%lum
         set t_8b=[48;2;%lu;%lu;%lum

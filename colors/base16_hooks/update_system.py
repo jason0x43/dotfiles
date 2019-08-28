@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import asyncio
-import iterm2
 from os import getenv
 
 
@@ -33,6 +32,30 @@ async def update_iterm_sessions():
     await asyncio.gather(*[s.async_inject(code) for s in sessions])
 
 
+async def update_kitty_sessions():
+    proc1 = await asyncio.create_subprocess_shell(
+        "source ~/.base16_theme",
+        env={"TMUX": ""},
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await proc1.communicate()
+
+    proc2 = await asyncio.create_subprocess_shell(
+        "kitty @ --to=unix:/tmp/kitty.sock get-colors", stdout=asyncio.subprocess.PIPE
+    )
+    output = (await proc2.communicate())[0].decode("utf-8")
+
+    colors = " ".join(["=".join(c.split()) for c in output.splitlines()])
+
+    proc3 = await asyncio.create_subprocess_shell(
+        f"kitty @ --to=unix:/tmp/kitty.sock set-colors -c -a {colors}",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await proc3.communicate()
+
+
 async def update_neovim_theme():
     proc = await asyncio.create_subprocess_shell(
         "nvr --serverlist", stdout=asyncio.subprocess.PIPE
@@ -53,8 +76,11 @@ async def update_neovim_theme():
 async def main():
     tasks = [update_neovim_theme()]
 
-    if getenv('TERM_PROGRAM') == 'iTerm.app':
+    if getenv("TERM_PROGRAM") == "iTerm.app":
+        import iterm2
         tasks.append(update_iterm_sessions())
+    elif getenv("TERM_PROGRAM") == "kitty":
+        tasks.append(update_kitty_sessions())
 
     await asyncio.gather(*tasks)
 
