@@ -199,15 +199,18 @@ class PythonUpdater(Updater):
 
 
 class BrewUpdater(Updater):
-    def __init__(self):
-        super().__init__("brew")
+    brew_cmd: str
+
+    def __init__(self, cask: bool = False):
+        super().__init__("cask" if cask else "brew")
+        self.brew_cmd = f"brew{' cask' if cask else ''}"
 
     async def check_packages(self) -> Updates:
         self.update_status("Updating cache...")
         await run("brew update")
 
         self.update_status("Checking for outdated packages...")
-        output = await run("brew outdated -v")
+        output = await run(f"{self.brew_cmd} outdated -v")
 
         lines = output.stdout.splitlines()
         packages: List[Package] = []
@@ -220,11 +223,11 @@ class BrewUpdater(Updater):
             packages.append(Package(name, previous, current))
 
         self.update_status("Done")
-        return Updates("brew", packages)
+        return Updates(self.name, packages)
 
     async def update_package(self, pkg_name: str):
-        out = await run(f"brew upgrade {pkg_name}")
-        if out.exitcode == 0:
+        out = await run(f"{self.brew_cmd} upgrade {pkg_name}")
+        if self.brew_cmd == 'brew' and out.exitcode == 0:
             await run(f"brew cleanup {pkg_name}")
         return out.exitcode == 0
 
@@ -318,6 +321,7 @@ async def main():
     groups = args.groups
     if len(groups) == 0:
         groups.append("brew")
+        groups.append("cask")
         groups.append("npm")
         groups.append("vim")
         groups.append("zsh")
@@ -342,6 +346,8 @@ async def main():
     for group in groups:
         if group == "npm":
             updaters.append(NpmUpdater())
+        elif group == "cask":
+            updaters.append(BrewUpdater(cask=True))
         elif group == "tmux":
             updaters.append(
                 GitUpdater("tmux", Path(getenv("TMUX_PLUGIN_MANAGER_PATH")))
