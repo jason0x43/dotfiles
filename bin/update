@@ -36,9 +36,12 @@ class Updater(ABC):
     def update_status(self, msg: str):
         cast(StatusUpdater, self.status_updater)(msg)
 
-    def update_progress(self, count: int):
+    def update_progress(self, count: int, extra: Optional[str] = None):
         progress = "#" * int(progress_width * (count / self.progress_max))
-        self.update_status(f"[{progress:{progress_width}.{progress_width}}]")
+        status = f"[{progress:{progress_width}.{progress_width}}]"
+        if extra:
+            status = f"{status} {extra}"
+        self.update_status(status)
 
     async def update_packages(self):
         updates = await self.check_packages()
@@ -48,12 +51,11 @@ class Updater(ABC):
 
         if len(packages) > 0:
             self.progress_max = len(packages)
-            self.update_progress(0)
 
             for i, pkg in enumerate(packages):
+                self.update_progress(i, f"{pkg.name}...")
                 if await self.update_package(pkg.name):
                     updated.append(pkg)
-                self.update_progress(i + 1)
 
         self.update_status("Done")
         return Updates(self.name, updated)
