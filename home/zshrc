@@ -76,7 +76,9 @@ export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 autoload -Uz compinit && compinit -i -d $ZCOMPFILE
 
 # Kitty completions
-kitty + complete setup zsh | source /dev/stdin
+if (( $+commands[kitty] )); then
+    kitty + complete setup zsh | source /dev/stdin
+fi
 
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
