@@ -541,6 +541,10 @@ if has('nvim')
     " things like tmux pane focus dimming.
 endif
 
+" startify
+" --------------------------------------------------------------------- 
+let g:startify_relative_path = 1
+
 " undotree
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
