@@ -492,6 +492,8 @@ let g:NERDTreeAutoDeleteBuffer=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeWinSize=40
 let g:NERDTreeRespectWildIgnore = 1
+let g:NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
+let g:NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
 
 function! ToggleNerdTree()
     if @% !=# '' && (!exists('g:NERDTree') || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen()))
@@ -675,6 +677,7 @@ endif
 
 " Load devicons last so it can integrate with everything it needs to
 Plug 'ryanoasis/vim-devicons'
+Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 
 " Load all the plugins
 call plug#end()
