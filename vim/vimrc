@@ -329,6 +329,7 @@ nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 " A COC_NODE_PATH env var points to the version of node that should be used by
 " the vim session (particularly coc). Use it to set g:coc_node_path and to
 " update the PATH for this vim session.
+let g:coc_node_path = '/usr/local/bin/node'
 if !empty($COC_NODE_PATH)
     let g:coc_node_path = $COC_NODE_PATH . '/bin/node'
     let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
