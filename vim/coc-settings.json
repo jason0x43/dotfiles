@@ -27,5 +27,6 @@
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
       "filetypes": ["go"]
     }
-  }
+  },
+  "java.errors.incompleteClasspath.severity": "ignore"
 }
