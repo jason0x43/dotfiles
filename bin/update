@@ -249,9 +249,9 @@ class NpmUpdater(Updater):
 
         for line in lines:
             parts = line.split(":")
-            name = parts[1].split("@")[0]
-            current = parts[1].split("@")[1]
-            latest = parts[3].split("@")[1]
+            name = parts[1].rpartition("@")[0]
+            current = parts[1].rpartition("@")[2]
+            latest = parts[3].rpartition("@")[2]
             packages.append(Package(name, current, latest))
 
         return Updates("npm", packages)
