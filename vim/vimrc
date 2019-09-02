@@ -140,9 +140,6 @@ map <silent> <Leader>c :close<CR>
 map <silent> <Leader>k :Bd<CR>
 map <silent> <Leader>K :bd!<CR>
 
-" <Leader>space to clear search highlights
-map <silent> <Leader><Space> :nohlsearch<CR>
-
 " <Leader>h to show the syntax highlight status of the character under the
 " cursor
 map <silent> <Leader>h :echo "hi<" . 
@@ -183,6 +180,9 @@ function! s:show_documentation()
     endif
 endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" space to clear search highlights
+noremap <silent> <space> :noh<cr>
 
 " Autocommands -----------------------------------------------------------------
 
