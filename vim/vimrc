@@ -289,11 +289,11 @@ command! UpdateColors call s:base16_load_theme()
 function! s:base16_customize()
     hi Normal guibg=NONE ctermbg=NONE
     hi Comment gui=italic
-    exec 'hi Visual guifg=#' . g:base16_gui01 . ' ctermfg=1'
+    exec 'hi Visual guibg=#' . g:base16_gui02 . ' ctermbg=2'
+        \ . ' guifg=#' . g:base16_gui00 . ' ctermfg=0'
     exec 'hi MatchParen guifg=#' . g:base16_gui06 . ' ctermfg=6'
-    exec 'hi MatchParenCur guifg=#' . g:base16_gui01 
-        \ . ' guibg=#' . g:base16_gui03 
-        \ . ' ctermfg=1 ctermbg=0'
+    exec 'hi MatchParenCur guibg=#' . g:base16_gui03 . ' ctermbg=0'
+        \ . ' guifg=#' . g:base16_gui01  . 'ctermfg=1'
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
