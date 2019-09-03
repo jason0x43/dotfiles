@@ -1,1 +1,1 @@
-autocmd User BufRead fish_funced.* set filetype=fish
+autocmd BufNewFile,BufRead fish_funced.* setfiletype fish

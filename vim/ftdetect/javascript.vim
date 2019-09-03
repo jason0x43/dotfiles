@@ -1,8 +1,7 @@
-au BufNewFile,BufRead *.js set filetype=javascript
-au BufNewFile,BufRead * call s:DetectJavaScript()
-
-function! s:DetectJavaScript()
+function! s:detectJavaScript()
     if getline(1) == '#!/usr/bin/osascript -l JavaScript'
-	set filetype=javascript
+        set filetype=javascript
     endif
 endfunction
+
+autocmd BufNewFile,BufRead * call s:detectJavaScript()

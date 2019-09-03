@@ -1,4 +1,2 @@
-autocmd BufRead .jscsrc set filetype=json
-autocmd BufRead .bowerrc set filetype=json
-autocmd BufRead .tslintrc set filetype=json
-autocmd BufRead *.dashtoc set filetype=json
+autocmd BufNewFile,BufRead .{jscsrc,bowerrc,tslintrc} setfiletype json
+autocmd BufNewFile,BufRead *.dashtoc setfiletype json
