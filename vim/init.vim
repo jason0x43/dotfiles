@@ -679,7 +679,6 @@ Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
-Plug 'RRethy/vim-hexokinase'          " Show color swatches
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
 
