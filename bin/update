@@ -334,6 +334,7 @@ async def main():
             groups.append("tmux")
 
     updaters = []
+    updates = []
 
     # If we're updating brew packages, do that first, because later updates may depend
     # on updated brew packages
@@ -341,9 +342,9 @@ async def main():
         groups.remove("brew")
         updater = BrewUpdater()
         if args.dry_run:
-            await updater.check_packages()
+            updates.append(await updater.check_packages())
         else:
-            await updater.update_packages()
+            updates.append(await updater.update_packages())
 
     for group in groups:
         if group == "npm":
@@ -372,7 +373,7 @@ async def main():
     else:
         tasks = [u.update_packages() for u in updaters]
 
-    updates = await asyncio.gather(*tasks)
+    updates.extend(await asyncio.gather(*tasks))
 
     print()
 
