@@ -14,7 +14,7 @@ async def run_applescript(script):
 
 
 async def set_term_theme(theme):
-    light_theme = "atelier-plateau-light"
+    light_theme = "solarized-light"
     dark_theme = "ashes"
     name = dark_theme if theme == "dark" else light_theme
     proc = await asyncio.create_subprocess_shell("""zsh -ic base16_%s""" % name)
@@ -43,10 +43,10 @@ async def set_alfred_theme(theme):
 async def main():
     theme = argv[1]
 
-    # Set the system dark mode first, otherwise app-level changes don't always
-    # take
-    await asyncio.gather(set_dark_mode(theme), set_term_theme(theme))
+    await asyncio.gather(set_term_theme(theme), set_dark_mode(theme))
 
+    # Set the Alfred theme after setting the system mode; otherwise it doesn't
+    # always take
     await set_alfred_theme(theme)
 
 
