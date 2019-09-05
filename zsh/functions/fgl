@@ -1,0 +1,31 @@
+# FZF-based git browser
+# ctrl-n and ctrl-p to scroll up and down
+# alt-n and alt-p to scroll in preview
+# Enter to echo the commit log
+
+if [[ ! $+commands[fzf] ]]; then
+	echo "FZF is not installed"
+	return 1
+fi
+
+if ! is_git; then
+    echo "Not a git repo"
+    return 1
+fi
+
+git log \
+    --graph \
+    --all \
+    --color=always \
+    --format="%C(auto)%h%d %s %C(magenta)(%an, %cr)" \
+| fzf \
+    --ansi \
+    --no-sort \
+    --reverse \
+    --tiebreak=index \
+    --preview-window=down:50% \
+    --preview 'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always $1 ; }; f {}' \
+    --bind "alt-n:preview-down,alt-p:preview-up,alt-f:preview-page-down,alt-b:preview-page-up,enter:execute:
+        (grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+        {}
+FZF-EOF"
