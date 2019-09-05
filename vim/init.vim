@@ -318,10 +318,10 @@ augroup END
 " coc
 " ---------------------------------------------------------------------
 augroup vimrc
-    autocmd FileType typescript,javascript,python,html,go map <buffer> <silent> <C-]> <Plug>(coc-definition)
-    autocmd FileType typescript,javascript,python,go map <buffer> <silent> <leader>r <Plug>(coc-rename)
-    autocmd FileType typescript,javascript,python,go map <buffer> <silent> <leader>j <Plug>(coc-references)
-    autocmd FileType typescript,javascript,python,go map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
+    autocmd FileType typescript,javascript,python,html,go,c map <buffer> <silent> <C-]> <Plug>(coc-definition)
+    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>r <Plug>(coc-rename)
+    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>j <Plug>(coc-references)
+    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
     autocmd CursorHold * silent call CocActionAsync('highlight')
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup END
