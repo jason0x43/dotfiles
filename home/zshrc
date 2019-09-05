@@ -248,6 +248,7 @@ alias mkdir='mkdir -p'
 alias mv='mv -i'
 alias rm='rm -i'
 alias type='type -a'
+alias fd='fd -I'
 
 # Let node use local readline setup (vi mode)
 if (( $+commands[rlwrap] )); then
@@ -383,6 +384,13 @@ else
     alias ls='ls -F'
 fi
 
+# Colorize cat
+if (( $+commands[bat] )); then
+    export BAT_THEME=base16
+    export BAT_STYLE=plain
+    alias cat=bat
+fi
+
 # Other ls aliases
 alias l='ls -1A'         # Lists in one column, hidden files
 alias ll='ls -lh'        # Lists human readable sizes
@@ -472,30 +480,25 @@ if (( $+commands[fzf] )); then
     export ESCDELAY=10
 
     # Use -1 for the bg color to specify 'none'
-    export FZF_DEFAULT_OPTS=--color=bg:-1,fg:8,bg+:-1,fg+:-1,hl:1,hl+:1,gutter:-1,spinner:14,info:14
+    export FZF_DEFAULT_OPTS='--color=bg:-1,fg:8,bg+:-1,fg+:-1,hl:1,hl+:1,gutter:-1,spinner:14,info:14'
 
     if [[ -d $FZF_PATH/shell ]]; then
         source $FZF_PATH/shell/completion.zsh
         source $FZF_PATH/shell/key-bindings.zsh
-    elif [[ -d /usr/share/doc/fzf ]]; then
-        source /usr/share/doc/fzf/examples/key-bindings.zsh
     fi
 
     bindkey '^P' fzf-file-widget
     bindkey '^G' fzf-cd-widget
 
-    if (( $+commands[rg] )); then
-        export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-    elif (( $+commands[ag] )); then
-        export FZF_DEFAULT_COMMAND='ag -g ""'
-    fi
-
-    # Use rg instead of the default find command for listing candidates.
-    # - The first argument to the function is the base path to start traversal
-    # - Note that ag only lists files not directories
-    # - See the source code (completion.{bash,zsh}) for the details.
+    # Use fd (https://github.com/sharkdp/fd) instead of the default find
+    # # command for listing path candidates.
     _fzf_compgen_path() {
-        rg -g "" "$1"
+        fd --hidden --follow --exclude ".git" . "$1"
+    }
+
+    # Use fd to generate the list for directory completion
+    _fzf_compgen_dir() {
+        fd --type d --hidden --follow --exclude ".git" . "$1"
     }
 fi
 
