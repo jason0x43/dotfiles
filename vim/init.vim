@@ -215,6 +215,7 @@ augroup vimrc
     " Close help files and quickfix panes on 'q' or Escape
     autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
     autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
+    autocmd BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>
 
     " More predictable syntax highlighting
     autocmd BufEnter * syntax sync fromstart
@@ -318,10 +319,10 @@ augroup END
 " coc
 " ---------------------------------------------------------------------
 augroup vimrc
-    autocmd FileType typescript,javascript,python,html,go,c map <buffer> <silent> <C-]> <Plug>(coc-definition)
-    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>r <Plug>(coc-rename)
-    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>j <Plug>(coc-references)
-    autocmd FileType typescript,javascript,python,go,c map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
+    autocmd FileType typescript,javascript,python,html,go,c,sh map <buffer> <silent> <C-]> <Plug>(coc-definition)
+    autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>r <Plug>(coc-rename)
+    autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>j <Plug>(coc-references)
+    autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
     autocmd CursorHold * silent call CocActionAsync('highlight')
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup END
@@ -349,8 +350,9 @@ nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 
 " A COC_NODE_PATH env var points to the version of node that should be used by
 " the vim session (particularly coc). Use it to set g:coc_node_path and to
-" update the PATH for this vim session.
-let g:coc_node_path = '/usr/local/bin/node'
+" update the PATH for this vim session. At least coc-sh only works with Node
+" 10.
+let g:coc_node_path = expand('~/.nodenv/versions/10.16.2/bin/node')
 if !empty($COC_NODE_PATH)
     let g:coc_node_path = $COC_NODE_PATH . '/bin/node'
     let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
