@@ -15,11 +15,15 @@
   "diagnostic.infoSign": "",
   "diagnostic.errorSign": "",
   "diagnostic.warningSign": "",
+  "diagnostic.refreshOnInsertMode": true,
+  "eslint.autoFixOnSave": true,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false,
   "javascript.referencesCodeLens.enable": false,
+  "javascript.suggestionActions.enabled": false,
   "python.jediEnabled": false,
   "python.formatting.provider": "black",
+  "python.linting.mypyEnabled": true,
   "languageserver": {
     "golang": {
       "command": "gopls",
