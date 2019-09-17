@@ -7,8 +7,9 @@ from collections import namedtuple
 from os import getenv, environ
 from pathlib import Path
 from curses import setupterm, tparm, tigetstr, tigetnum
-from sys import stdout, argv
+from sys import stdout, argv, exit
 from abc import ABC, abstractmethod
+from functools import reduce
 
 
 Env = Dict[str, str]
@@ -27,11 +28,13 @@ class Updater(ABC):
     status_updater: Any
     name: str
     progress_max: int
+    updates: Optional[Updates]
 
     def __init__(self, name: str):
         self.name = name
         self.status_updater = add_status(name, "Updating...")
         self.progress_count = 0
+        self.updates = None
 
     def update_status(self, msg: str):
         cast(StatusUpdater, self.status_updater)(msg)
@@ -44,10 +47,10 @@ class Updater(ABC):
         self.update_status(status)
 
     async def update_packages(self):
-        updates = await self.check_packages()
+        await self.check_packages()
 
         updated: List[Package] = []
-        packages = updates.packages
+        packages = self.updates.packages
 
         if len(packages) > 0:
             self.progress_max = len(packages)
@@ -60,13 +63,21 @@ class Updater(ABC):
         self.update_status("Done")
         return Updates(self.name, updated)
 
-    @abstractmethod
     async def check_packages(self) -> Updates:
-        pass
+        if self.updates == None:
+            self.updates = await self._check_packages()
+        return cast(Updates, self.updates)
+
+    async def update_package(self, name: str) -> bool:
+        return await self._update_package(name)
 
     @abstractmethod
-    async def update_package(self, name: str) -> None:
-        pass
+    async def _check_packages(self) -> Updates:
+        ...
+
+    @abstractmethod
+    async def _update_package(self, name: str) -> bool:
+        ...
 
 
 class Output:
@@ -143,7 +154,7 @@ class GitUpdater(Updater):
             else None
         )
 
-    async def check_packages(self) -> Updates:
+    async def _check_packages(self) -> Updates:
         self.update_status("Checking for outdated packages...")
         needs_update: List[Package] = []
 
@@ -156,10 +167,9 @@ class GitUpdater(Updater):
             )
             needs_update = [p for p in packages if p != None]
 
-        self.update_status("Done")
         return Updates(self.name, needs_update)
 
-    async def update_package(self, pkg_name: str):
+    async def _update_package(self, pkg_name: str):
         cwd = self.packages_path / pkg_name
         out1 = await run("git pull -q --recurse-submodules", cwd=cwd)
         if out1.exitcode == 0:
@@ -177,26 +187,20 @@ class PythonUpdater(Updater):
         self.name = name
         self.pip = pip
         self.env = environ.copy()
-        self.env['PYTHONWARNINGS'] = 'ignore:DEPRECATION'
+        self.env["PYTHONWARNINGS"] = "ignore:DEPRECATION"
 
-    async def check_packages(self) -> Updates:
+    async def _check_packages(self) -> Updates:
         self.update_status("Checking for outdated packages...")
-        output = await run(
-            f"{self.pip} list -o", env=self.env
-        )
+        output = await run(f"{self.pip} list -o", env=self.env)
         lines = output.stdout.splitlines()[2:]
         packages: List[Package] = []
         for line in lines:
             parts = line.split()
             packages.append(Package(parts[0], parts[1], parts[2]))
-        self.update_status("Done")
         return Updates(self.name, packages)
 
-    async def update_package(self, pkg_name: str):
-        out = await run(
-            f"{self.pip} install -U {pkg_name}",
-            env=self.env
-        )
+    async def _update_package(self, pkg_name: str):
+        out = await run(f"{self.pip} install -U {pkg_name}", env=self.env)
         return out.exitcode == 0
 
 
@@ -207,7 +211,7 @@ class BrewUpdater(Updater):
         super().__init__("cask" if cask else "brew")
         self.brew_cmd = f"brew{' cask' if cask else ''}"
 
-    async def check_packages(self) -> Updates:
+    async def _check_packages(self) -> Updates:
         self.update_status("Updating cache...")
         await run("brew update")
 
@@ -224,12 +228,11 @@ class BrewUpdater(Updater):
             current = parts[3]
             packages.append(Package(name, previous, current))
 
-        self.update_status("Done")
         return Updates(self.name, packages)
 
-    async def update_package(self, pkg_name: str):
+    async def _update_package(self, pkg_name: str):
         out = await run(f"{self.brew_cmd} upgrade {pkg_name}")
-        if self.brew_cmd == 'brew' and out.exitcode == 0:
+        if self.brew_cmd == "brew" and out.exitcode == 0:
             await run(f"brew cleanup {pkg_name}")
         return out.exitcode == 0
 
@@ -238,7 +241,7 @@ class NpmUpdater(Updater):
     def __init__(self):
         super().__init__("npm")
 
-    async def check_packages(self) -> Updates:
+    async def _check_packages(self) -> Updates:
         self.update_status("Checking for outdated packages...")
         output = await run(
             "npm --registry=https://registry.npmjs.org outdated -g --parseable"
@@ -256,7 +259,7 @@ class NpmUpdater(Updater):
 
         return Updates("npm", packages)
 
-    async def update_package(self, pkg_name: str):
+    async def _update_package(self, pkg_name: str):
         out = await run(
             f"npm install --registry=https://registry.npmjs.org --progress=false -g {pkg_name}@latest"
         )
@@ -333,8 +336,16 @@ async def main():
         if getenv("TMUX_PLUGIN_MANAGER_PATH"):
             groups.append("tmux")
 
-    updaters = []
+    updaters_to_defer = []
+    updaters1 = []
+    updaters2 = []
     updates = []
+
+    def add_updater(name: str, updater: Updater) -> None:
+        if name in updaters_to_defer:
+            updaters2.append(updater)
+        else:
+            updaters1.append(updater)
 
     # If we're updating brew packages, do that first, because later updates may depend
     # on updated brew packages
@@ -342,51 +353,61 @@ async def main():
         groups.remove("brew")
         updater = BrewUpdater()
         if args.dry_run:
-            updates.append(await updater.check_packages())
+            updaters1.append(updater)
         else:
-            updates.append(await updater.update_packages())
+            brew_updates = await updater.check_packages()
+            names = [p.name for p in brew_updates.packages]
+            if 'node' in names:
+                updaters_to_defer.append('npm')
+            if 'python' in names:
+                updaters_to_defer.append('py3')
+            if 'python@2' in names:
+                updaters_to_defer.append('py2')
+            add_updater('brew', updater)
 
     for group in groups:
         if group == "npm":
-            updaters.append(NpmUpdater())
+            add_updater(group, NpmUpdater())
         elif group == "cask":
-            updaters.append(BrewUpdater(cask=True))
+            add_updater(group, BrewUpdater(cask=True))
         elif group == "tmux":
-            updaters.append(
-                GitUpdater("tmux", Path(getenv("TMUX_PLUGIN_MANAGER_PATH")))
-            )
+            add_updater(group, GitUpdater("tmux", Path(getenv("TMUX_PLUGIN_MANAGER_PATH"))))
         elif group == "vim":
-            updaters.append(
-                GitUpdater("vim", Path(getenv("CACHEDIR")) / "vim" / "plugins")
-            )
+            add_updater(group, GitUpdater("vim", Path(getenv("CACHEDIR")) / "vim" / "plugins"))
         elif group == "zsh":
-            updaters.append(
-                GitUpdater("zsh", Path(getenv("CACHEDIR")) / "zsh" / "plugins")
-            )
+            add_updater(group, GitUpdater("zsh", Path(getenv("CACHEDIR")) / "zsh" / "plugins"))
         elif group == "py2":
-            updaters.append(PythonUpdater("py2", "pip2"))
+            add_updater(group, PythonUpdater("py2", "pip2"))
         elif group == "py3":
-            updaters.append(PythonUpdater("py3", "pip3"))
+            add_updater(group, PythonUpdater("py3", "pip3"))
 
     if args.dry_run:
-        tasks = [u.check_packages() for u in updaters]
+        tasks1 = [u.check_packages() for u in updaters1]
     else:
-        tasks = [u.update_packages() for u in updaters]
+        tasks1 = [u.update_packages() for u in updaters1]
 
-    updates.extend(await asyncio.gather(*tasks))
+    updates.extend(await asyncio.gather(*tasks1))
 
-    print()
-
-    for i, update in enumerate(updates):
-        print(update.name)
-        if len(update.packages) > 0:
-            for pkg in update.packages:
-                print(f"  {pkg.name}: {pkg.previous} -> {pkg.current}")
+    if len(updaters2) > 0:
+        if args.dry_run:
+            tasks2 = [u.check_packages() for u in updaters2]
         else:
-            print("  No updates")
+            tasks2 = [u.update_packages() for u in updaters2]
 
-        if i < len(updates) - 1:
-            print()
+        updates.extend(await asyncio.gather(*tasks2))
+
+    num_updates = reduce(lambda a, b: a + b, [len(u.packages) for u in updates])
+    if num_updates > 0:
+        print()
+    
+        for i, update in enumerate(updates):
+            if len(update.packages) > 0:
+                print(update.name)
+                for pkg in update.packages:
+                    print(f"  {pkg.name}: {pkg.previous} -> {pkg.current}")
+
+                if i < len(updates) - 1:
+                    print()
 
 
 setupterm()
