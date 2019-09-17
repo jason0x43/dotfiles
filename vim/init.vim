@@ -48,6 +48,9 @@ if !empty(s:project_root)
     endif
 endif
 
+" Add VimConfig command for quick access to vim config 
+command! VimConfig e ~/.vim/vimrc
+
 " General options --------------------------------------------------------------
 
 set backupcopy=yes           " Overwrite the original file when saving
@@ -74,7 +77,7 @@ set ruler                    " Show location info in statusline
 set nowrap                   " Don't wrap text by default
 set wildignorecase           " Case insensitive filename completion
 set lazyredraw               " Redraw less frequently
-set updatetime=100           " More responsive UI updates
+set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
 
 " Show markers at the beginning and end of non-wrapped lines
@@ -187,7 +190,7 @@ noremap <silent> <space> :noh<cr>
 " Autocommands -----------------------------------------------------------------
 
 " Easier navigation of text files (used in autocommands)
-function! TextMode()
+function! s:textMode()
     setlocal wrap linebreak nolist display+=lastline
     map <buffer> <silent> k gk
     map <buffer> <silent> j gj
@@ -198,10 +201,10 @@ endfunction
 " General autocommands
 augroup vimrc
     " Make text files easier to work with
-    autocmd FileType text call TextMode()
-    autocmd FileType textile call TextMode()
-    autocmd FileType markdown call TextMode()
-    autocmd FileType html call TextMode()
+    autocmd FileType text call s:textMode()
+    autocmd FileType textile call s:textMode()
+    autocmd FileType markdown call s:textMode()
+    autocmd FileType html call s:textMode()
 
     " If vim is resized, resize any splits
     autocmd VimResized * wincmd =
@@ -275,9 +278,30 @@ augroup vimrc
     autocmd FileType typescript,html,css nnoremap <silent><buffer> A :AngularAlternate<CR>
 augroup END
 
+" Restore cursor position
+function! s:restoreCursor()
+  if &filetype == 'gitcommit'
+    return
+  endif
+
+  if line("'\"") <= line("$")
+    normal! g`"
+    return 1
+  endif
+endfunction
+
+autocmd vimrc BufWinEnter * call s:restoreCursor()
+
 " =====================================================================
 " Plugin config
 " =====================================================================
+
+" auto-save
+" ---------------------------------------------------------------------
+" Enable auto-save by default
+let g:auto_save = 0 
+" Auto-saving when the cursor is still
+let g:auto_save_events = ["CursorHold", "CursorHoldI"]
 
 " Base16
 " ---------------------------------------------------------------------
@@ -330,7 +354,10 @@ augroup END
 map <silent> <Leader>e :CocList diagnostics<cr>
 map <silent> <Leader>l :CocList<CR>
 map <silent> <Leader>x <Plug>(coc-codeaction)
-map <silent> <Leader>p <Plug>(coc-format-selected)
+
+nmap <silent> <Leader>p <Plug>(coc-format-selected)
+vmap <silent> <Leader>p <Plug>(coc-format-selected)
+map <silent> <M-f> <Plug>(coc-format)
 
 " navigate chunks of current buffer
 
@@ -474,7 +501,8 @@ function! LightlineFileEncoding()
 endfunction
 
 function! LightlineFileFormat()
-    return WebDevIconsGetFileFormatSymbol()
+    let sym = WebDevIconsGetFileFormatSymbol()
+    return !empty(sym) ? (sym . ' ') : ''
 endfunction
 
 function! LightlineFileType()
@@ -683,6 +711,7 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
+Plug '907th/vim-auto-save'            " Autosave while editing
 
  " Show version info in package.json files
 Plug 'meain/vim-package-json', {
