@@ -156,6 +156,16 @@ if [[ -e /usr/local/texlive ]]; then
 	)
 fi
 
+# Terminal
+# --------------------------------------------------------------------------
+if [[ -z $TERM_PROGRAM ]]; then
+	if [[ -n $GNOME_TERMINAL_SCREEN ]]; then
+		export TERM_PROGRAM=gnome-terminal
+	elif [[ -n $KITTY_LISTEN_ON ]]; then
+		export TERM_PROGRAM=kitty
+	fi
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv

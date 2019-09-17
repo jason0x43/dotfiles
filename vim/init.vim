@@ -97,7 +97,7 @@ if has('pythonx')
 endif
 
 " Enable truecolor mode in supporting terminals
-if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty'
+if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty' || $TERM_PROGRAM == 'gnome-terminal'
     if !has('nvi')
         set t_8f=[38;2;%lu;%lu;%lum
         set t_8b=[48;2;%lu;%lu;%lum

@@ -1,6 +1,11 @@
 # Enable profiling
 zmodload zsh/zprof
 
+# Enable brew
+if [[ -d /home/linuxbrew ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
 # Plugin init
 # # ----------------------------------------------------------------------------
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"

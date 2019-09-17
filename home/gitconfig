@@ -29,7 +29,7 @@
 	bD = branch -D
 	bf = branch --contains
 	c = commit
-	ca = commat --all
+	ca = commit --all
 	cb = checkout -b
 	co = checkout
 	cp = cherry-pick
