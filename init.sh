@@ -46,7 +46,7 @@ else
 fi
 
 for f in $(ls $dotfiles/home); do
-	link $dotfiles/$f $HOME/.$(basename $f)
+	link $dotfiles/home/$f $HOME/.$(basename $f)
 done
 
 link $dotfiles/vim $HOME/.vim
