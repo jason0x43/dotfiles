@@ -56,3 +56,8 @@ pathadd ~/Applications/android/tools
 pathadd ~/Applications/android/platform-tools
 
 source /usr/local/bin/virtualenvwrapper.sh
+
+# Enable brew
+if [[ -d /home/linuxbrew ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
