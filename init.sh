@@ -45,7 +45,7 @@ else
 	}
 fi
 
-for f in $(ls home/*); do
+for f in $(ls home); do
 	link $dotfiles/$f $HOME/.$(basename $f)
 done
 
