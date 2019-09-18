@@ -20,7 +20,7 @@ if [[ "$1" == "-g" ]]; then
 
 	# Create a symlink
 	function link {
-		[[ ! -r $2 ]] && run ln -s $1 $2
+		[[ ! -r $2 ]] && ln -s $1 $2
 	}
 
 	# Fix terminal definition so C-H works properly in neovim
@@ -45,7 +45,7 @@ else
 	}
 fi
 
-for f in $(ls home); do
+for f in $(ls $dotfiles/home); do
 	link $dotfiles/$f $HOME/.$(basename $f)
 done
 
