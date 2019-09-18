@@ -14,6 +14,8 @@ async def intercept_term_theme():
 
 
 async def get_iterm_sessions():
+    import iterm2
+
     connection = await iterm2.Connection.async_create()
     app = await iterm2.async_get_app(connection)
     current_tab = app.current_terminal_window.current_tab
@@ -77,7 +79,6 @@ async def main():
     tasks = [update_neovim_theme()]
 
     if getenv("TERM_PROGRAM") == "iTerm.app":
-        import iterm2
         tasks.append(update_iterm_sessions())
     elif getenv("TERM_PROGRAM") == "kitty":
         tasks.append(update_kitty_sessions())
