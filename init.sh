@@ -53,6 +53,9 @@ link $dotfiles/vim $HOME/.vim
 
 makedir $cachedir/tmux/resurrect
 makedir $cachedir/vim/session
+makedir $cachedir/vim/swap
+makedir $cachedir/vim/backup
+makedir $cachedir/vim/undo
 makedir $cachedir/zsh
 
 makedir $configdir
