@@ -2,16 +2,29 @@ if [ -z "$PS1" ]; then
 	return
 fi
 
+command_exists() {
+	hash $1 2> /dev/null
+	if [[ $? == "1" ]]; then
+		return 0
+	fi
+	return 1
+}
+
 alias ls='ls -CF'
 alias la='ls -A'
 alias ll='ls -lh'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
-alias vi='vim'
 alias preview='open /Applications/Preview.app'
 alias hibernateon='sudo pmset -a hibernatemode 25'
 alias hibernateoff='sudo pmset -a hibernatemode 3'
+
+if hash nvim 2> /dev/null; then
+	alias vi='vim'
+else
+	alias vi='nvim'
+fi
 
 function get_git_ref {
 	git_branch=$(git idb 2> /dev/null)
@@ -22,13 +35,13 @@ function get_git_ref {
 	fi
 }
 
-pathinsert() {
+pathunshift() {
 	if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
 		PATH="$1:$PATH"
 	fi
 }
 
-pathadd() {
+pathpush() {
 	if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
 		PATH="$PATH:$1"
 	fi
@@ -38,7 +51,9 @@ hgdiff() {
 	hg cat $1 | vim - -c  ":vert diffsplit $1" -c "map q :qa!<CR>";
 }
 
-. ~/.bash_completion
+if [[ -e ~/.bash_completion ]]; then
+	. ~/.bash_completion
+fi
 
 PS1="\[\033[5;32m\]\u@\h\[\033[5;33m\] \W \[\033[5;31m\]\$(get_git_ref)\[\033[00m\]\$ "
 
@@ -49,13 +64,9 @@ export LESS=FSRX
 export MAGICK_HOME=/usr/local/ImageMagick
 export RUBYOPT=rubygems
 
-pathinsert /usr/local/bin
-pathinsert /usr/local/sbin
-pathadd ~/Applications
-pathadd ~/Applications/android/tools
-pathadd ~/Applications/android/platform-tools
-
-source /usr/local/bin/virtualenvwrapper.sh
+pathunshift /usr/local/bin
+pathunshift /usr/local/sbin
+pathunshift ~/.dotfiles/bin
 
 # Enable brew
 if [[ -d /home/linuxbrew ]]; then
