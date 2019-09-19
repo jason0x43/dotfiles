@@ -38,7 +38,7 @@ typeset -A plugins
 
 # Start SSH agent if it's not already running
 # ------------------------------------------------------------------------
-if [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
+if [[ -d $HOME/.ssh ]] && [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
     if [[ -e $HOME/.ssh/env ]]; then
         . $HOME/.ssh/env
     fi
