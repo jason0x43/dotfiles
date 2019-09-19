@@ -178,7 +178,7 @@ inoremap <silent><expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 function! s:show_documentation()
     if (index(['vim', 'help'], &filetype) >= 0)
         execute 'h ' . expand('<cword>')
-    else
+    else if exists('CocAction')
         call CocAction('doHover')
     endif
 endfunction
@@ -347,8 +347,10 @@ augroup vimrc
     autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>r <Plug>(coc-rename)
     autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>j <Plug>(coc-references)
     autocmd FileType typescript,javascript,python,go,c,sh map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
-    autocmd CursorHold * silent call CocActionAsync('highlight')
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+    if exists('CocActionAsync')
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+    endif
 augroup END
 
 map <silent> <Leader>e :CocList diagnostics<cr>
@@ -371,9 +373,6 @@ nmap gf :CocCommand git.foldUnchanged<CR>
 command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Format :call CocAction('format')
-
-nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 
 " A COC_NODE_PATH env var points to the version of node that should be used by
 " the vim session (particularly coc). Use it to set g:coc_node_path and to
@@ -787,6 +786,16 @@ Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 call plug#end()
 
 " Post-plugin initialization
-call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
+if exists('coc#config')
+    call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
+
+    augroup vimrc
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+    augroup END
+
+	nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+	nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
+endif
 
 UpdateColors
