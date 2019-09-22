@@ -650,16 +650,6 @@ if [[ ! -d $CACHEDIR/tmux ]]; then
 fi
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
-# Prompt
-# ------------------------------------------------------------------------
-zfetch $ZPLUGDIR jason0x43/pure
-if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
-    pure_dir=$ZPLUGDIR/jason0x43/pure
-    ln -s $pure_dir/pure.zsh $ZFUNCDIR/prompt_pure_setup
-    ln -s $pure_dir/async.zsh $ZFUNCDIR/async
-    unset pure_dir
-fi
-
 # Virtual envs
 # --------------------------------------------------------------------------
 if (( $+commands[nodenv] )); then
@@ -696,13 +686,16 @@ zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
+# Prompt activation
+# --------------------------------------------------------------------------
+if (( $+commands[starship] )); then
+    eval "$(starship init zsh)"
+else
+    echo "Install starship for prompty goodness"
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
-
-# Prompt activation
-# --------------------------------------------------------------------------
-autoload -Uz promptinit && promptinit
-prompt pure
 
 # vim:shiftwidth=4:tabstop=4:expandtab
