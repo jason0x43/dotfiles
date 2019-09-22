@@ -4,6 +4,7 @@ vim/autoload/plug.old
 vim/autoload/plug.vim.old
 vim/plugged/*
 vim/spell/*.spl
+vim/sessions/*
 vim/.netrwhist
 fish/fishd.*
 fish/fish_history
