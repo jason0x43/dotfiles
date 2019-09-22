@@ -4,6 +4,10 @@ fish_style_pwd_dir_length = 1
 [git_branch]
 symbol = " "
 
+[git_status]
+prefix = ""
+suffix = " "
+
 [time]
 disabled = false
 format = "%T"
@@ -18,4 +22,10 @@ symbol = " "
 symbol = " "
 
 [java]
-symbol = ""
+symbol = " "
+
+[golang]
+symbol = " "
+
+[rust]
+symbol = " "
