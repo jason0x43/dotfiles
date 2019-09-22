@@ -1,0 +1,18 @@
+[directory]
+fish_style_pwd_dir_length = 1
+
+[time]
+disabled = false
+format = "%T"
+
+[nodejs]
+symbol = " "
+
+[python]
+symbol = " "
+
+[package]
+symbol = " "
+
+[java]
+symbol = ""

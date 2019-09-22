@@ -49,6 +49,10 @@ for f in $(ls $dotfiles/home); do
 	link $dotfiles/home/$f $HOME/.$(basename $f)
 done
 
+for f in $(ls $dotfiles/config); do
+	link $dotfiles/config/$f $HOME/.config/$(basename $f)
+done
+
 link $dotfiles/vim $HOME/.vim
 
 makedir $cachedir/tmux/resurrect
