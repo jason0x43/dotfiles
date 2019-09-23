@@ -178,7 +178,7 @@ inoremap <silent><expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 function! s:show_documentation()
     if (index(['vim', 'help'], &filetype) >= 0)
         execute 'h ' . expand('<cword>')
-    else if exists('CocAction')
+    elseif exists('CocAction')
         call CocAction('doHover')
     endif
 endfunction
