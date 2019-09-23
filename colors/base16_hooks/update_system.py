@@ -14,7 +14,7 @@ async def intercept_term_theme():
                 stdout=asyncio.subprocess.PIPE,
                 env={"TMUX": ""},
             )
-        )
+        ).communicate()
     )[0]
 
 
