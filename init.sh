@@ -5,14 +5,7 @@ configdir=$HOME/.config
 cachedir=$HOME/.local/share
 cd $HOME
 
-# By default, the script only outputs what it *would* do. Use the '-g' ("go")
-# option to actually perform the initialization steps.
-if [[ "$1" != "-g" ]]; then
-	echo "This script creates cache directories and links dotfiles into your home directory."
-	echo "This is a dry run. Use '-g' to actually initialize."
-fi
-
-if [[ "$1" == "-g" ]]; then
+if [[ "$1" != "-n" ]]; then
 	# Create a directory
 	function makedir {
 		[[ ! -d $1 ]] && mkdir -p $1
