@@ -686,13 +686,11 @@ zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
-# Prompt activation
+# Prompt
 # --------------------------------------------------------------------------
-if (( $+commands[starship] )); then
-    eval "$(starship init zsh)"
-else
-    echo "Install starship for prompty goodness"
-fi
+zfetch $ZPLUGDIR romkatv/powerlevel10k
+source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # Local config
 # --------------------------------------------------------------------------
