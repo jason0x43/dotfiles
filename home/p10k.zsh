@@ -748,9 +748,18 @@
   typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
+  # Segment that shows the effective npm registry if it's not the default
   function prompt_npm() {
-    local output=$(nodenv vars 2> /dev/null)
-    (( $? )) && return
+    if (( ! $+commands[nodenv] )) then
+      return
+    fi
+
+    local output
+    output=$(nodenv vars 2> /dev/null)
+    if (( ? )) then
+      return
+    fi
+
     for line in $output; do
       if [[ $line =~ "export npm_config_registry='https?://([^:]+)(:[0-9]+)?/" ]]; then
         # BASE16_BASE11
@@ -761,10 +770,19 @@
   }
   typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
+  # Segment that shows the effective Java version if it's not the default
   function prompt_jenv() {
-    local output=$(jenv version-name 2> /dev/null)
-    (( $? )) && return
-    if [[ $output != "system" ]]; then
+    if (( ! $+commands[jenv] )) then
+      return
+    fi
+
+    local output
+    output=$(jenv version-name 2> /dev/null)
+    if (( ? )) then
+      return
+    fi
+
+    if [[ $output != "system" ]] then
       # BASE16_BASE09
       p10k segment -f 16 -i '' -t $output
     fi
