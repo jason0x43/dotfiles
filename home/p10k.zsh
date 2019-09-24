@@ -71,6 +71,8 @@
       # anaconda              # conda environment (https://conda.io/)
       pyenv                   # python environment (https://github.com/pyenv/pyenv)
       nodenv                  # node.js version from nodenv (https://github.com/nodenv/nodenv)
+      npm                     # custom npm registry host
+      jenv                    # java version from jenv
       # nvm                   # node.js version from nvm (https://github.com/nvm-sh/nvm)
       # nodeenv               # node.js environment (https://github.com/ekalinin/nodeenv)
       # node_version          # node.js version
@@ -196,7 +198,7 @@
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$BASE16_BASE11
   # Make the icon bold.
   typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='%B${P9K_CONTENT// } '
 
@@ -745,6 +747,29 @@
   # User-defined prompt segments can be customized the same way as built-in segments.
   typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
+
+  function prompt_npm() {
+    local output=$(nodenv vars 2> /dev/null)
+    (( $? )) && return
+    for line in $output; do
+      if [[ $line =~ "export npm_config_registry='https?://([^:]+)(:[0-9]+)?/" ]]; then
+        # BASE16_BASE11
+        p10k segment -f 2 -i '' -t $match[1]
+        break
+      fi
+    done
+  }
+  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
+
+  function prompt_jenv() {
+    local output=$(jenv version-name 2> /dev/null)
+    (( $? )) && return
+    if [[ $output != "system" ]]; then
+      # BASE16_BASE09
+      p10k segment -f 16 -i '' -t $output
+    fi
+  }
+  typeset -g POWERLEVEL9K_JENV_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 }
 
 setopt ${p10k_config_opts[@]}
