@@ -19,22 +19,22 @@
 'builtin' 'setopt' 'no_aliases' 'no_sh_glob' 'brace_expand'
 
 () {
-  typeset BASE16_BASE00=0
-  typeset BASE16_BASE01=18
-  typeset BASE16_BASE02=19
-  typeset BASE16_BASE03=8
-  typeset BASE16_BASE04=20
-  typeset BASE16_BASE05=7
-  typeset BASE16_BASE06=21
-  typeset BASE16_BASE07=15
-  typeset BASE16_BASE08=1
-  typeset BASE16_BASE09=16
-  typeset BASE16_BASE10=3
-  typeset BASE16_BASE11=2
-  typeset BASE16_BASE12=6
-  typeset BASE16_BASE13=4
-  typeset BASE16_BASE14=5
-  typeset BASE16_BASE15=17
+  typeset BASE16_BASE00=0    # Default background
+  typeset BASE16_BASE01=18   # Lighter background (status bars)
+  typeset BASE16_BASE02=19   # Selection background
+  typeset BASE16_BASE03=8    # Comments, invisibles, line highlighting
+  typeset BASE16_BASE04=20   # Dark foreground (used for status bars)
+  typeset BASE16_BASE05=7    # Default foreground, caret, delimiters, operators
+  typeset BASE16_BASE06=21   # Light foreground (not often used)
+  typeset BASE16_BASE07=15   # Light background (not often used)
+  typeset BASE16_BASE08=1    # Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+  typeset BASE16_BASE09=16   # Integers, Boolean, Constants, XML Attributes, Markup Link Url
+  typeset BASE16_BASE10=3    # Classes, Markup Bold, Search Text Background
+  typeset BASE16_BASE11=2    # Strings, Inherited Class, Markup Code, Diff Inserted
+  typeset BASE16_BASE12=6    # Support, Regular Expressions, Escape Characters, Markup Quotes
+  typeset BASE16_BASE13=4    # Functions, Methods, Attribute IDs, Headings
+  typeset BASE16_BASE14=5    # Keywords, Storage, Selector, Markup Italic, Diff Changed
+  typeset BASE16_BASE15=17   # Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
 
   emulate -L zsh
   setopt no_unset extended_glob
@@ -198,7 +198,7 @@
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$BASE16_BASE11
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$BASE16_BASE03
   # Make the icon bold.
   typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='%B${P9K_CONTENT// } '
 
