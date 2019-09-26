@@ -761,7 +761,7 @@
     fi
 
     for line in $output; do
-      if [[ $line =~ "export npm_config_registry='https?://([^:]+)(:[0-9]+)?/" ]]; then
+      if [[ $line =~ "export npm_config_registry='https?://([^:]+)(:[0-9]+)?" ]]; then
         # BASE16_BASE11
         p10k segment -f 2 -i '' -t $match[1]
         break
