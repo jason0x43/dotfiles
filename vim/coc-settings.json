@@ -10,7 +10,7 @@
   "git.addGlameToBufferVar": true,
   "git.branchCharacter": "",
   "suggest.maxPreviewWidth": 100,
-  "diagnostic.virtualText": true,
+  "diagnostic.virtualText": false,
   "diagnostic.maxWindowHeight": 20,
   "diagnostic.infoSign": "",
   "diagnostic.errorSign": "",
