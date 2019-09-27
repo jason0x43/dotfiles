@@ -542,57 +542,6 @@ if (( $+commands[direnv] )); then
     eval "$(direnv hook $SHELL)"
 fi
 
-# Line editor
-# ------------------------------------------------------------------------
-# History substring search -- load this after zsh-syntax-highlighting
-# https://github.com/zsh-users/zsh-history-substring-search
-zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
-source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-# Color for found substrings
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
-
-# Color for not-found substrings
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
-
-# Default globbing flags
-HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-
-# Check if case-sensitive is in the substring search style
-if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
-  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
-fi
-
-# Check if color is disabled
-if ! zstyle -t ':zconf:module:history-substring-search' color; then
-  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
-fi
-
-# Make history keybindings search
-bindkey -M vicmd "k" history-substring-search-up
-bindkey -M vicmd "j" history-substring-search-down
-
-# autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
-# (https://github.com/tarruda/zsh-autosuggestions)
-zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
-source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# Let vi keys jump through the suggestion
-bindkey '^f' vi-forward-word
-bindkey '^b' vi-forward-blank-word
-bindkey '^e' vi-end-of-line
-
-# Use a solarized-friendly background color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
-
-export ZSH_AUTOSUGGEST_USE_ASYNC=1
-
-# Configure autosuggest to work properly with history substring search;
-# without this, trying to history-substring-search with an empty line will
-# hang zsh
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-
 # History key bindings
 # ------------------------------------------------------------------------
 # Up and down arrow keys step through local history
@@ -678,13 +627,63 @@ fi
 # added by travis gem
 [ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
 
-# Syntax highlighting
-# --------------------------------------------------------------------------
+# Line editor
+# ------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+
+# History substring search -- load this after zsh-syntax-highlighting
+# https://github.com/zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
+source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+# autosuggest -- load this after zsh-syntax-highlighting and
+# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
+source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Color for found substrings
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
+
+# Color for not-found substrings
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
+
+# Default globbing flags
+HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+
+# Check if case-sensitive is in the substring search style
+if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
+  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
+fi
+
+# Check if color is disabled
+if ! zstyle -t ':zconf:module:history-substring-search' color; then
+  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
+fi
+
+# Make history keybindings search
+bindkey -M vicmd "k" history-substring-search-up
+bindkey -M vicmd "j" history-substring-search-down
+
+# Let vi keys jump through the suggestion
+bindkey '^f' vi-forward-word
+bindkey '^b' vi-forward-blank-word
+bindkey '^e' vi-end-of-line
+
+# Use a solarized-friendly background color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+
+# Make autosuggest faster
+export ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+# Configure autosuggest to work properly with history substring search;
+# without this, trying to history-substring-search with an empty line will
+# hang zsh
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
 # Prompt
 # --------------------------------------------------------------------------
