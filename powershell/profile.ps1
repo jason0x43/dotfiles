@@ -1,3 +1,8 @@
+$ca_path = $env:USERPROFILE + '\.config\ssl\ca.pem'
+if (test-path $ca_path) {
+	$env:NODE_EXTRA_CA_CERTS = $ca_path
+}
+
 if (test-path alias:gc) { remove-item -force alias:gc }
 if (test-path alias:gl) { remove-item -force alias:gl }
 if (test-path alias:gp) { remove-item -force alias:gp }
