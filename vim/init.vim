@@ -97,7 +97,7 @@ if has('pythonx')
 endif
 
 " Enable truecolor mode in supporting terminals
-if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty' || $TERM_PROGRAM == 'gnome-terminal'
+if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty' || $TERM_PROGRAM == 'gnome-terminal' || $TERM_PROGRAM == 'Windows Terminal'
     if !has('nvi')
         set t_8f=[38;2;%lu;%lu;%lum
         set t_8b=[48;2;%lu;%lu;%lum
@@ -378,10 +378,14 @@ command! -nargs=0 Format :call CocAction('format')
 " the vim session (particularly coc). Use it to set g:coc_node_path and to
 " update the PATH for this vim session. At least coc-sh only works with Node
 " 10.
-let g:coc_node_path = expand('~/.nodenv/versions/10.16.2/bin/node')
 if !empty($COC_NODE_PATH)
-    let g:coc_node_path = $COC_NODE_PATH . '/bin/node'
+    let s:coc_node_path = $COC_NODE_PATH . '/bin/node'
     let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
+else
+    let s:coc_node_path = expand('~/.nodenv/versions/10.16.2/bin/node')
+endif
+if executable(s:coc_node_path)
+    let g:coc_node_path = s:coc_node_path
 endif
 
 let g:coc_global_extensions = [
