@@ -1,42 +1,70 @@
-#!/bin/bash
+#!/bin/zsh
 
 dotfiles=$HOME/.dotfiles
 configdir=$HOME/.config
 cachedir=$HOME/.local/share
 cd $HOME
 
-if [[ "$1" != "-n" ]]; then
-	# Create a directory
-	function makedir {
-		[[ ! -d $1 ]] && mkdir -p $1
-	}
+if ! hash zsh; then
+	echo "Step 1: install zsh"
+	exit 1
+fi
 
-	# Create a symlink
-	function link {
-		[[ ! -r $2 ]] && ln -s $1 $2
-	}
+if ! hash brew; then
+	echo "Step 2: install homebrew"
+	echo '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+	exit 1
+fi
 
-	# Fix terminal definition so C-H works properly in neovim
-	function fixterm {
+# Install some baseline packages
+brew_packages=(
+	'neovim'
+	'direnv'
+	'fd'
+	'fzf'
+	'git'
+	'ripgrep'
+	'jenv'
+	'pyenv'
+	'pyenv-virtualenv'
+	'nodenv'
+	'node'
+	'tmux'
+)
+installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
+for pkg in $brew_packages; do
+	if ((! $installed_packages[(Ie)$pkg])); then
+		brew install $pkg
+		echo ">>> Installed $pkg"
+	fi
+done
+
+# Create a directory
+function makedir {
+	if [[ ! -d $1 ]]; then
+		mkdir -p $1
+		echo ">>> Created $1/"
+	fi
+}
+
+# Create a symlink
+function link {
+	if [[ ! -r $2 ]]; then
+		ln -s $1 $2
+		echo ">>> Created $1 -> $2"
+	fi
+}
+
+# Fix terminal definition so C-H works properly in neovim
+function fixterm {
+	kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
+	if [[ $kbs =~ "kbs=^[hH]" ]]; then
 		infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
 		tic /tmp/$TERM.ti
 		rm /tmp/$TERM.ti
-	}
-else
-	function makedir {
-		echo "mkdir $1"
-	}
-
-	function link {
-		echo "ln -s $1 -> $2"
-	}
-
-	function fixterm {
-		echo "infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti"
-		echo "tic /tmp/$TERM.ti"
-		echo "rm /tmp/$TERM.ti"
-	}
-fi
+		echo ">>> Fixed backspace code in terminfo"
+	fi
+}
 
 for f in $(ls $dotfiles/home); do
 	link $dotfiles/home/$f $HOME/.$(basename $f)
