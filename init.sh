@@ -67,6 +67,18 @@ function fixterm {
 	fi
 }
 
+function setup_jenv {
+	makedir $HOME/.jenv/versions
+
+	if [[ -x /usr/libexec/java_home ]]; then
+		sys_home=$(/usr/libexec/java_home)
+		if [[ ! $HOME/.jenv/versions/system -ef $sys_home ]] then
+			echo ">>> Creating system link for jenv..."
+			ln -sf $sys_home $HOME/.jenv/versions/system
+		fi
+	fi
+}
+
 for f in $(ls $dotfiles/home); do
 	link $dotfiles/home/$f $HOME/.$(basename $f)
 done
@@ -90,5 +102,7 @@ link $dotfiles/vim $configdir/nvim
 # Fix the terminal definition so that C-H works properly in neovim. This
 # function may also need to be run for the tmux terminal type.
 fixterm
+
+setup_jenv
 
 echo ">>> Done"
