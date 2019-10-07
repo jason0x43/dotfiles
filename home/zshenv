@@ -113,6 +113,12 @@ if [[ -d /usr/local/opt/python3 ]]; then
 	)
 fi
 
+# Node
+# ----------------------------------------------------------------------------
+if [[ -e $HOME/.config/ssl/ca.pem ]]; then
+	export NODE_EXTRA_CA_CERTS=$HOME/.config/ssl/ca.pem
+fi
+
 # Go
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
