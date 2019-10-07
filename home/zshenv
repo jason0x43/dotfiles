@@ -46,9 +46,9 @@ path=(
 	$HOME/Applications
 	$DOTFILES/bin
 	/usr/local/bin
-	${path:#/usr/local/bin}
+	/usr/local/sbin
+	${path:#/usr/local/bin:#/usr/local/sbin}
 )
-
 
 # Set the list of directories that Zsh searches for function scripts.
 fpath=(
@@ -56,7 +56,6 @@ fpath=(
     $DOTFILES/zsh/functions
     $fpath
 )
-
 
 # Set the list of directories that man searches for manuals.
 if [ -e /etc/manpaths ]; then
