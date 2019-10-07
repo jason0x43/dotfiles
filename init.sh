@@ -31,27 +31,28 @@ brew_packages=(
 	'node'
 	'tmux'
 )
+echo ">>> Checking for missing brew packages..."
 installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
 for pkg in $brew_packages; do
 	if ((! $installed_packages[(Ie)$pkg])); then
+		echo ">>> Installing $pkg..."
 		brew install $pkg
-		echo ">>> Installed $pkg"
 	fi
 done
 
 # Create a directory
 function makedir {
 	if [[ ! -d $1 ]]; then
+		echo ">>> Creating $1/..."
 		mkdir -p $1
-		echo ">>> Created $1/"
 	fi
 }
 
 # Create a symlink
 function link {
 	if [[ ! -r $2 ]]; then
+		echo ">>> Creating $1 -> $2..."
 		ln -s $1 $2
-		echo ">>> Created $1 -> $2"
 	fi
 }
 
@@ -59,10 +60,10 @@ function link {
 function fixterm {
 	kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
 	if [[ $kbs =~ "kbs=^[hH]" ]]; then
+		echo ">>> Fixing backspace code in terminfo..."
 		infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
 		tic /tmp/$TERM.ti
 		rm /tmp/$TERM.ti
-		echo ">>> Fixed backspace code in terminfo"
 	fi
 }
 
@@ -89,3 +90,5 @@ link $dotfiles/vim $configdir/nvim
 # Fix the terminal definition so that C-H works properly in neovim. This
 # function may also need to be run for the tmux terminal type.
 fixterm
+
+echo ">>> Done"
