@@ -602,25 +602,38 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 # Virtual envs
 # --------------------------------------------------------------------------
 if (( $+commands[nodenv] )); then
-    eval "$(nodenv init -)"
+    path=($HOME/.nodenv/shims $path)
+    export NODENV_SHELL=zsh
+    local nodenv_link=/usr/local/bin/nodenv
+    source ${nodenv_link:A:h}/../completions/nodenv.zsh
 fi
 
 if (( $+commands[pyenv] )); then
+    path=($HOME/.pyenv/shims $path)
     export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
+    export PYENV_SHELL=zsh
+    local pyenv_link=/usr/local/bin/pyenv
+    source ${pyenv_link:A:h}/../completions/pyenv.zsh
 fi
 
 if (( $+commands[jenv] )); then
-    eval "$(jenv init -)"
+    path=($HOME/.jenv/shims $path)
+    export JENV_SHELL=zsh
+    export JENV_LOADED=1
+    local jenv_link=/usr/local/bin/jenv
+    source ${jenv_link:A:h}/../libexec/completions/jenv.zsh
 
     # jenv points JAVA_HOME to ~/.jenv/versions/system when the system Java is
     # in use, but doesn't create a link for the system Java in versions/. That
     # makes some tools that pay attention to JAVA_HOME unhappy. Ensure that a
     # system link exists and points to the current default system Java.
     sys_home=$(/usr/libexec/java_home)
-    if [[ ! $HOME/.jenv/versions/system -ef $sys_home ]]; then
+    if [[ ! $HOME/.jenv/versions/system -ef $sys_home ]] then
         ln -sf $sys_home $HOME/.jenv/versions/system
+    fi
+
+    if [[ -z $JAVA_HOME ]] then
+        export JAVA_HOME=$(jenv javahome)
     fi
 fi
 
@@ -694,5 +707,9 @@ source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+
+# Install direnv
+# --------------------------------------------------------------------------
+eval "$(direnv hook zsh)"
 
 # vim:shiftwidth=4:tabstop=4:expandtab

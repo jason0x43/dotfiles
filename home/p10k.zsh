@@ -750,44 +750,34 @@
 
   # Segment that shows the effective npm registry if it's not the default
   function prompt_npm() {
-    if (( ! $+commands[nodenv] )) then
-      return
+    if [[ $npm_config_registry =~ "https?://([^/:]+)(:[0-9]+)?" ]] then
+      # BASE16_BASE11
+      p10k segment -f 2 -i '' -t $match[1]
     fi
-
-    local output
-    output=$(nodenv vars 2> /dev/null)
-    if (( ? )) then
-      return
-    fi
-
-    for line in $output; do
-      if [[ $line =~ "export npm_config_registry='https?://([^:]+)(:[0-9]+)?" ]]; then
-        # BASE16_BASE11
-        p10k segment -f 2 -i '' -t $match[1]
-        break
-      fi
-    done
   }
   typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # Segment that shows the effective Java version if it's not the default
   function prompt_jenv() {
-    if (( ! $+commands[jenv] )) then
-      return
-    fi
-
-    local output
-    output=$(jenv version-name 2> /dev/null)
-    if (( ? )) then
-      return
-    fi
-
-    if [[ $output != "system" ]] then
+    local version
+    version=${JAVA_HOME:t}
+    if [[ -n $version && $version != "system" ]] then
       # BASE16_BASE09
-      p10k segment -f 16 -i '' -t $output
+      p10k segment -f 16 -i '' -t $version
     fi
   }
   typeset -g POWERLEVEL9K_JENV_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
+
+  # Segment that shows the effective node version if it's not the default
+  # This overides the built-in nodenv helper
+  function prompt_nodenv() {
+    local version
+    version=${NODENV_VERSION}
+    if [[ -n $version ]] then
+      # BASE16_BASE09
+      p10k segment -f 16 -i '' -t $version
+    fi
+  }
 }
 
 setopt ${p10k_config_opts[@]}

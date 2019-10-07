@@ -10,3 +10,4 @@ fish/fishd.*
 fish/fish_history
 .vscode/
 .mypy_cache/
+config/direnv/allow

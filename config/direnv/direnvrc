@@ -1,0 +1,17 @@
+use_jenv() {
+  export JAVA_HOME=$(jenv javahome)
+  export JENV_FORCEJAVAHOME=true
+
+  if [[ -e "$JAVA_HOME/bin/javac" ]]; then
+    export JDK_HOME=$(jenv javahome)
+    export JENV_FORCEJDKHOME=true
+  fi
+}
+
+use_nodenv() {
+  export NODENV_VERSION=$(nodenv version-name)
+}
+
+use_pyenv_virtualenv() {
+  source $HOME/.pyenv/versions/$(pyenv version-name)/bin/activate
+}
