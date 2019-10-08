@@ -343,10 +343,10 @@ augroup END
 " coc
 " ---------------------------------------------------------------------
 augroup vimrc
-    autocmd FileType typescript,javascript,python,html,go,c,sh,rust,java map <buffer> <silent> <C-]> <Plug>(coc-definition)
-    autocmd FileType typescript,javascript,python,go,c,sh,rust,java map <buffer> <silent> <leader>r <Plug>(coc-rename)
-    autocmd FileType typescript,javascript,python,go,c,sh,rust,java map <buffer> <silent> <leader>j <Plug>(coc-references)
-    autocmd FileType typescript,javascript,python,go,c,sh,rust,java map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
+    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,html,go,c,sh,rust,java map <buffer> <silent> <C-]> <Plug>(coc-definition)
+    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>r <Plug>(coc-rename)
+    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>j <Plug>(coc-references)
+    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
     if exists('CocActionAsync')
         autocmd CursorHold * silent call CocActionAsync('highlight')
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
