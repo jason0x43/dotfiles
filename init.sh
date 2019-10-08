@@ -83,6 +83,7 @@ for f in $(ls $dotfiles/home); do
 	link $dotfiles/home/$f $HOME/.$(basename $f)
 done
 
+# TODO: link files, make directories
 for f in $(ls $dotfiles/config); do
 	link $dotfiles/config/$f $HOME/.config/$(basename $f)
 done
