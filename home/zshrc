@@ -622,7 +622,7 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 if (( $+commands[nodenv] )); then
     path=($HOME/.nodenv/shims $path)
     export NODENV_SHELL=zsh
-    local nodenv_link=/usr/local/bin/nodenv
+    local nodenv_link=$(whence nodenv)
     source ${nodenv_link:A:h}/../completions/nodenv.zsh
 fi
 
@@ -630,7 +630,7 @@ if (( $+commands[pyenv] )); then
     path=($HOME/.pyenv/shims $path)
     export PYENV_VIRTUALENV_DISABLE_PROMPT=1
     export PYENV_SHELL=zsh
-    local pyenv_link=/usr/local/bin/pyenv
+    local pyenv_link=$(whence pyenv)
     source ${pyenv_link:A:h}/../completions/pyenv.zsh
 fi
 
@@ -638,7 +638,7 @@ if (( $+commands[jenv] )); then
     path=($HOME/.jenv/shims $path)
     export JENV_SHELL=zsh
     export JENV_LOADED=1
-    local jenv_link=/usr/local/bin/jenv
+    local jenv_link=$(whence jenv)
     source ${jenv_link:A:h}/../libexec/completions/jenv.zsh
 
     if [[ -z $JAVA_HOME ]] then
