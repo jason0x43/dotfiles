@@ -79,11 +79,15 @@ fpath=(
 # Load and initialize the completion system, ignoring insecure directories
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 autoload -Uz compinit
-# Only try to rebuild the comp dump once a day
-if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]] then
-    compinit -i -d $ZCOMPFILE
+if [[ $HOME =~ "/Users" ]] then
+    # Only try to rebuild the comp dump once a day
+    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]] then
+        compinit -i -d $ZCOMPFILE
+    else
+        compinit -C -i -d $ZCOMPFILE
+    fi
 else
-    compinit -C -i -d $ZCOMPFILE
+    compinit -i -d $ZCOMPFILE
 fi
 
 # Compile the zcompfile in the background
