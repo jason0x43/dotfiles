@@ -44,6 +44,7 @@ typeset -aU path
 # Move /usr/local/bin top the top
 path=(
 	$HOME/Applications
+	$HOME/.local/bin
 	$DOTFILES/bin
 	/usr/local/bin
 	/usr/local/sbin
