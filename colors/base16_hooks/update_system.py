@@ -3,6 +3,8 @@
 import asyncio
 from os import getenv
 
+kitty_colors = None
+
 
 async def intercept_term_theme():
     # source the current base16 theme as if it weren't running in tmux; this
@@ -40,6 +42,11 @@ async def update_iterm_sessions():
 
 
 def base16_to_kitty():
+    global kitty_colors
+
+    if kitty_colors != None:
+        return kitty_colors
+
     from re import compile
 
     with open(f'{getenv("HOME")}/.base16_theme') as theme_file:
@@ -66,6 +73,10 @@ def base16_to_kitty():
         "selection_foreground": colors["color07"],
         "foreground": colors["color_foreground"],
         "background": colors["color_background"],
+        "active_tab_foreground": colors["color00"],
+        "active_tab_background": colors["color07"],
+        "inactive_tab_foreground": colors["color07"],
+        "inactive_tab_background": colors["color18"],
     }
 
     for i in range(22):
@@ -90,6 +101,18 @@ async def update_kitty_sessions():
             stderr=asyncio.subprocess.PIPE,
         )
     ).communicate()
+
+
+def update_kitty_conf():
+    kitty_conf = f'{getenv("HOME")}/.config/kitty/colors.conf'
+    colors = base16_to_kitty()
+    color_strings = []
+    for c in colors:
+        color_strings.append(f"{c} {colors[c]}")
+
+    with open(kitty_conf, mode="w") as conf_file:
+        conf_file.write("\n".join(color_strings))
+        conf_file.write("\n")
 
 
 async def update_neovim_theme():
@@ -128,6 +151,7 @@ async def main():
         tasks.append(update_iterm_sessions())
     if kitty_running:
         tasks.append(update_kitty_sessions())
+        update_kitty_conf()
 
     await asyncio.gather(*tasks)
 
