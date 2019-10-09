@@ -144,7 +144,9 @@ async def main():
     tasks = [update_neovim_theme()]
     processes = await list_processes()
 
-    kitty_running = any("kitty.app" in p for p in processes)
+    kitty_running = any("kitty.app" in p for p in processes) or any(
+        "kitty" in p for p in processes
+    )
     iterm_running = any("iTerm2" in p for p in processes)
 
     if iterm_running:
