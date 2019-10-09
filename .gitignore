@@ -10,3 +10,6 @@ fish/fishd.*
 fish/fish_history
 .vscode/
 .mypy_cache/
+config/kitty/colors.conf
+config/kitty/local.conf
+config/direnv/allow
