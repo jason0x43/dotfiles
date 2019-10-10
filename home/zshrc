@@ -390,6 +390,9 @@ alias swiftc="xcrun -sdk macosx swiftc"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
+alias light=base16_solarized-light
+alias dark=base16_ashes
+
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
     # Define colors for BSD ls
