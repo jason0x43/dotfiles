@@ -772,7 +772,7 @@
   # This overides the built-in nodenv helper
   function prompt_nodenv() {
     local version
-    version=${NODENV_VERSION}
+    version=${NODENV_VER}
     if [[ -n $version ]] then
       # BASE16_BASE09
       p10k segment -f 16 -i '' -t $version

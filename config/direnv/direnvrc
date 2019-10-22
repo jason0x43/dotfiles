@@ -9,7 +9,7 @@ use_jenv() {
 }
 
 use_nodenv() {
-  export NODENV_VERSION=$(nodenv version-name)
+  export NODENV_VER=$(nodenv version-name)
 }
 
 use_pyenv_virtualenv() {
