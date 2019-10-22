@@ -484,9 +484,12 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 
 # Colors
 # ----------------------------------------------------------------------------
-BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-zfetch $ZPLUGDIR chriskempson/base16-shell
-source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+# Only load base16 shell locally
+if [[ -z $SSH_CLIENT ]]; then
+    BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+    zfetch $ZPLUGDIR chriskempson/base16-shell
+    source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+fi
 
 # Less
 # ----------------------------------------------------------------------------
