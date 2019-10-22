@@ -720,8 +720,4 @@ source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
 
-# Install direnv
-# --------------------------------------------------------------------------
-eval "$(direnv hook zsh)"
-
 # vim:shiftwidth=4:tabstop=4:expandtab
