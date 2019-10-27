@@ -1,0 +1,75 @@
+# Move /usr/local/bin top the top
+path=(
+	$HOME/Applications
+	$HOME/.local/bin
+	$DOTFILES/bin
+	/usr/local/bin
+	/usr/local/sbin
+	${path:#/usr/local/bin:#/usr/local/sbin}
+)
+
+# Ruby
+# ----------------------------------------------------------------------------
+if [[ -d /usr/local/opt/ruby ]]; then
+	path=(
+		/usr/local/opt/ruby/bin
+		$path
+	)
+fi
+if [[ -d /usr/local/lib/ruby/gems/2.6.0 ]]; then
+	path=(
+		/usr/local/lib/ruby/gems/2.6.0/bin
+		$path
+	)
+fi
+
+# Rust
+# ----------------------------------------------------------------------------
+if [[ -d $HOME/.cargo/bin ]]; then
+	path=(
+		$HOME/.cargo/bin
+		$path
+	)
+fi
+
+# Python
+# ----------------------------------------------------------------------------
+if [[ -d /usr/local/opt/python3 ]]; then
+	# Put python at the end of the path since some of its programs, like pip,
+	# will eventually be overridden with things in /usr/local/bin
+	# https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
+	path=(
+		$path
+		/usr/local/opt/python3/libexec/bin
+	)
+fi
+
+# Go
+# ----------------------------------------------------------------------------
+if (( $+commands[go] )); then
+	path=(
+		$GOPATH/bin
+		$path
+	)
+fi
+
+# PHP
+# ------------------------------------------------------------------------
+path=(
+	$HOME/.composer/vendor/bin
+	$path
+	/usr/local/opt/php@7.1/bin
+	/usr/local/opt/php@7.1/sbin
+)
+
+# TeX
+# ------------------------------------------------------------------------
+if [[ -e /usr/local/texlive ]]; then 
+	path=(
+		$path
+		/usr/local/texlive/2018/bin/x86_64-darwin
+	)
+fi
+
+ # remove duplicate entries
+typeset -U PATH

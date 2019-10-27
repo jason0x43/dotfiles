@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+/usr/bin/ssh $@
+
+if [[ -e $HOME/.base16_theme ]]; then
+    TMUX="" BASE16_SHELL_HOOKS="" source ~/.base16_theme
+fi

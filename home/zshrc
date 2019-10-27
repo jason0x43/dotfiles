@@ -1,5 +1,5 @@
 # Enable profiling
-zmodload zsh/zprof
+# zmodload zsh/zprof
 
 # Enable brew
 if [[ -d /home/linuxbrew ]]; then
@@ -296,10 +296,6 @@ alias dl='docker logs'
 alias dlf='docker logs -f'
 alias dps='docker ps --format "{{.Names}}"'
 
-# Themes
-alias mtd='mac_theme dark'
-alias mtl='mac_theme light'
-
 # Git shortcuts
 alias ga='git a'
 alias gb='git b'
@@ -390,8 +386,9 @@ alias swiftc="xcrun -sdk macosx swiftc"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
-alias light=base16_solarized-light
-alias dark=base16_ashes
+# Color themes
+alias light='TMUX="" base16_solarized-light'
+alias dark='TMUX="" base16_ashes'
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
@@ -472,6 +469,9 @@ setopt   COMPLETE_IN_WORD       # Complete from both ends of a word
 setopt   PATH_DIRS              # Perform path search even on command names with slashes
 unsetopt CASE_GLOB              # Make globbing case insensitive
 unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
+
+# Don't show a % for partial lines
+export PROMPT_EOL_MARK=''
 
 # History
 # ------------------------------------------------------------------------
