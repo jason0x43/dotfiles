@@ -6,8 +6,16 @@ if [[ -d /home/linuxbrew ]]; then
     eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
+# Fpath
+# ----------------------------------------------------------------------------
+fpath=(
+    $ZFUNCDIR
+    $DOTFILES/zsh/functions
+    $fpath
+)
+
 # Plugin init
-# # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 if [[ ! -d "$ZPLUGDIR" ]]; then
     mkdir -p "$ZPLUGDIR"
@@ -261,6 +269,9 @@ bindkey -v
 # Clear existing aliases
 unalias -m '*'
 
+# ssh in interactive shells
+alias ssh=themed_ssh
+
 # Reload zshrc
 alias refresh='source ~/.zshenv && source ~/.zshrc'
 alias reload='exec zsh'
@@ -488,7 +499,7 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 if [[ -z $SSH_CLIENT ]]; then
     BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
     zfetch $ZPLUGDIR chriskempson/base16-shell
-    source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+    TMUX="" source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 fi
 
 # Less

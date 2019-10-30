@@ -38,16 +38,6 @@ fi
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
 
-# Make all path entries unique
-typeset -aU path
-
-# Set the list of directories that Zsh searches for function scripts.
-fpath=(
-    $ZFUNCDIR
-    $DOTFILES/zsh/functions
-    $fpath
-)
-
 # Set the list of directories that man searches for manuals.
 if [ -e /etc/manpaths ]; then
 	while read line; do 
