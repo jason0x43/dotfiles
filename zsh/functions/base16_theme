@@ -1,0 +1,8 @@
+local name=$1
+local theme_path="$ZPLUGDIR/chriskempson/base16-shell/scripts/base16-$name.sh"
+
+if [[ -n $TMUX_REMOTE && -z $TMUX ]]; then
+	TMUX=1 _base16 "$theme_path" $name
+else
+	_base16 "$theme_path" $name
+fi

@@ -398,8 +398,8 @@ alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
 # Color themes
-alias light='TMUX="" base16_solarized-light'
-alias dark='TMUX="" base16_ashes'
+alias light='base16_theme solarized-light'
+alias dark='base16_theme ashes'
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
@@ -499,7 +499,7 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 if [[ -z $SSH_CLIENT ]]; then
     BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
     zfetch $ZPLUGDIR chriskempson/base16-shell
-    TMUX="" source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+    source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 fi
 
 # Less
