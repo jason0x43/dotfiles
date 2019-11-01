@@ -581,11 +581,6 @@ if has('nvim')
     if executable('/usr/local/bin/python3')
         let g:python3_host_prog='/usr/local/bin/python3'
     endif
-
-    " Note -- Don't enable termguicolors because it's all around better for
-    " neovim to use the existing terminal palette rather than managing its
-    " own. For example, when using the terminal palette we automatically get
-    " things like tmux pane focus dimming.
 endif
 
 " startify
