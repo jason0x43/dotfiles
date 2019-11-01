@@ -96,14 +96,8 @@ if has('pythonx')
     set pyxversion=3
 endif
 
-" Enable truecolor mode in supporting terminals
-if $TERM_PROGRAM == 'iTerm.app' || $TERM_PROGRAM == 'kitty' || $TERM_PROGRAM == 'alacritty' || $TERM_PROGRAM == 'gnome-terminal' || $TERM_PROGRAM == 'Windows Terminal'
-    if !has('nvi')
-        set t_8f=[38;2;%lu;%lu;%lum
-        set t_8b=[48;2;%lu;%lu;%lum
-    endif
-    set termguicolors
-endif
+" Enable truecolor mode
+set termguicolors
 
 if has('nvim')
     " Better diff
