@@ -1,0 +1,8 @@
+command ssh $@
+
+# Reset the local palette
+if [[ -n $TMUX ]]; then
+  printf '\033]104\033\\\n' && tmux selectp -P default
+else
+  source ~/.base16_theme
+fi
