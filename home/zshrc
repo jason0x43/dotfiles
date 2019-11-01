@@ -269,9 +269,6 @@ bindkey -v
 # Clear existing aliases
 unalias -m '*'
 
-# ssh in interactive shells
-alias ssh=themed_ssh
-
 # Reload zshrc
 alias refresh='source ~/.zshenv && source ~/.zshrc'
 alias reload='exec zsh'
