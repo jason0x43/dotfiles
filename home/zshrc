@@ -657,8 +657,7 @@ if (( $+commands[jenv] )); then
     export JENV_LOADED=1
     local jenv_link=$(whence jenv)
     source ${jenv_link:A:h}/../libexec/completions/jenv.zsh
-
-    if [[ -z $JAVA_HOME ]] then
+    if [[ -n $JAVA_HOME && ! $JAVA_HOME =~ "\.jenv/" ]]; then
         export JAVA_HOME=$(jenv javahome)
     fi
 fi
