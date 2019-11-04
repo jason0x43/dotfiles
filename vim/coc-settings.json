@@ -2,6 +2,11 @@
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "suggest.enablePreview": true,
   "codeLens.enable": true,
+  "emmet.excludeLanguages": [
+    "markdown",
+    "javascript.jsx",
+    "typescript.tsx"
+  ],
   "git.addedSign.text": "┃",
   "git.removedSign.text": "┃",
   "git.changedSign.text": "┃",
