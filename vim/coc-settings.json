@@ -5,7 +5,9 @@
   "emmet.excludeLanguages": [
     "markdown",
     "javascript.jsx",
-    "typescript.tsx"
+    "javascriptreact",
+    "typescript.tsx",
+    "typescriptreact"
   ],
   "git.addedSign.text": "┃",
   "git.removedSign.text": "┃",
@@ -21,6 +23,17 @@
   "diagnostic.errorSign": "",
   "diagnostic.warningSign": "",
   "diagnostic.refreshOnInsertMode": true,
+  "explorer.icon.enableNerdfont": true,
+  "explorer.quitOnOpen": true,
+  "explorer.file.columns": [
+    "git",
+    "selection",
+    "clip",
+    "diagnosticError",
+    "indent",
+    "icon",
+    "filename"
+  ],
   "eslint.autoFixOnSave": true,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false,

@@ -274,7 +274,7 @@ augroup END
 
 " Restore cursor position
 function! s:restoreCursor()
-  if &filetype == 'gitcommit'
+  if &filetype == 'gitcommit' || &buftype == 'nofile'
     return
   endif
 
@@ -382,17 +382,25 @@ if executable(s:coc_node_path)
     let g:coc_node_path = s:coc_node_path
 endif
 
+" Set the registry for VIM to make COC happy
+let $npm_config_registry='https://registry.npmjs.org'
+
 let g:coc_global_extensions = [
     \ 'coc-angular',
     \ 'coc-calc',
     \ 'coc-css',
     \ 'coc-emmet',
     \ 'coc-emoji',
+    \ 'coc-explorer',
+    \ 'coc-eslint',
     \ 'coc-git',
     \ 'coc-github',
+    \ 'coc-highlight',
     \ 'coc-java',
+    \ 'coc-jest',
     \ 'coc-json',
     \ 'coc-lists',
+    \ 'coc-prettier',
     \ 'coc-python',
     \ 'coc-rls',
     \ 'coc-sh',
@@ -401,12 +409,8 @@ let g:coc_global_extensions = [
     \ 'coc-tsserver',
     \ 'coc-vimlsp',
     \ 'coc-vimtex',
-    \ 'coc-yaml',
     \ 'coc-xml',
-    \ 'coc-eslint',
-    \ 'coc-jest',
-    \ 'coc-highlight',
-    \ 'coc-prettier',
+    \ 'coc-yaml',
     \ ]
 
 let g:coc_status_error_sign = ' '
@@ -424,6 +428,8 @@ endfunction
 augroup vimrc
     autocmd ColorScheme * call s:coc_customize_colors()
 augroup END
+
+map <silent> <Leader>n :CocCommand explorer<CR>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -485,7 +491,7 @@ let g:lightline = {
 
 function! LightlineFileName() abort
     let filename = winwidth(0) > 70 ? expand('%') : expand('%:t')
-    if filename =~ 'NERD_tree'
+    if filename =~ 'coc-explorer'
         return ''
     endif
     let modified = &modified ? ' +' : ''
@@ -532,25 +538,6 @@ endfunction
 augroup vimrc
     autocmd ColorScheme * call s:lightline_update()
 augroup END
-
-" NERDTree
-" ---------------------------------------------------------------------
-let g:NERDTreeAutoDeleteBuffer=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeWinSize=40
-let g:NERDTreeRespectWildIgnore = 1
-let g:NERDTreeDirArrowExpandable = "\u00a0" " make arrows invisible
-let g:NERDTreeDirArrowCollapsible = "\u00a0" " make arrows invisible
-
-function! ToggleNerdTree()
-    if @% !=# '' && (!exists('g:NERDTree') || (g:NERDTree.ExistsForTab() && !g:NERDTree.IsOpen()))
-        :NERDTreeFind
-    else 
-        :NERDTreeToggle
-    endif
-endfunction
-
-map <silent> <Leader>n :call ToggleNerdTree()<CR>
 
 " neovim
 " ---------------------------------------------------------------------
@@ -715,12 +702,6 @@ Plug 'neoclide/coc.nvim', {
     \ }
 
 " File browsing
-Plug 'scrooloose/nerdtree', {
-    \ 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ]
-    \ }
-Plug 'Xuyuanp/nerdtree-git-plugin', {
-    \ 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ]
-    \ }
 Plug 'jason0x43/vim-wildgitignore'
 
 " Base filetype plugins (these detect filetypes)
