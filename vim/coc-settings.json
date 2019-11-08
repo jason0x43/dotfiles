@@ -1,7 +1,12 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
-  "suggest.enablePreview": true,
   "codeLens.enable": true,
+  "diagnostic.errorSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.maxWindowHeight": 20,
+  "diagnostic.refreshOnInsertMode": true,
+  "diagnostic.virtualText": false,
+  "diagnostic.warningSign": "",
   "emmet.excludeLanguages": [
     "markdown",
     "javascript.jsx",
@@ -9,22 +14,20 @@
     "typescript.tsx",
     "typescriptreact"
   ],
-  "git.addedSign.text": "┃",
-  "git.removedSign.text": "┃",
-  "git.changedSign.text": "┃",
-  "git.changeRemovedSign.text": "┃",
-  "git.addGBlameToVirtualText": false,
-  "git.addGBlameToBufferVar": true,
-  "git.branchCharacter": "",
-  "suggest.maxPreviewWidth": 100,
-  "diagnostic.virtualText": false,
-  "diagnostic.maxWindowHeight": 20,
-  "diagnostic.infoSign": "",
-  "diagnostic.errorSign": "",
-  "diagnostic.warningSign": "",
-  "diagnostic.refreshOnInsertMode": true,
+  "explorer.sources": [
+    {
+      "name": "file",
+      "expand": true
+    }
+  ],
   "explorer.icon.enableNerdfont": true,
-  "explorer.quitOnOpen": true,
+  "explorer.file.column.git.icon.added": "✚",
+  "explorer.file.column.git.icon.deleted": "✖",
+  "explorer.file.column.git.icon.renamed": "➜",
+  "explorer.file.column.git.icon.unmerged": "═",
+  "explorer.file.column.git.icon.untracked": "?",
+  "explorer.file.column.git.icon.modified": "✹",
+  "explorer.file.column.git.icon.ignored": "☒",
   "explorer.file.columns": [
     "git",
     "selection",
@@ -34,33 +37,46 @@
     "icon",
     "filename"
   ],
+  "explorer.keyMappings": {
+    "<cr>": "expandOrShrink",
+    "<space>": "cd"
+  },
   "eslint.autoFixOnSave": true,
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.referencesCodeLens.enable": false,
+  "git.addGBlameToBufferVar": true,
+  "git.addGBlameToVirtualText": false,
+  "git.addedSign.text": "┃",
+  "git.branchCharacter": "",
+  "git.changeRemovedSign.text": "┃",
+  "git.changedSign.text": "┃",
+  "git.removedSign.text": "┃",
+  "java.errors.incompleteClasspath.severity": "ignore",
   "javascript.referencesCodeLens.enable": false,
   "javascript.suggestionActions.enabled": false,
-  "python.jediEnabled": false,
-  "python.formatting.provider": "black",
-  "python.linting.mypyEnabled": true,
   "languageserver": {
-    "golang": {
-      "command": "gopls",
-      "args": [],
-      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-      "filetypes": ["go"]
-    },
     "ccls": {
       "command": "ccls",
       "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "initializationOptions": { "cache": { "directory": ".ccls-cache" } },
       "rootPatterns": [
         ".ccls",
         "compile_commands.json",
         ".vim/",
         ".git/",
         ".hg/"
-      ],
-      "initializationOptions": { "cache": { "directory": ".ccls-cache" } }
+      ]
+    },
+    "golang": {
+      "args": [],
+      "command": "gopls",
+      "filetypes": ["go"],
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"]
     }
   },
-  "java.errors.incompleteClasspath.severity": "ignore"
+  "python.formatting.provider": "black",
+  "python.jediEnabled": false,
+  "python.linting.mypyEnabled": true,
+  "suggest.enablePreview": true,
+  "suggest.maxPreviewWidth": 100,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.referencesCodeLens.enable": false
 }
