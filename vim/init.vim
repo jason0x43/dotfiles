@@ -215,7 +215,7 @@ augroup vimrc
     autocmd BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>
 
     " More predictable syntax highlighting
-    autocmd BufEnter * syntax sync fromstart
+    " autocmd BufEnter * syntax sync fromstart
 
     " Automatically close preview windows after autocompletion
     autocmd CompleteDone * pclose
@@ -568,7 +568,22 @@ let g:startify_fortune_use_unicode = 1
 let g:startify_use_env = 1
 let g:startify_files_number = 5
 let g:startify_change_to_dir = 0
-" let g:startify_custom_header = []
+let g:startify_ascii_header_1 = [
+ \ '                          _         ',
+ \ '   ____  ___  ____ _   __(_)___ ___ ',
+ \ '  / __ \/ _ \/ __ \ | / / / __ `__ \',
+ \ ' / / / /  __/ /_/ / |/ / / / / / / /',
+ \ '/_/ /_/\___/\____/|___/_/_/ /_/ /_/ ',
+ \ '',
+ \]
+let g:startify_ascii_header_2 = [
+ \ ' ____ ____ ____ ____ ____ ____ ',
+ \ '||n |||e |||o |||v |||i |||m ||',
+ \ '||__|||__|||__|||__|||__|||__||',
+ \ '|/__\|/__\|/__\|/__\|/__\|/__\|',
+ \ '',
+ \]
+let g:startify_custom_header = 'startify#pad(g:startify_ascii_header_2)'
 
 function! StartifyShowCommit(commit)
     new
