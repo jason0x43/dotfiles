@@ -1,5 +1,6 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+  "css.lint.unknownProperties": "ignore",
   "codeLens.enable": true,
   "diagnostic.errorSign": "",
   "diagnostic.infoSign": "",
@@ -37,11 +38,14 @@
     "icon",
     "filename"
   ],
-  "explorer.keyMappings": {
-    "<cr>": "expandOrShrink",
-    "<space>": "cd"
-  },
-  "eslint.autoFixOnSave": true,
+  "eslint.enable": false,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "explorer.openAction.changeDirectory": false,
   "git.addGBlameToBufferVar": true,
   "git.addGBlameToVirtualText": false,
   "git.addedSign.text": "┃",
