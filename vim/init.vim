@@ -220,15 +220,6 @@ augroup vimrc
     " Automatically close preview windows after autocompletion
     autocmd CompleteDone * pclose
 
-    " Identify files in a zsh/functions directory as zsh scripts
-    autocmd BufRead */zsh/functions/* set filetype=zsh
-
-    " ejs is HTML
-    autocmd BufRead *.ejs set filetype=html
-
-    " intern.json is jsonc
-    autocmd BufRead intern.json,tsconfig.json set filetype=jsonc
-
     " When editing a file, jump back to the last edited line if it makes sense
     " to do so
     autocmd BufReadPost *
