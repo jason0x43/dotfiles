@@ -19,7 +19,8 @@
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	pager = less -F -X
+	# pager = less -F -X
+	pager = diff-so-fancy | less -RFX
 
 [alias]
 	a = add
@@ -145,7 +146,7 @@
 	#log = diff-so-fancy | less --tabs=4 -RFX
 	#
 [interactive]
-	#diffFilter = diff-so-fancy
+	# diffFilter = diff-so-fancy
 
 [commit]
 	verbose = true
@@ -163,17 +164,8 @@
 	path = ~/.gitconfig-work
 
 [color "diff-highlight"]
-	oldNormal = red
-	oldHighlight = red 10
-	newNormal = green
-	newHighlight = green 10
-
-[color "diff"]
-	meta = 11 
-	commit = 9 
-	old = red
-	new = green
-	whitespace = red reverse
+	oldHighlight = 0 red
+	newHighlight = 0 green
 
 [help]
 	autoCorrect = 20
