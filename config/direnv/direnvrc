@@ -15,3 +15,42 @@ use_nodenv() {
 use_pyenv_virtualenv() {
   source $HOME/.pyenv/versions/$(pyenv version-name)/bin/activate
 }
+
+use_pyenv() {
+  unset PYENV_VERSION
+  # Because each python version is prepended to the PATH, add them in reverse order
+  for ((j = $#; j >= 1; j--)); do
+    local python_version=${!j}
+    local pyenv_python=$(pyenv root)/versions/${python_version}/bin/python
+    if [[ ! -x "$pyenv_python" ]]; then
+      log_error "Error: $pyenv_python can't be executed."
+      return 1
+    fi
+
+    unset PYTHONHOME
+    local ve=$($pyenv_python -c "import pkgutil; print('venv' if pkgutil.find_loader('venv') else ('virtualenv' if pkgutil.find_loader('virtualenv') else ''))")
+
+    case $ve in
+      "venv")
+        VIRTUAL_ENV=$(direnv_layout_dir)/python-$python_version
+        export VIRTUAL_ENV
+        if [[ ! -d $VIRTUAL_ENV ]]; then
+          $pyenv_python -m venv "$VIRTUAL_ENV"
+        fi
+        PATH_add "$VIRTUAL_ENV"/bin
+        ;;
+      "virtualenv")
+        layout_python "$pyenv_python"
+        ;;
+      *)
+        log_error "Error: neither venv nor virtualenv are available to ${pyenv_python}."
+        return 1
+        ;;
+    esac
+
+    # e.g. Given "use pyenv 3.6.9 2.7.16", PYENV_VERSION becomes "3.6.9:2.7.16"
+    [[ -z "$PYENV_VERSION" ]] && PYENV_VERSION=$python_version || PYENV_VERSION="${python_version}:$PYENV_VERSION"
+  done
+
+  export PYENV_VERSION
+}
