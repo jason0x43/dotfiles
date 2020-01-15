@@ -308,6 +308,10 @@ function! s:base16_customize()
         \ . ' guifg=#' . g:base16_gui01  . ' ctermfg=1'
     exec 'hi MatchParenCur guibg=#' . g:base16_gui03 . ' ctermbg=3'
         \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
+    exec 'hi Search guibg=#' . g:base16_gui0D . ' ctermbg=14'
+        \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
+    exec 'hi IncSearch guibg=#' . g:base16_gui0D . ' ctermbg=14'
+        \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
