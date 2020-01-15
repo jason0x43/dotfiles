@@ -484,6 +484,9 @@ unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
 # Don't show a % for partial lines
 export PROMPT_EOL_MARK=''
 
+# Get into vim command mode faster when hitting ESC
+export KEYTIMEOUT=1
+
 # History
 # ------------------------------------------------------------------------
 HISTFILE="$ZCACHEDIR/zhistory"  # The path to the history file
