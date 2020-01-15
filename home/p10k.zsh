@@ -775,7 +775,18 @@
     version=${NODENV_VER}
     if [[ -n $version ]] then
       # BASE16_BASE09
-      p10k segment -f 16 -i '' -t $version
+      p10k segment -f 16 -i '' -t $version
+    fi
+  }
+
+  # Segment that shows the effective Python version if it's not the default
+  # This overides the built-in pyenv helper
+  function prompt_pyenv() {
+    local version
+    version=${PYENV_VERSION}
+    if [[ -n $version ]] then
+      # BASE16_BASE09
+      p10k segment -f 16 -i '' -t $version
     fi
   }
 }
