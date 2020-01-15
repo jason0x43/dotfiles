@@ -79,6 +79,11 @@
   "python.formatting.provider": "black",
   "python.jediEnabled": false,
   "python.linting.mypyEnabled": true,
+  "snippets.extends": {
+    "javascriptreact": ["javascript"],
+    "typescript": ["javascript"],
+    "typescriptreact": ["typescript", "javascriptreact"]
+  },
   "suggest.enablePreview": true,
   "suggest.maxPreviewWidth": 100,
   "typescript.preferences.importModuleSpecifier": "relative",
