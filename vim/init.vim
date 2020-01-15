@@ -242,6 +242,9 @@ augroup vimrc
     nnoremap <leader><leader> <C-^>
 augroup END
 
+" Add a fullscreen Help command
+command! -nargs=? -complete=help Help help <args> | only
+
 " Setup a Tig command that opens tig in a terminal
 if executable('tig') && has('nvim')
     command! Tig Term 'tig'
@@ -663,6 +666,8 @@ let g:markdown_fenced_languages = [
     \ 'vim',
     \ 'xml',
     \ ]
+let g:markdown_syntax_conceal = 0
+let g:markdown_minlines = 100
 
 " vimtex
 " ---------------------------------------------------------------------
@@ -702,7 +707,6 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
-Plug '907th/vim-auto-save'            " Autosave while editing
 
  " Show version info in package.json files
 Plug 'meain/vim-package-json', {
@@ -727,7 +731,6 @@ Plug 'leafgarland/typescript-vim'
 Plug 'ianks/vim-tsx'
 Plug 'groenewege/vim-less'
 Plug 'rust-lang/rust.vim'
-Plug 'tpope/vim-markdown'
 Plug 'wavded/vim-stylus'
 
 " Filetype plugins (these provide filetype specific functionality, but don't
