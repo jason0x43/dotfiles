@@ -60,6 +60,16 @@
   "java.errors.incompleteClasspath.severity": "ignore",
   "javascript.referencesCodeLens.enable": false,
   "javascript.suggestionActions.enabled": false,
+  "json.schemas": [
+    {
+      "fileMatch": ["tsconfig*.json"],
+      "url": "http://json.schemastore.org/tsconfig"
+    },
+    {
+      "fileMatch": ["intern.json", "intern-*.json", "intern.*.json"],
+      "url": "http://theintern.io/schemas/intern/config-4.5.json"
+    }
+  ],
   "languageserver": {
     "ccls": {
       "command": "ccls",
