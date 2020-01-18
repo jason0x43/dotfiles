@@ -146,10 +146,13 @@ map <silent> <Leader>h :echo "hi<" .
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " <Leader>f to find files
-map <Leader>f :find 
+map <Leader>f :CocList files<CR>
+
+" <Leader>g to find files in a git repo
+map <Leader>g :CocList gfiles<CR>
 
 " <Leader>b to list buffers
-map <silent> <Leader>b :ls<CR> 
+map <Leader>b :CocList buffers<CR>
 
 " Tab for cycling forwards through matches in a completion popup (taken
 " from coc help)
@@ -345,6 +348,8 @@ augroup vimrc
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     endif
 augroup END
+
+command! Rg :CocList --interactive grep<CR>
 
 map <silent> <Leader>e :CocList diagnostics<cr>
 map <silent> <Leader>l :CocList<CR>

@@ -80,6 +80,7 @@
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"]
     }
   },
+  "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
   "python.formatting.provider": "black",
   "python.jediEnabled": false,
   "python.linting.mypyEnabled": true,
