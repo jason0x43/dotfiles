@@ -309,16 +309,20 @@ command! UpdateColors call s:base16_load_theme()
 function! s:base16_customize()
     hi Normal guibg=NONE ctermbg=NONE
     hi Comment gui=italic
-    exec 'hi Visual guibg=#' . g:base16_gui02 . ' ctermbg=2'
-        \ . ' guifg=#' . g:base16_gui00 . ' ctermfg=0'
-    exec 'hi MatchParen guibg=#' . g:base16_gui02 . ' ctermbg=2'
-        \ . ' guifg=#' . g:base16_gui01  . ' ctermfg=1'
-    exec 'hi MatchParenCur guibg=#' . g:base16_gui03 . ' ctermbg=3'
-        \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
-    exec 'hi Search guibg=#' . g:base16_gui0D . ' ctermbg=14'
-        \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
-    exec 'hi IncSearch guibg=#' . g:base16_gui0D . ' ctermbg=14'
-        \ . ' guifg=#' . g:base16_gui00  . ' ctermfg=0'
+    exec 'hi Visual guibg=#' . g:base16_gui02
+        \ . ' guifg=#' . g:base16_gui00
+    exec 'hi MatchParen guibg=#' . g:base16_gui02
+        \ . ' guifg=#' . g:base16_gui01
+    exec 'hi MatchParenCur guibg=#' . g:base16_gui03
+        \ . ' guifg=#' . g:base16_gui00
+    exec 'hi Search guibg=#' . g:base16_gui0D
+        \ . ' guifg=#' . g:base16_gui00
+    exec 'hi IncSearch guibg=#' . g:base16_gui0D
+        \ . ' guifg=#' . g:base16_gui00
+    exec 'hi IncSearch guibg=#' . g:base16_gui0D
+        \ . ' guifg=#' . g:base16_gui00
+    " hi visibility cursor
+    exec 'hi Cursor guibg=red'
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
