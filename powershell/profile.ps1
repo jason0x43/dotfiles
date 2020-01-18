@@ -29,6 +29,7 @@ function gp { git pull $args }
 function gri { git rebase -i  $args }
 function grv { git remote -v }
 function gs { git status --short $args }
+function rgl { rg -l $args }
 function which { get-command $args }
 
 $scoopPath = $env:USERPROFILE + '\scoop\shims'
