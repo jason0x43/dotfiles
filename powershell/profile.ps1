@@ -1,6 +1,6 @@
 $ca_path = $env:USERPROFILE + '\.config\ssl\ca.pem'
 if (test-path $ca_path) {
-	$env:NODE_EXTRA_CA_CERTS = $ca_path
+    $env:NODE_EXTRA_CA_CERTS = $ca_path
 }
 
 if (test-path alias:gc) { remove-item -force alias:gc }
@@ -31,6 +31,15 @@ function grv { git remote -v }
 function gs { git status --short $args }
 function rgl { rg -l $args }
 function which { get-command $args }
+
+function serve {
+    param (
+        [parameter(position=0)][string]$dir = ".",
+        [string]$addr = "localhost",
+        [int]$port = 8080
+    )
+    python3 -m http.server --directory $dir --bind $addr $port
+}
 
 $scoopPath = $env:USERPROFILE + '\scoop\shims'
 $cleanedPath = ($env:PATH.split(';')) -notmatch ($scoopPath -replace '\\', '\\')
