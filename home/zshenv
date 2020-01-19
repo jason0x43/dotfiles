@@ -93,6 +93,12 @@ fi
 
 # Local config
 # --------------------------------------------------------------------------
+if (( $+commands[direnv] )); then
+	direnv reload
+fi
+
+# Local config
+# --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
 
 # Disable global zprofile, which messes with the path
