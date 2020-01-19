@@ -94,7 +94,8 @@ fi
 # Local config
 # --------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
-	direnv reload
+	# Try to reload a direnv env, but be quiet if one doesn't exist
+	direnv reload 2> /dev/null
 fi
 
 # Local config
