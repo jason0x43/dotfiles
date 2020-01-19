@@ -343,10 +343,6 @@ augroup END
 " coc
 " ---------------------------------------------------------------------
 augroup vimrc
-    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,html,go,c,sh,rust,java map <buffer> <silent> <C-]> <Plug>(coc-definition)
-    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>r <Plug>(coc-rename)
-    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>j <Plug>(coc-references)
-    autocmd FileType typescript,typescript.tsx,javascript,javascript.jsx,python,go,c,sh,rust,java map <buffer> <silent> <leader>t <Plug>(coc-format-selected)
     if exists('CocActionAsync')
         autocmd CursorHold * silent call CocActionAsync('highlight')
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
@@ -362,6 +358,10 @@ map <silent> <Leader>x <Plug>(coc-codeaction)
 nmap <silent> <Leader>p <Plug>(coc-format-selected)
 vmap <silent> <Leader>p <Plug>(coc-format-selected)
 map <silent> <M-f> <Plug>(coc-format)
+map <silent> <C-]> <Plug>(coc-definition)
+map <silent> <leader>t <Plug>(coc-format-selected)
+map <silent> <leader>r <Plug>(coc-rename)
+map <silent> <leader>j <Plug>(coc-references)
 
 " navigate chunks of current buffer
 
@@ -412,6 +412,7 @@ let g:coc_global_extensions = [
     \ 'coc-python',
     \ 'coc-rls',
     \ 'coc-sh',
+    \ 'coc-snippets',
     \ 'coc-svg',
     \ 'coc-tslint-plugin',
     \ 'coc-tsserver',
