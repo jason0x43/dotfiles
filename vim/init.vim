@@ -253,6 +253,11 @@ if executable('tig') && has('nvim')
     command! Tig Term 'tig'
 endif
 
+" Setup a Lg command that opens lazygit in a terminal
+if executable('lazygit') && has('nvim')
+    command! Lg Term 'lazygit'
+endif
+
 " Setup 'A' for Angular files
 function! s:AngularAlternate()
     let l:current_base = expand('%:r')
