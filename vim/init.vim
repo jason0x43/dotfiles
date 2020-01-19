@@ -160,6 +160,10 @@ function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1] =~# '\s'
 endfunction
+" When popup menu is visible, tab goes to next entry.
+" Else, if the cursor is in an active snippet, tab between fields.
+" Else, if the character before the cursor isn't whitespace, put a Tab.
+" Else, refresh the completion list
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
