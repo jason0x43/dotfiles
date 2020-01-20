@@ -269,9 +269,10 @@ bindkey -v
 # Clear existing aliases
 unalias -m '*'
 
-# Reload zshrc
+# Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
+# reload the environment
 alias refresh='source ~/.zshenv && source ~/.zshrc'
-alias reload='exec zsh'
+alias reload='exec env -u DIRENV_WATCHES $SHELL'
 
 # Default command options
 alias cp='cp -i'

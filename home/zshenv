@@ -93,13 +93,6 @@ fi
 
 # Local config
 # --------------------------------------------------------------------------
-if (( $+commands[direnv] )); then
-	# Try to reload a direnv env, but be quiet if one doesn't exist
-	direnv reload 2> /dev/null
-fi
-
-# Local config
-# --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
 
 # Disable global zprofile, which messes with the path
