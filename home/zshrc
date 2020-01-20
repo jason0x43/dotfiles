@@ -577,6 +577,10 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
     eval "$(direnv hook $SHELL)"
+
+    # Wrap tmux to avoid environment loading issues
+    # See https://github.com/direnv/direnv/wiki/Tmux
+    alias tmux='direnv exec / tmux'
 fi
 
 # History key bindings
