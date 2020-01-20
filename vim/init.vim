@@ -151,6 +151,9 @@ map <Leader>f :CocList files<CR>
 " <Leader>g to find files in a git repo
 map <Leader>g :CocList gfiles<CR>
 
+" <Leader>m to find modified files in a git repo
+map <Leader>m :CocList gstatus<CR>
+
 " <Leader>b to list buffers
 map <Leader>b :CocList buffers<CR>
 
