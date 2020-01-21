@@ -133,8 +133,8 @@ map <silent> <Leader>Q :qall!<CR>
 " <Leader>c to close a window
 map <silent> <Leader>c :close<CR>
 
-" <Leader>k to kill a buffer (Bd comes from vim-bbye)
-map <silent> <Leader>k :Bd<CR>
+" <Leader>k to kill a buffer without closing its window
+map <silent> <Leader>k :bp\|bd #<CR>
 map <silent> <Leader>K :bd!<CR>
 
 " <Leader>h to show the syntax highlight status of the character under the
@@ -662,7 +662,7 @@ let g:startify_lists = [
     \ { 'header': ['    Commits'], 'type': function('s:startify_list_commits') }
     \ ]
 
-" autocmd vimrc User StartifyReady setlocal cursorline
+autocmd vimrc BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) | Startify | endif
 
 " undotree
 " --------------------------------------------------------------------- 
@@ -722,7 +722,6 @@ Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
 Plug 'junegunn/gv.vim'                " a git commit browser
-Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                " Visualize the undo tree
