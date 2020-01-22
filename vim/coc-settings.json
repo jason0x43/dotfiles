@@ -100,6 +100,7 @@
     "typescriptreact": ["typescript", "javascriptreact"]
   },
   "suggest.enablePreview": true,
+  "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": false
