@@ -367,8 +367,6 @@ map <silent> <Leader>e :CocList diagnostics<cr>
 map <silent> <Leader>l :CocList<CR>
 map <silent> <Leader>x <Plug>(coc-codeaction)
 
-nmap <silent> <Leader>p <Plug>(coc-format-selected)
-vmap <silent> <Leader>p <Plug>(coc-format-selected)
 map <silent> <M-f> <Plug>(coc-format)
 map <silent> <C-]> <Plug>(coc-definition)
 map <silent> <leader>t <Plug>(coc-format-selected)
