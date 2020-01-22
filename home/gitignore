@@ -29,6 +29,9 @@
 *.pyc
 /tmp
 
+# direnv config files
+.envrc
+
 # Intern files
 .internrc
 intern-local.js

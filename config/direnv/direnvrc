@@ -9,11 +9,21 @@ use_jenv() {
 }
 
 use_nodenv() {
-  export NODENV_VER=$(nodenv version-name)
-}
-
-use_pyenv_virtualenv() {
-  source $HOME/.pyenv/versions/$(pyenv version-name)/bin/activate
+  node_version=$1
+  declare -a versions
+  versions=($(nodenv versions --bare))
+  match=0
+  for ver in ${versions[@]}; do
+    if [[ $ver == $node_version ]]; then
+      match=1
+      break
+    fi
+  done
+  if [[ $match == 0 ]]; then
+    echo "installing $node_version"
+    nodenv install $node_version
+  fi
+  export NODENV_VERSION=$node_version
 }
 
 use_pyenv() {
@@ -53,4 +63,8 @@ use_pyenv() {
   done
 
   export PYENV_VERSION
+}
+
+use_local_npm() {
+	export npm_config_registry=https://npm.registry.local:4873
 }
