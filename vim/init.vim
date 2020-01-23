@@ -134,8 +134,8 @@ map <silent> <Leader>Q :qall!<CR>
 map <silent> <Leader>c :close<CR>
 
 " <Leader>k to kill a buffer without closing its window
-map <silent> <Leader>k :bp\|bd #<CR>
-map <silent> <Leader>K :bd!<CR>
+map <silent> <Leader>k :Bdelete<CR>
+map <silent> <Leader>K :Bdelete!<CR>
 
 " <Leader>h to show the syntax highlight status of the character under the
 " cursor
@@ -721,6 +721,7 @@ Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
 Plug 'junegunn/gv.vim'                " a git commit browser
+Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                " Visualize the undo tree
