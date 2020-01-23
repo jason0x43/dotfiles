@@ -234,6 +234,9 @@ class BrewUpdater(Updater):
         out = await run(f"{self.brew_cmd} upgrade {pkg_name}")
         if self.brew_cmd == "brew" and out.exitcode == 0:
             await run(f"brew cleanup {pkg_name}")
+        if pkg_name == "git":
+            # Remove the built-in git completions; they're not great
+            Path("/usr/local/share/zsh/site-functions/_git").unlink(missing_ok=True)
         return out.exitcode == 0
 
 
