@@ -1,4 +1,3 @@
-
 command_not_found_handler() {
   # Do not run within a pipe
   if test ! -t 1; then

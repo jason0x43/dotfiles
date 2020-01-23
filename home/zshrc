@@ -1,18 +1,31 @@
 # Enable profiling
 # zmodload zsh/zprof
 
+typeset -gU cdpath
+
 # Enable brew
 if [[ -d /home/linuxbrew ]]; then
     eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
-# Fpath
+# fpath
 # ----------------------------------------------------------------------------
+typeset -gU fpath
 fpath=(
     $ZFUNCDIR
     $DOTFILES/zsh/functions
     $fpath
 )
+
+# manpath
+# ----------------------------------------------------------------------------
+# Set the list of directories that man searches for manuals.
+typeset -gU manpath
+if [ -e /etc/manpaths ]; then
+	while read line; do 
+		manpath+=$line
+	done < /etc/manpaths
+fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
@@ -627,8 +640,6 @@ fi
 
 # Load NPM completion
 if (( $+commands[npm] )); then
-    npm_completer="$DOTFILES/zsh/npm.zsh"
-    source "$npm_completer"
     zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
     source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi

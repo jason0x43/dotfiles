@@ -35,15 +35,7 @@ fi
 
 # General paths
 # ----------------------------------------------------------------------------
-typeset -gU cdpath fpath mailpath manpath path
-typeset -gUT INFOPATH infopath
-
-# Set the list of directories that man searches for manuals.
-if [ -e /etc/manpaths ]; then
-	while read line; do 
-		manpath+=$line
-	done < /etc/manpaths
-fi
+typeset -gU mailpath path
 
 # Java
 # ----------------------------------------------------------------------------
