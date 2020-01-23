@@ -661,7 +661,7 @@ let g:startify_lists = [
     \ { 'header': ['    Commits'], 'type': function('s:startify_list_commits') }
     \ ]
 
-autocmd vimrc BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) | Startify | endif
+nnoremap <Leader>s :Startify<CR>
 
 " undotree
 " --------------------------------------------------------------------- 
