@@ -360,13 +360,13 @@ async def main():
         else:
             brew_updates = await updater.check_packages()
             names = [p.name for p in brew_updates.packages]
-            if 'node' in names:
-                updaters_to_defer.append('npm')
-            if 'python' in names:
-                updaters_to_defer.append('py3')
-            if 'python@2' in names:
-                updaters_to_defer.append('py2')
-            add_updater('brew', updater)
+            if "node" in names:
+                updaters_to_defer.append("npm")
+            if "python" in names:
+                updaters_to_defer.append("py3")
+            if "python@2" in names:
+                updaters_to_defer.append("py2")
+            add_updater("brew", updater)
 
     for group in groups:
         if group == "npm":
@@ -374,11 +374,17 @@ async def main():
         elif group == "cask":
             add_updater(group, BrewUpdater(cask=True))
         elif group == "tmux":
-            add_updater(group, GitUpdater("tmux", Path(getenv("TMUX_PLUGIN_MANAGER_PATH"))))
+            add_updater(
+                group, GitUpdater("tmux", Path(getenv("TMUX_PLUGIN_MANAGER_PATH")))
+            )
         elif group == "vim":
-            add_updater(group, GitUpdater("vim", Path(getenv("CACHEDIR")) / "vim" / "plugins"))
+            add_updater(
+                group, GitUpdater("vim", Path(getenv("CACHEDIR")) / "vim" / "plugins")
+            )
         elif group == "zsh":
-            add_updater(group, GitUpdater("zsh", Path(getenv("CACHEDIR")) / "zsh" / "plugins"))
+            add_updater(
+                group, GitUpdater("zsh", Path(getenv("CACHEDIR")) / "zsh" / "plugins")
+            )
         elif group == "py2":
             add_updater(group, PythonUpdater("py2", "pip2"))
         elif group == "py3":
@@ -402,7 +408,7 @@ async def main():
     num_updates = reduce(lambda a, b: a + b, [len(u.packages) for u in updates])
     if num_updates > 0:
         print()
-    
+
         for i, update in enumerate(updates):
             if len(update.packages) > 0:
                 print(update.name)
