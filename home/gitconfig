@@ -105,8 +105,8 @@
 [tig "color"]
 	cursor = color0 color2 normal
 	default = color7 default normal
-	diff-del = color8 default normal
-	diff-add = color11 default normal
+	diff-del = color5 default normal
+	diff-add = color2 default normal
 	title-focus = color0 color1 normal
 	title-blur = color0 color6 normal
 
@@ -163,9 +163,15 @@
 [includeIf "gitdir:~/Documents/Work/projects/"]
 	path = ~/.gitconfig-work
 
+[color "diff"]
+	old = 5
+	new = 2
+
 [color "diff-highlight"]
-	oldHighlight = 0 red
-	newHighlight = 0 green
+	oldNormal = 5
+	oldHighlight = 5 bold 18
+	newNormal = 2
+	newHighlight = 2 bold 18
 
 [help]
 	autoCorrect = 20
