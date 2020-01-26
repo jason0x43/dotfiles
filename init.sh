@@ -18,17 +18,19 @@ fi
 
 # Install some baseline packages
 brew_packages=(
-	'neovim'
+	'bat'
 	'direnv'
 	'fd'
 	'fzf'
+	'gawk'
 	'git'
-	'ripgrep'
+	'git-delta'
 	'jenv'
-	'pyenv'
-	'pyenv-virtualenv'
-	'nodenv'
+	'neovim'
 	'node'
+	'nodenv'
+	'pyenv'
+	'ripgrep'
 	'tmux'
 )
 echo ">>> Checking for missing brew packages..."
