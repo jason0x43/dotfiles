@@ -380,12 +380,17 @@ map <silent> <leader>r <Plug>(coc-rename)
 map <silent> <leader>j <Plug>(coc-references)
 
 " navigate chunks of current buffer
-
-nmap ]g <Plug>(coc-git-nextchunk)
+nmap g[ <Plug>(coc-git-prevchunk)
+nmap g] <Plug>(coc-git-nextchunk)
 " show chunk diff at current position
-nmap gs <Plug>(coc-git-chunkinfo)
-" show commit contains current position
+nmap gi <Plug>(coc-git-chunkinfo)
+" show commit contains current position (don't use gc)
 nmap gl <Plug>(coc-git-commit)
+" stage current chunk
+nmap gu :CocCommand git.chunkStage<CR>
+" undo current chunk
+nmap g! :CocCommand git.chunkUndo<CR>
+" fold everything but chunnks
 nmap gf :CocCommand git.foldUnchanged<CR>
 
 command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
