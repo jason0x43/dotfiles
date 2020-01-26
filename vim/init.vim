@@ -335,6 +335,12 @@ function! s:base16_customize()
         \ . ' guifg=#' . g:base16_gui00
     " hi visibility cursor
     exec 'hi Cursor guibg=red'
+    " no background for diffs (it messes with floating windows)
+    exec 'hi DiffAdded guibg=NONE'
+    exec 'hi DiffFile guibg=NONE'
+    exec 'hi DiffNewFile guibg=NONE'
+    exec 'hi DiffLine guibg=NONE'
+    exec 'hi DiffRemoved guibg=NONE'
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
