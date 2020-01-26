@@ -86,6 +86,8 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
+export BAT_THEME=base16
+
 # Completions
 # ------------------------------------------------------------------------
 export ZCOMPDIR="$CACHEDIR/zsh/completions"
