@@ -20,7 +20,8 @@
 	editor = nvim
 	precomposeunicode = true
 	# pager = less -F -X
-	pager = diff-so-fancy | less -RFX
+	; pager = diff-so-fancy | less -RFX
+	pager = delta
 
 [alias]
 	a = add
