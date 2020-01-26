@@ -764,6 +764,7 @@ Plug 'ianks/vim-tsx'
 Plug 'groenewege/vim-less'
 Plug 'rust-lang/rust.vim'
 Plug 'wavded/vim-stylus'
+Plug 'Glench/Vim-Jinja2-Syntax'
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
