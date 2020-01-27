@@ -23,16 +23,16 @@ function err {
 # Create a directory
 function makedir {
 	if [[ ! -d $1 ]]; then
-		log "Creating $1/..."
 		mkdir -p $1
+		logSub "Created $1/"
 	fi
 }
 
 # Create a symlink
 function link {
 	if [[ ! -r $2 ]]; then
-		log "Creating $1 -> $2..."
 		ln -s $1 $2
+		logSub "Linked $1 -> $2"
 	fi
 }
 
@@ -40,7 +40,7 @@ function link {
 function fixterm {
 	kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
 	if [[ $kbs =~ "kbs=^[hH]" ]]; then
-		log "Fixing backspace code in terminfo..."
+		logSub "Fixing backspace code in terminfo..."
 		infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
 		tic /tmp/$TERM.ti
 		rm /tmp/$TERM.ti
@@ -54,6 +54,8 @@ cd $HOME
 
 # basic profile setup
 # ----------------------------------------------------------
+
+log "Updating home directory files..."
 
 for f in $(ls $dotfiles/home); do
 	link $dotfiles/home/$f $HOME/.$(basename $f)
@@ -71,6 +73,7 @@ makedir $cachedir/vim/swap
 makedir $cachedir/vim/backup
 makedir $cachedir/vim/undo
 makedir $cachedir/zsh
+makedir $cachedir/direnv/allow
 
 makedir $configdir
 link $dotfiles/vim $configdir/nvim
