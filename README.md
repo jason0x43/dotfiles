@@ -1,19 +1,17 @@
-Dotfiles
-========
+# Dotfiles
 
 Dotfiles! Err...yay!
 
-Environment
------------
+## Environment
 
 I spend most of my time in [zsh](http://zsh.sourceforge.net),
-[tmux](http://tmux.sourceforge.net), and [iTerm2](http://iterm2.com), and
-[vim](http://www.vim.org) is my editor of choice. I use a number of vim
-plugins, managed by [vim-plug](https://github.com/junegunn/vim-plug), and a few
-tmux plugins, manged by [tpm](https://github.com/tmux-plugins/tpm).
+[tmux](http://tmux.sourceforge.net), and
+[kitty](https://sw.kovidgoyal.net/kitty/), and [neovim](http://neovim.io) is my
+editor of choice. I use a number of vim plugins, managed by
+[vim-plug](https://github.com/junegunn/vim-plug), and a few tmux plugins, manged
+by [tpm](https://github.com/tmux-plugins/tpm).
 
-Paths
------
+## Paths
 
 The location of my dotfiles is specified by the `DOTFILES` environment variable
 in `.zshenv`. It’s set to `~/.dotfiles` by default. Things that shouldn’t be in
@@ -26,17 +24,17 @@ pointed at `~/.config` as necessary.
 Transient files, like vim sessions or zsh completions, are stored under
 `CACHEDIR`, set to `~/.cache` by default.
 
-There’s an `init.sh` script that will put things in their expected places.
+There’s a `bin/dotfiles` script that will put things in their expected places,
+as well as installing some core homebrew packages and updating plugins.
 
-Zsh and Git
------------
+## Zsh and Git
 
-The zsh completion script that comes with git is outdated. The one that comes
-with current distributions of zsh (including 5.2 in macOS Sierra) is much
-better. When installing git via homebrew, use the `--without-completions`
-option.
+Note that the zsh completion script that comes with git is outdated. The one
+that comes with current distributions of zsh (including 5.x in macOS) is much
+better. After installing or updating git via homebrew, remove
+`/usr/local/share/zsh/site-functions/_git`.
 
-Credits
--------
+## Credits
 
-Much of the ZSH config was copied from [prezto](https://github.com/sorin-ionescu/prezto).
+Much of the ZSH config was originally copied from
+[prezto](https://github.com/sorin-ionescu/prezto).
