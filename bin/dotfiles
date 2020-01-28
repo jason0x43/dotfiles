@@ -47,8 +47,8 @@ function fixterm {
     fi
 }
 
+# Link dotfiles into $HOME, update terminfo
 function dotfiles-home {
-    # basic profile setup
     log "Updating home directory files..."
 
     for f in $(ls $dotfiles/home); do
@@ -77,6 +77,7 @@ function dotfiles-home {
     fixterm
 }
 
+# Install homebrew and core packages, update packages and casks
 function dotfiles-brew {
     log "Updating brew packages..."
 
@@ -120,6 +121,7 @@ function dotfiles-brew {
     brew cask upgrade
 }
 
+# Update zsh plugins
 function dotfiles-zsh {
     log "Updating zsh plugins..."
 
@@ -145,6 +147,7 @@ function dotfiles-zsh {
     done
 }
 
+# Update global python2 and python3 packages
 function dotfiles-python {
     log "Updating global python packages..."
 
@@ -159,6 +162,7 @@ function dotfiles-python {
     fi
 }
 
+# Ensure jenv (Java environment) is setup properly
 function dotfiles-jenv {
     log "Updating jenv..."
 
@@ -176,6 +180,7 @@ function dotfiles-jenv {
     fi
 }
 
+# Update global npm packages
 function dotfiles-npm {
     log "Updating global npm modules..."
 
@@ -222,6 +227,7 @@ function dotfiles-npm {
     done
 }
 
+# Update tmux plugins
 function dotfiles-tmux {
     log "Updating tmux plugins..."
 
@@ -243,6 +249,7 @@ function dotfiles-tmux {
     done
 }
 
+# Update vim plugins
 function dotfiles-vim {
     log "Updating vim plugins..."
 
