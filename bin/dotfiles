@@ -255,6 +255,14 @@ function dotfiles-asdf {
         bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
         logSub "Installed asdf-nodejs"
     fi
+    if (( ! $asdf_plugins[(Ie)python] )); then
+        asdf plugin-add python
+        logSub "Installed asdf-python"
+    fi
+    if (( ! $asdf_plugins[(Ie)java] )); then
+        asdf plugin-add java
+        logSub "Installed asdf-java"
+    fi
     # neovim uses node 10 to support at least coc-sh
     if [[ ! -d $HOME/.asdf/installs/nodejs/10.16.2 ]]; then
         asdf install nodejs 10.16.2
