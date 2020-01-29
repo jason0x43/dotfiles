@@ -89,20 +89,27 @@ function dotfiles-brew {
 
     logSub "Checking for missing brew packages..."
     brew_packages=(
+        'asdf',
+        'autoconf',
+        'automake',
         'bat'
-        'direnv'
+        'coreutils',
         'fd'
         'fzf'
         'gawk'
         'git'
         'git-delta'
-        'jenv'
+        'gpg'
+        'jq'
+        'libtool',
+        'libyaml',
         'neovim'
         'node'
-        'nodenv'
-        'pyenv'
+        'openssl',
+        'readline',
         'ripgrep'
-        'tmux'
+        'tmux',
+        'unixodbc'
     )
 
     installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
@@ -247,6 +254,31 @@ function dotfiles-tmux {
         fi
         cd ..
     done
+}
+
+# Update asdf plugins
+function dotfiles-asdf {
+    log "Updating asdf..."
+
+    asdf_plugins=(${(@f)$(asdf plugin-list)})
+    if (( ! $asdf_plugins[(Ie)"direnv"] )); then
+        asdf plugin-add direnv
+        direnv_versions=(${(@f)$(asdf list-all direnv)})
+        asdf install direnv $direnv_versions[-1]
+        logSub "Installed asdf-direnv"
+    fi
+    if (( ! $asdf_plugins[(Ie)"nodejs"] )); then
+        asdf plugin-add direnv
+        direnv_versions=(${(@f)$(asdf list-all direnv)})
+        asdf install direnv $direnv_versions[-1]
+        logSub "Installed asdf-nodejs"
+    fi
+    # neovim uses node 10 to support at least coc-sh
+    if [[ ! -d $HOME/.asdf/installs/nodejs/10.16.2 ]]; then
+        asdf nodejs install 10.16.2
+        logSub "Installed nodejs 10.16.2"
+    fi
+    asdf plugin-update --all
 }
 
 # Update vim plugins

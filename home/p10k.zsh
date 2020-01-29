@@ -69,19 +69,23 @@
       background_jobs         # presence of background jobs
       # virtualenv            # python virtual environment (https://docs.python.org/3/library/venv.html)
       # anaconda              # conda environment (https://conda.io/)
-      pyenv                   # python environment (https://github.com/pyenv/pyenv)
-      nodenv                  # node.js version from nodenv (https://github.com/nodenv/nodenv)
-      npm                     # custom npm registry host
-      jenv                    # java version from jenv
+      # pyenv                 # python environment (https://github.com/pyenv/pyenv)
+      # nodenv                # node.js version from nodenv (https://github.com/nodenv/nodenv)
+      # jenv                  # java version from jenv
       # nvm                   # node.js version from nvm (https://github.com/nvm-sh/nvm)
       # nodeenv               # node.js environment (https://github.com/ekalinin/nodeenv)
       # node_version          # node.js version
       # go_version            # go version (https://golang.org)
-      rust_version            # rustc version (https://www.rust-lang.org)
-      rbenv                   # ruby version from rbenv (https://github.com/rbenv/rbenv)
+      # rust_version          # rustc version (https://www.rust-lang.org)
+      # rbenv                 # ruby version from rbenv (https://github.com/rbenv/rbenv)
       # rvm                   # ruby version from rvm (https://rvm.io)
       # kubecontext           # current kubernetes context (https://kubernetes.io/)
       # terraform             # terraform workspace (https://www.terraform.io)
+      npm                     # custom npm registry host
+      node                    # custom node version
+      java                    # custom java version
+      python                  # custom python version
+      rust                    # custom rust version
       context                 # user@host
       # nordvpn               # nordvpn connection status, linux only (https://nordvpn.com/)
       # ranger                # ranger shell (https://github.com/ranger/ranger)
@@ -504,99 +508,53 @@
   # Custom prefix.
   # typeset -g POWERLEVEL9K_CONTEXT_PREFIX='%fwith '
 
-  ###[ virtualenv: python virtual environment (https://docs.python.org/3/library/venv.html) ]###
-  # Python virtual environment color.
-  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$BASE16_BASE13
-  # Don't show Python version next to the virtual environment name.
-  typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=false
-  # Separate environment name from Python version only with a space.
-  typeset -g POWERLEVEL9K_VIRTUALENV_{LEFT,RIGHT}_DELIMITER=
-  # Custom icon.
-  typeset -g POWERLEVEL9K_VIRTUALENV_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #####################[ anaconda: conda environment (https://conda.io/) ]######################
-  # Anaconda environment color.
-  typeset -g POWERLEVEL9K_ANACONDA_FOREGROUND=$BASE16_BASE13
-  # Don't show Python version next to the anaconda environment name.
-  typeset -g POWERLEVEL9K_ANACONDA_SHOW_PYTHON_VERSION=false
-  # Separate environment name from Python version only with a space.
-  typeset -g POWERLEVEL9K_ANACONDA_{LEFT,RIGHT}_DELIMITER=
-  # Custom icon.
-  typeset -g POWERLEVEL9K_ANACONDA_VISUAL_IDENTIFIER_EXPANSION=''
-
-  ################[ pyenv: python environment (https://github.com/pyenv/pyenv) ]################
-  # Pyenv color.
-  typeset -g POWERLEVEL9K_PYENV_FOREGROUND=$BASE16_BASE13
+  ################[ python ]####################################################################
+  # Python color.
+  typeset -g POWERLEVEL9K_PYTHON_FOREGROUND=$BASE16_BASE13
   # Don't show the current Python version if it's the same as global.
-  typeset -g POWERLEVEL9K_PYENV_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_PYTHON_PROMPT_ALWAYS_SHOW=false
   # Custom icon.
-  typeset -g POWERLEVEL9K_PYENV_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_PYTHON_VISUAL_IDENTIFIER_EXPANSION=''
 
-  ##########[ nodenv: node.js version from nodenv (https://github.com/nodenv/nodenv) ]##########
-  # Nodenv color.
-  typeset -g POWERLEVEL9K_NODENV_FOREGROUND=$BASE16_BASE11
+  ##########[ node ]############################################################################
+  # Node color.
+  typeset -g POWERLEVEL9K_NODE_FOREGROUND=$BASE16_BASE11
   # Don't show node version if it's the same as global: $(nodenv version-name) == $(nodenv global).
-  typeset -g POWERLEVEL9K_NODENV_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_NODE_PROMPT_ALWAYS_SHOW=false
   # Custom icon.
-  typeset -g POWERLEVEL9K_NODENV_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_NODE_VISUAL_IDENTIFIER_EXPANSION=''
 
-  ##############[ nvm: node.js version from nvm (https://github.com/nvm-sh/nvm) ]###############
-  # Nvm color.
-  typeset -g POWERLEVEL9K_NVM_FOREGROUND=$BASE16_BASE11
+  ##########[ npm ]#############################################################################
+  # npm color.
+  typeset -g POWERLEVEL9K_NPM_FOREGROUND=$BASE16_BASE11
+  # Don't show node version if it's the same as global: $(nodenv version-name) == $(nodenv global).
+  typeset -g POWERLEVEL9K_NPM_PROMPT_ALWAYS_SHOW=false
   # Custom icon.
-  # typeset -g POWERLEVEL9K_NVM_VISUAL_IDENTIFIER_EXPANSION='⭐'
+  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION=''
 
-  ############[ nodeenv: node.js environment (https://github.com/ekalinin/nodeenv) ]############
-  # Nodeenv color.
-  typeset -g POWERLEVEL9K_NODEENV_FOREGROUND=$BASE16_BASE11
-  # Don't show Node version next to the environment name.
-  typeset -g POWERLEVEL9K_NODEENV_SHOW_NODE_VERSION=false
-  # Separate environment name from Node version only with a space.
-  typeset -g POWERLEVEL9K_NODEENV_{LEFT,RIGHT}_DELIMITER=
-  # Custom icon.
-  # typeset -g POWERLEVEL9K_NODEENV_VISUAL_IDENTIFIER_EXPANSION='⭐'
-
-  ##############################[ node_version: node.js version ]###############################
-  # Node version color.
-  typeset -g POWERLEVEL9K_NODE_VERSION_FOREGROUND=$BASE16_BASE11
-  # Show node version only when in a directory tree containing package.json.
-  typeset -g POWERLEVEL9K_NODE_VERSION_PROJECT_ONLY=true
-  # Custom icon.
-  typeset -g POWERLEVEL9K_NODE_VERSION_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #######################[ go_version: go version (https://golang.org) ]########################
-  # Go version color.
-  typeset -g POWERLEVEL9K_GO_VERSION_FOREGROUND=$BASE16_BASE10
+  #######################[ go ]#################################################################
+  # Go color.
+  typeset -g POWERLEVEL9K_GO_FOREGROUND=$BASE16_BASE10
   # Show go version only when in a go project subdirectory.
-  typeset -g POWERLEVEL9K_GO_VERSION_PROJECT_ONLY=true
+  typeset -g POWERLEVEL9K_GO_PROJECT_ONLY=true
   # Custom icon.
-  typeset -g POWERLEVEL9K_GO_VERSION_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_GO_VISUAL_IDENTIFIER_EXPANSION=''
 
-  #################[ rust_version: rustc version (https://www.rust-lang.org) ]##################
-  # Rust version color.
-  typeset -g POWERLEVEL9K_RUST_VERSION_FOREGROUND=$BASE16_BASE08
+  #################[ rust ]#####################################################################
+  # Rust color.
+  typeset -g POWERLEVEL9K_RUST_FOREGROUND=$BASE16_BASE08
   # Show rust version only when in a rust project subdirectory.
-  typeset -g POWERLEVEL9K_RUST_VERSION_PROJECT_ONLY=true
+  typeset -g POWERLEVEL9K_RUST_PROJECT_ONLY=true
   # Custom icon.
-  typeset -g POWERLEVEL9K_RUST_VERSION_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_RUST_VISUAL_IDENTIFIER_EXPANSION=''
 
-  #############[ rbenv: ruby version from rbenv (https://github.com/rbenv/rbenv) ]##############
-  # Rbenv color.
-  typeset -g POWERLEVEL9K_RBENV_FOREGROUND=$BASE16_BASE08
+  #############[ ruby ]#########################################################################
+  # Ruby color.
+  typeset -g POWERLEVEL9K_RUBY_FOREGROUND=$BASE16_BASE08
   # Don't show ruby version if it's the same as global: $(rbenv version-name) == $(rbenv global).
-  typeset -g POWERLEVEL9K_RBENV_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_RUBY_PROMPT_ALWAYS_SHOW=false
   # Custom icon.
-  typeset -g POWERLEVEL9K_RBENV_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #######################[ rvm: ruby version from rvm (https://rvm.io) ]########################
-  # Rvm color.
-  typeset -g POWERLEVEL9K_RVM_FOREGROUND=$BASE16_BASE08
-  # Don't show @gemset at the end.
-  typeset -g POWERLEVEL9K_RVM_SHOW_GEMSET=false
-  # Don't show ruby- at the front.
-  typeset -g POWERLEVEL9K_RVM_SHOW_PREFIX=false
-  # Custom icon.
-  typeset -g POWERLEVEL9K_RVM_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_RUBY_VISUAL_IDENTIFIER_EXPANSION=''
 
   #############[ kubecontext: current kubernetes context (https://kubernetes.io/) ]#############
   # Kubernetes context classes for the purpose of using different colors, icons and expansions with
@@ -735,58 +693,33 @@
   # Custom prefix.
   # typeset -g POWERLEVEL9K_TIME_PREFIX='%fat '
 
-  # Example of a user-defined prompt segment. Function prompt_example will be called on every
-  # prompt if `example` prompt segment is added to POWERLEVEL9K_LEFT_PROMPT_ELEMENTS or
-  # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS. It displays an icon and orange text greeting the user.
-  #
-  # Type `p10k help segment` for documentation and a more sophisticated example.
-  function prompt_example() {
-    p10k segment -f 208 -i '⭐' -t 'hello, %n'
-  }
-
-  # User-defined prompt segments can be customized the same way as built-in segments.
-  typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
-  typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
+  ##################################[ User-defined segments ]###################################
 
   # Segment that shows the effective npm registry if it's not the default
   function prompt_npm() {
     if [[ $npm_config_registry =~ "https?://([^/:]+)(:[0-9]+)?" ]] then
-      # BASE16_BASE11
-      p10k segment -f 2 -i '' -t $match[1]
+      p10k segment -t $match[1]
     fi
   }
-  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # Segment that shows the effective Java version if it's not the default
-  function prompt_jenv() {
-    local version
-    version=${JAVA_HOME:t}
-    if [[ -n $version && $version != "system" ]] then
-      # BASE16_BASE09
-      p10k segment -f 16 -i '' -t $version
+  function prompt_java() {
+    if [[ -n $JAVA_VERSION && $JAVA_VERSION != "system" ]] then
+      p10k segment -t $JAVA_VERSION
     fi
   }
-  typeset -g POWERLEVEL9K_JENV_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # Segment that shows the effective node version if it's not the default
-  # This overides the built-in nodenv helper
-  function prompt_nodenv() {
-    local version
-    version=${NODENV_VERSION}
-    if [[ -n $version ]] then
-      # BASE16_BASE09
-      p10k segment -f 16 -i '' -t $version
+  function prompt_node() {
+    if [[ -n $NODE_VERSION ]] then
+      p10k segment -t $NODE_VERSION
     fi
   }
 
   # Segment that shows the effective Python version if it's not the default
-  # This overides the built-in pyenv helper
-  function prompt_pyenv() {
-    local version
-    version=${PYENV_VERSION}
-    if [[ -n $version ]] then
-      # BASE16_BASE09
-      p10k segment -f 16 -i '' -t $version
+  function prompt_python() {
+    if [[ -n $PYTHON_VERSION ]] then
+      p10k segment -t $PYTHON_VERSION
     fi
   }
 }

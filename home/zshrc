@@ -1,26 +1,31 @@
 # Enable profiling
 # zmodload zsh/zprof
 
+# Declare some key global variables
+# ------------------------------------------------------------------------
 typeset -gU cdpath
-
-# Enable brew
-if [[ -d /home/linuxbrew ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-fi
-
-# fpath
-# ----------------------------------------------------------------------------
 typeset -gU fpath
+typeset -gU manpath
+
+# Setup fpath
+# ------------------------------------------------------------------------
+# The fpath should be initialized before trying to load plugins (with zfetch)
+# or trying to initialize completions
 fpath=(
     $ZFUNCDIR
     $DOTFILES/zsh/functions
     $fpath
 )
 
+# Brew
+# ----------------------------------------------------------------------------
+if [[ -d /home/linuxbrew ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
 # manpath
 # ----------------------------------------------------------------------------
 # Set the list of directories that man searches for manuals.
-typeset -gU manpath
 if [ -e /etc/manpaths ]; then
 	while read line; do 
 		manpath+=$line
@@ -29,6 +34,10 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
+# Create a global plugins variable for zfetch -- this must be done before
+# zfetch is used for the first time
+typeset -A plugins
+
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 if [[ ! -d "$ZPLUGDIR" ]]; then
     mkdir -p "$ZPLUGDIR"
@@ -52,10 +61,6 @@ export VISUAL=$SUDO_VISUAL
 if [[ -d $DOTFILES/zsh/functions ]]; then
     for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
-
-# Create an array to hold plugin references
-# ------------------------------------------------------------------------
-typeset -A plugins
 
 # Start SSH agent if it's not already running
 # ------------------------------------------------------------------------
@@ -90,17 +95,27 @@ export BAT_THEME=base16
 
 # Completions
 # ------------------------------------------------------------------------
+# The completion system should be configured and enabled before sourcing
+# completion plugins
+
 export ZCOMPDIR="$CACHEDIR/zsh/completions"
+export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 
+# Extra ZSH completions
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+
+# Completion directories should be added to the fpath before compinit is called
 fpath=(
+    $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZCOMPDIR
     /usr/local/share/zsh-completions
     $fpath
 )
 
-# Load and initialize the completion system, ignoring insecure directories
-export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+# Load and initialize the completion system, ignoring insecure directories.
+# Note that fpath should be configured before calling compinit.
+# (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
 autoload -Uz compinit
 if [[ $HOME =~ "/Users" ]] then
     # Only try to rebuild the comp dump once a day
@@ -137,13 +152,6 @@ if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     done
     unset dest
 fi
-
-# Extra ZSH completions
-zfetch $ZPLUGDIR zsh-users/zsh-completions
-fpath=(
-    $ZPLUGDIR/zsh-users/zsh-completions/src
-    $fpath
-)
 
 # Use caching to make completion for commands with many options usable
 zstyle ':completion:*' use-cache on
@@ -588,16 +596,6 @@ if (( $+commands[fzf] )); then
     }
 fi
 
-# direnv (https://github.com/direnv/direnv)
-# ------------------------------------------------------------------------
-if (( $+commands[direnv] )); then
-    eval "$(direnv hook $SHELL)"
-
-    # Wrap tmux to avoid environment loading issues
-    # See https://github.com/direnv/direnv/wiki/Tmux
-    alias tmux='direnv exec / tmux'
-fi
-
 # History key bindings
 # ------------------------------------------------------------------------
 # Up and down arrow keys step through local history
@@ -653,32 +651,24 @@ if [[ ! -d $CACHEDIR/tmux ]]; then
 fi
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
-# Virtual envs
-# --------------------------------------------------------------------------
-if (( $+commands[nodenv] )); then
-    path=($HOME/.nodenv/shims $path)
-    export NODENV_SHELL=zsh
-    local nodenv_link=$(whence nodenv)
-    source ${nodenv_link:A:h}/../completions/nodenv.zsh
-fi
+# asdf
+# ------------------------------------------------------------------------
+if (( $+commands[asdf] )); then
+    # Don't load the asd shell integration; direnv will load it when necessary
+    autoload bashcompinit; bashcompinit
+    # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
+    # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
+    export ASDF_DIR=/usr/local/opt/asdf
+    source $ASDF_DIR/etc/bash_completion.d/asdf.bash
 
-if (( $+commands[pyenv] )); then
-    path=($HOME/.pyenv/shims $path)
-    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-    export PYENV_SHELL=zsh
-    local pyenv_link=$(whence pyenv)
-    source ${pyenv_link:A:h}/../completions/pyenv.zsh
-fi
+    eval "$(asdf exec direnv hook $SHELL)"
 
-if (( $+commands[jenv] )); then
-    path=($HOME/.jenv/shims $path)
-    export JENV_SHELL=zsh
-    export JENV_LOADED=1
-    local jenv_link=$(whence jenv)
-    source ${jenv_link:A:h}/../libexec/completions/jenv.zsh
-    if [[ -n $JAVA_HOME && ! $JAVA_HOME =~ "\.jenv/" ]]; then
-        export JAVA_HOME=$(jenv javahome)
-    fi
+    # alias direnv so we don't have to type asdf exec all the time
+    alias direnv='asdf exec direnv'
+
+    # Wrap tmux to avoid environment loading issues
+    # See https://github.com/direnv/direnv/wiki/Tmux
+    alias tmux='asdf exec direnv exec / tmux'
 fi
 
 # added by travis gem

@@ -405,8 +405,7 @@ if !empty($COC_NODE_PATH)
     let s:coc_node_path = $COC_NODE_PATH . '/bin/node'
     let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
 else
-    let s:coc_node_path = expand('~/.nodenv/versions/10.16.2/bin/node')
-    let $NODENV_VERSION = "10.16.2"
+    let s:coc_node_path = expand('~/.asdf/installs/nodejs/10.16.2/bin/node')
 endif
 if executable(s:coc_node_path)
     let g:coc_node_path = s:coc_node_path

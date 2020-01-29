@@ -1,70 +1,47 @@
-use_jenv() {
-  export JAVA_HOME=$(jenv javahome)
-  export JENV_FORCEJAVAHOME=true
+source $(asdf which direnv_use_asdf)
 
-  if [[ -e "$JAVA_HOME/bin/javac" ]]; then
-    export JDK_HOME=$(jenv javahome)
-    export JENV_FORCEJDKHOME=true
+get_version() {
+  plugin=$1
+  asdf_version=$(asdf current $plugin)
+  version=${asdf_version%% *}
+  if [[ $version != "No" ]]; then
+    echo $version
   fi
 }
 
-use_nodenv() {
-  node_version=$1
-  declare -a versions
-  versions=($(nodenv versions --bare))
-  match=0
-  for ver in ${versions[@]}; do
-    if [[ $ver == $node_version ]]; then
-      match=1
-      break
-    fi
-  done
-  if [[ $match == 0 ]]; then
-    echo "installing $node_version"
-    nodenv install $node_version
+# Use asdf, and set env vars for the p10k prompt
+use_asdf_p10k() {
+  use_asdf
+
+  py_version=$(get_version python)
+  if [[ -n $py_version ]]; then
+    export PYTHON_VERSION=$py_version
   fi
-  export NODENV_VERSION=$node_version
+
+  node_version=$(get_version nodejs)
+  if [[ -n $node_version ]]; then
+    export NODE_VERSION=$node_version
+  fi
+
+  java_version=$(get_version java)
+  if [[ -n $java_version ]]; then
+    export JAVA_VERSION=$java_version
+  fi
 }
 
+# Create and use a local python env
 use_pyenv() {
-  unset PYENV_VERSION
-  # Because each python version is prepended to the PATH, add them in reverse order
-  for ((j = $#; j >= 1; j--)); do
-    local python_version=${!j}
-    local pyenv_python=$(pyenv root)/versions/${python_version}/bin/python
-    if [[ ! -x "$pyenv_python" ]]; then
-      log_error "Error: $pyenv_python can't be executed."
-      return 1
-    fi
-
-    unset PYTHONHOME
-    local ve=$($pyenv_python -c "import pkgutil; print('venv' if pkgutil.find_loader('venv') else ('virtualenv' if pkgutil.find_loader('virtualenv') else ''))")
-
-    case $ve in
-      "venv")
-        VIRTUAL_ENV=$(direnv_layout_dir)/python-$python_version
-        export VIRTUAL_ENV
-        if [[ ! -d $VIRTUAL_ENV ]]; then
-          $pyenv_python -m venv "$VIRTUAL_ENV"
-        fi
-        PATH_add "$VIRTUAL_ENV"/bin
-        ;;
-      "virtualenv")
-        layout_python "$pyenv_python"
-        ;;
-      *)
-        log_error "Error: neither venv nor virtualenv are available to ${pyenv_python}."
-        return 1
-        ;;
-    esac
-
-    # e.g. Given "use pyenv 3.6.9 2.7.16", PYENV_VERSION becomes "3.6.9:2.7.16"
-    [[ -z "$PYENV_VERSION" ]] && PYENV_VERSION=$python_version || PYENV_VERSION="${python_version}:$PYENV_VERSION"
-  done
-
-  export PYENV_VERSION
+  asdf_version=$(asdf current python)
+  version=${asdf_version%% *}
+  if [[ ! -d .asdf/python-$version ]]; then
+    python -m venv .asdf/python-$version
+    .asdf/python-$version/bin/pip install --upgrade pip
+  fi
+  export PATH=$PWD/.asdf/python-$version/bin:$PATH
 }
 
 use_local_npm() {
-	export npm_config_registry=https://npm.registry.local:4873
+  export npm_config_registry=https://npm.registry.local:4873
 }
+
+# vim:filetype=bash:
