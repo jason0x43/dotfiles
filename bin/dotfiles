@@ -89,11 +89,11 @@ function dotfiles-brew {
 
     logSub "Checking for missing brew packages..."
     brew_packages=(
-        'asdf',
-        'autoconf',
-        'automake',
+        'asdf'
+        'autoconf'
+        'automake'
         'bat'
-        'coreutils',
+        'coreutils'
         'fd'
         'fzf'
         'gawk'
@@ -101,14 +101,14 @@ function dotfiles-brew {
         'git-delta'
         'gpg'
         'jq'
-        'libtool',
-        'libyaml',
+        'libtool'
+        'libyaml'
         'neovim'
         'node'
-        'openssl',
-        'readline',
+        'openssl'
+        'readline'
         'ripgrep'
-        'tmux',
+        'tmux'
         'unixodbc'
     )
 
