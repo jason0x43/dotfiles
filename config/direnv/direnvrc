@@ -1,32 +1,19 @@
 source $(asdf which direnv_use_asdf)
 
-get_version() {
-  plugin=$1
-  asdf_version=$(asdf current $plugin)
-  version=${asdf_version%% *}
-  if [[ $version != "No" ]]; then
-    echo $version
-  fi
-}
-
 # Use asdf, and set env vars for the p10k prompt
-use_asdf_p10k() {
+use_asdf_versions() {
+  for spec in $@; do
+    version=${spec#*@}
+    package=${spec%@*}
+    eval "export ASDF_${package^^}_VERSION=$version"
+
+    asdf current $package &> /dev/null
+    if [[ $? -ne 0 ]]; then
+      asdf install $package $version
+    fi
+  done
+
   use_asdf
-
-  py_version=$(get_version python)
-  if [[ -n $py_version ]]; then
-    export PYTHON_VERSION=$py_version
-  fi
-
-  node_version=$(get_version nodejs)
-  if [[ -n $node_version ]]; then
-    export NODE_VERSION=$node_version
-  fi
-
-  java_version=$(get_version java)
-  if [[ -n $java_version ]]; then
-    export JAVA_VERSION=$java_version
-  fi
 }
 
 # Create and use a local python env

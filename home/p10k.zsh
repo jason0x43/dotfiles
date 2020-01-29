@@ -704,22 +704,22 @@
 
   # Segment that shows the effective Java version if it's not the default
   function prompt_java() {
-    if [[ -n $JAVA_VERSION && $JAVA_VERSION != "system" ]] then
-      p10k segment -t $JAVA_VERSION
+    if [[ -n $ASDF_JAVA_VERSION ]]; then
+      p10k segment -t $ASDF_JAVA_VERSION
     fi
   }
 
   # Segment that shows the effective node version if it's not the default
   function prompt_node() {
-    if [[ -n $NODE_VERSION ]] then
-      p10k segment -t $NODE_VERSION
+    if [[ -n $ASDF_NODE_VERSION ]]; then
+      p10k segment -t $ASDF_NODE_VERSION
     fi
   }
 
   # Segment that shows the effective Python version if it's not the default
   function prompt_python() {
-    if [[ -n $PYTHON_VERSION ]] then
-      p10k segment -t $PYTHON_VERSION
+    if [[ -n $ASDF_PYTHON_VERSION ]]; then
+      p10k segment -t $ASDF_PYTHON_VERSION
     fi
   }
 }
