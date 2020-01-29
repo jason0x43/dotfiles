@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+if (( $+commands[pbpaste] )); then
+	pbpaste
+elif (( $+commands[xclip] )); then
+	xclip -o
+fi
