@@ -169,24 +169,6 @@ function dotfiles-python {
     fi
 }
 
-# Ensure jenv (Java environment) is setup properly
-function dotfiles-jenv {
-    log "Updating jenv..."
-
-    if [[ ! -d $HOME/.jenv/versions ]]; then
-        makedir $HOME/.jenv/versions
-        logSub "Created jenv versions directory"
-    fi
-
-    if [[ -x /usr/libexec/java_home ]]; then
-        sys_home=$(/usr/libexec/java_home)
-        if [[ ! $HOME/.jenv/versions/system -ef $sys_home ]] then
-            ln -sf $sys_home $HOME/.jenv/versions/system
-            logSub "Updated system link for jenv"
-        fi
-    fi
-}
-
 # Update global npm packages
 function dotfiles-npm {
     log "Updating global npm modules..."
@@ -261,23 +243,24 @@ function dotfiles-asdf {
     log "Updating asdf..."
 
     asdf_plugins=(${(@f)$(asdf plugin-list)})
-    if (( ! $asdf_plugins[(Ie)"direnv"] )); then
+    if (( ! $asdf_plugins[(Ie)direnv] )); then
         asdf plugin-add direnv
         direnv_versions=(${(@f)$(asdf list-all direnv)})
         asdf install direnv $direnv_versions[-1]
+        asdf global direnv $direnv_versions[-1]
         logSub "Installed asdf-direnv"
     fi
-    if (( ! $asdf_plugins[(Ie)"nodejs"] )); then
-        asdf plugin-add direnv
-        direnv_versions=(${(@f)$(asdf list-all direnv)})
-        asdf install direnv $direnv_versions[-1]
+    if (( ! $asdf_plugins[(Ie)nodejs] )); then
+        asdf plugin-add nodejs
+        bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
         logSub "Installed asdf-nodejs"
     fi
     # neovim uses node 10 to support at least coc-sh
     if [[ ! -d $HOME/.asdf/installs/nodejs/10.16.2 ]]; then
-        asdf nodejs install 10.16.2
+        asdf install nodejs 10.16.2
         logSub "Installed nodejs 10.16.2"
     fi
+
     asdf plugin-update --all
 }
 
@@ -333,7 +316,7 @@ else
     dotfiles-brew
     dotfiles-zsh
     dotfiles-python
-    dotfiles-jenv
+    dotfiles-asdf
     dotfiles-npm
     dotfiles-tmux
     dotfiles-vim
