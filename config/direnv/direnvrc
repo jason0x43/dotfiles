@@ -1,7 +1,7 @@
 source $(asdf which direnv_use_asdf)
 
-# Use asdf, and set env vars for the p10k prompt
-use_asdf_versions() {
+# Use particular versions of tools (e.g. python@3.7.5)
+use_tools() {
   for spec in $@; do
     version=${spec#*@}
     package=${spec%@*}
