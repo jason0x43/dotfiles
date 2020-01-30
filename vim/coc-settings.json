@@ -92,6 +92,7 @@
   },
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
   "python.formatting.provider": "black",
+  "python.globalModuleInstallation": true,
   "python.jediEnabled": false,
   "python.linting.mypyEnabled": true,
   "snippets.extends": {
