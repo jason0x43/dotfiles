@@ -99,7 +99,7 @@ function dotfiles-brew {
         'gawk'
         'git'
         'git-delta'
-        'gpg'
+        'gnupg'
         'jq'
         'libtool'
         'libyaml'
