@@ -342,6 +342,10 @@ function! s:base16_customize()
     exec 'hi DiffLine guibg=NONE'
     exec 'hi DiffRemoved guibg=NONE'
 
+    hi htmlItalic gui=italic guifg=NONE guibg=NONE
+    hi htmlBold gui=bold guifg=NONE guibg=NONE
+    hi htmlBoldItalic gui=italic,bold guifg=NONE guibg=NONE
+
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
     if has('nvim')
