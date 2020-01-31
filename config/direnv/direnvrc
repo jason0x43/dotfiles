@@ -3,13 +3,20 @@ source $(asdf which direnv_use_asdf)
 # Use particular versions of tools (e.g. python@3.7.5)
 use_tools() {
   for spec in $@; do
+    plugin=${spec%@*}
     version=${spec#*@}
-    package=${spec%@*}
-    eval "export ASDF_${package^^}_VERSION=$version"
 
-    asdf current $package &> /dev/null
+    asdf list $plugin &> /dev/null
     if [[ $? -ne 0 ]]; then
-      asdf install $package $version
+      echo "Plugin $plugin is not installed"
+      exit 1
+    fi
+
+    eval "export ASDF_${plugin^^}_VERSION=$version"
+
+    asdf current $plugin &> /dev/null
+    if [[ $? -ne 0 ]]; then
+      asdf install $plugin $version
     fi
   done
 
