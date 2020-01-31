@@ -711,8 +711,8 @@
 
   # Segment that shows the effective node version if it's not the default
   function prompt_node() {
-    if [[ -n $ASDF_NODE_VERSION ]]; then
-      p10k segment -t $ASDF_NODE_VERSION
+    if [[ -n $ASDF_NODEJS_VERSION ]]; then
+      p10k segment -t $ASDF_NODEJS_VERSION
     fi
   }
 
