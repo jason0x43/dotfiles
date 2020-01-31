@@ -418,6 +418,7 @@ alias sftp="noglob ${aliases[sftp]:-sftp}"
 # Default swift compilation options
 alias swiftc="xcrun -sdk macosx swiftc"
 
+alias npm="npm --silent"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
