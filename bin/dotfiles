@@ -170,13 +170,15 @@ function dotfiles-python {
 }
 
 # Update global npm packages
-function dotfiles-npm {
+function dotfiles-node {
     node_path=$1
     if [[ -n $node_path && -d $node_path ]]; then
         path=($node_path $path)
         export PATH
     fi
 
+    # if a node_path was provided, the function was called from another
+    # function, so don't print the top-level message
     if [[ -z $node_path ]]; then
         log "Updating global npm modules..."
     fi
@@ -325,8 +327,8 @@ function dotfiles-vim {
         done
     fi
 
-    logSub "Updating vim's node packages..."
-    dotfiles-npm "$HOME/.asdf/installs/nodejs/10.16.2/bin"
+    log "Updating vim's node packages..."
+    dotfiles-node "$HOME/.asdf/installs/nodejs/10.16.2/bin"
 }
 
 dotfiles=$HOME/.dotfiles
@@ -342,7 +344,7 @@ else
     dotfiles-zsh
     dotfiles-python
     dotfiles-asdf
-    dotfiles-npm
+    dotfiles-node
     dotfiles-tmux
     dotfiles-vim
 fi
