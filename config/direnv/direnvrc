@@ -1,5 +1,21 @@
 source $(asdf which direnv_use_asdf)
 
+# Return the currently active version of a particular tool
+#
+# This works by looking at the full path to a given executable. If it fits a
+# versioned format (e.g., python-3.7.5 or node/10.13.0), then the version is
+# returned.
+#
+function get_tool_version {
+  tool=$1
+  tool_path=$(/usr/bin/type -P $tool)
+  if [[ $tool_path =~ /$tool-([0-9][^/]*)/ ]]; then
+    echo ${BASH_REMATCH[1]}
+  elif [[ $tool_path =~ /$tool/([0-9][^/]*)/ ]]; then
+    echo ${BASH_REMATCH[1]}
+  fi
+}
+
 # Use particular versions of tools (e.g. python@3.7.5)
 use_tools() {
   for spec in $@; do
@@ -23,7 +39,29 @@ use_tools() {
   use_asdf
 }
 
-# Create and use a local python env
+# Set prompt environment variables.
+#
+# This should be used at the end of an .envrc file when using `use asdf`. It's
+# not needed if using `use tools`.
+#
+use_prompt() {
+  python_ver=$(get_tool_version python)
+  if [[ -n $python_ver ]]; then
+    export ASDF_PYTHON_VERSION=$python_ver
+  fi
+
+  nodejs_ver=$(get_tool_version node)
+  if [[ -n $nodejs_ver ]]; then
+    export ASDF_NODEJS_VERSION=$nodejs_ver
+  fi
+
+  java_ver=$(get_tool_version java)
+  if [[ -n $java_ver ]]; then
+    export ASDF_JAVA_VERSION=$java_ver
+  fi
+}
+
+# Use a local python env, creating it if necessary
 use_pyenv() {
   asdf_version=$(asdf current python)
   version=${asdf_version%% *}
@@ -34,6 +72,7 @@ use_pyenv() {
   export PATH=$PWD/.asdf/python-$version/bin:$PATH
 }
 
+# Use a custom/local npm registry.
 use_local_npm() {
   export npm_config_registry=https://npm.registry.local:4873
 }
