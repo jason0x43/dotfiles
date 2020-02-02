@@ -71,6 +71,10 @@
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
     direnv                  # direnv status (https://direnv.net/)
+    npm                     # custom npm registry host
+    asdf_node               # custom node version
+    asdf_java               # custom java version
+    asdf_python             # custom python version
     # virtualenv            # python virtual environment (https://docs.python.org/3/library/venv.html)
     # anaconda              # conda environment (https://conda.io/)
     # pyenv                 # python environment (https://github.com/pyenv/pyenv)
@@ -95,11 +99,6 @@
     # azure                 # azure account name (https://docs.microsoft.com/en-us/cli/azure)
     # gcloud                # google cloud cli account and project (https://cloud.google.com/)
     # google_app_cred       # google application credentials (https://cloud.google.com/docs/authentication/production)
-    npm                     # custom npm registry host
-    node                    # custom node version
-    java                    # custom java version
-    python                  # custom python version
-    rust                    # custom rust version
     context                 # user@hostname
     # nordvpn               # nordvpn connection status, linux only (https://nordvpn.com/)
     # ranger                # ranger shell (https://github.com/ranger/ranger)
@@ -681,53 +680,26 @@
   # Custom prefix.
   # typeset -g POWERLEVEL9K_CONTEXT_PREFIX='%fwith '
 
-  ################[ python ]####################################################################
-  # Python color.
-  typeset -g POWERLEVEL9K_PYTHON_FOREGROUND=$BASE16_BASE13
-  # Don't show the current Python version if it's the same as global.
-  typeset -g POWERLEVEL9K_PYTHON_PROMPT_ALWAYS_SHOW=false
-  # Custom icon.
-  typeset -g POWERLEVEL9K_PYTHON_VISUAL_IDENTIFIER_EXPANSION=''
+  ##########[ npm ]#############################################################################
+  typeset -g POWERLEVEL9K_NPM_FOREGROUND=$BASE16_BASE11
+  typeset -g POWERLEVEL9K_NPM_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_NPM_SHOW_ON_COMMAND='npm'
+
+  ################[ java ]######################################################################
+  typeset -g POWERLEVEL9K_ASDF_JAVA_FOREGROUND=$BASE16_BASE08
+  typeset -g POWERLEVEL9K_ASDF_JAVA_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_ASDF_JAVA_VISUAL_IDENTIFIER_EXPANSION=''
 
   ##########[ node ]############################################################################
-  # Node color.
-  typeset -g POWERLEVEL9K_NODE_FOREGROUND=$BASE16_BASE11
-  # Don't show node version if it's the same as global: $(nodenv version-name) == $(nodenv global).
-  typeset -g POWERLEVEL9K_NODE_PROMPT_ALWAYS_SHOW=false
-  # Custom icon.
-  typeset -g POWERLEVEL9K_NODE_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_ASDF_NODE_FOREGROUND=$BASE16_BASE11
+  typeset -g POWERLEVEL9K_ASDF_NODE_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_ASDF_NODE_VISUAL_IDENTIFIER_EXPANSION=''
 
-  ##########[ npm ]#############################################################################
-  # npm color.
-  typeset -g POWERLEVEL9K_NPM_FOREGROUND=$BASE16_BASE11
-  # Don't show node version if it's the same as global: $(nodenv version-name) == $(nodenv global).
-  typeset -g POWERLEVEL9K_NPM_PROMPT_ALWAYS_SHOW=false
-  # Custom icon.
-  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #######################[ go ]#################################################################
-  # Go color.
-  typeset -g POWERLEVEL9K_GO_FOREGROUND=$BASE16_BASE10
-  # Show go version only when in a go project subdirectory.
-  typeset -g POWERLEVEL9K_GO_PROJECT_ONLY=true
-  # Custom icon.
-  typeset -g POWERLEVEL9K_GO_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #################[ rust ]#####################################################################
-  # Rust color.
-  typeset -g POWERLEVEL9K_RUST_FOREGROUND=$BASE16_BASE08
-  # Show rust version only when in a rust project subdirectory.
-  typeset -g POWERLEVEL9K_RUST_PROJECT_ONLY=true
-  # Custom icon.
-  typeset -g POWERLEVEL9K_RUST_VISUAL_IDENTIFIER_EXPANSION=''
-
-  #############[ ruby ]#########################################################################
-  # Ruby color.
-  typeset -g POWERLEVEL9K_RUBY_FOREGROUND=$BASE16_BASE08
-  # Don't show ruby version if it's the same as global: $(rbenv version-name) == $(rbenv global).
-  typeset -g POWERLEVEL9K_RUBY_PROMPT_ALWAYS_SHOW=false
-  # Custom icon.
-  typeset -g POWERLEVEL9K_RUBY_VISUAL_IDENTIFIER_EXPANSION=''
+  ################[ python ]####################################################################
+  typeset -g POWERLEVEL9K_ASDF_PYTHON_FOREGROUND=$BASE16_BASE13
+  typeset -g POWERLEVEL9K_ASDF_PYTHON_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_ASDF_PYTHON_VISUAL_IDENTIFIER_EXPANSION=''
 
   ###[ virtualenv: python virtual environment (https://docs.python.org/3/library/venv.html) ]###
   # Python virtual environment color.
@@ -1219,21 +1191,21 @@
   }
 
   # Segment that shows the effective Java version if it's not the default
-  function prompt_java() {
+  function prompt_asdf_java() {
     if [[ -n $ASDF_JAVA_VERSION ]]; then
       p10k segment -t $ASDF_JAVA_VERSION
     fi
   }
 
-  # Segment that shows the effective node version if it's not the default
-  function prompt_node() {
+  # Segment that shows the effective Node version if it's not the default
+  function prompt_asdf_node() {
     if [[ -n $ASDF_NODEJS_VERSION ]]; then
       p10k segment -t $ASDF_NODEJS_VERSION
     fi
   }
 
   # Segment that shows the effective Python version if it's not the default
-  function prompt_python() {
+  function prompt_asdf_python() {
     if [[ -n $ASDF_PYTHON_VERSION ]]; then
       p10k segment -t $ASDF_PYTHON_VERSION
     fi
