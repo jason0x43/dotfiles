@@ -34,10 +34,6 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
-# Create a global plugins variable for zfetch -- this must be done before
-# zfetch is used for the first time
-typeset -A plugins
-
 export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 if [[ ! -d "$ZPLUGDIR" ]]; then
     mkdir -p "$ZPLUGDIR"
