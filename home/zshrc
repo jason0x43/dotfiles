@@ -1,12 +1,3 @@
-# Enable profiling
-# zmodload zsh/zprof
-
-# Declare some key global variables
-# ------------------------------------------------------------------------
-typeset -gU cdpath
-typeset -gU fpath
-typeset -gU manpath
-
 # Setup fpath
 # ------------------------------------------------------------------------
 # The fpath should be initialized before trying to load plugins (with zfetch)
@@ -16,6 +7,51 @@ fpath=(
     $DOTFILES/zsh/functions
     $fpath
 )
+
+# Autoload all user shell functions, following symlinks
+# ------------------------------------------------------------------------
+if [[ -d $DOTFILES/zsh/functions ]]; then
+    for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
+fi
+
+# Plugin init
+# ----------------------------------------------------------------------------
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+if [[ ! -d "$ZPLUGDIR" ]]; then
+    mkdir -p "$ZPLUGDIR"
+fi
+
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+zfetch $ZPLUGDIR chriskempson/base16-shell
+zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
+zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
+zfetch $ZPLUGDIR romkatv/powerlevel10k
+zfetch $CACHEDIR/tmux tmux-plugins/tpm
+
+# Colors
+# ----------------------------------------------------------------------------
+# Only load base16 shell locally
+BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# ----------------------------------------------------------------------------
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Enable profiling
+# zmodload zsh/zprof
+
+# Declare some key global variables
+# ------------------------------------------------------------------------
+typeset -gU cdpath
+typeset -gU fpath
+typeset -gU manpath
 
 # Brew
 # ----------------------------------------------------------------------------
@@ -32,13 +68,6 @@ if [ -e /etc/manpaths ]; then
 	done < /etc/manpaths
 fi
 
-# Plugin init
-# ----------------------------------------------------------------------------
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
-if [[ ! -d "$ZPLUGDIR" ]]; then
-    mkdir -p "$ZPLUGDIR"
-fi
-
 # Editors
 # ----------------------------------------------------------------------------
 if (( $+commands[nvim] )); then
@@ -51,12 +80,6 @@ fi
 
 export EDITOR=$SUDO_EDITOR
 export VISUAL=$SUDO_VISUAL
-
-# Autoload all user shell functions, following symlinks
-# ------------------------------------------------------------------------
-if [[ -d $DOTFILES/zsh/functions ]]; then
-    for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
-fi
 
 # Start SSH agent if it's not already running
 # ------------------------------------------------------------------------
@@ -97,9 +120,6 @@ export BAT_THEME=base16
 export ZCOMPDIR="$CACHEDIR/zsh/completions"
 export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
-
-# Extra ZSH completions
-zfetch $ZPLUGDIR zsh-users/zsh-completions
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
@@ -517,13 +537,6 @@ SAVEHIST=10000                # The maximum number of events to save in the hist
 # Lists the ten most used commands
 alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r | head"
 
-# Colors
-# ----------------------------------------------------------------------------
-# Only load base16 shell locally
-BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-zfetch $ZPLUGDIR chriskempson/base16-shell
-source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
-
 # Less
 # ----------------------------------------------------------------------------
 export LESS='-F -g -i -M -R -w -X -z-4'
@@ -637,7 +650,6 @@ fi
 
 # Load NPM completion
 if (( $+commands[npm] )); then
-    zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
     source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
@@ -646,7 +658,6 @@ fi
 if [[ ! -d $CACHEDIR/tmux ]]; then
     mkdir $CACHEDIR/tmux
 fi
-zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # asdf
 # ------------------------------------------------------------------------
@@ -675,18 +686,15 @@ fi
 # ------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
-zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
 source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
-zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # autosuggest -- load this after zsh-syntax-highlighting and
 # zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
-zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Color for found substrings
@@ -731,7 +739,6 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 
 # Prompt
 # --------------------------------------------------------------------------
-zfetch $ZPLUGDIR romkatv/powerlevel10k
 source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
