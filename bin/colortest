@@ -1,7 +1,27 @@
 #!/bin/bash
-for i in {0..255} ; do
-    printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
-    if (( i == 15 )) || (( i > 15 )) && (( (i-15) % 6 == 0 )); then
-        printf "\n";
-    fi
-done
+
+if [[ $1 == "base16" ]]; then
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "0" "7" "base00"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "18" "7" "base01"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "19" "7" "base02"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "8" "7" "base03"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "20" "0" "base04"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "7" "0" "base05"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "21" "0" "base06"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "15" "0" "base07"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "1" "0" "base08"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "16" "0" "base09"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "3" "0" "base10"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "2" "0" "base11"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "6" "0" "base12"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "4" "0" "base13"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n"  "5" "0" "base14"
+    printf "\e[48;5;%sm\e[38;5;%sm%s\e[0m\n" "17" "0" "base15"
+else
+    for i in {0..255} ; do
+        printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
+        if (( i == 15 )) || (( i > 15 )) && (( (i-15) % 6 == 0 )); then
+            printf "\n";
+        fi
+    done
+fi
