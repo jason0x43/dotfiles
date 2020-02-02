@@ -669,6 +669,9 @@ if (( $+commands[asdf] )); then
     export ASDF_DIR=/usr/local/opt/asdf
     source $ASDF_DIR/etc/bash_completion.d/asdf.bash
 
+    # Silence direnv. The prompt will indicate if it's active.
+    export DIRENV_LOG_FORMAT=
+
     eval "$(asdf exec direnv hook $SHELL)"
 
     # alias direnv so we don't have to type asdf exec all the time
