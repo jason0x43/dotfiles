@@ -6,7 +6,7 @@
 
 [diff]
 	renamelimit = 0
-	tool = nvimdiff
+	tool = vimdiff
 	renames = true
 	compactionHeuristic = true
 	indentHeuristic = true
