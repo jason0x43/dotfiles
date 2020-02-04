@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+refs=($(git for-each-ref 'refs/heads/pr/*' --format='%(refname)'))
+for ref in $refs; do
+  branch=${ref#refs/heads/}
+  git branch --delete --force $branch
+done

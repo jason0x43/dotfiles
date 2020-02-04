@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+set -e
+
+if (( $# < 1 )); then
+	echo "Need a PR number to checkout"
+	exit 1
+fi
+
+pr=$1
+
+git fetch --force --update-head-ok origin refs/pull/$pr/head:pr/$pr
+git checkout pr/$pr
