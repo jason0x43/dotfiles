@@ -20,22 +20,6 @@
 'builtin' 'setopt' 'no_aliases' 'no_sh_glob' 'brace_expand'
 
 () {
-  typeset BASE16_BASE00=0    # Default background
-  typeset BASE16_BASE01=18   # Lighter background (status bars)
-  typeset BASE16_BASE02=19   # Selection background
-  typeset BASE16_BASE03=8    # Comments, invisibles, line highlighting
-  typeset BASE16_BASE04=20   # Dark foreground (used for status bars)
-  typeset BASE16_BASE05=7    # Default foreground, caret, delimiters, operators
-  typeset BASE16_BASE06=21   # Light foreground (not often used)
-  typeset BASE16_BASE07=15   # Light background (not often used)
-  typeset BASE16_BASE08=1    # Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
-  typeset BASE16_BASE09=16   # Integers, Boolean, Constants, XML Attributes, Markup Link Url
-  typeset BASE16_BASE10=3    # Classes, Markup Bold, Search Text Background
-  typeset BASE16_BASE11=2    # Strings, Inherited Class, Markup Code, Diff Inserted
-  typeset BASE16_BASE12=6    # Support, Regular Expressions, Escape Characters, Markup Quotes
-  typeset BASE16_BASE13=4    # Functions, Methods, Attribute IDs, Headings
-  typeset BASE16_BASE14=5    # Keywords, Storage, Selector, Markup Italic, Diff Changed
-  typeset BASE16_BASE15=17   # Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
   emulate -L zsh
   setopt no_unset extended_glob
 
@@ -72,9 +56,7 @@
     background_jobs         # presence of background jobs
     direnv                  # direnv status (https://direnv.net/)
     npm                     # custom npm registry host
-    asdf_node               # custom node version
-    asdf_java               # custom java version
-    asdf_python             # custom python version
+    asdf                    # asdf tool versions
     # virtualenv            # python virtual environment (https://docs.python.org/3/library/venv.html)
     # anaconda              # conda environment (https://conda.io/)
     # pyenv                 # python environment (https://github.com/pyenv/pyenv)
@@ -211,7 +193,7 @@
   # POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR=' ' below.
   typeset -g POWERLEVEL9K_SHOW_RULER=false
   typeset -g POWERLEVEL9K_RULER_CHAR='─'        # reasonable alternative: '·'
-  typeset -g POWERLEVEL9K_RULER_FOREGROUND=$BASE16_BASE14 #7
+  typeset -g POWERLEVEL9K_RULER_FOREGROUND=5
 
   # Filler between left and right prompt on the first prompt line. You can set it to '·' or '─'
   # to make it easier to see the alignment between left and right prompt and to separate prompt
@@ -222,7 +204,7 @@
   typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR=' '
   if [[ $POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR != ' ' ]]; then
     # The color of the filler.
-    typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_FOREGROUND=$BASE16_BASE05 #7
+    typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_FOREGROUND=7
     # Add a space between the end of left prompt and the filler.
     typeset -g POWERLEVEL9K_LEFT_PROMPT_LAST_SEGMENT_END_SYMBOL=' '
     # Add a space between the filler and the start of right prompt.
@@ -235,15 +217,15 @@
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$BASE16_BASE03
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=8
   # Custom icon.
   typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='${P9K_CONTENT// } '
 
   ################################[ prompt_char: prompt symbol ]################################
   # Green prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=$BASE16_BASE11 #2
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=2
   # Red prompt symbol if the last command failed.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=$BASE16_BASE08 #1
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=1
   # Default prompt symbol.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
   # Prompt symbol in command vi mode.
@@ -260,17 +242,17 @@
 
   ##################################[ dir: current directory ]##################################
   # Default current directory color.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$BASE16_BASE12 #4
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=6
   # If directory is too long, shorten some of its segments to the shortest possible unique
   # prefix. The shortened directory can be tab-completed to the original.
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
   # Replace removed segment suffixes with this symbol.
   typeset -g POWERLEVEL9K_SHORTEN_DELIMITER=
   # Color of the shortened directory segments.
-  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=$BASE16_BASE13 #4
+  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=4
   # Color of the anchor directory segments. Anchor segments are never shortened. The first
   # segment is always an anchor.
-  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=$BASE16_BASE12 #4
+  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=6
   # Set to true to display anchor directory segments in bold.
   typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=true
   # Don't shorten directories that contain any of these files. They are anchors.
@@ -458,7 +440,7 @@
   typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=-1
 
   # Icon color.
-  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=$BASE16_BASE14 #2
+  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=5
   typeset -g POWERLEVEL9K_VCS_LOADING_VISUAL_IDENTIFIER_COLOR=
   # Custom icon.
   # typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_EXPANSION='⭐'
@@ -472,9 +454,9 @@
 
   # These settings are used for respositories other than Git or when gitstatusd fails and
   # Powerlevel10k has to fall back to using vcs_info.
-  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=$BASE16_BASE15 #2
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=$BASE16_BASE15 #2
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$BASE16_BASE11 #3
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=17
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=17
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=2
 
   ##########################[ status: exit code of the last command ]###########################
   # Enable OK_PIPE, ERROR_PIPE and ERROR_SIGNAL status states to allow us to enable, disable and
@@ -484,24 +466,24 @@
   # Status on success. No content, just an icon. No need to show it if prompt_char is enabled as
   # it will signify success by turning green.
   typeset -g POWERLEVEL9K_STATUS_OK=false
-  typeset -g POWERLEVEL9K_STATUS_OK_FOREGROUND=$BASE16_BASE11 #2
+  typeset -g POWERLEVEL9K_STATUS_OK_FOREGROUND=2
   typeset -g POWERLEVEL9K_STATUS_OK_VISUAL_IDENTIFIER_EXPANSION='✔'
 
   # Status when some part of a pipe command fails but the overall exit status is zero. It may look
   # like this: 1|0.
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE=true
-  typeset -g POWERLEVEL9K_STATUS_OK_PIPE_FOREGROUND=$BASE16_BASE11 #2
+  typeset -g POWERLEVEL9K_STATUS_OK_PIPE_FOREGROUND=2
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE_VISUAL_IDENTIFIER_EXPANSION='✔'
 
   # Status when it's just an error code (e.g., '1'). No need to show it if prompt_char is enabled as
   # it will signify error by turning red.
   typeset -g POWERLEVEL9K_STATUS_ERROR=false
-  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=$BASE16_BASE08 #1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=1
   typeset -g POWERLEVEL9K_STATUS_ERROR_VISUAL_IDENTIFIER_EXPANSION='✘'
 
   # Status when the last command was terminated by a signal.
   typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL=true
-  typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_FOREGROUND=$BASE16_BASE08 #1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_FOREGROUND=1
   # Use terse signal names: "INT" instead of "SIGINT(2)".
   typeset -g POWERLEVEL9K_STATUS_VERBOSE_SIGNAME=false
   typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_VISUAL_IDENTIFIER_EXPANSION='✘'
@@ -509,7 +491,7 @@
   # Status when some part of a pipe command fails and the overall exit status is also non-zero.
   # It may look like this: 1|0.
   typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE=true
-  typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_FOREGROUND=$BASE16_BASE08 #1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_FOREGROUND=1
   typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_VISUAL_IDENTIFIER_EXPANSION='✘'
 
   ###################[ command_execution_time: duration of the last command ]###################
@@ -518,7 +500,7 @@
   # Show this many fractional digits. Zero means round to seconds.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION=0
   # Execution time color.
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$BASE16_BASE11 #3
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=2
   # Duration format: 1d 2h 3m 4s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FORMAT='d h m s'
   # Custom icon.
@@ -530,13 +512,13 @@
   # Don't show the number of background jobs.
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=false
   # Background jobs color.
-  typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=$BASE16_BASE12 #1
+  typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=6
   # Custom icon.
   # typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   #######################[ direnv: direnv status (https://direnv.net/) ]########################
   # Direnv color.
-  typeset -g POWERLEVEL9K_DIRENV_FOREGROUND=$BASE16_BASE09 #3
+  typeset -g POWERLEVEL9K_DIRENV_FOREGROUND=16
   # Custom icon.
   typeset -g POWERLEVEL9K_DIRENV_VISUAL_IDENTIFIER_EXPANSION='▼'
 
@@ -658,7 +640,7 @@
 
   ##################################[ context: user@hostname ]##################################
   # Context color when running with privileges.
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=$BASE16_BASE10 #1
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=3
   # Context color in SSH without privileges.
   typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_FOREGROUND=7
   # Default context color (no privileges, no SSH).
@@ -681,25 +663,13 @@
   # typeset -g POWERLEVEL9K_CONTEXT_PREFIX='%fwith '
 
   ##########[ npm ]#############################################################################
-  typeset -g POWERLEVEL9K_NPM_FOREGROUND=$BASE16_BASE11
   typeset -g POWERLEVEL9K_NPM_PROMPT_ALWAYS_SHOW=false
-  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION=''
-  typeset -g POWERLEVEL9K_NPM_SHOW_ON_COMMAND='npm'
+  # typeset -g POWERLEVEL9K_NPM_SHOW_ON_COMMAND='npm'
+  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
-  ################[ java ]######################################################################
-  typeset -g POWERLEVEL9K_ASDF_JAVA_FOREGROUND=$BASE16_BASE08
-  typeset -g POWERLEVEL9K_ASDF_JAVA_PROMPT_ALWAYS_SHOW=false
-  typeset -g POWERLEVEL9K_ASDF_JAVA_VISUAL_IDENTIFIER_EXPANSION=''
-
-  ##########[ node ]############################################################################
-  typeset -g POWERLEVEL9K_ASDF_NODE_FOREGROUND=$BASE16_BASE11
-  typeset -g POWERLEVEL9K_ASDF_NODE_PROMPT_ALWAYS_SHOW=false
-  typeset -g POWERLEVEL9K_ASDF_NODE_VISUAL_IDENTIFIER_EXPANSION=''
-
-  ################[ python ]####################################################################
-  typeset -g POWERLEVEL9K_ASDF_PYTHON_FOREGROUND=$BASE16_BASE13
-  typeset -g POWERLEVEL9K_ASDF_PYTHON_PROMPT_ALWAYS_SHOW=false
-  typeset -g POWERLEVEL9K_ASDF_PYTHON_VISUAL_IDENTIFIER_EXPANSION=''
+  ################[ asdf ]######################################################################
+  typeset -g POWERLEVEL9K_ASDF_PROMPT_ALWAYS_SHOW=false
+  typeset -g POWERLEVEL9K_ASDF_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   ###[ virtualenv: python virtual environment (https://docs.python.org/3/library/venv.html) ]###
   # Python virtual environment color.
@@ -1139,7 +1109,7 @@
 
   ####################################[ time: current time ]####################################
   # Current time color.
-  typeset -g POWERLEVEL9K_TIME_FOREGROUND=$BASE16_BASE03 #6
+  typeset -g POWERLEVEL9K_TIME_FOREGROUND=8
   # Format for the current time: 09:51:02. See `man 3 strftime`.
   typeset -g POWERLEVEL9K_TIME_FORMAT='%D{%H:%M:%S}'
   # If set to true, time will update when you hit enter. This way prompts for the past
@@ -1186,28 +1156,21 @@
   # Segment that shows the effective npm registry if it's not the default
   function prompt_npm() {
     if [[ $npm_config_registry =~ "https?://([^/:]+)(:[0-9]+)?" ]] then
-      p10k segment -t $match[1]
+      # p10k segment -i "" -f "2" -t $match[1]
+      p10k segment -i  -f 2 -t $match[1]
     fi
   }
 
-  # Segment that shows the effective Java version if it's not the default
-  function prompt_asdf_java() {
+  # Segment that shows ASDF tool versions
+  function prompt_asdf() {
     if [[ -n $ASDF_JAVA_VERSION ]]; then
-      p10k segment -t $ASDF_JAVA_VERSION
+      p10k segment -i "" -f 1 -t $ASDF_JAVA_VERSION
     fi
-  }
-
-  # Segment that shows the effective Node version if it's not the default
-  function prompt_asdf_node() {
     if [[ -n $ASDF_NODEJS_VERSION ]]; then
-      p10k segment -t $ASDF_NODEJS_VERSION
+      p10k segment -i "" -f 2 -t $ASDF_NODEJS_VERSION
     fi
-  }
-
-  # Segment that shows the effective Python version if it's not the default
-  function prompt_asdf_python() {
     if [[ -n $ASDF_PYTHON_VERSION ]]; then
-      p10k segment -t $ASDF_PYTHON_VERSION
+      p10k segment -i "" -f 4 -t $ASDF_PYTHON_VERSION
     fi
   }
 
