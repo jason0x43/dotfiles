@@ -341,6 +341,7 @@ function! s:base16_customize()
     exec 'hi DiffNewFile guibg=NONE'
     exec 'hi DiffLine guibg=NONE'
     exec 'hi DiffRemoved guibg=NONE'
+    exec 'hi SpellBad guifg=#' . g:base16_gui0E
 
     hi htmlItalic gui=italic guifg=NONE guibg=NONE
     hi htmlBold gui=bold guifg=NONE guibg=NONE
