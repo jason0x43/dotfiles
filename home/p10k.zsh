@@ -1203,6 +1203,9 @@
     if [[ -n $ASDF_PYTHON_VERSION ]]; then
       p10k segment -i "" -f 4 -t $ASDF_PYTHON_VERSION
     fi
+    if [[ -n $ASDF_RUBY_VERSION ]]; then
+      p10k segment -i "" -f 5 -t $ASDF_RUBY_VERSION
+    fi
   }
 
   # Transient prompt works similarly to the builtin transient_rprompt option. It trims down prompt
