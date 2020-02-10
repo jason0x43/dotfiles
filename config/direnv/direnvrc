@@ -6,13 +6,22 @@ source $(asdf which direnv_use_asdf)
 # versioned format (e.g., python-3.7.5 or node/10.13.0), then the version is
 # returned.
 #
-function get_tool_version {
+get_tool_version() {
   tool=$1
   tool_path=$(/usr/bin/type -P $tool)
   if [[ $tool_path =~ /$tool-([0-9][^/]*)/ ]]; then
     echo ${BASH_REMATCH[1]}
   elif [[ $tool_path =~ /$tool/([0-9][^/]*)/ ]]; then
     echo ${BASH_REMATCH[1]}
+  fi
+}
+
+# Export the current version of a tool as an ASDF_<TOOL>_VERSION variable
+export_tool_version() {
+  tool=$1
+  tool_version=$(get_tool_version $tool)
+  if [[ -n $tool_version ]]; then
+    eval "export ASDF_${tool^^}_VERSION=$tool_version"
   fi
 }
 
@@ -45,20 +54,10 @@ use_tools() {
 # not needed if using `use tools`.
 #
 use_prompt() {
-  python_ver=$(get_tool_version python)
-  if [[ -n $python_ver ]]; then
-    export ASDF_PYTHON_VERSION=$python_ver
-  fi
-
-  nodejs_ver=$(get_tool_version node)
-  if [[ -n $nodejs_ver ]]; then
-    export ASDF_NODEJS_VERSION=$nodejs_ver
-  fi
-
-  java_ver=$(get_tool_version java)
-  if [[ -n $java_ver ]]; then
-    export ASDF_JAVA_VERSION=$java_ver
-  fi
+  export_tool_version python
+  export_tool_version nodejs
+  export_tool_version java
+  export_tool_version ruby
 }
 
 # Use a local python env, creating it if necessary
@@ -70,6 +69,17 @@ use_pyenv() {
     .asdf/python-$version/bin/pip install --upgrade pip
   fi
   export PATH=$PWD/.asdf/python-$version/bin:$PATH
+}
+
+# Use a local ruby env, creating it if necessary
+use_rbenv() {
+  asdf_version=$(asdf current ruby)
+  version=${asdf_version%% *}
+  if [[ ! -d .asdf/python-$version ]]; then
+    mkdir -p .asdf/ruby-$version
+  fi
+  export GEM_HOME=$PWD/.asdf/ruby-$version
+  export PATH=$GEM_HOME/bin:$PATH
 }
 
 # Use a custom/local npm registry.
