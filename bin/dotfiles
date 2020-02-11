@@ -92,6 +92,7 @@ function dotfiles-brew {
         'asdf'
         'autoconf'
         'automake'
+        'bash',
         'bat'
         'coreutils'
         'fd'
@@ -106,6 +107,7 @@ function dotfiles-brew {
         'neovim'
         'node'
         'openssl'
+        'python',
         'readline'
         'ripgrep'
         'tmux'
@@ -157,15 +159,9 @@ function dotfiles-zsh {
 # Update global python2 and python3 packages
 function dotfiles-python {
     log "Updating global python packages..."
-
     if hash pip3; then
         pip3 install -U pip setuptools pynvim > /dev/null
         logSub "Updated Python 3 packages"
-    fi
-
-    if hash pip2; then
-        PYTHONWARNINGS=ignore:DEPRECATION pip2 install -U pip setuptools pynvim > /dev/null
-        logSub "Updated Python 2 packages"
     fi
 }
 
