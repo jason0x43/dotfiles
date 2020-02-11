@@ -1,9 +1,9 @@
-#compdef term_theme
+#compdef base16_theme
 # ------------------------------------------------------------------------------
 # Description
 # -----------
 #
-#  Completion script for term_theme
+#  Completion script for base16_theme
 #
 # ------------------------------------------------------------------------------
 # Authors
@@ -13,12 +13,10 @@
 #
 # ------------------------------------------------------------------------------
 
-local cmds
-local -a base_commands
+local -a themes
 
-cmds=`term_theme -l`
-base_commands=("${(f)cmds}")
-_describe -t base_commands 'COMMANDS' base_commands
+themes=($(base16_theme -l))
+_describe -t themes 'COMMANDS' themes
 
 return 0
 
