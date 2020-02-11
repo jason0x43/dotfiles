@@ -48,18 +48,6 @@ use_tools() {
   use_asdf
 }
 
-# Set prompt environment variables.
-#
-# This should be used at the end of an .envrc file when using `use asdf`. It's
-# not needed if using `use tools`.
-#
-use_prompt() {
-  export_tool_version python
-  export_tool_version nodejs
-  export_tool_version java
-  export_tool_version ruby
-}
-
 # Use a local python env, creating it if necessary
 use_pyenv() {
   asdf_version=$(asdf current python)
