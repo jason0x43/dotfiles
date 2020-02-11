@@ -143,7 +143,7 @@ fi
 if [[ -e /usr/local/texlive ]]; then 
 	path=(
 		$path
-		/usr/local/texlive/2018/bin/x86_64-darwin
+		/usr/local/texlive/2019/bin/x86_64-darwin
 	)
 fi
 
