@@ -92,7 +92,7 @@ function dotfiles-brew {
         'asdf'
         'autoconf'
         'automake'
-        'bash',
+        'bash'
         'bat'
         'coreutils'
         'fd'
@@ -107,7 +107,7 @@ function dotfiles-brew {
         'neovim'
         'node'
         'openssl'
-        'python',
+        'python'
         'readline'
         'ripgrep'
         'tmux'
