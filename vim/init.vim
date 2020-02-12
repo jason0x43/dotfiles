@@ -192,6 +192,18 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 " space to clear search highlights
 noremap <silent> <space> :noh<cr>
 
+" yank to terminal
+" https://sunaku.github.io/tmux-yank-osc52.html
+function! Yank(text) abort
+  let escape = system("term_copy", a:text)
+  if v:shell_error
+    echoerr escape
+  else
+    call writefile([escape], '/dev/tty', 'b')
+  endif
+endfunction
+noremap <silent> <Leader>y y:<C-U>call Yank(@0)<CR>
+
 " Autocommands -----------------------------------------------------------------
 
 " Easier navigation of text files (used in autocommands)
