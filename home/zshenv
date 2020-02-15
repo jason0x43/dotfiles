@@ -37,6 +37,12 @@ fi
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
 
+if [[ -d /home/linuxbrew ]]; then
+	export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+else
+	export HOMEBREW_BASE=/usr/local
+fi
+
 # Java
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
@@ -83,9 +89,9 @@ path=(
 	$HOME/Applications
 	$HOME/.local/bin
 	$DOTFILES/bin
+	$HOMEBREW_BASE/bin
 	/usr/local/bin
-	/usr/local/sbin
-	${path:#/usr/local/bin:#/usr/local/sbin}
+	${path:#/usr/local/bin}
 )
 
 # Ruby
