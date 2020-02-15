@@ -95,15 +95,15 @@ path=(
 )
 
 # Ruby
-if [[ -d /usr/local/opt/ruby ]]; then
+if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
 	path=(
-		/usr/local/opt/ruby/bin
+		$HOMEBREW_BASE/opt/ruby/bin
 		$path
 	)
 fi
-if [[ -d /usr/local/lib/ruby/gems/2.6.0 ]]; then
+if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.6.0 ]]; then
 	path=(
-		/usr/local/lib/ruby/gems/2.6.0/bin
+		$HOMEBREW_BASE/lib/ruby/gems/2.6.0/bin
 		$path
 	)
 fi
@@ -117,13 +117,13 @@ if [[ -d $HOME/.cargo/bin ]]; then
 fi
 
 # Python
-if [[ -d /usr/local/opt/python3 ]]; then
+if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
 	# Put python at the end of the path since some of its programs, like pip,
-	# will eventually be overridden with things in /usr/local/bin
+	# will eventually be overridden with things in $HOMEBREW_BASE/bin
 	# https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
 	path=(
 		$path
-		/usr/local/opt/python3/libexec/bin
+		$HOMEBREW_BASE/opt/python3/libexec/bin
 	)
 fi
 
@@ -136,20 +136,20 @@ fi
 # fi
 
 # PHP
-if [[ -d /usr/local/opt/php@7.1/bin ]]; then
+if [[ -d $HOMEBREW_BASE/opt/php@7.1/bin ]]; then
 	path=(
 		$HOME/.composer/vendor/bin
 		$path
-		/usr/local/opt/php@7.1/bin
-		/usr/local/opt/php@7.1/sbin
+		$HOMEBREW_BASE/opt/php@7.1/bin
+		$HOMEBREW_BASE/opt/php@7.1/sbin
 	)
 fi
 
 # TeX
-if [[ -e /usr/local/texlive ]]; then 
+if [[ -e $HOMEBREW_BASE/texlive ]]; then 
 	path=(
 		$path
-		/usr/local/texlive/2019/bin/x86_64-darwin
+		$HOMEBREW_BASE/texlive/2019/bin/x86_64-darwin
 	)
 fi
 

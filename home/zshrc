@@ -125,7 +125,7 @@ export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
 fpath=(
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZCOMPDIR
-    /usr/local/share/zsh-completions
+    $HOMEBREW_BASE/share/zsh-completions
     $fpath
 )
 
@@ -665,7 +665,7 @@ if (( $+commands[asdf] )); then
     autoload bashcompinit; bashcompinit
     # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
     # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
-    export ASDF_DIR=/usr/local/opt/asdf
+    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
     source $ASDF_DIR/etc/bash_completion.d/asdf.bash
 
     # Silence direnv. The prompt will indicate if it's active.
