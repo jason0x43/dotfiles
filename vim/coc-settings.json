@@ -1,9 +1,6 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
-  "coc.preferences.formatOnSaveFiletypes": [
-    "python",
-    "markdown"
-  ],
+  "coc.preferences.formatOnSaveFiletypes": ["python", "markdown"],
   "css.lint.unknownProperties": "ignore",
   "codeLens.enable": true,
   "diagnostic.errorSign": "",
@@ -71,17 +68,11 @@
     }
   ],
   "languageserver": {
-    "ccls": {
-      "command": "ccls",
-      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
-      "initializationOptions": { "cache": { "directory": ".ccls-cache" } },
-      "rootPatterns": [
-        ".ccls",
-        "compile_commands.json",
-        ".vim/",
-        ".git/",
-        ".hg/"
-      ]
+    "clangd": {
+      "command": "clangd",
+      "args": ["--background-index"],
+      "filetypes": ["c", "cpp", "objc", "objcpp"],
+      "rootPatterns": [".vim/", ".git/", ".hg/"]
     },
     "golang": {
       "args": [],
