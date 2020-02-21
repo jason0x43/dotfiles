@@ -79,6 +79,11 @@
       "command": "gopls",
       "filetypes": ["go"],
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"]
+    },
+    "sourcekit-lsp": {
+      "filetypes": ["swift"],
+      "command": "xcrun",
+      "args": ["sourcekit-lsp"]
     }
   },
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
