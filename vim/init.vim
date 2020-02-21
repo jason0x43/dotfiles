@@ -747,7 +747,6 @@ Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
-Plug 'junegunn/gv.vim'                " a git commit browser
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
 Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
@@ -755,6 +754,7 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
+Plug 'yasuhiroki/github-actions-yaml.vim'
 
  " Show version info in package.json files
 Plug 'meain/vim-package-json', {
