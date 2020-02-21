@@ -94,6 +94,14 @@ path=(
 	${path:#/usr/local/bin}
 )
 
+# LLVM
+if [[ -d $HOMEBREW_BASE/opt/llvm ]]; then
+	path=(
+		$HOMEBREW_BASE/opt/llvm/bin
+		$path
+	)
+fi
+
 # Ruby
 if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
 	path=(
