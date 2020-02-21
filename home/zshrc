@@ -434,7 +434,6 @@ alias sftp="noglob ${aliases[sftp]:-sftp}"
 # Default swift compilation options
 alias swiftc="xcrun -sdk macosx swiftc"
 
-alias npm="npm --silent"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
@@ -686,11 +685,6 @@ fi
 
 # Line editor
 # ------------------------------------------------------------------------
-# This should be near the end (preferably at the end) of the zshrc
-# https://github.com/zsh-users/zsh-syntax-highlighting
-source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -747,5 +741,12 @@ source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+
+# Syntax highlighting
+# --------------------------------------------------------------------------
+# This should be near the end (preferably at the end) of the zshrc
+# https://github.com/zsh-users/zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 
 # vim:shiftwidth=4:tabstop=4:expandtab
