@@ -24,7 +24,7 @@ fi
 zfetch $ZPLUGDIR zsh-users/zsh-completions
 zfetch $ZPLUGDIR chriskempson/base16-shell
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
-zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
+zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
@@ -747,6 +747,6 @@ source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 # This should be near the end (preferably at the end) of the zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 
 # vim:shiftwidth=4:tabstop=4:expandtab
