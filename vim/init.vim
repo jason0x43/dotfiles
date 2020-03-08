@@ -414,19 +414,10 @@ command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Format :call CocAction('format')
 
-" A COC_NODE_PATH env var points to the version of node that should be used by
-" the vim session (particularly coc). Use it to set g:coc_node_path and to
-" update the PATH for this vim session. At least coc-sh only works with Node
-" 10.
-if !empty($COC_NODE_PATH)
-    let s:coc_node_path = $COC_NODE_PATH . '/bin/node'
-    let $PATH = $COC_NODE_PATH . '/bin:' . $PATH
-else
-    let s:coc_node_path = expand('~/.asdf/installs/nodejs/10.16.2/bin/node')
-endif
-if executable(s:coc_node_path)
-    let g:coc_node_path = s:coc_node_path
-endif
+" Use a specific version of Node for vim. At least coc-sh won't work with > 10
+let node_version = '10.19.0'
+let g:coc_node_path = expand('~/.asdf/installs/nodejs/' . node_version . '/bin/node')
+let g:node_host_prog = expand('~/.asdf/installs/nodejs/' . node_version . '/.npm/bin/neovim-node-host')
 
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'
