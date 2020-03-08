@@ -100,5 +100,6 @@
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
   "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.referencesCodeLens.enable": false
+  "typescript.referencesCodeLens.enable": false,
+  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml"
 }
