@@ -83,6 +83,10 @@ if [[ -z $TERM_PROGRAM ]]; then
 	fi
 fi
 
+# Tmux
+# --------------------------------------------------------------------------
+export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+
 # Path
 # --------------------------------------------------------------------------
 path=(
