@@ -24,7 +24,7 @@
 	precomposeunicode = true
 	# pager = less -F -X
 	; pager = diff-so-fancy | less -RFX
-	pager = delta
+	pager = delta --plus-color="#003300"
 
 [alias]
 	a = add
