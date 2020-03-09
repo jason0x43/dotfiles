@@ -678,6 +678,9 @@ if (( $+commands[asdf] )); then
     # Wrap tmux to avoid environment loading issues
     # See https://github.com/direnv/direnv/wiki/Tmux
     alias tmux='asdf exec direnv exec / tmux'
+
+    # Indicate which asdf version of node should be used with vim
+    export VIM_NODE_VERSION=10.19.0
 fi
 
 # added by travis gem

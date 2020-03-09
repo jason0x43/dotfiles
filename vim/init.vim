@@ -415,9 +415,10 @@ command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Format :call CocAction('format')
 
 " Use a specific version of Node for vim. At least coc-sh won't work with > 10
-let node_version = '10.19.0'
-let g:coc_node_path = expand('~/.asdf/installs/nodejs/' . node_version . '/bin/node')
-let g:node_host_prog = expand('~/.asdf/installs/nodejs/' . node_version . '/.npm/bin/neovim-node-host')
+if exists('$VIM_NODE_VERSION')
+  let g:coc_node_path = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin/node')
+  let g:node_host_prog = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/.npm/bin/neovim-node-host')
+endif
 
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'

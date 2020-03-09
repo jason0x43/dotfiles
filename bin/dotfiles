@@ -276,9 +276,9 @@ function dotfiles-asdf {
         logSub "Installed asdf-java"
     fi
     # neovim uses node 10 to support at least coc-sh
-    if [[ ! -d $HOME/.asdf/installs/nodejs/10.16.2 ]]; then
-        asdf install nodejs 10.16.2
-        logSub "Installed nodejs 10.16.2"
+    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION ]]; then
+        asdf install nodejs $VIM_NODE_VERSION
+        logSub "Installed nodejs $VIM_NODE_VERSION"
     fi
 
     asdf plugin-update --all
