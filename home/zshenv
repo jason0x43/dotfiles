@@ -165,6 +165,14 @@ if [[ -e $HOMEBREW_BASE/texlive ]]; then
 	)
 fi
 
+# VMware
+if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then
+	path=(
+		$path
+		/Applications/VMware\ Fusion.app/Contents/Library
+	)
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
