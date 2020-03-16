@@ -59,6 +59,13 @@ function dotfiles-home {
         link $dotfiles/config/$f $HOME/.config/$(basename $f)
     done
 
+    for f in $(ls $HOME/.[a-z]*); do
+        if [[ -L $f ]] && [[ ! -e $f ]]; then
+            rm $f
+            logSub "Removed $f"
+        fi
+    done
+
     link $dotfiles/vim $HOME/.vim
 
     makedir $cachedir/tmux/resurrect
