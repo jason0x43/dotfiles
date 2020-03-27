@@ -16,11 +16,12 @@
     "typescript.tsx",
     "typescriptreact"
   ],
-  "explorer.sources": [
-    {
-      "name": "file",
-      "expand": true
-    }
+  "eslint.enable": false,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
   ],
   "explorer.icon.enableNerdfont": true,
   "explorer.file.column.git.icon.added": "✚",
@@ -39,14 +40,15 @@
     "icon",
     "filename"
   ],
-  "eslint.enable": false,
-  "eslint.filetypes": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
+  "explorer.keyMappings": {
+    "<cr>": ["expandable?", "expandOrCollapse", "open"]
+  },
+  "explorer.sources": [
+    {
+      "name": "file",
+      "expand": true
+    }
   ],
-  "explorer.openAction.changeDirectory": false,
   "git.addGBlameToBufferVar": true,
   "git.addGBlameToVirtualText": false,
   "git.addedSign.text": "┃",
