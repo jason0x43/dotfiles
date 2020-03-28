@@ -95,6 +95,7 @@ path=(
 	$DOTFILES/bin
 	$HOMEBREW_BASE/bin
 	/usr/local/bin
+	$HOMEBREW_BASE/sbin
 	${path:#/usr/local/bin}
 )
 
