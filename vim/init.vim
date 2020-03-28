@@ -759,7 +759,7 @@ Plug 'neoclide/coc.nvim', {
     \ }
 
 " File browsing
-Plug 'jason0x43/vim-wildgitignore'
+" Plug 'jason0x43/vim-wildgitignore'
 
 " Base filetype plugins (these detect filetypes)
 Plug 'pangloss/vim-javascript'
