@@ -441,7 +441,9 @@ alias npmr="npm --registry=https://registry.npmjs.org"
 alias light='base16_theme solarized-light'
 alias dark='base16_theme ashes'
 
-alias hassio='TERM=xterm-256color ssh hassio@homeassistant.local'
+alias ha='TERM=xterm-256color ssh root@homeassistant.local'
+alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log'
+alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log'
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
