@@ -444,6 +444,7 @@ alias dark='base16_theme ashes'
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
 alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log'
 alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log'
+alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
