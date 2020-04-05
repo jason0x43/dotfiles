@@ -183,7 +183,7 @@ inoremap <silent><expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 function! s:show_documentation()
     if (index(['vim', 'help'], &filetype) >= 0)
         execute 'h ' . expand('<cword>')
-    elseif exists('CocAction')
+    elseif exists(':CocAction')
         call CocAction('doHover')
     endif
 endfunction
@@ -824,8 +824,8 @@ if exists('coc#config')
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     augroup END
 
-	nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-	nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
+    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 endif
 
 UpdateColors
