@@ -119,9 +119,6 @@ let mapleader=';'
 " # to toggle cursor crosshairs
 map <silent> # :set cursorcolumn! cursorline!<CR>
 
-" Y to yank to the clipboard
-map <silent> Y "*y
-
 " <Leader>w to write
 map <silent> <Leader>w :w<CR>
 map <silent> <Leader>W :w!<CR>
@@ -202,7 +199,12 @@ function! Yank(text) abort
     call writefile([escape], '/dev/tty', 'b')
   endif
 endfunction
+
+" yank to terminal and system clipboard
 noremap <silent> <Leader>y y:<C-U>call Yank(@0)<CR>
+" paste from system clipboard
+noremap <silent> <Leader>p "*p
+
 
 " Autocommands -----------------------------------------------------------------
 
