@@ -121,6 +121,13 @@ function dotfiles-brew {
         'unixodbc'
     )
 
+    if [[ $(uname -s) == "Darwin" ]]; then
+        brew_packages=(
+            $brew_packages
+            'mas'
+        )
+    fi
+
     installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
 
     for pkg in $brew_packages; do
@@ -135,6 +142,12 @@ function dotfiles-brew {
 
     logSub "Updating installed brew casks..."
     brew cask upgrade
+}
+
+# Update Mac App Store apps
+function dotfiles-mas {
+    logSub "Updating installed App Store apps..."
+    mas upgrade
 }
 
 # Update zsh plugins
@@ -350,6 +363,10 @@ else
     dotfiles-node
     dotfiles-tmux
     dotfiles-vim
+
+    if (( $+commands[mas] )); then
+        dotfiles-mas
+    fi
 fi
 
 log "Done"
