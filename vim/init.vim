@@ -169,7 +169,7 @@ inoremap <silent><expr> <TAB>
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<Tab>" :
       \ coc#refresh()
- 
+
 " Shift-Tab for cycling backwards through matches in a completion popup
 inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
 
@@ -240,7 +240,7 @@ augroup vimrc
     autocmd BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>
 
     " More predictable syntax highlighting
-    " autocmd BufEnter * syntax sync fromstart
+    autocmd BufEnter * syntax sync fromstart
 
     " Automatically close preview windows after autocompletion
     autocmd CompleteDone * pclose
