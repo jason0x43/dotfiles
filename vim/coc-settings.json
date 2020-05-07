@@ -1,6 +1,6 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
-  "coc.preferences.formatOnSaveFiletypes": ["python", "markdown"],
+  "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
   "coc.preferences.hoverTarget": "float",
   "css.lint.unknownProperties": "ignore",
   "codeLens.enable": true,
@@ -32,18 +32,10 @@
   "explorer.file.column.git.icon.untracked": "?",
   "explorer.file.column.git.icon.modified": "✹",
   "explorer.file.column.git.icon.ignored": "☒",
-  "explorer.file.columns": [
-    "git",
-    "selection",
-    "clip",
-    "diagnosticError",
-    "indent",
-    "icon",
-    "filename"
-  ],
   "explorer.keyMappings": {
     "<cr>": ["expandable?", "expandOrCollapse", "open"]
   },
+  "explorer.previewAction.onHover": false,
   "explorer.sources": [
     {
       "name": "file",
