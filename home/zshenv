@@ -146,12 +146,12 @@ if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
 fi
 
 # Go
-# if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
-# 	path=(
-# 		$GOPATH/bin
-# 		$path
-# 	)
-# fi
+if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
+	path=(
+		$GOPATH/bin
+		$path
+	)
+fi
 
 # PHP
 if [[ -d $HOMEBREW_BASE/opt/php@7.1/bin ]]; then
