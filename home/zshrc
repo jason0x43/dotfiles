@@ -442,8 +442,8 @@ alias light='base16_theme solarized-light'
 alias dark='base16_theme ashes'
 
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
-alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log'
-alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log'
+alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log | bat --paging=never -l halog'
+alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
 alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
 
 # Colorize ls
@@ -461,9 +461,11 @@ fi
 
 # Colorize cat
 if (( $+commands[bat] )); then
-    export BAT_THEME=base16
-    export BAT_STYLE=plain
     alias cat=bat
+
+    # BAT_THEME is also used by delta, so set it here rather than in the bat
+    # config file
+    export BAT_THEME=base16_plus
 fi
 
 # Other ls aliases
