@@ -145,6 +145,13 @@ if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
 	)
 fi
 
+if [[ -d $HOME/.poetry/bin ]]; then
+	path=(
+		$path
+		$HOME/.poetry/bin
+	)
+fi
+
 # Go
 if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
 	path=(
@@ -176,6 +183,14 @@ if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then
 	path=(
 		$path
 		/Applications/VMware\ Fusion.app/Contents/Library
+	)
+fi
+
+# Deno
+if [[ -d $HOME/.deno/bin ]]; then
+	path=(
+		$path
+		$HOME/.deno/bin
 	)
 fi
 
