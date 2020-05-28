@@ -205,7 +205,7 @@ function dotfiles-node {
     fi
 
     # get list of outdated global packages
-    mods=$(npm --registry=https://registry.npmjs.org outdated -g --parseable)
+    mods=($(npm --registry=https://registry.npmjs.org outdated -g --parseable))
     for mod in $mods; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
