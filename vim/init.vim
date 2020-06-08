@@ -264,6 +264,12 @@ augroup vimrc
 
     " Use ;; to go to previous buffer
     nnoremap <leader><leader> <C-^>
+
+    " Auto-set quickfix height
+    function! AdjustWindowHeight(minheight, maxheight)
+      exe max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"
+    endfunction
+    autocmd FileType qf call AdjustWindowHeight(1, 10)
 augroup END
 
 " Add a fullscreen Help command
@@ -309,6 +315,30 @@ function! s:restoreCursor()
 endfunction
 
 autocmd vimrc BufWinEnter * call s:restoreCursor()
+
+let s:hidden_all = 0
+function! s:toggleChrome()
+    if s:hidden_all  == 0
+        let s:hidden_all = 1
+        set noshowmode
+        set noruler
+        set cmdheight=1
+        set laststatus=0
+        set noshowcmd
+        set nonumber
+        set signcolumn=no
+    else
+        let s:hidden_all = 0
+        set showmode
+        set cmdheight=2
+        set ruler
+        set laststatus=2
+        set showcmd
+        set number
+        set signcolumn=yes
+    endif
+endfunction
+command! ToggleChrome call s:toggleChrome()
 
 " =====================================================================
 " Plugin config
@@ -775,6 +805,7 @@ Plug 'groenewege/vim-less'
 Plug 'rust-lang/rust.vim'
 Plug 'wavded/vim-stylus'
 Plug 'Glench/Vim-Jinja2-Syntax'
+Plug 'udalov/kotlin-vim'
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
