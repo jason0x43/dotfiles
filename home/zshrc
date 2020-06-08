@@ -468,6 +468,11 @@ if (( $+commands[bat] )); then
     export BAT_THEME=base16_plus
 fi
 
+# Better top
+if (( $+commands[htop] )); then
+    alias top=htop
+fi
+
 # Other ls aliases
 alias l='ls -1A'         # Lists in one column, hidden files
 alias ll='ls -lh'        # Lists human readable sizes
@@ -730,6 +735,7 @@ bindkey -M vicmd "j" history-substring-search-down
 bindkey '^f' vi-forward-word
 bindkey '^b' vi-forward-blank-word
 bindkey '^e' vi-end-of-line
+bindkey '[24~' autosuggest-toggle
 
 # Use a solarized-friendly background color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
