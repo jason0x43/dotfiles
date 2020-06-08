@@ -18,7 +18,7 @@
     "typescript.tsx",
     "typescriptreact"
   ],
-  "eslint.enable": false,
+  "eslint.enable": true,
   "eslint.filetypes": [
     "javascript",
     "javascriptreact",
@@ -34,7 +34,7 @@
   "explorer.file.column.git.icon.modified": "✹",
   "explorer.file.column.git.icon.ignored": "☒",
   "explorer.keyMappings": {
-    "<cr>": ["expandable?", "expandOrCollapse", "open"]
+    "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
   "explorer.previewAction.onHover": false,
   "explorer.sources": [
@@ -60,7 +60,7 @@
     },
     {
       "fileMatch": ["intern.json", "intern-*.json", "intern.*.json"],
-      "url": "http://theintern.io/schemas/intern/config-4.5.json"
+      "url": "https://theintern.io/intern/resources/4/schemas/config.json"
     }
   ],
   "languageserver": {
