@@ -119,9 +119,9 @@ if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
 		$path
 	)
 fi
-if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.6.0 ]]; then
+if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.7.0 ]]; then
 	path=(
-		$HOMEBREW_BASE/lib/ruby/gems/2.6.0/bin
+		$HOMEBREW_BASE/lib/ruby/gems/2.7.0/bin
 		$path
 	)
 fi
@@ -130,6 +130,14 @@ fi
 if [[ -d $HOME/.cargo/bin ]]; then
 	path=(
 		$HOME/.cargo/bin
+		$path
+	)
+fi
+
+# sqlite3
+if [[ -d $HOMEBREW_BASE/opt/sqlite3 ]]; then
+	path=(
+		$HOMEBREW_BASE/opt/sqlite3/bin
 		$path
 	)
 fi
