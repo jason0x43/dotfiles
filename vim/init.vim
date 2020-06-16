@@ -488,6 +488,7 @@ let g:coc_status_error_sign = ' '
 let g:coc_status_warning_sign = ' '
 
 let g:coc_snippet_next = '<tab>'
+let g:coc_disable_startup_warning = 1
 
 function! s:coc_customize_colors()
     exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
