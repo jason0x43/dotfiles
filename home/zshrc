@@ -28,6 +28,7 @@ zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
+zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Colors
@@ -748,6 +749,13 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 # hang zsh
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+
+# autocomplete
+# --------------------------------------------------------------------------
+source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+zstyle ':autocomplete:list-choices:*' max-lines 5
+zstyle ':autocomplete:space:*' magic expand-history
+zstyle ':autocomplete:tab:*' completion select
 
 # Prompt
 # --------------------------------------------------------------------------
