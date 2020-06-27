@@ -47,6 +47,12 @@ function fixterm {
     fi
 }
 
+# Rebuild bat cache
+function dotfiles-bat {
+    log "Rebuilding bat cache..."
+    bat cache --build
+}
+
 # Link dotfiles into $HOME, update terminfo
 function dotfiles-home {
     log "Updating home directory files..."
@@ -363,6 +369,7 @@ else
     dotfiles-node
     dotfiles-tmux
     dotfiles-vim
+    dotfiles-bat
 
     if (( $+commands[mas] )); then
         dotfiles-mas
