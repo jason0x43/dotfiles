@@ -13,3 +13,4 @@ fish/fish_history
 config/kitty/colors.conf
 config/kitty/local.conf
 config/direnv/allow
+.tool-versions

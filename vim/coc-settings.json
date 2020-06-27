@@ -8,6 +8,7 @@
   "diagnostic.errorSign": "",
   "diagnostic.infoSign": "",
   "diagnostic.maxWindowHeight": 20,
+  // "diagnostic.messageTarget": "echo",
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.virtualText": false,
   "diagnostic.warningSign": "",
