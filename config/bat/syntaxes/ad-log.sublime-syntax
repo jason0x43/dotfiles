@@ -1,0 +1,28 @@
+%YAML 1.2
+---
+name: AppDaemon Assistant Log
+file_extensions: [adlog]
+scope: source.adlog
+
+contexts:
+  main:
+    - match: (.*) (ERROR) (\w+:)?
+      captures:
+        1: commet
+        2: markup.deleted
+        3: markup.bold
+    - match: (.*) (WARNING) (\w+:)?
+      captures:
+        1: comment
+        2: entity.name.tag
+        3: markup.bold
+    - match: (.*) (INFO) (\w+:)?
+      captures:
+        1: comment
+        2: constant.other.color
+        3: markup.bold
+    - match: (.*) (DEBUG) (\w+:)?
+      captures:
+        1: comment
+        2: invalid.deprecated
+        3: markup.bold

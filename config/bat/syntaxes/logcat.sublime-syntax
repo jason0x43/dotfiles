@@ -1,0 +1,125 @@
+%YAML 1.2
+---
+name: logcat (-v threadtime)
+file_extensions: [logcat]
+scope: source.logcat.threadtime
+
+# this is the generic format of a log
+# https://regex101.com/r/eC3lI7/
+
+# match: '(?x)^
+#       (?:\s*(\d+:)\s*)?         # (optional) line number
+#       ([\d-]+)\s+([\d:.]+)\s+   # date, time
+#       (\d+)\s+(\d+)\s+          # pid, tid
+#       ([VDIWEF])\s+(.*?):\s+    # log type, log tag
+#       (.*)                      # log message
+#       $'
+# captures:
+#   '1': line number
+#   '2': date
+#   '3': time
+#   '4': pid
+#   '5': tid
+#   '6': log type
+#   '7': log tag (note it is non greedy)
+#   '8': log message
+# captures[6] and captures[8] should be of the same scope
+
+patterns:
+- include: '#verbose'
+- include: '#debug'
+- include: '#info'
+- include: '#warn'
+- include: '#error'
+
+contexts:
+  main:
+    - name: meta.logcat.line.verbose
+      match: '(?x)^
+            (?:\s*(\d+:)\s*)?
+            ([\d-]+)\s+([\d:.]+)\s+
+            (\d+)\s+(\d+)\s+
+            ([V])\s+(.*?):\s+
+            (.*)
+            $'
+      captures:
+        1: constant.numeric.logcat.line
+        2: comment.timestamp.date
+        3: comment.timestamp.time
+        4: comment.logcat.pid
+        5: comment.logcat.tid
+        6: comment.logcat.type
+        7: string.logcat.tag
+        8: comment.logcat.msg
+
+    - name: meta.logcat.line.debug
+      match: '(?x)^
+            (?:\s*(\d+:)\s*)?
+            ([\d-]+)\s+([\d:.]+)\s+
+            (\d+)\s+(\d+)\s+
+            ([D])\s+(.*?):\s+
+            (.*)
+            $'
+      captures:
+        1: constant.numeric.logcat.line
+        2: comment.timestamp.date
+        3: comment.timestamp.time
+        4: comment.logcat.pid
+        5: comment.logcat.tid
+        6: entity.name.function.logcat.type
+        7: string.logcat.tag
+        8: entity.name.function.logcat.msg
+
+    - name: meta.logcat.line.info
+      match: '(?x)^
+            (?:\s*(\d+:)\s*)?
+            ([\d-]+)\s+([\d:.]+)\s+
+            (\d+)\s+(\d+)\s+
+            ([I])\s+(.*?):\s+
+            (.*)
+            $'
+      captures:
+        1: constant.numeric.logcat.line
+        2: comment.timestamp.date
+        3: comment.timestamp.time
+        4: comment.logcat.pid
+        5: comment.logcat.tid
+        6: entity.name.class.logcat.type
+        7: string.logcat.tag
+        8: text.logcat.msg
+
+    - name: meta.logcat.line.warn
+      match: '(?x)^
+            (?:\s*(\d+:)\s*)?
+            ([\d-]+)\s+([\d:.]+)\s+
+            (\d+)\s+(\d+)\s+
+            ([W])\s+(.*?):\s+
+            (.*)
+            $'
+      captures:
+        1: constant.numeric.logcat.line
+        2: comment.timestamp.date
+        3: comment.timestamp.time
+        4: comment.logcat.pid
+        5: comment.logcat.tid
+        6: entity.name.tag.logcat.type
+        7: string.logcat.tag
+        8: entity.name.tag.logcat.msg
+
+    - name: meta.logcat.line.error
+      match: '(?x)^
+            (?:\s*(\d+:)\s*)?
+            ([\d-]+)\s+([\d:.]+)\s+
+            (\d+)\s+(\d+)\s+
+            ([EF])\s+(.*?):\s+
+            (.*)
+            $'
+      captures:
+        1: constant.numeric.logcat.line
+        2: comment.timestamp.date
+        3: comment.timestamp.time
+        4: comment.logcat.pid
+        5: comment.logcat.tid
+        6: keyword.logcat.type
+        7: string.logcat.tag
+        8: keyword.logcat.msg

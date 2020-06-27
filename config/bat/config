@@ -1,0 +1,3 @@
+# The theme is set in zshrc for compatability with delta
+--italic-text=always
+--style=plain
