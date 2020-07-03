@@ -752,10 +752,10 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 
 # autocomplete
 # --------------------------------------------------------------------------
-source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-zstyle ':autocomplete:list-choices:*' max-lines 5
-zstyle ':autocomplete:space:*' magic expand-history
-zstyle ':autocomplete:tab:*' completion select
+# source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# zstyle ':autocomplete:list-choices:*' max-lines 5
+# zstyle ':autocomplete:space:*' magic expand-history
+# zstyle ':autocomplete:tab:*' completion select
 
 # Prompt
 # --------------------------------------------------------------------------
