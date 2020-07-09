@@ -497,6 +497,7 @@ function! s:coc_customize_colors()
     exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=NONE'
     exec 'hi CocInfoSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=bold'
     exec 'hi CocInfoVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=NONE'
+    exec 'hi CocErrorHighlight gui=undercurl guisp=red'
 endfunction
 
 augroup vimrc
