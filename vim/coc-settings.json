@@ -26,7 +26,7 @@
     "typescript",
     "typescriptreact"
   ],
-  "explorer.icon.enableNerdfont": true,
+  "explorer.file.autoReveal": false,
   "explorer.file.column.git.icon.added": "✚",
   "explorer.file.column.git.icon.deleted": "✖",
   "explorer.file.column.git.icon.renamed": "➜",
@@ -34,6 +34,7 @@
   "explorer.file.column.git.icon.untracked": "?",
   "explorer.file.column.git.icon.modified": "✹",
   "explorer.file.column.git.icon.ignored": "☒",
+  "explorer.icon.enableNerdfont": true,
   "explorer.keyMappings": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
