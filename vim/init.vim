@@ -427,6 +427,7 @@ map <silent> <C-]> <Plug>(coc-definition)
 map <silent> <leader>t <Plug>(coc-format-selected)
 map <silent> <leader>r <Plug>(coc-rename)
 map <silent> <leader>j <Plug>(coc-references)
+map <silent> <leader>d <Plug>(coc-diagnostic-info)
 
 " navigate chunks of current buffer
 nmap g[ <Plug>(coc-git-prevchunk)
