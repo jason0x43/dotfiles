@@ -378,18 +378,21 @@ function! s:base16_customize()
     exec 'hi IncSearch guibg=#' . g:base16_gui0D
         \ . ' guifg=#' . g:base16_gui00
     " hi visibility cursor
-    exec 'hi Cursor guibg=red'
+    hi Cursor guibg=red
     " no background for diffs (it messes with floating windows)
-    exec 'hi DiffAdded guibg=NONE'
-    exec 'hi DiffFile guibg=NONE'
-    exec 'hi DiffNewFile guibg=NONE'
-    exec 'hi DiffLine guibg=NONE'
-    exec 'hi DiffRemoved guibg=NONE'
+    hi DiffAdded guibg=NONE
+    hi DiffFile guibg=NONE
+    hi DiffNewFile guibg=NONE
+    hi DiffLine guibg=NONE
+    hi DiffRemoved guibg=NONE
     exec 'hi SpellBad guifg=#' . g:base16_gui0E
 
     hi htmlItalic gui=italic guifg=NONE guibg=NONE
     hi htmlBold gui=bold guifg=NONE guibg=NONE
     hi htmlBoldItalic gui=italic,bold guifg=NONE guibg=NONE
+
+    exec 'hi MatchParen guifg=NONE guibg=#' . g:base16_gui01
+    exec 'hi MatchParenCur guifg=NONE guibg=#' . g:base16_gui01
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
