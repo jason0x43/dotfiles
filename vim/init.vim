@@ -411,9 +411,11 @@ augroup END
 " ---------------------------------------------------------------------
 augroup vimrc
     if exists('CocActionAsync')
-        autocmd CursorHold * silent call CocActionAsync('highlight')
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     endif
+
+    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 augroup END
 
 command! Rg :CocList --interactive grep<CR>
@@ -482,6 +484,7 @@ let g:coc_status_error_sign = ' '
 let g:coc_status_warning_sign = ' '
 
 let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<S-tab>'
 let g:coc_disable_startup_warning = 1
 
 function! s:coc_customize_colors()
@@ -847,14 +850,6 @@ call plug#end()
 " Post-plugin initialization
 if exists('coc#config')
     call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
-
-    augroup vimrc
-        autocmd CursorHold * silent call CocActionAsync('highlight')
-        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-    augroup END
-
-    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 endif
 
 UpdateColors
