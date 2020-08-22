@@ -59,6 +59,18 @@ use_pyenv() {
   export PATH=$PWD/.asdf/python-$version/bin:$PATH
 }
 
+# Use a central python env, creating it if necessary
+use_pyenv_home() {
+  asdf_version=$(asdf current python)
+  version=${asdf_version%% *}
+  dir=${PWD//\//_}
+  if [[ ! -d ~/.asdf/python-$version/$dir ]]; then
+    python -m venv ~/.asdf/python-$version/$dir
+    ~/.asdf/python-$version/$dir/bin/pip install --upgrade pip
+  fi
+  export PATH=$HOME/.asdf/python-$version/$dir/bin:$PATH
+}
+
 # Use a local ruby env, creating it if necessary
 use_rbenv() {
   asdf_version=$(asdf current ruby)
