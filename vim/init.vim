@@ -378,18 +378,21 @@ function! s:base16_customize()
     exec 'hi IncSearch guibg=#' . g:base16_gui0D
         \ . ' guifg=#' . g:base16_gui00
     " hi visibility cursor
-    exec 'hi Cursor guibg=red'
+    hi Cursor guibg=red
     " no background for diffs (it messes with floating windows)
-    exec 'hi DiffAdded guibg=NONE'
-    exec 'hi DiffFile guibg=NONE'
-    exec 'hi DiffNewFile guibg=NONE'
-    exec 'hi DiffLine guibg=NONE'
-    exec 'hi DiffRemoved guibg=NONE'
+    hi DiffAdded guibg=NONE
+    hi DiffFile guibg=NONE
+    hi DiffNewFile guibg=NONE
+    hi DiffLine guibg=NONE
+    hi DiffRemoved guibg=NONE
     exec 'hi SpellBad guifg=#' . g:base16_gui0E
 
     hi htmlItalic gui=italic guifg=NONE guibg=NONE
     hi htmlBold gui=bold guifg=NONE guibg=NONE
     hi htmlBoldItalic gui=italic,bold guifg=NONE guibg=NONE
+
+    exec 'hi MatchParen guifg=NONE guibg=#' . g:base16_gui01
+    exec 'hi MatchParenCur guifg=NONE guibg=#' . g:base16_gui01
 
     " This doesn't currently work
     " see https://github.com/neovim/neovim/issues/7018
@@ -411,9 +414,11 @@ augroup END
 " ---------------------------------------------------------------------
 augroup vimrc
     if exists('CocActionAsync')
-        autocmd CursorHold * silent call CocActionAsync('highlight')
         autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     endif
+
+    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
+    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 augroup END
 
 command! Rg :CocList --interactive grep<CR>
@@ -446,12 +451,6 @@ nmap gf :CocCommand git.foldUnchanged<CR>
 command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Format :call CocAction('format')
-
-" Use a specific version of Node for vim. At least coc-sh won't work with > 10
-if exists('$VIM_NODE_VERSION')
-  let g:coc_node_path = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin/node')
-  let g:node_host_prog = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/.npm/bin/neovim-node-host')
-endif
 
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'
@@ -488,6 +487,7 @@ let g:coc_status_error_sign = ' '
 let g:coc_status_warning_sign = ' '
 
 let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<S-tab>'
 let g:coc_disable_startup_warning = 1
 
 function! s:coc_customize_colors()
@@ -853,14 +853,6 @@ call plug#end()
 " Post-plugin initialization
 if exists('coc#config')
     call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
-
-    augroup vimrc
-        autocmd CursorHold * silent call CocActionAsync('highlight')
-        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-    augroup END
-
-    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
 endif
 
 UpdateColors
