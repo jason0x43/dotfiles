@@ -357,28 +357,6 @@ let g:autoprettier_exclude = [
 " ---------------------------------------------------------------------
 let g:jsx_ext_required = 1
 
-" vim-lsp
-" ---------------------------------------------------------------------
-" let g:lsp_log_verbose = 1
-" let g:lsp_log_file = expand('~/vim-lsp.log')
-let g:lsp_signs_enabled = 1
-let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_diagnostics_echo_delay = 100
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_warning = {'text': '!'}
-let g:lsp_signs_information = {'text': '?'}
-let g:lsp_signs_hint = {'text': '$'}
-
-" vim-signify
-" ---------------------------------------------------------------------
-let g:signify_vcs_list = ['git']
-let s:signify_sign = '┃'
-let g:signify_sign_add = s:signify_sign
-let g:signify_sign_change = s:signify_sign
-let g:signify_sign_changedelete = s:signify_sign
-let g:signify_sign_delete = s:signify_sign
-let g:signify_sign_show_count = 10
-
 " vimtex
 " ---------------------------------------------------------------------
 let g:vimtex_indent_lists = [
@@ -419,16 +397,6 @@ Plug 'w0rp/ale'                            " Linting
 Plug 'mhinz/vim-signify'                   " Show modified lines
 Plug 'RRethy/vim-hexokinase'               " Show color swatches
 
-" LSP
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-
-" Completion
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-
 " File browsing
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTreeFind' ] }
@@ -461,6 +429,8 @@ Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
 Plug 'tpope/vim-classpath', { 'for': 'java' }
 Plug 'lervag/vimtex', { 'for': ['tex', 'latex'] }
 
+Plug 'neoclide/coc.nvim', { 'do': 'yarn install --frozen-lockfile' }
+
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
     Plug $FZF_PATH
@@ -479,88 +449,3 @@ endif
 " Load all the plugins
 call plug#end()
 
-" =====================================================================
-" Post-plugin initialization
-" =====================================================================
-
-" vim-lsp
-" ---------------------------------------------------------------------
-let s:asyncomplete_blacklist = []
-
-if executable('typescript-language-server')
-    let s:asyncomplete_blacklist += ['typescript']
-    autocmd vimrc User lsp_setup call lsp#register_server({
-        \ 'name': 'typescript-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> [&shell, &shellcmdflag, 'typescript-language-server --stdio']
-        \ },
-        \ 'root_uri': {
-        \     server_info->lsp#utils#path_to_uri(
-        \         lsp#utils#find_nearest_parent_file_directory(
-        \             lsp#utils#get_buffer_path(),
-        \             'tsconfig.json'
-        \         )
-        \     )
-        \ },
-        \ 'whitelist': ['typescript', 'typescript.tsx', 'javascript', 'javascript.jsx'],
-        \ })
-    autocmd vimrc FileType typescript map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType typescript map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType typescript map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType typescript setlocal omnifunc=lsp#complete
-endif
-
-if executable('php-language-server.php')
-    let s:asyncomplete_blacklist += ['php']
-    autocmd vimrc User lsp_setup call lsp#register_server({
-        \ 'name': 'php-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> ['php', expand('~/.composer/vendor/bin/php-language-server.php')]
-        \ },
-        \ 'whitelist': ['php'],
-        \ })
-    autocmd vimrc FileType php map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType php map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType php map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType php setlocal omnifunc=lsp#complete
-endif
-
-if executable(expand('~/Applications/java-language-server/bin/launcher'))
-    let s:asyncomplete_blacklist += ['java']
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'java-language-server',
-        \ 'priority': 99,
-        \ 'cmd': {
-        \     server_info -> [
-        \         expand('~/Applications/java-language-server/bin/launcher'),
-        \         '--quiet',
-        \     ]
-        \ },
-        \ 'whitelist': ['java'],
-        \ })
-    autocmd vimrc FileType java map <buffer> <silent> <C-]> :LspDefinition<CR>
-    autocmd vimrc FileType java map <buffer> <Leader>e :LspDocumentDiagnostics<CR>
-    autocmd vimrc FileType java map <buffer> K :LspHover<CR>
-    autocmd vimrc FileType java setlocal omnifunc=lsp#complete
-endif
-
-" asyncomplete
-" ---------------------------------------------------------------------
-autocmd User asyncomplete_setup call asyncomplete#register_source(
-    \ asyncomplete#sources#buffer#get_source_options({
-    \     'name': 'buffer',
-    \     'whitelist': ['*'],
-    \     'blacklist': s:asyncomplete_blacklist,
-    \     'priority': 9,
-    \     'completor': function('asyncomplete#sources#buffer#completor')
-    \ }))
-
-autocmd vimrc User asyncomplete_setup call asyncomplete#register_source(
-    \ asyncomplete#sources#file#get_source_options({
-    \     'name': 'file',
-    \     'whitelist': ['*'],
-    \     'priority': 10,
-    \     'completor': function('asyncomplete#sources#file#completor')
-    \ }))

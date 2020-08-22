@@ -3,16 +3,12 @@
 theme=$1
 
 if [[ $theme == "dark" ]]; then
-  alfred_theme="Minimal Dark"
   dark_mode="true"
   term_theme="Ashes"
 else
-  alfred_theme="Minimal"
   dark_mode="false"
-  term_theme="Solarized Light"
+  term_theme="Gruvbox Light Hard"
 fi
-
-osascript -e "tell application \"Alfred 3\" to set theme \"$alfred_theme\""
 
 osascript <<END
   tell application "System Events"
