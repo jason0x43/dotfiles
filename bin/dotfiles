@@ -90,7 +90,7 @@ function dotfiles-home {
     fixterm
 }
 
-# Install homebrew and core packages, update packages and casks
+# Install homebrew and core packages, update packages
 function dotfiles-brew {
     log "Updating brew packages..."
 
@@ -145,9 +145,6 @@ function dotfiles-brew {
 
     logSub "Updating installed brew packages..."
     brew upgrade
-
-    logSub "Updating installed brew casks..."
-    brew cask upgrade
 }
 
 # Update Mac App Store apps
