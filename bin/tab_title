@@ -1,0 +1,3 @@
+#!/bin/bash
+
+printf '\e]1;%s\a' "$1"

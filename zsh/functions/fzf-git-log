@@ -1,0 +1,40 @@
+# FZF-based git browser
+# ctrl-n and ctrl-p to scroll up and down
+# alt-n and alt-p to scroll in preview
+# Enter to echo the commit log
+
+if [[ ! $+commands[fzf] ]]; then
+	echo "FZF is not installed"
+	return 1
+fi
+
+if ! is_git; then
+    echo "Not a git repo"
+    return 1
+fi
+
+local bindings=(
+    'alt-n:preview-down'
+    'alt-p:preview-up'
+    'alt-f:preview-page-down'
+    'alt-b:preview-page-up'
+)
+
+# Store any retrieved commits as an array
+local commits=($(git log \
+    --graph \
+    --all \
+    --color=always \
+    --format="%C(auto)%h%d %s %C(magenta)(%an, %cr)" \
+| fzf \
+    --ansi \
+    --multi \
+    --no-sort \
+    --reverse \
+    --tiebreak=index \
+    --preview-window=down:50% \
+    --preview='f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always $1 ; }; f {}' \
+    --bind=${(j:,:)bindings} \
+| grep -o "[a-f0-9]\{7\}"))
+
+echo $commits

@@ -1,0 +1,31 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "indent": {
+            "options": [ "tabs" ]
+        },
+        "interface-name": {
+            "options": [ "never-prefix" ]
+        },
+        "member-access": {
+            "options": [ "no-public" ]
+        },
+        "no-internal-module": false,
+        "no-namespace": false,
+        "no-reference": false,
+        "quotemark": {
+            "options": [ true, "single", "avoid-escape" ]
+        },
+        "trailing-comma": {
+            "options": {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        }
+    },
+    "rulesDirectory": []
+}

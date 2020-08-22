@@ -1,0 +1,32 @@
+%YAML 1.2
+---
+name: Home Assistant Log
+file_extensions: [halog]
+scope: source.hasslog
+
+contexts:
+  main:
+    - match: (.*) (ERROR) \(([^)]+)\) \[([^]]+)]
+      captures:
+        1: commet
+        2: markup.deleted
+        3: markup.italic
+        4: markup.bold
+    - match: (.*) (WARNING) \(([^)]+)\) \[([^]]+)]
+      captures:
+        1: comment
+        2: entity.name.tag
+        3: markup.italic
+        4: markup.bold
+    - match: (.*) (INFO) \(([^)]+)\) \[([^]]+)]
+      captures:
+        1: comment
+        2: constant.other.color
+        3: markup.italic
+        4: markup.bold
+    - match: (.*) (DEBUG) \(([^)]+)\) \[([^]]+)]
+      captures:
+        1: comment
+        2: invalid.deprecated
+        3: markup.italic
+        4: markup.bold

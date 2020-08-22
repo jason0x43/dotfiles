@@ -1,0 +1,238 @@
+#
+# A simple theme that displays relevant, contextual information.
+#
+# This is a modified version of Sorin's theme from prezto.
+#
+
+# Exposes information about the Zsh Line Editor via the $editor_info
+# associative array.
+function editor-info() {
+	# Clean up previous $editor_info.
+	unset editor_info
+	typeset -gA editor_info
+
+	if [[ "$KEYMAP" == 'vicmd' ]]; then
+		zstyle -s ':zconf:module:editor:info:keymap:alternate' format 'REPLY'
+		editor_info[keymap]="$REPLY"
+	else
+		zstyle -s ':zconf:module:editor:info:keymap:primary' format 'REPLY'
+		editor_info[keymap]="$REPLY"
+	fi
+
+	unset REPLY
+}
+zle -N editor-info
+
+# Updates editor information when the keymap changes.
+function zle-keymap-select() {
+	zle editor-info
+	zle reset-prompt
+}
+zle -N zle-keymap-select
+
+# Gets the Git status information
+function git-info() {
+	# Extended globbing is needed to parse repository status
+	setopt LOCAL_OPTIONS
+	setopt EXTENDED_GLOB
+
+	# Clean up previous $git_info
+	unset git_info
+	typeset -gA git_info
+
+	# Return if not inside a Git repository work tree (command will print
+	# 'true' or nothing)
+	if [[ -z "$(git rev-parse --is-inside-work-tree 2> /dev/null)" ]]; then
+		return 1
+	fi
+
+	local flags
+
+	git diff --quiet 2> /dev/null
+	if (( $? )); then
+		local mod_format
+		zstyle -s ':zconf:module:git:info:mod' format 'mod_format'
+		zformat -f flags "$flags$mod_format" "v:*"
+	fi
+
+	local reference
+
+	# Get the branch
+	local branch
+	branch="${$(git symbolic-ref HEAD 2> /dev/null)#refs/heads/}"
+
+	if [[ -n "$branch" ]]; then
+		# Format branch
+		local branch_format
+		zstyle -s ':zconf:module:git:info:branch' format 'branch_format'
+		if [[ -n "$branch_format" ]]; then
+			zformat -f reference "$branch_format" "b:$branch"
+		fi
+
+		# Check if there's a stash related to the current branch
+		git stash list 2> /dev/null | grep -q ": WIP on $branch:"
+		if (( !$? )); then
+			local stash_format
+			zstyle -s ':zconf:module:git:info:stash' format 'stash_format'
+			zformat -f flags "$flags$stash_format" "v:+"
+		fi
+	else
+		local tag
+		tag="$(git describe --tags --exact-match 2> /dev/null)"
+
+		if [[ -n "$tag" ]]; then
+			local tag_format
+			zstyle -s ':zconf:module:git:info:tag' format 'tag_format'
+			zformat -f reference "$tag_format" "t:$tag"
+		fi
+
+		local commit
+		commit="$(git rev-parse --short HEAD 2> /dev/null)"
+
+		if [[ -z "$tag" ]]; then
+			local commit_format
+			zstyle -s ':zconf:module:git:info:commit' format 'commit_format'
+			zformat -f reference "$commit_format" "c:$commit"
+		fi
+
+		# Check if a stash related to the current commit
+		git stash list 2> /dev/null | grep -q ": WIP on (no branch): $commit"
+		if (( !$? )); then
+			local stash_format
+			zstyle -s ':zconf:module:git:info:stash' format 'stash_format'
+			zformat -f flags "$flags$stash_format" "v:+"
+		fi
+	fi
+
+	# Format info
+	local -A info_formats
+	local info_format
+	zstyle -a ':zconf:module:git:info:keys' format 'info_formats'
+	for info_format in ${(k)info_formats}; do
+		zformat -f REPLY "$info_formats[$info_format]" "r:$reference" "g:$flags"
+		git_info[$info_format]="$REPLY"
+	done
+
+	unset REPLY
+	return 0
+}
+
+# Gets Node status information
+function node-info() {
+	local version
+	local version_format
+	local version_formatted
+
+	unset node_info
+	typeset -gA node_info
+
+	#if (( $+functions[nvm_version] )); then
+	#	version="${$(nvm_version)#v}"
+
+	#	if [[ -n "$version" && "$version" != "system" ]]; then
+	#		zstyle -s ':zconf:module:node:info:version' format 'version_format'
+	#		zformat -f version_formatted "$version_format" "v:$version"
+	#		node_info[version]=" %F{blue}node:%f$version_formatted"
+	#	fi
+	#fi
+	if (( $+commands[nodenv] )); then
+		version=${${(z)$(nodenv version)}[1]}
+
+		if [[ -n "$version" && "$version" != "system" ]]; then
+			zstyle -s ':zconf:module:node:info:version' format 'version_format'
+			zformat -f version_formatted "$version_format" "v:$version"
+			node_info[version]=" %F{blue}node:%f$version_formatted"
+		fi
+	fi
+}
+
+# Format the PWD
+function prompt_jason_pwd() {
+	local pwd="${PWD/#$HOME/~}"
+
+	if [[ "$pwd" == (#m)[/~] ]]; then
+		_prompt_jason_pwd="$MATCH"
+		unset MATCH
+	else
+		# Raw PWD
+		_prompt_jason_pwd="${${${(@j:/:M)${(@s:/:)pwd}##.#?}:h}%/}/${pwd:t}"
+
+		# First shortening
+		if (( ${#_prompt_jason_pwd} >= $max_width )); then
+			_prompt_jason_pwd="${pwd:t}"
+		fi
+
+		# Second shortening
+		if (( ${#_prompt_jason_pwd} >= $max_width )); then
+			_prompt_jason_pwd=".../${_prompt_jason_pwd[0,30]}..."
+		fi
+	fi
+}
+
+# Run commands to generate info required for the prompt
+function prompt_jason_precmd() {
+	setopt LOCAL_OPTIONS
+	unsetopt XTRACE
+	unsetopt KSH_ARRAYS
+
+	# Format PWD
+	prompt_jason_pwd
+
+	# Get Git repository information
+	git-info
+
+	# Get Node information
+	node-info
+
+	# Get line editor state info
+	editor-info
+}
+
+# Actually build the prompt
+setopt LOCAL_OPTIONS
+unsetopt XTRACE
+unsetopt KSH_ARRAYS
+
+# Set prompt expansion options
+prompt_opts=(cr percent subst)
+
+# Max prompt with before we start compressing things
+max_width=30
+
+# Set editor-info formats
+zstyle ':zconf:module:editor:info:keymap:primary'   format ' %B%F{green}❯%f%b'
+zstyle ':zconf:module:editor:info:keymap:alternate' format ' %B%F{yellow}❮%f%b'
+
+# Set git-info formats
+zstyle ':zconf:module:git:info'        verbose 'yes'
+zstyle ':zconf:module:git:info:branch' format  ':%F{green}%b%f'
+zstyle ':zconf:module:git:info:tag'    format  ':#%F{green}%t%f'
+zstyle ':zconf:module:git:info:commit' format  ':%F{green}%.7c%f'
+zstyle ':zconf:module:git:info:mod'    format  '%F{red}%v%f'
+zstyle ':zconf:module:git:info:stash'  format  '%F{blue}%v%f'
+zstyle ':zconf:module:git:info:flags'  format  ' %v'
+
+# Set format for overall git prompt
+zstyle ':zconf:module:git:info:keys'   format  'prompt' ' %F{blue}git%f%r%g'
+
+# Set node-info formats
+zstyle ':zconf:module:node:info:version' format '%F{green}%v%f'
+
+# Regular prompt
+remote=""
+
+if [[ -n $SSH_CONNECTION ]]; then
+	remote=" <$HOST>"
+fi
+
+PROMPT='%B[%*]%f%k$remote${editor_info[keymap]}%b '
+RPROMPT='%B[%F{cyan}${_prompt_jason_pwd}${node_info[version]}%f${(e)git_info[prompt]}]%b'
+
+# Correction prompt
+SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+
+# Undefine and reload add-zsh-hook
+add-zsh-hook precmd prompt_jason_precmd
+add-zsh-hook chpwd prompt_jason_precmd
+
+# vim:filetype=zsh:shiftwidth=4:tabstop=4:noexpandtab

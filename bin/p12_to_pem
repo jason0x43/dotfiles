@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+if (( $# != 1 )) then
+	echo "usage: $0 NAME"
+	exit 1
+fi
+
+file=$1
+
+if [[ ${file:e} == "p12" ]] then
+	file=${file:r}
+fi
+
+openssl pkcs12 -in $file.p12 -out $file.pem -nodes

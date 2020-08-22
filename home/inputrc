@@ -1,0 +1,6 @@
+set editing-mode vi
+set completion-ignore-case on
+set keymap vi
+set bell-style visible
+set mark-symlinked-directories on
+set convert-meta on

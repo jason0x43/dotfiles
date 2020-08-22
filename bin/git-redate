@@ -1,0 +1,2 @@
+#!/bin/sh
+git filter-branch --env-filter "if [ \$GIT_COMMIT = $1 ]; then export GIT_AUTHOR_DATE=\"$2\"; fi" $1~1..HEAD

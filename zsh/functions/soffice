@@ -1,0 +1,9 @@
+if [[ -e /Applications/LibreOffice.app/Contents/MacOS/soffice ]]; then
+	if (( $# )); then
+		/Applications/LibreOffice.app/Contents/MacOS/soffice --headless $*
+	else
+		/Applications/LibreOffice.app/Contents/MacOS/soffice --headless --help
+	fi
+else
+	echo "LibreOffice is not installed"
+fi

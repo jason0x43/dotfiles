@@ -1,0 +1,16 @@
+tmux/plugins/*
+vim/autoload/plug.vim
+vim/autoload/plug.old
+vim/autoload/plug.vim.old
+vim/plugged/*
+vim/spell/*.spl
+vim/sessions/*
+vim/.netrwhist
+fish/fishd.*
+fish/fish_history
+.vscode/
+.mypy_cache/
+config/kitty/colors.conf
+config/kitty/local.conf
+config/direnv/allow
+.tool-versions

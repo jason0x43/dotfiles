@@ -1,0 +1,379 @@
+#!/bin/zsh
+
+autoload colors; colors
+
+# Log output
+function log {
+    msg=$1
+    echo "$fg_bold[green]>>>$reset_color $fg_bold[white]$msg$reset_color"
+}
+
+# Log output
+function logSub {
+    msg=$1
+    echo "$fg_bold[blue]>>>$reset_color $fg_bold[white]$msg$reset_color"
+}
+
+# Log error output
+function err {
+    msg=$1
+    echo "$fg_bold[red]>>>$reset_color $fg_bold[white]$msg$reset_color"
+}
+
+# Create a directory
+function makedir {
+    if [[ ! -d $1 ]]; then
+        mkdir -p $1
+        logSub "Created $1/"
+    fi
+}
+
+# Create a symlink
+function link {
+    if [[ ! -r $2 ]]; then
+        ln -s $1 $2
+        logSub "Linked $1 -> $2"
+    fi
+}
+
+# Fix terminal definition so C-H works properly in neovim
+function fixterm {
+    kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
+    if [[ $kbs =~ "kbs=^[hH]" ]]; then
+        logSub "Fixing backspace code in terminfo..."
+        infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
+        tic /tmp/$TERM.ti
+        rm /tmp/$TERM.ti
+    fi
+}
+
+# Rebuild bat cache
+function dotfiles-bat {
+    log "Rebuilding bat cache..."
+    bat cache --build
+}
+
+# Link dotfiles into $HOME, update terminfo
+function dotfiles-home {
+    log "Updating home directory files..."
+
+    for f in $(ls $dotfiles/home); do
+        link $dotfiles/home/$f $HOME/.$(basename $f)
+    done
+
+    for f in $(ls $dotfiles/config); do
+        link $dotfiles/config/$f $HOME/.config/$(basename $f)
+    done
+
+    for f in $(ls $HOME/.[a-z]*); do
+        if [[ -L $f ]] && [[ ! -e $f ]]; then
+            rm $f
+            logSub "Removed $f"
+        fi
+    done
+
+    link $dotfiles/vim $HOME/.vim
+
+    makedir $cachedir/tmux/resurrect
+    makedir $cachedir/vim/session
+    makedir $cachedir/vim/swap
+    makedir $cachedir/vim/backup
+    makedir $cachedir/vim/undo
+    makedir $cachedir/zsh
+    makedir $cachedir/direnv/allow
+
+    makedir $configdir
+    link $dotfiles/vim $configdir/nvim
+
+    # Fix the terminal definition so that C-H works properly in neovim. This
+    # function may also need to be run for the tmux terminal type.
+    fixterm
+}
+
+# Install homebrew and core packages, update packages and casks
+function dotfiles-brew {
+    log "Updating brew packages..."
+
+    if ! hash brew; then
+        logSub "Installing homebrew..."
+        usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        rehash
+    fi
+
+    logSub "Checking for missing brew packages..."
+    brew_packages=(
+        'asdf'
+        'autoconf'
+        'automake'
+        'bash'
+        'bat'
+        'coreutils'
+        'fd'
+        'fzf'
+        'gawk'
+        'git'
+        'git-delta'
+        'gnupg'
+        'jq'
+        'libtool'
+        'libyaml'
+        'neovim'
+        'node'
+        'openssl'
+        'python'
+        'readline'
+        'ripgrep'
+        'tmux'
+        'unixodbc'
+    )
+
+    if [[ $(uname -s) == "Darwin" ]]; then
+        brew_packages=(
+            $brew_packages
+            'mas'
+        )
+    fi
+
+    installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
+
+    for pkg in $brew_packages; do
+        if ((! $installed_packages[(Ie)$pkg])); then
+            logSub "Installing $pkg..."
+            brew install $pkg
+        fi
+    done
+
+    logSub "Updating installed brew packages..."
+    brew upgrade
+
+    logSub "Updating installed brew casks..."
+    brew cask upgrade
+}
+
+# Update Mac App Store apps
+function dotfiles-mas {
+    logSub "Updating installed App Store apps..."
+    mas upgrade
+}
+
+# Update zsh plugins
+function dotfiles-zsh {
+    log "Updating zsh plugins..."
+
+    if [[ -z $ZPLUGDIR ]]; then
+        err "ZPLUGDIR not defined"
+        return
+    fi
+
+    cd $ZPLUGDIR
+    for org in *; do
+        cd $org 
+        for plugin in *; do
+            cd $plugin
+            head=$(git rev-parse HEAD)
+            git pull -q --recurse-submodules
+            git submodule update --remote
+            if [[ $(git rev-parse HEAD) != $head ]]; then 
+                logSub "Updated $org/$plugin"
+            fi
+            cd ..
+        done
+        cd ..
+    done
+}
+
+# Update global python2 and python3 packages
+function dotfiles-python {
+    log "Updating global python packages..."
+    if hash pip3; then
+        pip3 install -U pip setuptools pynvim > /dev/null
+        logSub "Updated Python 3 packages"
+    fi
+}
+
+# Update global npm packages
+function dotfiles-node {
+    node_path=$1
+    if [[ -n $node_path && -d $node_path ]]; then
+        path=($node_path $path)
+        export PATH
+    fi
+
+    # if a node_path was provided, the function was called from another
+    # function, so don't print the top-level message
+    if [[ -z $node_path ]]; then
+        log "Updating global npm modules..."
+    fi
+
+    if ! hash npm; then
+        err "No npm executable"
+        return
+    fi
+
+    # get list of outdated global packages
+    mods=($(npm --registry=https://registry.npmjs.org outdated -g --parseable))
+    for mod in $mods; do
+        # extract current and latest fields
+        array=(${(@s/:/)mod})
+        currentPkg=$array[3]
+        latestPkg=$array[4]
+
+        # extract current and latest versions, minus any prerelease tags
+        currentVerParts=(${(@s/@/)currentPkg})
+        currentVer=$currentVerParts[2]
+        latestVerParts=(${(@s/@/)latestPkg})
+        latestVer=$latestVerParts[2]
+
+        if [[ $latestVer == 'linked' ]]; then
+            logSub "Skipping $latestPkg"
+            continue
+        fi
+
+        # read versions into arrays
+        current=(${(@s/./)currentVer})
+        latest=(${(@s/./)latestVer})
+
+        # if latest is newer than current, install latest
+        if (( latest[1] > current[1] )) || {
+            (( latest[1] == current[1] )) &&
+            (( latest[2] > current[2] )) || {
+                (( latest[1] == current[1] )) &&
+                (( latest[2] == current[2] )) &&
+                (( latest[3] > current[3] ));
+            };
+        }; then
+            npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+            logSub "Installed $latestPkg"
+        fi
+    done
+
+    if [[ -n $node_path && -d $node_path ]]; then
+        # Remove the temporarily added first path element
+        path=(${(@)path[2,$#path]})
+        export PATH
+    fi
+}
+
+# Update tmux plugins
+function dotfiles-tmux {
+    log "Updating tmux plugins..."
+
+    if [[ -z $TMUX_PLUGIN_MANAGER_PATH ]]; then
+        err "TMUX_PLUGIN_MANAGER_PATH not defined"
+        return
+    fi
+
+    cd $TMUX_PLUGIN_MANAGER_PATH
+    for plugin in *; do
+        cd $plugin 
+        head=$(git rev-parse HEAD)
+        git pull -q --recurse-submodules
+        git submodule update --remote -q
+        if [[ $(git rev-parse HEAD) != $head ]]; then 
+            logSub "Updated $plugin"
+        fi
+        cd ..
+    done
+}
+
+# Update asdf plugins
+function dotfiles-asdf {
+    log "Updating asdf..."
+
+    asdf_plugins=(${(@f)$(asdf plugin-list)})
+    if (( ! $asdf_plugins[(Ie)direnv] )); then
+        asdf plugin-add direnv
+        direnv_versions=(${(@f)$(asdf list-all direnv)})
+        asdf install direnv $direnv_versions[-1]
+        asdf global direnv $direnv_versions[-1]
+        logSub "Installed asdf-direnv"
+    fi
+    if (( ! $asdf_plugins[(Ie)nodejs] )); then
+        asdf plugin-add nodejs
+        bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+        logSub "Installed asdf-nodejs"
+    fi
+    if (( ! $asdf_plugins[(Ie)python] )); then
+        asdf plugin-add python
+        logSub "Installed asdf-python"
+    fi
+    if (( ! $asdf_plugins[(Ie)java] )); then
+        asdf plugin-add java
+        logSub "Installed asdf-java"
+    fi
+    # neovim uses node 10 to support at least coc-sh
+    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION ]]; then
+        asdf install nodejs $VIM_NODE_VERSION
+        logSub "Installed nodejs $VIM_NODE_VERSION"
+    fi
+
+    asdf plugin-update --all
+}
+
+# Update vim plugins
+function dotfiles-vim {
+    log "Updating vim plugins..."
+
+    if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
+        cd $HOME/.vim/autoload
+        existing=$(<plug.vim)
+        current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
+        if [[ "$existing" != "$current" ]]; then
+            mv plug.vim plug.old
+            echo -E "$current" > plug.vim
+            logSub "Updated vim-plug"
+        fi
+
+        cd $CACHEDIR/vim/plugins
+        for plugin in *; do
+            cd $plugin 
+            head=$(git rev-parse HEAD)
+            git pull -q --recurse-submodules
+            if (( $? != 0 )); then 
+                err "Problem updating $plugin"
+            else
+                # If the current head is different than the original head,
+                # check for a package.json
+                if [[ $(git rev-parse HEAD) != $head ]]; then 
+                    if [[ -e package.json ]]; then
+                        if [[ -e yarn.lock ]]; then
+                            yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
+                        else
+                            npm install --registry=https://registry.npmjs.org --silent
+                        fi
+                    fi
+                    logSub "Updated $plugin"
+                fi
+            fi
+            cd ..
+        done
+    fi
+
+    log "Updating vim's node packages..."
+    dotfiles-node "$HOME/.asdf/installs/nodejs/10.16.2/bin"
+}
+
+dotfiles=$HOME/.dotfiles
+configdir=$HOME/.config
+cachedir=$HOME/.local/share
+cd $HOME
+
+if [[ -n $1 ]]; then
+    dotfiles-$1
+else
+    dotfiles-home
+    dotfiles-brew
+    dotfiles-zsh
+    dotfiles-python
+    dotfiles-asdf
+    dotfiles-node
+    dotfiles-tmux
+    dotfiles-vim
+    dotfiles-bat
+
+    if (( $+commands[mas] )); then
+        dotfiles-mas
+    fi
+fi
+
+log "Done"

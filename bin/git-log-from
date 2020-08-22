@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Show descendents from a particular commit. This assumes an 'lg' alias exists.
+
+if [[ -z $2 ]]; then
+	git lg --ancestry-path $1..
+else
+	git lgb --ancestry-path $1..$2
+fi

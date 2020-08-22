@@ -1,0 +1,74 @@
+if [ -z "$PS1" ]; then
+	return
+fi
+
+command_exists() {
+	hash $1 2> /dev/null
+	if [[ $? == "1" ]]; then
+		return 0
+	fi
+	return 1
+}
+
+alias ls='ls -CF'
+alias la='ls -A'
+alias ll='ls -lh'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias preview='open /Applications/Preview.app'
+alias hibernateon='sudo pmset -a hibernatemode 25'
+alias hibernateoff='sudo pmset -a hibernatemode 3'
+
+if hash nvim 2> /dev/null; then
+	alias vi='vim'
+else
+	alias vi='nvim'
+fi
+
+function get_git_ref {
+	git_branch=$(git idb 2> /dev/null)
+	if [ $git_branch ]; then
+		echo "[$git_branch] "
+	else
+		return
+	fi
+}
+
+pathunshift() {
+	if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+		PATH="$1:$PATH"
+	fi
+}
+
+pathpush() {
+	if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+		PATH="$PATH:$1"
+	fi
+}
+
+hgdiff() {
+	hg cat $1 | vim - -c  ":vert diffsplit $1" -c "map q :qa!<CR>";
+}
+
+if [[ -e ~/.bash_completion ]]; then
+	. ~/.bash_completion
+fi
+
+PS1="\[\033[5;32m\]\u@\h\[\033[5;33m\] \W \[\033[5;31m\]\$(get_git_ref)\[\033[00m\]\$ "
+
+export CLICOLOR=1
+export LC_ALL=C
+export PAGER=less
+export LESS=FSRX
+export MAGICK_HOME=/usr/local/ImageMagick
+export RUBYOPT=rubygems
+
+pathunshift /usr/local/bin
+pathunshift /usr/local/sbin
+pathunshift ~/.dotfiles/bin
+
+# Enable brew
+if [[ -d /home/linuxbrew ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi

@@ -1,0 +1,22 @@
+#compdef git-pullthis
+#description pull the current branch from a remote
+
+__git_remote_names () {
+	local expl
+	declare -a remote_names
+
+	remote_names=(${(f)"$(_call_program remotenames git remote 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted remote-names expl remote-name compadd $* - $remote_names
+}
+
+__git_command_successful () {
+	if (( ${#pipestatus:#0} > 0 )); then
+		_message 'not a git repository'
+		return 1
+	fi
+	return 0
+}
+
+_arguments ':remote:__git_remote_names'

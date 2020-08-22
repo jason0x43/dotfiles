@@ -1,0 +1,2 @@
+# Checks if a name is a command, function, or alias
+[[ $+commands[$1] ]] || [[ $+functions[$1] ]] || [[ $+aliases[$1] ]]

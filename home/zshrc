@@ -1,23 +1,12 @@
-PROFILE_STARTUP=false
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
-    PS4=$'%D{%M%S%.} %N:%i> '
-    exec 3>&2 2>$HOME/Temp/startlog.$$
-    setopt xtrace prompt_subst
-fi
-
-# Editors
-# ----------------------------------------------------------------------------
-if (( $+commands[nvim] )); then
-	export SUDO_EDITOR=nvim
-elif (( $+commands[vim] )); then
-	export SUDO_EDITOR=vim
-else
-	export SUDO_EDITOR=vi
-fi
-
-export EDITOR=$SUDO_EDITOR
-export VISUAL=$SUDO_VISUAL
+# Setup fpath
+# ------------------------------------------------------------------------
+# The fpath should be initialized before trying to load plugins (with zfetch)
+# or trying to initialize completions
+fpath=(
+    $ZFUNCDIR
+    $DOTFILES/zsh/functions
+    $fpath
+)
 
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
@@ -25,13 +14,77 @@ if [[ -d $DOTFILES/zsh/functions ]]; then
     for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
-# Create an array to hold plugin references
+# Plugin init
+# ----------------------------------------------------------------------------
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+if [[ ! -d "$ZPLUGDIR" ]]; then
+    mkdir -p "$ZPLUGDIR"
+fi
+
+zfetch $ZPLUGDIR zsh-users/zsh-completions
+zfetch $ZPLUGDIR chriskempson/base16-shell
+zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
+zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
+zfetch $ZPLUGDIR romkatv/powerlevel10k
+zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
+zfetch $CACHEDIR/tmux tmux-plugins/tpm
+
+# Colors
+# ----------------------------------------------------------------------------
+# Only load base16 shell locally
+BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# ----------------------------------------------------------------------------
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Enable profiling
+# zmodload zsh/zprof
+
+# Declare some key global variables
 # ------------------------------------------------------------------------
-typeset -A plugins
+typeset -gU cdpath
+typeset -gU fpath
+typeset -gU manpath
+
+# Brew
+# ----------------------------------------------------------------------------
+if [[ -d /home/linuxbrew ]]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
+# manpath
+# ----------------------------------------------------------------------------
+# Set the list of directories that man searches for manuals.
+if [ -e /etc/manpaths ]; then
+	while read line; do 
+		manpath+=$line
+	done < /etc/manpaths
+fi
+
+# Editors
+# ----------------------------------------------------------------------------
+if (( $+commands[nvim] )); then
+    export SUDO_EDITOR=nvim
+elif (( $+commands[vim] )); then
+    export SUDO_EDITOR=vim
+else
+    export SUDO_EDITOR=vi
+fi
+
+export EDITOR=$SUDO_EDITOR
+export VISUAL=$SUDO_VISUAL
 
 # Start SSH agent if it's not already running
 # ------------------------------------------------------------------------
-if [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
+if [[ -d $HOME/.ssh ]] && [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
     if [[ -e $HOME/.ssh/env ]]; then
         . $HOME/.ssh/env
     fi
@@ -58,8 +111,53 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
+export BAT_THEME=base16
+
 # Completions
 # ------------------------------------------------------------------------
+# The completion system should be configured and enabled before sourcing
+# completion plugins
+
+export ZCOMPDIR="$CACHEDIR/zsh/completions"
+export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+
+# Completion directories should be added to the fpath before compinit is called
+fpath=(
+    $ZPLUGDIR/zsh-users/zsh-completions/src
+    $ZCOMPDIR
+    $HOMEBREW_BASE/share/zsh-completions
+    $fpath
+)
+
+# Load and initialize the completion system, ignoring insecure directories.
+# Note that fpath should be configured before calling compinit.
+# (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
+autoload -Uz compinit
+if [[ $HOME =~ "/Users" ]] then
+    # Only try to rebuild the comp dump once a day
+    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]] then
+        compinit -i -d $ZCOMPFILE
+    else
+        compinit -C -i -d $ZCOMPFILE
+    fi
+else
+    compinit -i -d $ZCOMPFILE
+fi
+
+# Compile the zcompfile in the background
+{
+    # Compile zcompdump, if modified, to increase startup speed.
+    if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]] then
+        zcompile "$ZCOMPFILE"
+    fi
+} &!
+
+# Kitty completions
+if (( $+commands[kitty] )); then
+    kitty + complete setup zsh | source /dev/stdin
+fi
+
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
@@ -71,16 +169,6 @@ if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     done
     unset dest
 fi
-
-# Extra ZSH completions
-zfetch $ZPLUGDIR zsh-users/zsh-completions
-if [[ $? == 0 ]]; then
-    fpath=($ZPLUGDIR/zsh-users/zsh-completions/src $fpath)
-fi
-
-# Load and initialize the completion system, ignoring insecure directories
-export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
-autoload -Uz compinit && compinit -i -d $ZCOMPFILE
 
 # Use caching to make completion for commands with many options usable
 zstyle ':completion:*' use-cache on
@@ -221,6 +309,11 @@ bindkey -v
 # Clear existing aliases
 unalias -m '*'
 
+# Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
+# reload the environment
+alias refresh='source ~/.zshenv && source ~/.zshrc'
+alias reload='exec env -u DIRENV_WATCHES $SHELL'
+
 # Default command options
 alias cp='cp -i'
 alias ln='ln -i'
@@ -228,15 +321,17 @@ alias mkdir='mkdir -p'
 alias mv='mv -i'
 alias rm='rm -i'
 alias type='type -a'
+alias fda='fd -I'
 
 # Let node use local readline setup (vi mode)
 if (( $+commands[rlwrap] )); then
-	alias node='env NODE_NO_READLINE=1 rlwrap node'
+    alias node='env NODE_NO_READLINE=1 rlwrap node'
 fi
 
 # Shortcuts
 alias agl='ag -l'
 alias rgl='rg -l'
+alias rgla='rg -l -u'
 alias back='popd'
 alias help='run-help'
 alias se='sudo -e'
@@ -250,68 +345,63 @@ alias dl='docker logs'
 alias dlf='docker logs -f'
 alias dps='docker ps --format "{{.Names}}"'
 
-# Themes
-alias mtd='mac_theme dark'
-alias mtl='mac_theme light'
-
 # Git shortcuts
-alias ga='git add'
-alias gb='git branch'
-alias gba='git branch -a'
-alias gbd='git branch -d'
-alias gbf='git branch --contains'
-alias gc='git commit'
-alias gca='git commit --all'
-alias gcb='git checkout -b'
-alias gco='git checkout'
-alias gcp='git cherry-pick --ff'
-alias gcpn='git cherry-pick --no-commit'
-alias gd='git diff'
-alias gdh='git diff HEAD'
-alias gdp='git diffprev'
-alias gds='git diff --stat'
-alias gdv='git difftool'
-alias gf='git fetch'
-alias gfp='git fetch --prune'
-alias gfr='git fetchreset'
+alias ga='git a'
+alias gb='git b'
+alias gba='git ba'
+alias gbd='git bd'
+alias gbf='git bf'
+alias gc='git c'
+alias gca='git ca'
+alias gcb='git cb'
+alias gco='git co'
+alias gcp='git cp'
+alias gcpe='git cp -e'
+alias gcpn='git cpn'
+alias gd='git d'
+alias gds='git ds'
+alias gdv='git dv'
+alias gf='git f'
+alias gfp='git fp'
+alias gfr='git fr'
 alias gfpr='git pr'
-alias gg='git grep'
-alias ggi='git grep --ignore-case'
-alias ggil='git grep --ignore-case --files-with-matches'
-alias ggl='git grep --files-with-matches'
-alias gid='git rev-parse HEAD'
-alias gkb='git killbranch'
-alias gl='git lg -n 20'
-alias gla='git lg'
-alias gl1='git log -1'
-alias glb='git lgb -n 20'
-alias glba='git lgb'
-alias glbn='git lgb -n'
-alias glf='git log-from'
-alias glfm='git log-from-merge'
-alias glg='git log --topo-order --pretty=format:${_git_log_medium_format}'
-alias gln='git lg -n'
-alias gls='git ls-files'
-alias gmb='git merge-base'
-alias gp='git pullthis'
-alias gr='git rebase'
-alias gri='git rebase -i'
-alias grc='git rebase --continue'
+alias gg='git g'
+alias ggi='git gi'
+alias ggil='git gil'
+alias ggl='git gl'
+alias gid='git id'
+alias gkb='git kb'
+alias gl='git l'
+alias gla='git la'
+alias glb='git lb'
+alias glba='git lba'
+alias glf='git lf'
+alias glfm='git lfm'
+alias gls='git ls'
+alias gmb='git mb'
+alias gp='git p'
+alias gr='git r'
+alias gri='git ri'
+alias grc='git rc'
 alias grm='git rm'
-alias gro='git rebase --onto'
-alias grv='git remote -v'
+alias gro='git ro'
+alias grv='git rv'
 alias gs='git s'
-alias gsc='git diff --name-only --diff-filter=U'
-alias gsh='git show'
-alias gss='git show --stat'
-alias gwa='git worktree add'
-alias gwl='git worktree list'
-alias gwp='git worktree prune'
+alias gsu='git su'
+alias gsh='git sh'
+alias gss='git ss'
+
 alias tiga='tig --all'
+alias fgl='fzf-git-log'
+alias ts='tig status'
+
+# ssh in interactive shells
+alias ssh=themed_ssh
 
 # tmux
 alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
+alias tks='tmux kill-session -t'
 
 # Pretty print json
 alias json='python -m json.tool'
@@ -350,6 +440,14 @@ alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
 alias vi="nvim"
+# Color themes
+alias light='base16_theme solarized-light'
+alias dark='base16_theme ashes'
+
+alias ha='TERM=xterm-256color ssh root@homeassistant.local'
+alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log | bat --paging=never -l halog'
+alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
+alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
 
 # Colorize ls
 if zstyle -t ':zconf:module:utility:ls' color; then
@@ -364,9 +462,24 @@ else
     alias ls='ls -F'
 fi
 
+# Colorize cat
+if (( $+commands[bat] )); then
+    alias cat=bat
+
+    # BAT_THEME is also used by delta, so set it here rather than in the bat
+    # config file
+    export BAT_THEME=base16_plus
+fi
+
+# Better top
+if (( $+commands[htop] )); then
+    alias top=htop
+fi
+
 # Other ls aliases
 alias l='ls -1A'         # Lists in one column, hidden files
 alias ll='ls -lh'        # Lists human readable sizes
+alias lld='ll -d'        # List directories
 alias la='ll -A'         # Lists human readable sizes, hidden files
 
 # Space usage
@@ -392,7 +505,6 @@ setopt   BRACE_CCL              # Allow brace character class list expansion
 setopt   COMBINING_CHARS        # Combine zero-length punctuation characters (accents) with the base character
 setopt   CORRECT                # Correct mis-typed commands
 setopt   RC_QUOTES              # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'
-unsetopt MAIL_WARNING           # Don't print a warning message if a mail file has been accessed
 
 # Jobs
 setopt   AUTO_RESUME            # Attempt to resume existing job before creating a new process
@@ -423,6 +535,12 @@ setopt   PATH_DIRS              # Perform path search even on command names with
 unsetopt CASE_GLOB              # Make globbing case insensitive
 unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
 
+# Don't show a % for partial lines
+export PROMPT_EOL_MARK=''
+
+# Get into vim command mode faster when hitting ESC
+export KEYTIMEOUT=1
+
 # History
 # ------------------------------------------------------------------------
 HISTFILE="$ZCACHEDIR/zhistory"  # The path to the history file
@@ -447,102 +565,58 @@ if (( $+commands[fzf] )); then
     export ESCDELAY=10
 
     # Use -1 for the bg color to specify 'none'
-    export FZF_DEFAULT_OPTS=--color=16,bg:-1,fg:11,bg+:10,spinner:14,info:14,fg+:12,hl+:8,hl:8
+    export FZF_DEFAULT_OPTS='--color=bg:-1,fg:8,bg+:-1,fg+:-1,hl:1,hl+:1,gutter:-1,spinner:14,info:14'
 
-	if [[ -d $FZF_PATH/shell ]]; then
-		source $FZF_PATH/shell/completion.zsh
-		source $FZF_PATH/shell/key-bindings.zsh
-	elif [[ -d /usr/share/doc/fzf ]]; then
-		source /usr/share/doc/fzf/examples/key-bindings.zsh
-	fi
-
-    bindkey '^P' fzf-file-widget
-    bindkey '^G' fzf-cd-widget
-
-    if (( $+commands[rg] )); then
-        export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-    elif (( $+commands[ag] )); then
-        export FZF_DEFAULT_COMMAND='ag -g ""'
+    if [[ -d $FZF_PATH/shell ]]; then
+        source $FZF_PATH/shell/completion.zsh
+        source $FZF_PATH/shell/key-bindings.zsh
     fi
 
-    # Use rg instead of the default find command for listing candidates.
-    # - The first argument to the function is the base path to start traversal
-    # - Note that ag only lists files not directories
-    # - See the source code (completion.{bash,zsh}) for the details.
-    _fzf_compgen_path() {
-        rg -g "" "$1"
+    # Select commits using fgl
+    fzf-git-log-widget() {
+        LBUFFER="${LBUFFER}$(fgl)"
+        local ret=$?
+        zle reset-prompt
+        return $ret
     }
-fi
+    zle -N fzf-git-log-widget
+    # Use alt-g to bring up the git log
+    bindkey 'g' fzf-git-log-widget
 
-# direnv (https://github.com/direnv/direnv)
-# ------------------------------------------------------------------------
-if (( $+commands[direnv] )); then
-    eval "$(direnv hook $SHELL)"
-fi
+    # Select git files 
+    __gfsel() {
+      setopt localoptions pipefail 2> /dev/null
+      eval git ls-files | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse $FZF_DEFAULT_OPTS $FZF_CTRL_T_OPTS" $(__fzfcmd) -m "$@"
+      return $?
+    }
+    fzf-git-file-widget() {
+      local selection=$(__gfsel)
+      LBUFFER="${LBUFFER}$selection"
+      local ret=$?
+      if [[ -n $selection ]]; then
+          # Execute the command buffer immediately
+          zle accept-line
+      else
+          zle reset-prompt
+      fi
+      return $ret
+    }
+    zle -N   fzf-git-file-widget
+    bindkey '^G' fzf-git-file-widget
 
-# Line editor
-# ------------------------------------------------------------------------
-# Syntax highlighting -- this should be near the end (preferably at the end) of the zshrc
-# https://github.com/zsh-users/zsh-syntax-highlighting
-zfetch $ZPLUGDIR zdharma/fast-syntax-highlighting
-if [[ $? == 0 ]]; then
-    source $ZPLUGDIR/zdharma/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-    if [[ -n $ZSH_HIGHLIGHT_VERSION ]]; then
-        ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-    fi
-fi
+    # Bind the file widget to ^P since we use ^T for tmux
+    bindkey '^P' fzf-file-widget
 
-# History substring search -- load this after zsh-syntax-highlighting
-# https://github.com/zsh-users/zsh-history-substring-search
-zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
-if [[ $? == 0 ]]; then
-    source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+    # Use fd (https://github.com/sharkdp/fd) instead of the default find
+    # # command for listing path candidates.
+    _fzf_compgen_path() {
+        fd --hidden --follow --exclude ".git" . "$1"
+    }
 
-    # Color for found substrings
-	HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
-
-    # Color for not-found substrings
-    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
-
-    # Default globbing flags
-    HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-
-    # Check if case-sensitive is in the substring search style
-    if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
-      HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
-    fi
-
-    # Check if color is disabled
-    if ! zstyle -t ':zconf:module:history-substring-search' color; then
-      unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
-    fi
-
-    # Make history keybindings search
-    bindkey -M vicmd "k" history-substring-search-up
-    bindkey -M vicmd "j" history-substring-search-down
-fi
-
-# autosuggest -- load this after zsh-syntax-highlighting and zsh-history-substring-search
-# (https://github.com/tarruda/zsh-autosuggestions)
-zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
-if [[ $? == 0 ]]; then
-    source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-    # Let vi keys jump through the suggestion
-    bindkey '^f' vi-forward-word
-    bindkey '^b' vi-forward-blank-word
-    bindkey '^e' vi-end-of-line
-
-    # Use a solarized-friendly background color
-    export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
-
-    export ZSH_AUTOSUGGEST_USE_ASYNC=1
-
-    # Configure autosuggest to work properly with history substring search;
-    # without this, trying to history-substring-search with an empty line will
-    # hang zsh
-    ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-    ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+    # Use fd to generate the list for directory completion
+    _fzf_compgen_dir() {
+        fd --type d --hidden --follow --exclude ".git" . "$1"
+    }
 fi
 
 # History key bindings
@@ -581,7 +655,6 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-#
 # Load NPX fallback script
 if (( $+commands[npx] )); then
     npx_fallback="$DOTFILES/zsh/npx.zsh"
@@ -590,8 +663,7 @@ fi
 
 # Load NPM completion
 if (( $+commands[npm] )); then
-    npm_completer="$DOTFILES/zsh/npm.zsh"
-    source "$npm_completer"
+    source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
 # TPM
@@ -599,37 +671,108 @@ fi
 if [[ ! -d $CACHEDIR/tmux ]]; then
     mkdir $CACHEDIR/tmux
 fi
-zfetch $CACHEDIR/tmux tmux-plugins/tpm
+
+# asdf
+# ------------------------------------------------------------------------
+if (( $+commands[asdf] )); then
+    # Don't load the asd shell integration; direnv will load it when necessary
+    autoload bashcompinit; bashcompinit
+    # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
+    # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
+    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
+    source $ASDF_DIR/etc/bash_completion.d/asdf.bash
+
+    # Silence direnv. The prompt will indicate if it's active.
+    export DIRENV_LOG_FORMAT=
+
+    eval "$(asdf exec direnv hook $SHELL)"
+
+    # alias direnv so we don't have to type asdf exec all the time
+    alias direnv='asdf exec direnv'
+
+    # Wrap tmux to avoid environment loading issues
+    # See https://github.com/direnv/direnv/wiki/Tmux
+    alias tmux='asdf exec direnv exec / tmux'
+
+    # Indicate which asdf version of node should be used with vim
+    export VIM_NODE_VERSION=10.19.0
+fi
+
+# added by travis gem
+[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
+
+# Line editor
+# ------------------------------------------------------------------------
+# History substring search -- load this after zsh-syntax-highlighting
+# https://github.com/zsh-users/zsh-history-substring-search
+source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+# autosuggest -- load this after zsh-syntax-highlighting and
+# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
+source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Color for found substrings
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
+
+# Color for not-found substrings
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
+
+# Default globbing flags
+HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+
+# Check if case-sensitive is in the substring search style
+if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
+  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
+fi
+
+# Check if color is disabled
+if ! zstyle -t ':zconf:module:history-substring-search' color; then
+  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
+fi
+
+# Make history keybindings search
+bindkey -M vicmd "k" history-substring-search-up
+bindkey -M vicmd "j" history-substring-search-down
+
+# Let vi keys jump through the suggestion
+bindkey '^f' vi-forward-word
+bindkey '^b' vi-forward-blank-word
+bindkey '^e' vi-end-of-line
+bindkey '[24~' autosuggest-toggle
+
+# Use a solarized-friendly background color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+
+# Make autosuggest faster
+export ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+# Configure autosuggest to work properly with history substring search;
+# without this, trying to history-substring-search with an empty line will
+# hang zsh
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+
+# autocomplete
+# --------------------------------------------------------------------------
+# source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# zstyle ':autocomplete:list-choices:*' max-lines 5
+# zstyle ':autocomplete:space:*' magic expand-history
+# zstyle ':autocomplete:tab:*' completion select
 
 # Prompt
-# ------------------------------------------------------------------------
-zfetch $ZPLUGDIR jason0x43/pure
-if [[ $? == 0 ]]; then
-	if [[ \
-		-h $ZFUNCDIR/prompt_pure_setup \
-		&& $(link_target $ZFUNCDIR/prompt_pure_setup) != $ZPLUGDIR/jason0x43/pure/pure.zsh \
-	]]; then
-        rm -f $ZFUNCDIR/prompt_pure_setup
-        rm -f $ZFUNCDIR/async
-	fi
-    if [[ ! -h $ZFUNCDIR/prompt_pure_setup ]]; then
-        ln -s $ZPLUGDIR/jason0x43/pure/pure.zsh $ZFUNCDIR/prompt_pure_setup
-        ln -s $ZPLUGDIR/jason0x43/pure/async.zsh $ZFUNCDIR/async
-    fi
-fi
-autoload -Uz promptinit && promptinit
-prompt pure
+# --------------------------------------------------------------------------
+source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # Local config
 # --------------------------------------------------------------------------
 [[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
 
-# added by travis gem
-[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
+# Syntax highlighting
+# --------------------------------------------------------------------------
+# This should be near the end (preferably at the end) of the zshrc
+# https://github.com/zsh-users/zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    unsetopt xtrace
-    exec 2>&3 3>&-
-fi
-
-# vim:shiftwidth=4:tabstop=4:noexpandtab
+# vim:shiftwidth=4:tabstop=4:expandtab

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux attach -t mosh 2> /dev/null || tmux new -t mosh

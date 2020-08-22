@@ -1,0 +1,7 @@
+if (($+commands[ag])); then
+	command ag $*
+elif (($+commands[rg])); then
+	command rg $*
+else
+	grep $*
+fi

@@ -1,26 +1,53 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-theme=$1
+from sys import argv, executable
+from os import environ
+import asyncio
+import iterm2
 
-if [[ $theme == "dark" ]]; then
-  dark_mode="true"
-  term_theme="Ashes"
-else
-  dark_mode="false"
-  term_theme="Gruvbox Light Hard"
-fi
 
-osascript <<END
-  tell application "System Events"
-    tell appearance preferences
-	  set dark mode to $dark_mode
-	end tell
-  end tell
-END
+async def run_applescript(script):
+    proc = await asyncio.create_subprocess_exec(
+        "osascript", "-", stdout=asyncio.subprocess.PIPE, stdin=asyncio.subprocess.PIPE
+    )
+    await proc.communicate(script.encode())
 
-osascript <<END
-  tell application "Terminal"
-    set current settings of tabs of windows to settings set "$term_theme"
-    set default settings to settings set "$term_theme"
-  end tell
-END
+
+async def set_term_theme(theme):
+    light_theme = "solarized-light"
+    dark_theme = "ashes"
+    name = dark_theme if theme == "dark" else light_theme
+    proc = await asyncio.create_subprocess_shell("""zsh -ic base16_%s""" % name)
+    await proc.wait()
+
+
+async def set_dark_mode(theme):
+    await run_applescript(
+        """tell application "System Events"
+      tell appearance preferences
+	    set dark mode to %s
+	  end tell
+    end tell"""
+        % ("true" if theme == "dark" else "false")
+    )
+
+
+async def set_alfred_theme(theme):
+    if theme == "dark":
+        name = "Minimal Dark"
+    else:
+        name = "Minimal"
+    await run_applescript('''tell application "Alfred 4" to set theme "%s"''' % name)
+
+
+async def main():
+    theme = argv[1]
+
+    await asyncio.gather(set_term_theme(theme), set_dark_mode(theme))
+
+    # Set the Alfred theme after setting the system mode; otherwise it doesn't
+    # always take
+    await set_alfred_theme(theme)
+
+
+asyncio.get_event_loop().run_until_complete(main())

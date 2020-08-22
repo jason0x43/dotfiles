@@ -26,9 +26,6 @@ export ZCACHEDIR="$CACHEDIR/zsh"
 export ZFUNCDIR="$CACHEDIR/zsh/functions"
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
-[[ -d "$ZPLUGDIR" ]] || mkdir -p "$ZPLUGDIR"
-
 export ZCOMPDIR="$CACHEDIR/zsh/completions"
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
 
@@ -39,68 +36,32 @@ fi
 
 # General paths
 # ----------------------------------------------------------------------------
-typeset -gU cdpath fpath mailpath manpath path
-typeset -gUT INFOPATH infopath
+typeset -gU mailpath path
 
-# Set the list of directories that Zsh searches for function scripts.
-fpath=(
-    $ZCOMPDIR
-    $ZFUNCDIR
-    $DOTFILES/zsh/functions
-    /usr/local/share/zsh-completions
-    $fpath
-)
-
-
-# Set the list of directories that man searches for manuals.
-if [ -e /etc/manpaths ]; then
-	while read line; do 
-		manpath+=$line
-	done < /etc/manpaths
+if [[ -d /home/linuxbrew ]]; then
+	export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+else
+	export HOMEBREW_BASE=/usr/local
 fi
 
-if [ -x /usr/libexec/path_helper ]; then
-	eval `/usr/libexec/path_helper -s`
+# Groovy
+# ----------------------------------------------------------------------------
+if [[ -z "$GROOVY_HOME" ]]; then
+	export GROOVY_HOME=/usr/local/opt/groovy/libexec
 fi
 
 # Java
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
-	# Use java 1.8 by default
-	JAVA_HOME=`/usr/libexec/java_home -v 1.8 2> /dev/null`
-	if (( $? )); then
-		unset JAVA_HOME
-	else
-		export JAVA_HOME
+	if [[ -x /usr/libexec/java_home ]]; then
+		export JAVA_HOME=`/usr/libexec/java_home -v 12 2> /dev/null`
 	fi
 fi
 
-# Ruby
+# Node
 # ----------------------------------------------------------------------------
-if [[ -d $HOME/Library/Ruby/Gems/2.0.0 ]]; then
-	export GEM_HOME=$HOME/Library/Ruby/Gems/2.0.0
-	path=(
-		$GEM_HOME/bin
-		$path
-	)
-fi
-
-# Rust
-# ----------------------------------------------------------------------------
-if [[ -d $HOME/.cargo/bin ]]; then
-	path=(
-		$HOME/.cargo/bin
-		$path
-	)
-fi
-
-# Python
-# ----------------------------------------------------------------------------
-if [[ -e $HOME/Library/Python/2.7/bin ]]; then 
-	path=(
-		$HOME/Library/Python/2.7/bin
-		$path
-	)
+if [[ -e $HOME/.config/ssl/ca.pem ]]; then
+	export NODE_EXTRA_CA_CERTS=$HOME/.config/ssl/ca.pem
 fi
 
 # Go
@@ -110,10 +71,6 @@ if (( $+commands[go] )); then
 		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
 	esac
-	path=(
-		$GOPATH/bin
-		$path
-	)
 fi
 
 # Android
@@ -122,36 +79,129 @@ if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
 fi
 
-# Node
-# ------------------------------------------------------------------------
-export npm_config_python=/usr/bin/python
+# Terminal
+# --------------------------------------------------------------------------
+if [[ -z $TERM_PROGRAM ]]; then
+	if [[ -n $GNOME_TERMINAL_SCREEN ]]; then
+		export TERM_PROGRAM=gnome-terminal
+	elif [[ -n $KITTY_LISTEN_ON ]]; then
+		export TERM_PROGRAM=kitty
+	fi
+fi
 
-# PHP
-# ------------------------------------------------------------------------
+# Tmux
+# --------------------------------------------------------------------------
+export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+
+# Path
+# --------------------------------------------------------------------------
 path=(
-	$HOME/.composer/vendor/bin
-	/usr/local/opt/php@7.1/bin
-	/usr/local/opt/php@7.1/sbin
-	$path
+	$HOME/Applications
+	$HOME/.local/bin
+	$DOTFILES/bin
+	$HOMEBREW_BASE/bin
+	/usr/local/bin
+	$HOMEBREW_BASE/sbin
+	${path:#/usr/local/bin}
 )
 
-
-# TeX
-# ------------------------------------------------------------------------
-if [[ -e /usr/local/texlive ]]; then 
+# LLVM
+if [[ -d $HOMEBREW_BASE/opt/llvm ]]; then
 	path=(
-		/usr/local/texlive/2018/bin/x86_64-darwin
+		$HOMEBREW_BASE/opt/llvm/bin
 		$path
 	)
 fi
 
-# Path
-# ------------------------------------------------------------------------
-path=(
-	$HOME/Applications
-	$DOTFILES/bin
-	$path
-)
+# Ruby
+if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
+	path=(
+		$HOMEBREW_BASE/opt/ruby/bin
+		$path
+	)
+fi
+if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.7.0 ]]; then
+	path=(
+		$HOMEBREW_BASE/lib/ruby/gems/2.7.0/bin
+		$path
+	)
+fi
+
+# Rust
+if [[ -d $HOME/.cargo/bin ]]; then
+	path=(
+		$HOME/.cargo/bin
+		$path
+	)
+fi
+
+# sqlite3
+if [[ -d $HOMEBREW_BASE/opt/sqlite3 ]]; then
+	path=(
+		$HOMEBREW_BASE/opt/sqlite3/bin
+		$path
+	)
+fi
+
+# Python
+if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
+	# Put python at the end of the path since some of its programs, like pip,
+	# will eventually be overridden with things in $HOMEBREW_BASE/bin
+	# https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
+	path=(
+		$path
+		$HOMEBREW_BASE/opt/python3/libexec/bin
+	)
+fi
+
+if [[ -d $HOME/.poetry/bin ]]; then
+	path=(
+		$path
+		$HOME/.poetry/bin
+	)
+fi
+
+# Go
+if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
+	path=(
+		$GOPATH/bin
+		$path
+	)
+fi
+
+# PHP
+if [[ -d $HOMEBREW_BASE/opt/php@7.1/bin ]]; then
+	path=(
+		$HOME/.composer/vendor/bin
+		$path
+		$HOMEBREW_BASE/opt/php@7.1/bin
+		$HOMEBREW_BASE/opt/php@7.1/sbin
+	)
+fi
+
+# TeX
+if [[ -e $HOMEBREW_BASE/texlive ]]; then 
+	path=(
+		$path
+		$HOMEBREW_BASE/texlive/2019/bin/x86_64-darwin
+	)
+fi
+
+# VMware
+if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then
+	path=(
+		$path
+		/Applications/VMware\ Fusion.app/Contents/Library
+	)
+fi
+
+# Deno
+if [[ -d $HOME/.deno/bin ]]; then
+	path=(
+		$path
+		$HOME/.deno/bin
+	)
+fi
 
 # Local config
 # --------------------------------------------------------------------------

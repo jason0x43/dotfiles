@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Git fetch name branch from named remote and reset local branch to point to it
+
+if [[ $1 == "" ]]; then
+	echo Must provide a remote
+	exit 1
+fi
+
+remote=$1
+branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+
+if [[ $branch == "" ]]; then
+	echo Not on a branch
+	exit 1
+fi
+
+git fetch $remote $branch && git reset --hard $remote/$branch

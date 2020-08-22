@@ -1,0 +1,23 @@
+#compdef base16_theme
+# ------------------------------------------------------------------------------
+# Description
+# -----------
+#
+#  Completion script for base16_theme
+#
+# ------------------------------------------------------------------------------
+# Authors
+# -------
+#
+#  * Jason Cheatham (https://github.com/jason0x43)
+#
+# ------------------------------------------------------------------------------
+
+local -a themes
+
+themes=($(base16_theme -l))
+_describe -t themes 'COMMANDS' themes
+
+return 0
+
+# vim: ft=zsh sw=4 ts=4 noet

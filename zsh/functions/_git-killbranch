@@ -1,0 +1,22 @@
+#compdef git-killbranch
+#description kill a branch locally and on all remotes
+
+__git_branch_names () {
+	local expl
+	declare -a branch_names
+
+	branch_names=(${(f)"$(_call_program branchrefs git for-each-ref --format='"%(refname)"' refs/{heads,remotes} | xargs basename | awk '!x[$0]++' | grep -v HEAD 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted branch-names expl branch-name compadd $* - $branch_names
+}
+
+__git_command_successful () {
+	if (( ${#pipestatus:#0} > 0 )); then
+		_message 'not a git repository'
+		return 1
+	fi
+	return 0
+}
+
+_arguments '*:branch:__git_branch_names'

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Show descendents from a particular commit. This assumes an 'lg' alias exists.
+
+base=$1
+shift
+
+git lgb --ancestry-path $base.. $@

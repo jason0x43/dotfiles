@@ -1,0 +1,23 @@
+local name=$1
+local theme_path="$ZPLUGDIR/chriskempson/base16-shell/scripts"
+
+if [[ $name == '-l' ]]; then
+	themes=($(ls $theme_path))
+	for theme in $themes; do
+		echo ${theme:7:-3}
+	done
+	return
+fi
+
+local theme_script="$theme_path/base16-$name.sh"
+
+if [[ ! -f $theme_script ]]; then
+	echo "Unknown theme '$name'"
+	return 1
+fi
+
+if [[ -n $TMUX_REMOTE && -z $TMUX ]]; then
+	TMUX=1 _base16 "$theme_script" $name
+else
+	_base16 "$theme_script" $name
+fi

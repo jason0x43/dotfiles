@@ -1,124 +1,179 @@
 [color]
 	ui = auto
+
 [pack]
 	threads = 0
+
 [diff]
 	renamelimit = 0
-	tool = icdiff
+	tool = vimdiff
 	renames = true
 	compactionHeuristic = true
 	indentHeuristic = true
+
 [difftool]
 	prompt = false
+
+[difftool.vimdiff]
+	cmd = vimdiff "$REMOTE" "$LOCAL"
+
 [core]
-	excludesfile = /Users/michelle.cheatham/.gitignore
+	excludesfile = /Users/jason/.gitignore
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	pager = less -F -X
+	# pager = less -F -X
+	; pager = diff-so-fancy | less -RFX
+	pager = delta --plus-color="#003300"
+
 [alias]
+	a = add
+	b = branch
+	ba = branch -a
 	bd = branch -d
 	bD = branch -D
+	bf = branch --contains
+	c = commit
+	ca = commit --all
 	cb = checkout -b
 	co = checkout
 	cp = cherry-pick
+	cpn = cherry-pick --no-commit
+	d = diff
 	dp = show
+	ds = diff --stat
+	dv = difftool
+	f = fetch
+	fp = fetch --prune
+	fr = fetchreset
 	forget = rm --cached
+	g = grep
+	gi = grep --ignore-case
+	gil = grep --ignore-case --files-with-matches
+	gl = grep --files-with-matches
 	ia = !git add $(git ls-files --modified --others --exclude-standard | fzf -m)
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3
 	ignore = update-index --assume-unchanged
+	kb = killbranch
+	l = lg -n 20
+	la = lg
+	lb = lgb -n 20
+	lb = lgb -n 20
+	lba = lgb
+	latest = !git for-each-ref --color=always --sort='-committerdate' --format='%(color:red)%(refname:lstrip=-2)%(color:reset)%09%(committerdate)' refs | less -XFR
 	lg = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset' --all
 	lgb = log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'
-	s = status --short
+	lf = log-from
+	lfm = log-from-merge
+	ls = ls-files
+	mb = merge-base
+	p = pullthis
+	cop = checkout-pr
+	clp = clean-prs
+	r = rebase
+	ri = rebase -i
+	rc = rebase --continue
+	ro = rebase --onto
+	rv = remote -v
+	s = -c status.color=always status --short
+	sh = show
+	ss = show --stat
+	su = "!git s | grep UU"
 	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
 	unstage = reset HEAD
 	untrack = rm --cached
 
-	# check out a local copy of a PR. https://gist.github.com/gnarf/5406589
-	pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
-	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[difftool "nvimdiff"]
-	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
-	path = 
-[difftool "sdiff"]
-	cmd = sdiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[difftool "icdiff"]
-	cmd = icdiff --no-bold --line-numbers \"$LOCAL\" \"$REMOTE\"
-	path =
 [push]
 	default = current
+
 [tig]
 	line-graphics = utf-8
 	vertical-split = no
 	commit-order = default
 	main-view-id = yes
 	main-view-date = relative-compact
+
 [tig "color"]
 	cursor = color0 color2 normal
 	default = color7 default normal
-	diff-del = color8 default normal
-	diff-add = color11 default normal
+	diff-del = color5 default normal
+	diff-add = color2 default normal
 	title-focus = color0 color1 normal
 	title-blur = color0 color6 normal
+
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line
 	status = S !?git stash save --keep-index %(prompt)
 	status = + !git commit --amend
+
 [url "git@github.com:"]
 	insteadOf = gh:
 	pushInsteadOf = gh:
 	pushInsteadOf = git://github.com/
+
 [url "git@gist.github.com:"]
 	insteadOf = gist:
 	pushInsteadOf = gist:
 	pushInsteadOf = git://gist.github.com/
+
 [filter "lfs"]
 	clean = git-lfs clean %f
 	smudge = git-lfs smudge %f
 	required = true
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-[rebase]
-	instructionFormat = [%an @ %ar] %s
-	autostash = true
-[pager]
-	#diff = diff-so-fancy | less --tabs=4 -RFX
-	difftool =
-	#show = diff-so-fancy | less --tabs=4 -RFX
-	#log = diff-so-fancy | less --tabs=4 -RFX
-[interactive]
-	#diffFilter = diff-so-fancy
-[commit]
-	verbose = true
-[submodule]
-	fetchJobs = 4
-[stash]
-	showPatch = true
-[rerere]
-	enabled = true
-[color "diff-highlight"]
-	oldNormal = red
-	oldHighlight = red 10
-	newNormal = green
-	newHighlight = green 10
-[color "diff"]
-	meta = 11 
-	commit = 9 
-	old = red
-	new = green
-	whitespace = red reverse
-[help]
-	autoCorrect = 20
-[advice]
-	detachedHead = false
+
 [user]
 	name = Michelle Cheatham
 	email = michelle.cheatham@gmail.com
+
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+
+[rebase]
+	instructionFormat = [%an @ %ar] %s
+	autostash = true
+
+[pager]
+	#diff = diff-so-fancy | less --tabs=4 -RFX
+	#show = diff-so-fancy | less --tabs=4 -RFX
+	#log = diff-so-fancy | less --tabs=4 -RFX
+	#
+[interactive]
+	# diffFilter = diff-so-fancy
+
+[commit]
+	verbose = true
+
+[submodule]
+	fetchJobs = 4
+
+[stash]
+	showPatch = true
+
+[rerere]
+	enabled = true
+
+[includeIf "gitdir:~/Documents/Work/projects/"]
+	path = ~/.gitconfig-work
+
+[color "diff"]
+	old = 5
+	new = 2
+
+[color "diff-highlight"]
+	oldNormal = 5
+	oldHighlight = 5 bold 18
+	newNormal = 2
+	newHighlight = 2 bold 18
+
+[help]
+	autoCorrect = 20
+
+[advice]
+	detachedHead = false
+
+[pull]
+	rebase = true

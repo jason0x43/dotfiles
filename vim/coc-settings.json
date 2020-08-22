@@ -1,0 +1,103 @@
+{
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+  "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
+  "coc.preferences.hoverTarget": "float",
+  "css.lint.unknownProperties": "ignore",
+  "codeLens.enable": true,
+  "deno.enable": false,
+  "diagnostic.errorSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.maxWindowHeight": 20,
+  "diagnostic.enableMessage": "jump",
+  "diagnostic.refreshOnInsertMode": true,
+  "diagnostic.virtualText": false,
+  "diagnostic.warningSign": "",
+  "emmet.excludeLanguages": [
+    "markdown",
+    "javascript.jsx",
+    "javascriptreact",
+    "typescript.tsx",
+    "typescriptreact"
+  ],
+  "eslint.enable": true,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "explorer.file.autoReveal": false,
+  "explorer.file.column.git.icon.added": "✚",
+  "explorer.file.column.git.icon.deleted": "✖",
+  "explorer.file.column.git.icon.renamed": "➜",
+  "explorer.file.column.git.icon.unmerged": "═",
+  "explorer.file.column.git.icon.untracked": "?",
+  "explorer.file.column.git.icon.modified": "✹",
+  "explorer.file.column.git.icon.ignored": "☒",
+  "explorer.icon.enableNerdfont": true,
+  "explorer.keyMappings": {
+    "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
+  },
+  "explorer.previewAction.onHover": false,
+  "explorer.sources": [
+    {
+      "name": "file",
+      "expand": true
+    }
+  ],
+  "git.addGBlameToBufferVar": true,
+  "git.addGBlameToVirtualText": false,
+  "git.addedSign.text": "┃",
+  "git.branchCharacter": "",
+  "git.changeRemovedSign.text": "┃",
+  "git.changedSign.text": "┃",
+  "git.removedSign.text": "┃",
+  "java.errors.incompleteClasspath.severity": "ignore",
+  "javascript.referencesCodeLens.enable": false,
+  "javascript.suggestionActions.enabled": false,
+  "json.schemas": [
+    {
+      "fileMatch": ["tsconfig*.json"],
+      "url": "http://json.schemastore.org/tsconfig"
+    },
+    {
+      "fileMatch": ["intern.json", "intern-*.json", "intern.*.json"],
+      "url": "https://theintern.io/intern/resources/4/schemas/config.json"
+    }
+  ],
+  "languageserver": {
+    "clangd": {
+      "command": "clangd",
+      "args": ["--background-index"],
+      "filetypes": ["c", "cpp", "objc", "objcpp"],
+      "rootPatterns": [".vim/", ".git/", ".hg/"]
+    },
+    "golang": {
+      "args": [],
+      "command": "gopls",
+      "filetypes": ["go"],
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"]
+    },
+    "sourcekit-lsp": {
+      "filetypes": ["swift"],
+      "command": "xcrun",
+      "args": ["sourcekit-lsp"]
+    }
+  },
+  "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
+  "python.formatting.provider": "black",
+  "python.globalModuleInstallation": true,
+  "python.jediEnabled": false,
+  "python.linting.mypyEnabled": true,
+  "snippets.extends": {
+    "javascriptreact": ["javascript"],
+    "typescript": ["javascript"],
+    "typescriptreact": ["typescript", "javascriptreact"]
+  },
+  "suggest.enablePreview": true,
+  "suggest.enablePreselect": false,
+  "suggest.maxPreviewWidth": 100,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.referencesCodeLens.enable": false,
+  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml"
+}

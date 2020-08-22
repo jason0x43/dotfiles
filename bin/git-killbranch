@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Git remove a branch or branches from everywhere
+
+if [[ $# == 0 ]]; then
+	echo Must provide at least one branch name
+	exit 1
+fi
+
+for branch in $*; do
+	git branch -D $branch
+
+	for r in $(git remote); do
+		git push $r :$branch
+	done
+done

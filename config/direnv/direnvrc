@@ -1,0 +1,95 @@
+source $(asdf which direnv_use_asdf)
+
+# Return the currently active version of a particular tool
+#
+# This works by looking at the full path to a given executable. If it fits a
+# versioned format (e.g., python-3.7.5 or node/10.13.0), then the version is
+# returned.
+#
+get_tool_version() {
+  tool=$1
+  tool_path=$(/usr/bin/type -P $tool)
+  if [[ $tool_path =~ /$tool-([0-9][^/]*)/ ]]; then
+    echo ${BASH_REMATCH[1]}
+  elif [[ $tool_path =~ /$tool/([0-9][^/]*)/ ]]; then
+    echo ${BASH_REMATCH[1]}
+  fi
+}
+
+# Export the current version of a tool as an ASDF_<TOOL>_VERSION variable
+export_tool_version() {
+  tool=$1
+  tool_version=$(get_tool_version $tool)
+  if [[ -n $tool_version ]]; then
+    eval "export ASDF_${tool^^}_VERSION=$tool_version"
+  fi
+}
+
+# Use particular versions of tools (e.g. python@3.7.5)
+use_tools() {
+  for spec in $@; do
+    plugin=${spec%@*}
+    version=${spec#*@}
+
+    asdf list $plugin &> /dev/null
+    if [[ $? -ne 0 ]]; then
+      echo "Plugin $plugin is not installed"
+      exit 1
+    fi
+
+    eval "export ASDF_${plugin^^}_VERSION=$version"
+
+    asdf current $plugin &> /dev/null
+    if [[ $? -ne 0 ]]; then
+      asdf install $plugin $version
+    fi
+  done
+
+  use_asdf
+}
+
+# Use a local python env, creating it if necessary
+use_pyenv() {
+  asdf_version=$(asdf current python)
+  version=${asdf_version%% *}
+  if [[ ! -d .asdf/python-$version ]]; then
+    python -m venv .asdf/python-$version
+    .asdf/python-$version/bin/pip install --upgrade pip
+  fi
+  export PATH=$PWD/.asdf/python-$version/bin:$PATH
+}
+
+# Use a local ruby env, creating it if necessary
+use_rbenv() {
+  asdf_version=$(asdf current ruby)
+  version=${asdf_version%% *}
+  if [[ ! -d .asdf/python-$version ]]; then
+    mkdir -p .asdf/ruby-$version
+  fi
+  export GEM_HOME=$PWD/.asdf/ruby-$version
+  export PATH=$GEM_HOME/bin:$PATH
+}
+
+# Use a custom/local npm registry.
+use_local_npm() {
+  export npm_config_registry=https://npm.registry.local:4873
+}
+
+layout_poetry() {
+  if [[ ! -f pyproject.toml ]]; then
+    log_error 'No pyproject.toml found.  Use `poetry new` or `poetry init` to create one first.'
+    exit 2
+  fi
+
+  local VENV=$(poetry env list --full-path | cut -d' ' -f1)
+  if [[ -z $VENV || ! -d $VENV/bin ]]; then
+    log_error 'No created poetry virtual environment found.  Use `poetry install` to create one first.'
+    exit 2
+  fi
+  VENV=$VENV/bin
+  export VIRTUAL_ENV=$(echo "$VENV" | rev | cut -d'/' -f2- | rev)
+  export POETRY_ACTIVE=1
+  PATH_add "$VENV"
+}
+
+# vim:filetype=bash:

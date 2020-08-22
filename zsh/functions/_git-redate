@@ -1,0 +1,23 @@
+#compdef git-redate
+#description reset the date on a commit
+
+__git_commit_ids () {
+	local expl remote
+	declare -a commits
+
+    remote=${words[CURRENT-1]}
+	commit_ids=(${(f)"$(_call_program commitrefs git rev-list HEAD --max-count=50 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted commit-ids expl commit-id compadd $* - $commit_ids
+}
+
+__git_command_successful () {
+	if (( ${#pipestatus:#0} > 0 )); then
+		_message 'not a git repository'
+		return 1
+	fi
+	return 0
+}
+
+_arguments ':commit_id:__git_commit_ids' 
