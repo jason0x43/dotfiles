@@ -102,29 +102,19 @@ function dotfiles-brew {
 
     logSub "Checking for missing brew packages..."
     brew_packages=(
-        'asdf'
-        'autoconf'
-        'automake'
-        'bash'
-        'bat'
-        'coreutils'
-        'fd'
-        'fzf'
-        'gawk'
-        'git'
-        'git-delta'
-        'gnupg'
-        'jq'
-        'libtool'
-        'libyaml'
-        'neovim'
-        'node'
-        'openssl'
-        'python'
-        'readline'
-        'ripgrep'
-        'tmux'
-        'unixodbc'
+        'asdf'        # for managing devtools
+        'bash'        # update from system stock version
+        'bat'         # better cat
+        'fd'          # better find
+        'fzf'         # fuzzy finder
+        'git'         # update from system stock git
+        'git-delta'   # prettier git diffs
+        'jq'          # used with asdf to manage java
+        'neovim'      # better vim
+        'node'        # NodeJS
+        'python@3.8'  # update from system stock Python3
+        'ripgrep'     # better grep
+        'tmux'        # terminal manager
     )
 
     if [[ $(uname -s) == "Darwin" ]]; then
