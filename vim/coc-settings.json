@@ -1,9 +1,10 @@
 {
+  "clangd.path": "/usr/local/opt/llvm/bin/clangd",
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
   "coc.preferences.hoverTarget": "float",
   "css.lint.unknownProperties": "ignore",
-  "codeLens.enable": true,
+  "codeLens.enable": false,
   "deno.enable": false,
   "diagnostic.errorSign": "",
   "diagnostic.infoSign": "",
@@ -26,7 +27,7 @@
     "typescript",
     "typescriptreact"
   ],
-  "explorer.file.autoReveal": false,
+  // "explorer.file.autoReveal": false,
   "explorer.file.column.git.icon.added": "✚",
   "explorer.file.column.git.icon.deleted": "✖",
   "explorer.file.column.git.icon.renamed": "➜",
@@ -53,8 +54,8 @@
   "git.changedSign.text": "┃",
   "git.removedSign.text": "┃",
   "java.errors.incompleteClasspath.severity": "ignore",
-  "javascript.referencesCodeLens.enable": false,
-  "javascript.suggestionActions.enabled": false,
+  "javascript.referencesCodeLens.enable": true,
+  "javascript.suggestionActions.enabled": true,
   "json.schemas": [
     {
       "fileMatch": ["tsconfig*.json"],
@@ -66,12 +67,6 @@
     }
   ],
   "languageserver": {
-    "clangd": {
-      "command": "clangd",
-      "args": ["--background-index"],
-      "filetypes": ["c", "cpp", "objc", "objcpp"],
-      "rootPatterns": [".vim/", ".git/", ".hg/"]
-    },
     "golang": {
       "args": [],
       "command": "gopls",
@@ -98,6 +93,6 @@
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
   "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.referencesCodeLens.enable": false,
+  "typescript.referencesCodeLens.enable": true,
   "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml"
 }
