@@ -1,5 +1,4 @@
 {
-  "clangd.path": "/usr/local/opt/llvm/bin/clangd",
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
   "coc.preferences.hoverTarget": "float",
