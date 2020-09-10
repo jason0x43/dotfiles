@@ -369,14 +369,20 @@ alias gg='git g'
 alias ggi='git gi'
 alias ggil='git gil'
 alias ggl='git gl'
-alias gid='git id'
-alias gkb='git kb'
-alias gl='git l'
-alias gla='git la'
-alias glb='git lb'
-alias glba='git lba'
-alias glf='git lf'
-alias glfm='git lfm'
+alias gid='git rev-parse HEAD'
+
+# Display graph logs
+local lg="git log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'"
+local lga="$lg --all"
+alias gl="$lga -n 20"
+alias gla="$lga"
+alias glb="$lg -n 20"
+alias glba="$lg"
+
+# Show descendents from a particular commit
+alias glf="$lga --ancestry-path"
+alias glfm="$lg --ancestry-path"
+
 alias gls='git ls'
 alias gmb='git mb'
 alias gp='git p'
@@ -386,10 +392,13 @@ alias grc='git rc'
 alias grm='git rm'
 alias gro='git ro'
 alias grv='git rv'
-alias gs='git s'
-alias gsu='git su'
-alias gsh='git sh'
-alias gss='git ss'
+alias gs='git -c status.color=always status --short'
+alias gsh='git show'
+alias gshs='git show --stat'
+alias gshu='gs | grep UU'
+alias gwl='git worktree list'
+alias gwa='git worktree add'
+alias gwr='git worktree remove'
 
 alias tiga='tig --all'
 alias fgl='fzf-git-log'
