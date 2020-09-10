@@ -173,7 +173,7 @@ function dotfiles-zsh {
 function dotfiles-python {
     log "Updating global python packages..."
     if hash pip3; then
-        pip3 install -U pip setuptools pynvim > /dev/null
+        pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
         logSub "Updated Python 3 packages"
     fi
 }
