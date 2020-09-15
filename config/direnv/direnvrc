@@ -1,4 +1,4 @@
-source $(asdf which direnv_use_asdf)
+source $(asdf direnv hook asdf)
 
 # Return the currently active version of a particular tool
 #

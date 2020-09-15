@@ -1,0 +1,21 @@
+#!/bin/zsh
+
+ref=$1
+
+if [[ -z $ref ]]; then
+  echo
+  echo "NAME"
+  echo "\tgit-ancestor-tags - List tags that are ancestors of a commit"
+  echo
+  echo "SYNOPSIS"
+  echo "\tgit ancestor-tags <ref>"
+  echo
+  exit 1
+fi
+
+for tag in $(git tag); do
+  git merge-base --is-ancestor $(git show-ref -s $tag) $ref
+  if (( $? == 0 )); then
+    echo "$tag"
+  fi
+done

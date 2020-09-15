@@ -106,10 +106,12 @@ path=(
 )
 
 # LLVM
+# Put LLVM at the end of the path to avoid overriding Xcode's LLVM in projects
+# that use it (this may not be sufficient)
 if [[ -d $HOMEBREW_BASE/opt/llvm ]]; then
 	path=(
-		$HOMEBREW_BASE/opt/llvm/bin
 		$path
+		$HOMEBREW_BASE/opt/llvm/bin
 	)
 fi
 
