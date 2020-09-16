@@ -491,8 +491,8 @@ alias lld='ll -d'        # List directories
 alias la='ll -A'         # Lists human readable sizes, hidden files
 
 # Space usage
-alias df='df -kh'
-alias du='du -kh'
+alias dfh='df -h'
+alias duh='du -h *(D) | sort -h'
 
 # Shell options
 # ------------------------------------------------------------------------
