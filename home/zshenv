@@ -53,7 +53,7 @@ fi
 # ----------------------------------------------------------------------------
 if [[ -z "$JAVA_HOME" ]]; then
 	if [[ -x /usr/libexec/java_home ]]; then
-		export JAVA_HOME=`/usr/libexec/java_home -v 12 2> /dev/null`
+		export JAVA_HOME=`/usr/libexec/java_home -v 14 2> /dev/null`
 	fi
 fi
 
