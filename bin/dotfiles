@@ -36,8 +36,16 @@ function link {
     fi
 }
 
-# Fix terminal definition so C-H works properly in neovim
+# Fix terminal config
 function fixterm {
+    if [[ $TERM == "xterm-kitty" && $(uname -s) == "Darwin" && ! -d $HOME/.terminfo/78/xterm-kitty ]]; then
+        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+        infocmp xterm-kitty > $tmpfile
+        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+        rm $tmpfile
+    fi
+
+    # Fix terminal definition so C-H works properly in neovim
     kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
     if [[ $kbs =~ "kbs=^[hH]" ]]; then
         logSub "Fixing backspace code in terminfo..."
