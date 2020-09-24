@@ -358,6 +358,11 @@ alias gco='git co'
 alias gcp='git cp'
 alias gcpe='git cp -e'
 alias gcpn='git cpn'
+
+# Cleanup
+alias gcln='git clean -nxd'
+alias gclf='git clean -fxd'
+
 alias gd='git d'
 alias gds='git ds'
 alias gdv='git dv'
