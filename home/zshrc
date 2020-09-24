@@ -410,7 +410,7 @@ alias fgl='fzf-git-log'
 alias ts='tig status'
 
 # ssh in interactive shells
-alias ssh=themed_ssh
+# alias ssh=themed_ssh
 
 # tmux
 alias tls='tmux list-sessions'
