@@ -188,25 +188,21 @@ function dotfiles-python {
 
 # Update global npm packages
 function dotfiles-node {
-    node_path=$1
-    if [[ -n $node_path && -d $node_path ]]; then
-        path=($node_path $path)
-        export PATH
+    local node_path=$1
+    if [[ -z $node_path ]]; then
+        log "Updating global node packages..."
+        node_path=$(dirname $(whence -p node))
     fi
 
     # if a node_path was provided, the function was called from another
     # function, so don't print the top-level message
-    if [[ -z $node_path ]]; then
-        log "Updating global npm modules..."
-    fi
-
-    if ! hash npm; then
+    if [[ ! -x $node_path/npm ]]; then
         err "No npm executable"
         return
     fi
 
     # get list of outdated global packages
-    mods=($(npm --registry=https://registry.npmjs.org outdated -g --parseable))
+    mods=($($node_path/npm --registry=https://registry.npmjs.org outdated -g --parseable))
     for mod in $mods; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
@@ -237,16 +233,10 @@ function dotfiles-node {
                 (( latest[3] > current[3] ));
             };
         }; then
-            npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+            $node_path/npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
             logSub "Installed $latestPkg"
         fi
     done
-
-    if [[ -n $node_path && -d $node_path ]]; then
-        # Remove the temporarily added first path element
-        path=(${(@)path[2,$#path]})
-        export PATH
-    fi
 }
 
 # Update tmux plugins
@@ -309,6 +299,13 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
+    local node_path
+    if [[ -n $VIM_NODE_VERSION ]]; then
+        node_path=$HOME/.asdf/installs/nodejs/10.16.2/bin
+    else
+        node_path=/usr/local/bin
+    fi
+
     if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
         cd $HOME/.vim/autoload
         existing=$(<plug.vim)
@@ -332,9 +329,9 @@ function dotfiles-vim {
                 if [[ $(git rev-parse HEAD) != $head ]]; then 
                     if [[ -e package.json ]]; then
                         if [[ -e yarn.lock ]]; then
-                            yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
+                            $node_path/yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
                         else
-                            npm install --registry=https://registry.npmjs.org --silent
+                            $node_path/npm install --registry=https://registry.npmjs.org --silent
                         fi
                     fi
                     logSub "Updated $plugin"
@@ -345,7 +342,7 @@ function dotfiles-vim {
     fi
 
     log "Updating vim's node packages..."
-    dotfiles-node "$HOME/.asdf/installs/nodejs/10.16.2/bin"
+    dotfiles-node $node_path
 }
 
 dotfiles=$HOME/.dotfiles
