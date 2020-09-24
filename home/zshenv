@@ -104,6 +104,30 @@ path=(
 	${path:#/usr/local/bin}
 )
 
+if [[ -d /Applications/Xcode.app ]]; then
+	export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+fi
+
+
+# pkg-config
+typeset -U pkg_config_path=$PKG_CONFIG_PATH
+
+if [[ -d /usr/local/opt/openssl ]]; then
+	pkg_config_path=(
+		/usr/local/opt/openssl/lib/pkgconfig
+		$pkg_config_path
+	)
+fi
+
+if [[ -d /usr/local/opt/icu4c ]]; then
+	pkg_config_path=(
+		/usr/local/opt/icu4c/lib/pkgconfig
+		$pkg_config_path
+	)
+fi
+
+export PKG_CONFIG_PATH=$(print -R ${(j|:|)pkg_config_path})
+
 # LLVM
 # Put LLVM at the end of the path to avoid overriding Xcode's LLVM in projects
 # that use it (this may not be sufficient)
