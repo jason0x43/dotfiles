@@ -80,6 +80,9 @@ set lazyredraw               " Redraw less frequently
 set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
 
+" Improve completion experience with completion-nvim
+set completeopt=menuone,noinsert,noselect
+
 " Show markers at the beginning and end of non-wrapped lines
 set listchars+=precedes:^,extends:$
 
@@ -142,49 +145,9 @@ map <silent> <Leader>h :echo "hi<" .
     \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-" <Leader>f to find files
-map <Leader>f :CocList files<CR>
-
-" <Leader>g to find files in a git repo
-map <Leader>g :CocList gfiles<CR>
-
-" <Leader>m to find modified files in a git repo
-map <Leader>m :CocList gstatus<CR>
-
-" <Leader>b to list buffers
-map <Leader>b :CocList buffers<CR>
-
-" Tab for cycling forwards through matches in a completion popup (taken
-" from coc help)
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1] =~# '\s'
-endfunction
-" When popup menu is visible, tab goes to next entry.
-" Else, if the cursor is in an active snippet, tab between fields.
-" Else, if the character before the cursor isn't whitespace, put a Tab.
-" Else, refresh the completion list
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<Tab>" :
-      \ coc#refresh()
-
-" Shift-Tab for cycling backwards through matches in a completion popup
-inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" Enter to confirm completion
-inoremap <silent><expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-
-" K to show documentation in a preview window
-function! s:show_documentation()
-    if (index(['vim', 'help'], &filetype) >= 0)
-        execute 'h ' . expand('<cword>')
-    elseif exists(':CocAction')
-        call CocAction('doHover')
-    endif
-endfunction
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Use tab to cycle through completions
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " space to clear search highlights
 noremap <silent> <space> :noh<cr>
@@ -377,6 +340,7 @@ function! s:base16_customize()
         \ . ' guifg=#' . g:base16_gui00
     exec 'hi IncSearch guibg=#' . g:base16_gui0D
         \ . ' guifg=#' . g:base16_gui00
+    exec 'hi Error guibg=NONE guifg=#' . g:base16_gui0E
     " hi visibility cursor
     hi Cursor guibg=red
     " no background for diffs (it messes with floating windows)
@@ -404,116 +368,50 @@ function! s:base16_customize()
         let g:terminal_color_20 = '#' . g:base16_gui04
         let g:terminal_color_21 = '#' . g:base16_gui06
     endif
+
+    let g:chadtree_colours = {
+        \ "8_bit": {
+        \   "Black":         { "hl24": g:terminal_color_0 },
+        \   "Red":           { "hl24": g:terminal_color_1 },
+        \   "Green":         { "hl24": g:terminal_color_2 },
+        \   "Yellow":        { "hl24": g:terminal_color_3 },
+        \   "Blue":          { "hl24": g:terminal_color_4 },
+        \   "Magenta":       { "hl24": g:terminal_color_5 },
+        \   "Cyan":          { "hl24": g:terminal_color_6 },
+        \   "White":         { "hl24": g:terminal_color_7 },
+        \   "BrightBlack":   { "hl24": g:terminal_color_8 },
+        \   "BrightRed":     { "hl24": g:terminal_color_9 },
+        \   "BrightGreen":   { "hl24": g:terminal_color_10 },
+        \   "BrightYellow":  { "hl24": g:terminal_color_11 },
+        \   "BrightBlue":    { "hl24": g:terminal_color_12 },
+        \   "BrightMagenta": { "hl24": g:terminal_color_13 },
+        \   "BrightCyan":    { "hl24": g:terminal_color_14 },
+        \   "BrightWhite":   { "hl24": g:terminal_color_15 },
+        \ }}
+
+    exec 'hi LspDiagnosticsWarning guibg=NONE guifg=#' . g:base16_gui0F . ' gui=italic'
+    exec 'hi LspDiagnosticsWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=bold'
+    exec 'hi LspDiagnosticsWarningFloating guibg=NONE guifg=#' . g:base16_gui0F
+    exec 'hi LspDiagnosticsUnderlineWarning gui=undercurl guisp=#' . g:base16_gui0F
+
+    exec 'hi LspDiagnosticsError guibg=NONE guifg=#' . g:base16_gui0E . ' gui=italic'
+    exec 'hi LspDiagnosticsErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0E . ' gui=bold'
+    exec 'hi LspDiagnosticsErrorFloating guibg=NONE guifg=#' . g:base16_gui0E
+    exec 'hi LspDiagnosticsUnderlineError gui=undercurl guisp=#' . g:base16_gui0E
+
+    exec 'hi LspDiagnosticsHintSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=bold'
+    exec 'hi LspDiagnosticsHint guibg=NONE guifg=#' . g:base16_gui02 . ' gui=italic'
+    exec 'hi LspDiagnosticsHintFloating guibg=NONE guifg=#' . g:base16_gui0B
+    exec 'hi LspDiagnosticsUnderlineHint gui=undercurl guisp=#' . g:base16_gui0B
 endfunction
 
 augroup vimrc
     autocmd ColorScheme * call s:base16_customize()
 augroup END
 
-" coc
+" chadtree
 " ---------------------------------------------------------------------
-augroup vimrc
-    if exists('CocActionAsync')
-        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-    endif
-
-    nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-    nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
-augroup END
-
-command! Rg :CocList --interactive grep<CR>
-
-map <silent> <Leader>e :CocList diagnostics<cr>
-map <silent> <Leader>l :CocList<CR>
-map <silent> <Leader>x <Plug>(coc-codeaction)
-
-map <silent> <M-f> <Plug>(coc-format)
-map <silent> <C-]> <Plug>(coc-definition)
-map <silent> <leader>t <Plug>(coc-format-selected)
-map <silent> <leader>r <Plug>(coc-rename)
-map <silent> <leader>j <Plug>(coc-references)
-map <silent> <leader>d <Plug>(coc-diagnostic-info)
-
-" navigate chunks of current buffer
-nmap g[ <Plug>(coc-git-prevchunk)
-nmap g] <Plug>(coc-git-nextchunk)
-" show chunk diff at current position
-nmap gi <Plug>(coc-git-chunkinfo)
-" show commit contains current position (don't use gc)
-nmap gl <Plug>(coc-git-commit)
-" stage current chunk
-nmap gu :CocCommand git.chunkStage<CR>
-" undo current chunk
-nmap g! :CocCommand git.chunkUndo<CR>
-" fold everything but chunnks
-nmap gf :CocCommand git.foldUnchanged<CR>
-
-command! -nargs=0 OrganizeImports :CocCommand editor.action.organizeImport
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-command! -nargs=0 Format :call CocAction('format')
-
-" Use a specific version of Node for vim. At least coc-sh won't work with > 10
-if exists('$VIM_NODE_VERSION')
-  let g:coc_node_path = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin/node')
-  let g:node_host_prog = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/.npm/bin/neovim-node-host')
-else
-  let g:coc_node_path = '/usr/local/bin/node'
-  let g:node_host_prog = '/usr/local/bin/neovim-node-host'
-endif
-
-" Set the registry for VIM to make COC happy
-let $npm_config_registry='https://registry.npmjs.org'
-
-let g:coc_global_extensions = [
-    \ 'coc-calc',
-    \ 'coc-css',
-    \ 'coc-emmet',
-    \ 'coc-emoji',
-    \ 'coc-eslint',
-    \ 'coc-explorer',
-    \ 'coc-git',
-    \ 'coc-github',
-    \ 'coc-highlight',
-    \ 'coc-java',
-    \ 'coc-jest',
-    \ 'coc-json',
-    \ 'coc-lists',
-    \ 'coc-lua',
-    \ 'coc-prettier',
-    \ 'coc-python',
-    \ 'coc-rls',
-    \ 'coc-sh',
-    \ 'coc-snippets',
-    \ 'coc-svg',
-    \ 'coc-tsserver',
-    \ 'coc-vimlsp',
-    \ 'coc-vimtex',
-    \ 'coc-xml',
-    \ 'coc-yaml',
-    \ ]
-
-let g:coc_status_error_sign = ' '
-let g:coc_status_warning_sign = ' '
-
-let g:coc_snippet_next = '<tab>'
-let g:coc_snippet_prev = '<S-tab>'
-let g:coc_disable_startup_warning = 1
-
-function! s:coc_customize_colors()
-    exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
-    exec 'hi CocErrorVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=NONE'
-    exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=bold'
-    exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=NONE'
-    exec 'hi CocInfoSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=bold'
-    exec 'hi CocInfoVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=NONE'
-    exec 'hi CocErrorHighlight gui=undercurl guisp=red'
-endfunction
-
-augroup vimrc
-    autocmd ColorScheme * call s:coc_customize_colors()
-augroup END
-
-map <silent> <Leader>n :CocCommand explorer<CR>
+nnoremap <leader>n <cmd>CHADopen<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -544,7 +442,7 @@ let g:lightline = {
     \   ],
     \   'right': [
     \     [ 'lineinfo', 'percent' ],
-    \     [ 'cocstatus', 'sleuth' ],
+    \     [ 'sleuth' ],
     \     [ 'gitblame', 'filetype', 'fileformat', 'fileencoding' ]
     \   ]
     \ },
@@ -556,14 +454,10 @@ let g:lightline = {
     \   'readonly': 'error',
     \ },
     \ 'component_function': {
-    \   'cocstatus': 'coc#status',
-    \   'currentfunction': 'CocCurrentFunction',
     \   'fileencoding': 'LightlineFileEncoding',
     \   'filename': 'LightlineFileName',
     \   'fileformat': 'LightlineFileFormat',
     \   'filetype': 'LightlineFileType',
-    \   'gitbranch': 'LightlineGitBranch',
-    \   'gitblame': 'LightlineGitBlame',
     \   'sleuth': 'SleuthIndicator'
     \ },
     \ 'separator': { 'left': '', 'right': '' },
@@ -593,18 +487,6 @@ endfunction
 
 function! LightlineFileType()
     return WebDevIconsGetFileTypeSymbol()
-endfunction
-
-function! LightlineGitBranch()
-    return get(g:, 'coc_git_status', '')
-endfunction
-
-function! LightlineGitBlame()
-    let l:blame = get(b:, 'coc_git_blame', '')
-    if empty(l:blame) || l:blame[0] == 'Not committed yet'
-        return ''
-    endif
-    return matchstr(l:blame, '^\zs([^)]\+)\ze')
 endfunction
 
 function! s:lightline_update()
@@ -796,27 +678,35 @@ Plug 'meain/vim-package-json', {
     \ 'do': 'cd rplugin/node/vim-package-json && npm install'
     \ }
 
-" Completion
-Plug 'neoclide/coc.nvim', {
-    \ 'do': 'yarn install --frozen-lockfile'
-    \ }
-
-" File browsing
-" Plug 'jason0x43/vim-wildgitignore'
-
 " Base filetype plugins (these detect filetypes)
-Plug 'pangloss/vim-javascript'
 Plug 'neoclide/jsonc.vim'
-Plug 'mxw/vim-jsx'
 Plug 'digitaltoad/vim-jade'
 Plug 'keith/swift.vim'
-Plug 'leafgarland/typescript-vim'
-Plug 'ianks/vim-tsx'
 Plug 'groenewege/vim-less'
 Plug 'rust-lang/rust.vim'
 Plug 'wavded/vim-stylus'
 Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'udalov/kotlin-vim'
+Plug 'cespare/vim-toml'
+
+" Completion
+Plug 'neoclide/coc.nvim', {
+    \ 'do': 'yarn install --frozen-lockfile'
+    \ }
+
+" nvim-lsp
+" if has('nvim')
+"   Plug 'neovim/nvim-lspconfig'
+"   Plug 'nvim-lua/completion-nvim'
+"   Plug 'nvim-lua/diagnostic-nvim'
+"   Plug 'nvim-treesitter/completion-treesitter'
+" endif
+" Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+
+" Flashier syntax highlighting
+if has('nvim')
+  Plug 'nvim-treesitter/nvim-treesitter'
+endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
@@ -859,9 +749,6 @@ Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 " Load all the plugins
 call plug#end()
 
-" Post-plugin initialization
-if exists('coc#config')
-    call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
-endif
-
-UpdateColors
+if has('nvim')
+  lua require("treesitter_config")
+endif 
