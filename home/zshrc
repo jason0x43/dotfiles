@@ -417,6 +417,10 @@ alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
 alias tks='tmux kill-session -t'
 
+# xcode
+alias xcr='xcrun'
+alias xcb='xcodebuild'
+
 # Pretty print json
 alias json='python -m json.tool'
 

@@ -104,4 +104,11 @@ layout_poetry() {
   PATH_add "$VENV"
 }
 
+# Set CPATH for projects that need it
+use_xcode_cpath() {
+  if [[ -d /Applications/Xcode.app ]]; then
+      export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+  fi
+}
+
 # vim:filetype=bash:

@@ -104,11 +104,6 @@ path=(
 	${path:#/usr/local/bin}
 )
 
-if [[ -d /Applications/Xcode.app ]]; then
-	export CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
-fi
-
-
 # pkg-config
 typeset -U pkg_config_path=$PKG_CONFIG_PATH
 
