@@ -5,17 +5,19 @@ let g:coc_node_path = '/usr/local/bin/node'
 
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 
-" <Leader>f to find files
-map <Leader>f :CocList files<CR>
+if !exists('g:fzf#vim#buffers')
+  " <Leader>f to find files
+  map <Leader>f :CocList files<CR>
 
-" <Leader>g to find files in a git repo
-map <Leader>g :CocList gfiles<CR>
+  " <Leader>g to find files in a git repo
+  map <Leader>g :CocList gfiles<CR>
 
-" <Leader>m to find modified files in a git repo
-map <Leader>m :CocList gstatus<CR>
+  " <Leader>m to find modified files in a git repo
+  map <Leader>m :CocList gstatus<CR>
 
-" <Leader>b to list buffers
-map <Leader>b :CocList buffers<CR>
+  " <Leader>b to list buffers
+  map <Leader>b :CocList buffers<CR>
+endif
 
 " Tab for cycling forwards through matches in a completion popup (taken
 " from coc help)
@@ -119,6 +121,8 @@ let g:coc_global_extensions = [
   \ ]
 
 let g:coc_status_error_sign = ' '
+let g:coc_status_info_sign = ' '
+let g:coc_status_hint_sign = ' '
 let g:coc_status_warning_sign = ' '
 
 let g:coc_snippet_next = '<tab>'
@@ -126,13 +130,21 @@ let g:coc_snippet_prev = '<S-tab>'
 let g:coc_disable_startup_warning = 1
 
 function! s:coc_customize_colors()
-  exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
-  exec 'hi CocErrorVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=NONE'
-  exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=bold'
-  exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0A . ' gui=NONE'
+  exec 'hi CocErrorSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=bold'
+  exec 'hi CocErrorVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=NONE'
+  exec 'hi CocErrorHighlight gui=undercurl guisp=#' . g:base16_gui0F
+
+  exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
+  exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=NONE'
+  exec 'hi CocWarningHighlight gui=undercurl guisp=#' . g:base16_gui08
+
   exec 'hi CocInfoSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=bold'
   exec 'hi CocInfoVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0B . ' gui=NONE'
-  exec 'hi CocErrorHighlight gui=undercurl guisp=red'
+  exec 'hi CocInfoHighlight gui=undercurl guisp=#' . g:base16_gui0B
+
+  exec 'hi CocHintSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=bold'
+  exec 'hi CocHintVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=NONE'
+  exec 'hi CocHintHighlight gui=undercurl guisp=#' . g:base16_gui0C
 endfunction
 
 augroup vimrc
