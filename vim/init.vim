@@ -676,9 +676,7 @@ Plug 'chriskempson/base16-vim'        " Color schemes
 Plug 'yasuhiroki/github-actions-yaml.vim'
 
  " Show version info in package.json files
-Plug 'meain/vim-package-json', {
-    \ 'do': 'cd rplugin/node/vim-package-json && npm install'
-    \ }
+Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
 Plug 'neoclide/jsonc.vim'
