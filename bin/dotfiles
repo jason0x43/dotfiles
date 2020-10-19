@@ -191,7 +191,7 @@ function dotfiles-node {
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
-        node_path=$(dirname $(whence -p node))
+        node_path=/usr/local/bin
     fi
 
     # if a node_path was provided, the function was called from another
