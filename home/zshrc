@@ -712,7 +712,7 @@ if (( $+commands[asdf] )); then
     alias tmux='asdf exec direnv exec / tmux'
 
     # Indicate which asdf version of node should be used with vim
-    export VIM_NODE_VERSION=10.19.0
+    # export VIM_NODE_VERSION=10.19.0
 fi
 
 # added by travis gem

@@ -48,6 +48,8 @@ if !empty(s:project_root)
     endif
 endif
 
+let g:node_host_prog = '/usr/local/bin/neovim-node-host'
+
 " Add VimConfig command for quick access to vim config 
 command! VimConfig e ~/.vim/vimrc
 

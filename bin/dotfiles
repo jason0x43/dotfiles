@@ -299,11 +299,11 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    local node_path
+    local node_path=/usr/local/bin
     if [[ -n $VIM_NODE_VERSION ]]; then
-        node_path=$HOME/.asdf/installs/nodejs/10.16.2/bin
-    else
-        node_path=/usr/local/bin
+        node_path=$HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin
+        log "Updating vim's node packages..."
+        dotfiles-node $node_path
     fi
 
     if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
@@ -340,9 +340,6 @@ function dotfiles-vim {
             cd ..
         done
     fi
-
-    log "Updating vim's node packages..."
-    dotfiles-node $node_path
 }
 
 dotfiles=$HOME/.dotfiles

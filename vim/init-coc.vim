@@ -1,14 +1,7 @@
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'
 
-" Use a specific version of Node for vim. At least coc-sh won't work with > 10
-if exists('$VIM_NODE_VERSION')
-  let g:coc_node_path = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin/node')
-  let g:node_host_prog = expand('~/.asdf/installs/nodejs/$VIM_NODE_VERSION/.npm/bin/neovim-node-host')
-else
-  let g:coc_node_path = '/usr/local/bin/node'
-  let g:node_host_prog = '/usr/local/bin/neovim-node-host'
-endif
+let g:coc_node_path = '/usr/local/bin/node'
 
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 
