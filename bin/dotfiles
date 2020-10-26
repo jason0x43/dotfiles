@@ -125,6 +125,11 @@ function dotfiles-brew {
         'tmux'        # terminal manager
     )
 
+    # Remove git's included zsh completions in favor of the system completions
+    if [[ -f /usr/local/share/zsh/site-functions/_git ]]; then
+        rm -f /usr/local/share/zsh/site-functions/_git
+    fi
+
     if [[ $(uname -s) == "Darwin" ]]; then
         brew_packages=(
             $brew_packages
