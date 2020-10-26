@@ -96,7 +96,6 @@ fi
 
 # Turn on color for everything
 # ------------------------------------------------------------------------
-zstyle ':zconf:*:*' color 'yes'
 autoload -Uz colors && colors
 
 # Terminal colors
@@ -118,9 +117,9 @@ export BAT_THEME=base16
 # The completion system should be configured and enabled before sourcing
 # completion plugins
 
-export ZCOMPDIR="$CACHEDIR/zsh/completions"
-export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+export ZCOMPDIR=$ZCACHEDIR/completions
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
@@ -467,17 +466,12 @@ alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/ap
 alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
 
 # Colorize ls
-if zstyle -t ':zconf:module:utility:ls' color; then
-    # Define colors for BSD ls
-    export LSCOLORS='exfxcxdxbxGxDxabagacad'
 
-    # Define colors for the completion system
-    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
-
-    alias ls='ls -G -F'
-else
-    alias ls='ls -F'
-fi
+# Define colors for BSD ls
+export LSCOLORS='exfxcxdxbxGxDxabagacad'
+# Define colors for the completion system
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+alias ls='ls -G -F'
 
 # Colorize cat
 if (( $+commands[bat] )); then
@@ -734,16 +728,6 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
 
 # Default globbing flags
 HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-
-# Check if case-sensitive is in the substring search style
-if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
-  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
-fi
-
-# Check if color is disabled
-if ! zstyle -t ':zconf:module:history-substring-search' color; then
-  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
-fi
 
 # Make history keybindings search
 bindkey -M vicmd "k" history-substring-search-up
