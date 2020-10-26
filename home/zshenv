@@ -16,20 +16,20 @@ export DOTFILES=$HOME/.dotfiles
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
-export CACHEDIR="$HOME/.local/share"
+export CACHEDIR=$HOME/.cache
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
 
-export ZCACHEDIR="$CACHEDIR/zsh"
+export ZCACHEDIR=$CACHEDIR/zsh
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
 
-export ZFUNCDIR="$CACHEDIR/zsh/functions"
+export DATADIR=$HOME/.local/share
+[[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
+
+export ZFUNCDIR=$DATADIR/zsh/functions
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
-export ZCOMPDIR="$CACHEDIR/zsh/completions"
-[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
-
 if [[ -d "$TMPDIR" ]]; then
-	export TMPPREFIX="${TMPDIR%/}/zsh"
+	export TMPPREFIX=${TMPDIR%/}/zsh
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
