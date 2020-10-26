@@ -65,16 +65,16 @@ function dotfiles-bat {
 function dotfiles-home {
     log "Updating home directory files..."
 
-    for f in $(ls $dotfiles/home); do
-        link $dotfiles/home/$f $HOME/.$(basename $f)
+    for f in $dotfiles/home/*(.); do
+        link $f $HOME/.$f:t
     done
 
-    for f in $(ls $dotfiles/config); do
-        link $dotfiles/config/$f $HOME/.config/$(basename $f)
+    for f in $dotfiles/config/*(.); do
+        link $f $HOME/.config/$f:t
     done
 
-    for f in $(ls $HOME/.[a-z]*); do
-        if [[ -L $f ]] && [[ ! -e $f ]]; then
+    for f in $HOME/.[a-z]*(@); do
+        if [[ ! -e $f ]]; then
             rm $f
             logSub "Removed $f"
         fi
