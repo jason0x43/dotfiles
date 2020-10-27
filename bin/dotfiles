@@ -69,7 +69,7 @@ function dotfiles-home {
         link $f $HOME/.$f:t
     done
 
-    for f in $dotfiles/config/*(.); do
+    for f in $dotfiles/config/*; do
         link $f $HOME/.config/$f:t
     done
 
