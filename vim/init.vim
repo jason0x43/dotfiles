@@ -654,7 +654,7 @@ let g:vimtex_compiler_progname = 'nvr'
 
 " Plugins
 " ---------------------------------------------------------------------
-call plug#begin('~/.local/share/vim/plugins')
+call plug#begin('$CACHEDIR/vim/plugins')
 
 Plug 'andymass/vim-matchup'           " Better start/end matching
 Plug 'sgur/vim-editorconfig'          " EditorConfig
