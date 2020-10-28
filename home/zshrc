@@ -264,42 +264,6 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host'   ignored-patterns '*(.|:)*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-# Key bindings
-# ------------------------------------------------------------------------
-# Define friendly names for keycodes
-typeset -gA key_info
-key_info=(
-    'Control'      '\C-'
-    'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
-    'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
-    'Escape'       '\e'
-    'Meta'         '\M-'
-    'Backspace'    "^?"
-    'Delete'       "^[[3~"
-    'F1'           "$terminfo[kf1]"
-    'F2'           "$terminfo[kf2]"
-    'F3'           "$terminfo[kf3]"
-    'F4'           "$terminfo[kf4]"
-    'F5'           "$terminfo[kf5]"
-    'F6'           "$terminfo[kf6]"
-    'F7'           "$terminfo[kf7]"
-    'F8'           "$terminfo[kf8]"
-    'F9'           "$terminfo[kf9]"
-    'F10'          "$terminfo[kf10]"
-    'F11'          "$terminfo[kf11]"
-    'F12'          "$terminfo[kf12]"
-    'Insert'       "$terminfo[kich1]"
-    'Home'         "$terminfo[khome]"
-    'PageUp'       "$terminfo[kpp]"
-    'End'          "$terminfo[kend]"
-    'PageDown'     "$terminfo[knp]"
-    'Up'           "$terminfo[kcuu1]"
-    'Left'         "$terminfo[kcub1]"
-    'Down'         "$terminfo[kcud1]"
-    'Right'        "$terminfo[kcuf1]"
-    'BackTab'      "$terminfo[kcbt]"
-)
-
 # VI keybindings
 bindkey -v
 
