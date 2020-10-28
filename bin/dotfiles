@@ -2,6 +2,18 @@
 
 autoload colors; colors
 
+dotfiles=$HOME/.dotfiles
+configdir=$HOME/.config
+cachedir=$HOME/.cache
+
+if [[ $OSTYPE == linux* ]]; then
+    homebrew_base=/home/linuxbrew/.linuxbrew
+else
+    homebrew_base=/usr/local
+fi
+
+asdf_installs=$HOME/.asdf/installs
+
 # Log output
 function log {
     msg=$1
@@ -102,9 +114,17 @@ function dotfiles-home {
 function dotfiles-brew {
     log "Updating brew packages..."
 
+    if [[ $OSTYPE == linux* ]]; then
+        if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( $+commands[curl] )); then
+            logSub "Installing system requirements..."
+            sudo apt-get update
+            sudo apt-get install -y build-essential curl file git || true
+        fi
+    fi
+
     if ! hash brew; then
         logSub "Installing homebrew..."
-        usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         rehash
     fi
 
@@ -123,21 +143,17 @@ function dotfiles-brew {
         'python@3.8'  # update from system stock Python3
         'ripgrep'     # better grep
         'tmux'        # terminal manager
+        'zsh'         # newer zsh
     )
 
-    # Remove git's included zsh completions in favor of the system completions
-    if [[ -f /usr/local/share/zsh/site-functions/_git ]]; then
-        rm -f /usr/local/share/zsh/site-functions/_git
-    fi
-
-    if [[ $(uname -s) == "Darwin" ]]; then
+    if [[ $OSTYPE == darwin* ]]; then
         brew_packages=(
             $brew_packages
             'mas'
         )
     fi
 
-    installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
+    local installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
 
     for pkg in $brew_packages; do
         if ((! $installed_packages[(Ie)$pkg])); then
@@ -148,6 +164,11 @@ function dotfiles-brew {
 
     logSub "Updating installed brew packages..."
     brew upgrade
+
+    # Remove git's included zsh completions in favor of the system completions
+    if [[ -f /usr/local/share/zsh/site-functions/_git ]]; then
+        rm -f /usr/local/share/zsh/site-functions/_git
+    fi
 }
 
 # Update Mac App Store apps
@@ -182,12 +203,12 @@ function dotfiles-zsh {
     done
 }
 
-# Update global python2 and python3 packages
+# Update global python packages
 function dotfiles-python {
     log "Updating global python packages..."
     if hash pip3; then
         pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
-        logSub "Updated Python 3 packages"
+        logSub "Updated Python packages"
     fi
 }
 
@@ -196,7 +217,7 @@ function dotfiles-node {
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
-        node_path=/usr/local/bin
+        node_path=$homebrew_base/bin
     fi
 
     # if a node_path was provided, the function was called from another
@@ -207,7 +228,7 @@ function dotfiles-node {
     fi
 
     # get list of outdated global packages
-    mods=($($node_path/npm --registry=https://registry.npmjs.org outdated -g --parseable))
+    local mods=($($node_path/npm --registry=https://registry.npmjs.org outdated -g --parseable))
     for mod in $mods; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
@@ -270,28 +291,36 @@ function dotfiles-tmux {
 function dotfiles-asdf {
     log "Updating asdf..."
 
-    asdf_plugins=(${(@f)$(asdf plugin-list)})
+    local asdf_plugins=(${(@f)$(asdf plugin-list)})
     if (( ! $asdf_plugins[(Ie)direnv] )); then
         asdf plugin-add direnv
-        direnv_versions=(${(@f)$(asdf list-all direnv)})
-        asdf install direnv $direnv_versions[-1]
-        asdf global direnv $direnv_versions[-1]
         logSub "Installed asdf-direnv"
     fi
+
+    if [[ ! -d $asdf_installs/direnv/system/bin ]]; then
+        makedir $asdf_installs/direnv/system/bin
+        link $homebrew_base/bin/direnv $asdf_installs/direnv/system/bin/direnv
+        asdf reshim
+        logSub "Linked system direnv"
+    fi
+
     if (( ! $asdf_plugins[(Ie)nodejs] )); then
         asdf plugin-add nodejs
         bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
         logSub "Installed asdf-nodejs"
     fi
+
     if (( ! $asdf_plugins[(Ie)python] )); then
         asdf plugin-add python
         logSub "Installed asdf-python"
     fi
+
     if (( ! $asdf_plugins[(Ie)java] )); then
         asdf plugin-add java
         logSub "Installed asdf-java"
     fi
-    # neovim uses node 10 to support at least coc-sh
+
+    # Vim may need a dedicated version of Node
     if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION ]]; then
         asdf install nodejs $VIM_NODE_VERSION
         logSub "Installed nodejs $VIM_NODE_VERSION"
@@ -304,9 +333,9 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    local node_path=/usr/local/bin
+    local node_path=$homebrew_base/bin
     if [[ -n $VIM_NODE_VERSION ]]; then
-        node_path=$HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION/bin
+        node_path=$asdf_installs/nodejs/$VIM_NODE_VERSION/bin
         log "Updating vim's node packages..."
         dotfiles-node $node_path
     fi
@@ -347,9 +376,6 @@ function dotfiles-vim {
     fi
 }
 
-dotfiles=$HOME/.dotfiles
-configdir=$HOME/.config
-cachedir=$HOME/.local/share
 cd $HOME
 
 if [[ -n $1 ]]; then
@@ -357,17 +383,18 @@ if [[ -n $1 ]]; then
 else
     dotfiles-home
     dotfiles-brew
-    dotfiles-zsh
-    dotfiles-python
-    dotfiles-asdf
-    dotfiles-node
-    dotfiles-tmux
-    dotfiles-vim
-    dotfiles-bat
 
     if (( $+commands[mas] )); then
         dotfiles-mas
     fi
+
+    dotfiles-zsh
+    dotfiles-asdf
+    dotfiles-python
+    dotfiles-node
+    dotfiles-tmux
+    dotfiles-vim
+    dotfiles-bat
 fi
 
 log "Done"

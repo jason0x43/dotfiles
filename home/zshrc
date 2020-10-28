@@ -694,14 +694,11 @@ if (( $+commands[asdf] )); then
     # Silence direnv. The prompt will indicate if it's active.
     # export DIRENV_LOG_FORMAT=
 
-    eval "$(asdf exec direnv hook $SHELL)"
-
-    # alias direnv so we don't have to type asdf exec all the time
-    alias direnv='asdf exec direnv'
+    eval "$(direnv hook $SHELL)"
 
     # Wrap tmux to avoid environment loading issues
     # See https://github.com/direnv/direnv/wiki/Tmux
-    alias tmux='asdf exec direnv exec / tmux'
+    alias tmux='direnv exec / tmux'
 
     # Indicate which asdf version of node should be used with vim
     # export VIM_NODE_VERSION=10.19.0
