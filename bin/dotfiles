@@ -344,7 +344,9 @@ function dotfiles-vim {
         cd $HOME/.vim/autoload
         existing=$(<plug.vim)
         current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
-        if [[ "$existing" != "$current" ]]; then
+        if [[ -z "$current" ]]; then
+            err "Problem updating plug.vim"
+        elif [[ "$existing" != "$current" ]]; then
             mv plug.vim plug.old
             echo -E "$current" > plug.vim
             logSub "Updated vim-plug"
