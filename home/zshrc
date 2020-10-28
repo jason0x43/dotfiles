@@ -461,6 +461,11 @@ alias la='ll -A'         # Lists human readable sizes, hidden files
 alias dfh='df -h'
 alias duh='du -h *(D) | sort -h'
 
+if [[ -d '/Applications/VMware Fusion.app' ]]; then
+    alias vmrun='/Applications/VMware\ Fusion.app/Contents/Public/vmrun'
+    alias vctl='/Applications/VMware\ Fusion.app/Contents/Public/vctl'
+fi
+
 # Shell options
 # ------------------------------------------------------------------------
 # Navigation
