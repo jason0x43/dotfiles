@@ -6,6 +6,12 @@ dotfiles=$HOME/.dotfiles
 configdir=$HOME/.config
 cachedir=$HOME/.cache
 
+typeset -U path
+path = (
+    $homebrew_base/bin
+    $path
+)
+
 if [[ $OSTYPE == linux* ]]; then
     homebrew_base=/home/linuxbrew/.linuxbrew
 else
@@ -112,6 +118,11 @@ function dotfiles-home {
 
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
+    if [[ ! -w $homebrew_base ]]; then
+        log "Skipping homebrew update (no write permissions)"
+        return
+    fi
+
     log "Updating brew packages..."
 
     if [[ $OSTYPE == linux* ]]; then
@@ -212,6 +223,11 @@ function dotfiles-zsh {
 
 # Update global python packages
 function dotfiles-python {
+    if [[ ! -w $homebrew_base ]]; then
+        log "Skipping python update (no write permissions)"
+        return
+    fi
+
     log "Updating global python packages..."
     $homebrew_base/bin/pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
     logSub "Updated Python packages"
@@ -219,6 +235,11 @@ function dotfiles-python {
 
 # Update global npm packages
 function dotfiles-node {
+    if [[ ! -w $homebrew_base ]]; then
+        log "Skipping node update (no write permissions)"
+        return
+    fi
+
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
@@ -279,17 +300,19 @@ function dotfiles-tmux {
         return
     fi
 
-    cd $TMUX_PLUGIN_MANAGER_PATH
-    for plugin in *; do
-        cd $plugin 
-        head=$(git rev-parse HEAD)
-        git pull -q --recurse-submodules
-        git submodule update --remote -q
-        if [[ $(git rev-parse HEAD) != $head ]]; then 
-            logSub "Updated $plugin"
-        fi
-        cd ..
-    done
+    if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
+        cd $TMUX_PLUGIN_MANAGER_PATH
+        for plugin in *; do
+            cd $plugin 
+            head=$(git rev-parse HEAD)
+            git pull -q --recurse-submodules
+            git submodule update --remote -q
+            if [[ $(git rev-parse HEAD) != $head ]]; then 
+                logSub "Updated $plugin"
+            fi
+            cd ..
+        done
+    fi
 }
 
 # Update asdf plugins
