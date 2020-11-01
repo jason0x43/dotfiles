@@ -41,9 +41,9 @@ source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 # ----------------------------------------------------------------------------
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block, everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # Enable profiling
 # zmodload zsh/zprof
@@ -96,7 +96,6 @@ fi
 
 # Turn on color for everything
 # ------------------------------------------------------------------------
-zstyle ':zconf:*:*' color 'yes'
 autoload -Uz colors && colors
 
 # Terminal colors
@@ -118,9 +117,9 @@ export BAT_THEME=base16
 # The completion system should be configured and enabled before sourcing
 # completion plugins
 
-export ZCOMPDIR="$CACHEDIR/zsh/completions"
-export ZCOMPFILE=$CACHEDIR/zsh/zcompdump
+export ZCOMPDIR=$ZCACHEDIR/completions
 [[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
@@ -265,42 +264,6 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host'   ignored-patterns '*(.|:)*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-# Key bindings
-# ------------------------------------------------------------------------
-# Define friendly names for keycodes
-typeset -gA key_info
-key_info=(
-    'Control'      '\C-'
-    'ControlLeft'  '\e[1;5D \e[5D \e\e[D \eOd'
-    'ControlRight' '\e[1;5C \e[5C \e\e[C \eOc'
-    'Escape'       '\e'
-    'Meta'         '\M-'
-    'Backspace'    "^?"
-    'Delete'       "^[[3~"
-    'F1'           "$terminfo[kf1]"
-    'F2'           "$terminfo[kf2]"
-    'F3'           "$terminfo[kf3]"
-    'F4'           "$terminfo[kf4]"
-    'F5'           "$terminfo[kf5]"
-    'F6'           "$terminfo[kf6]"
-    'F7'           "$terminfo[kf7]"
-    'F8'           "$terminfo[kf8]"
-    'F9'           "$terminfo[kf9]"
-    'F10'          "$terminfo[kf10]"
-    'F11'          "$terminfo[kf11]"
-    'F12'          "$terminfo[kf12]"
-    'Insert'       "$terminfo[kich1]"
-    'Home'         "$terminfo[khome]"
-    'PageUp'       "$terminfo[kpp]"
-    'End'          "$terminfo[kend]"
-    'PageDown'     "$terminfo[knp]"
-    'Up'           "$terminfo[kcuu1]"
-    'Left'         "$terminfo[kcub1]"
-    'Down'         "$terminfo[kcud1]"
-    'Right'        "$terminfo[kcuf1]"
-    'BackTab'      "$terminfo[kcbt]"
-)
-
 # VI keybindings
 bindkey -v
 
@@ -358,6 +321,11 @@ alias gco='git co'
 alias gcp='git cp'
 alias gcpe='git cp -e'
 alias gcpn='git cpn'
+
+# Cleanup
+alias gcln='git clean -nxd'
+alias gclf='git clean -fxd'
+
 alias gd='git d'
 alias gds='git ds'
 alias gdv='git dv'
@@ -405,12 +373,16 @@ alias fgl='fzf-git-log'
 alias ts='tig status'
 
 # ssh in interactive shells
-alias ssh=themed_ssh
+# alias ssh=themed_ssh
 
 # tmux
 alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
 alias tks='tmux kill-session -t'
+
+# xcode
+alias xcr='xcrun'
+alias xcb='xcodebuild'
 
 # Pretty print json
 alias json='python -m json.tool'
@@ -459,17 +431,12 @@ alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/ap
 alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
 
 # Colorize ls
-if zstyle -t ':zconf:module:utility:ls' color; then
-    # Define colors for BSD ls
-    export LSCOLORS='exfxcxdxbxGxDxabagacad'
 
-    # Define colors for the completion system
-    export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
-
-    alias ls='ls -G -F'
-else
-    alias ls='ls -F'
-fi
+# Define colors for BSD ls
+export LSCOLORS='exfxcxdxbxGxDxabagacad'
+# Define colors for the completion system
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+alias ls='ls -G -F'
 
 # Colorize cat
 if (( $+commands[bat] )); then
@@ -492,8 +459,13 @@ alias lld='ll -d'        # List directories
 alias la='ll -A'         # Lists human readable sizes, hidden files
 
 # Space usage
-alias df='df -kh'
-alias du='du -kh'
+alias dfh='df -h'
+alias duh='du -h *(D) | sort -h'
+
+if [[ -d '/Applications/VMware Fusion.app' ]]; then
+    alias vmrun='/Applications/VMware\ Fusion.app/Contents/Public/vmrun'
+    alias vctl='/Applications/VMware\ Fusion.app/Contents/Public/vctl'
+fi
 
 # Shell options
 # ------------------------------------------------------------------------
@@ -685,26 +657,21 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[asdf] )); then
     # Don't load the asd shell integration; direnv will load it when necessary
-    autoload bashcompinit; bashcompinit
     # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
     # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
     export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
-    source $ASDF_DIR/etc/bash_completion.d/asdf.bash
 
     # Silence direnv. The prompt will indicate if it's active.
-    export DIRENV_LOG_FORMAT=
+    # export DIRENV_LOG_FORMAT=
 
-    eval "$(asdf exec direnv hook $SHELL)"
-
-    # alias direnv so we don't have to type asdf exec all the time
-    alias direnv='asdf exec direnv'
+    eval "$(direnv hook $SHELL)"
 
     # Wrap tmux to avoid environment loading issues
     # See https://github.com/direnv/direnv/wiki/Tmux
-    alias tmux='asdf exec direnv exec / tmux'
+    alias tmux='direnv exec / tmux'
 
     # Indicate which asdf version of node should be used with vim
-    export VIM_NODE_VERSION=10.19.0
+    # export VIM_NODE_VERSION=10.19.0
 fi
 
 # added by travis gem
@@ -728,16 +695,6 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=1,fg=0,bold'
 
 # Default globbing flags
 HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-
-# Check if case-sensitive is in the substring search style
-if zstyle -t ':zconf:module:history-substring-search' case-sensitive; then
-  HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS="${HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS//i}"
-fi
-
-# Check if color is disabled
-if ! zstyle -t ':zconf:module:history-substring-search' color; then
-  unset HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_{FOUND,NOT_FOUND}
-fi
 
 # Make history keybindings search
 bindkey -M vicmd "k" history-substring-search-up
