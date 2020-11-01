@@ -115,7 +115,7 @@ function dotfiles-brew {
     log "Updating brew packages..."
 
     if [[ $OSTYPE == linux* ]]; then
-        if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( $+commands[curl] )); then
+        if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( ! $+commands[curl] )); then
             logSub "Installing system requirements..."
             sudo apt-get update
             sudo apt-get install -y build-essential curl file git || true
@@ -133,6 +133,7 @@ function dotfiles-brew {
         'asdf'        # for managing devtools
         'bash'        # update from system stock version
         'bat'         # better cat
+        'direnv'      # local environment management
         'fd'          # better find
         'fzf'         # fuzzy finder
         'git'         # update from system stock git
