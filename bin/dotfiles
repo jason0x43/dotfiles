@@ -125,6 +125,10 @@ function dotfiles-brew {
     if ! hash brew; then
         logSub "Installing homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+        # If homebrew was just installed, ensure it's in the path
+        export PATH=$homebrew_base/bin:$PATH
+
         rehash
     fi
 
