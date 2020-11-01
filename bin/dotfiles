@@ -149,6 +149,7 @@ function dotfiles-brew {
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
+        'yarn'        # Node package manager
         'zsh'         # newer zsh
     )
 
