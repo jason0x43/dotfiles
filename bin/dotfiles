@@ -147,7 +147,9 @@ function dotfiles-brew {
         'node'        # NodeJS
         'python@3.8'  # update from system stock Python3
         'ripgrep'     # better grep
+        'tig'         # terminal git ui
         'tmux'        # terminal manager
+        'yarn'        # Node package manager
         'zsh'         # newer zsh
     )
 
@@ -171,8 +173,8 @@ function dotfiles-brew {
     brew upgrade
 
     # Remove git's included zsh completions in favor of the system completions
-    if [[ -f /usr/local/share/zsh/site-functions/_git ]]; then
-        rm -f /usr/local/share/zsh/site-functions/_git
+    if [[ -f $homebrew_base/share/zsh/site-functions/_git ]]; then
+        rm -f $homebrew_base/share/zsh/site-functions/_git
     fi
 }
 
@@ -211,10 +213,8 @@ function dotfiles-zsh {
 # Update global python packages
 function dotfiles-python {
     log "Updating global python packages..."
-    if hash pip3; then
-        pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
-        logSub "Updated Python packages"
-    fi
+    $homebrew_base/bin/pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
+    logSub "Updated Python packages"
 }
 
 # Update global npm packages

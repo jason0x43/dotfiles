@@ -1,7 +1,7 @@
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'
 
-let g:coc_node_path = '/usr/local/bin/node'
+let g:coc_node_path = '$HOMEBREW_BASE/bin/node'
 
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 

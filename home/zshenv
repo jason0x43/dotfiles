@@ -47,7 +47,7 @@ fi
 # Groovy
 # ----------------------------------------------------------------------------
 if [[ -z "$GROOVY_HOME" ]]; then
-	export GROOVY_HOME=/usr/local/opt/groovy/libexec
+	export GROOVY_HOME=$HOMEBREW_BASE/opt/groovy/libexec
 fi
 
 # Java
@@ -100,24 +100,23 @@ path=(
 	$HOME/.local/bin
 	$DOTFILES/bin
 	$HOMEBREW_BASE/bin
-	/usr/local/bin
 	$HOMEBREW_BASE/sbin
-	${path:#/usr/local/bin}
+	$path
 )
 
 # pkg-config
 typeset -U pkg_config_path=$PKG_CONFIG_PATH
 
-if [[ -d /usr/local/opt/openssl ]]; then
+if [[ -d $HOMEBREW_BASE/opt/openssl ]]; then
 	pkg_config_path=(
-		/usr/local/opt/openssl/lib/pkgconfig
+		$HOMEBREW_BASE/opt/openssl/lib/pkgconfig
 		$pkg_config_path
 	)
 fi
 
-if [[ -d /usr/local/opt/icu4c ]]; then
+if [[ -d $HOMEBREW_BASE/opt/icu4c ]]; then
 	pkg_config_path=(
-		/usr/local/opt/icu4c/lib/pkgconfig
+		$HOMEBREW_BASE/opt/icu4c/lib/pkgconfig
 		$pkg_config_path
 	)
 fi

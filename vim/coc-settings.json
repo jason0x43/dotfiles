@@ -75,7 +75,7 @@
   "suggest.enablePreview": true,
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
-  "tsserver.npm": "/usr/local/bin/npm",
+  // "tsserver.npm": "/usr/local/bin/npm",
   "tsserver.log": "verbose",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": true,

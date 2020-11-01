@@ -30,7 +30,7 @@ if exists('$CACHEDIR')
 
     " neovim uses shada rather than viminfo
     if !has('nvim')
-        set viminfo+=n$CACHEDIR/vim/viminfo
+        set viminfo+=$CACHEDIR/vim/viminfo
     endif
 endif
 
@@ -48,7 +48,7 @@ if !empty(s:project_root)
     endif
 endif
 
-let g:node_host_prog = '/usr/local/bin/neovim-node-host'
+let g:node_host_prog = '$HOMEBREW_BASE/bin/neovim-node-host'
 
 " Add VimConfig command for quick access to vim config 
 command! VimConfig e ~/.vim/vimrc
@@ -530,11 +530,11 @@ if has('nvim')
     command! -nargs=? Term call s:openTerminal("<args>")
 
     " Tell Neovim.app which Python to use
-    if executable('/usr/local/bin/python2')
-        let g:python_host_prog='/usr/local/bin/python2'
+    if executable('$HOMEBREW_BASE/bin/python2')
+        let g:python_host_prog='$HOMEBREW_BASE/bin/python2'
     endif
-    if executable('/usr/local/bin/python3')
-        let g:python3_host_prog='/usr/local/bin/python3'
+    if executable('$HOMEBREW_BASE/bin/python3')
+        let g:python3_host_prog='$HOMEBREW_BASE/bin/python3'
     endif
 endif
 
@@ -704,7 +704,7 @@ Plug 'neoclide/coc.nvim', {
 " Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 
 " Flashier syntax highlighting
-if has('nvim')
+if has('nvim-0.5')
   Plug 'nvim-treesitter/nvim-treesitter'
 endif
 
@@ -749,6 +749,6 @@ Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 " Load all the plugins
 call plug#end()
 
-if has('nvim')
+if has('nvim-0.5')
   lua require("treesitter_config")
 endif 
