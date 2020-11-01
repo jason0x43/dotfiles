@@ -35,7 +35,7 @@
   "explorer.file.column.git.icon.modified": "✹",
   "explorer.file.column.git.icon.ignored": "☒",
   "explorer.icon.enableNerdfont": true,
-  "explorer.keyMappings": {
+  "explorer.keyMappings.global": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
   "explorer.previewAction.onHover": false,
