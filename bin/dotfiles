@@ -83,19 +83,20 @@ function dotfiles-bat {
 function dotfiles-home {
     log "Updating home directory files..."
 
+    # Remove broken links
+    for f in $HOME/.*(@) $configdir/*(@); do
+        if [[ ! -e $f ]]; then
+            rm $f
+            logSub "Removed $f"
+        fi
+    done
+
     for f in $dotfiles/home/*(.); do
         link $f $HOME/.$f:t
     done
 
     for f in $dotfiles/config/*; do
-        link $f $HOME/.config/$f:t
-    done
-
-    for f in $HOME/.[a-z]*(@); do
-        if [[ ! -e $f ]]; then
-            rm $f
-            logSub "Removed $f"
-        fi
+        link $f $configdir/$f:t
     done
 
     link $dotfiles/vim $HOME/.vim
