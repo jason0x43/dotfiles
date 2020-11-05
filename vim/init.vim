@@ -619,6 +619,7 @@ let g:jsx_ext_required = 1
 
 " vim-markdown
 " ---------------------------------------------------------------------
+" TODO: use javascriptreact and typescriptreact
 let g:markdown_fenced_languages = [
     \ 'help',
     \ 'html',
@@ -706,6 +707,11 @@ Plug 'neoclide/coc.nvim', {
 " Flashier syntax highlighting
 if has('nvim-0.5')
   Plug 'nvim-treesitter/nvim-treesitter'
+else
+  Plug 'leafgarland/typescript-vim'
+  Plug 'peitalin/vim-jsx-typescript'
+  hi link xmlTag Function
+  hi link xmlTagName Function
 endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't

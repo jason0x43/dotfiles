@@ -6,17 +6,17 @@ dotfiles=$HOME/.dotfiles
 configdir=$HOME/.config
 cachedir=$HOME/.cache
 
-typeset -U path
-path = (
-    $homebrew_base/bin
-    $path
-)
-
 if [[ $OSTYPE == linux* ]]; then
     homebrew_base=/home/linuxbrew/.linuxbrew
 else
     homebrew_base=/usr/local
 fi
+
+typeset -U path
+path=(
+    $homebrew_base/bin
+    $path
+)
 
 asdf_installs=$HOME/.asdf/installs
 
@@ -83,19 +83,20 @@ function dotfiles-bat {
 function dotfiles-home {
     log "Updating home directory files..."
 
+    # Remove broken links
+    for f in $HOME/.*(@) $configdir/*(@); do
+        if [[ ! -e $f ]]; then
+            rm $f
+            logSub "Removed $f"
+        fi
+    done
+
     for f in $dotfiles/home/*(.); do
         link $f $HOME/.$f:t
     done
 
     for f in $dotfiles/config/*; do
-        link $f $HOME/.config/$f:t
-    done
-
-    for f in $HOME/.[a-z]*(@); do
-        if [[ ! -e $f ]]; then
-            rm $f
-            logSub "Removed $f"
-        fi
+        link $f $configdir/$f:t
     done
 
     link $dotfiles/vim $HOME/.vim
@@ -298,6 +299,10 @@ function dotfiles-tmux {
     if [[ -z $TMUX_PLUGIN_MANAGER_PATH ]]; then
         err "TMUX_PLUGIN_MANAGER_PATH not defined"
         return
+    fi
+
+    if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
