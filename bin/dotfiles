@@ -6,17 +6,17 @@ dotfiles=$HOME/.dotfiles
 configdir=$HOME/.config
 cachedir=$HOME/.cache
 
-typeset -U path
-path = (
-    $homebrew_base/bin
-    $path
-)
-
 if [[ $OSTYPE == linux* ]]; then
     homebrew_base=/home/linuxbrew/.linuxbrew
 else
     homebrew_base=/usr/local
 fi
+
+typeset -U path
+path=(
+    $homebrew_base/bin
+    $path
+)
 
 asdf_installs=$HOME/.asdf/installs
 
