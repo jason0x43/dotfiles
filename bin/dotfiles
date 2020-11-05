@@ -301,6 +301,10 @@ function dotfiles-tmux {
         return
     fi
 
+    if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
+    fi
+
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
         cd $TMUX_PLUGIN_MANAGER_PATH
         for plugin in *; do
