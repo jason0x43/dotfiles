@@ -414,7 +414,33 @@ function dotfiles-vim {
 cd $HOME
 
 if [[ -n $1 ]]; then
-    dotfiles-$1
+    if [[ $1 == -h || $1 == --help ]]; then
+        echo 'usage: dotfiles [-h | --help | <group>]'
+        echo
+        echo 'Update local environment. All groups are updated by default.'
+        echo
+        echo 'Options:'
+        echo '    -h, --help     Show this help message'
+        echo '    <group>        A group to update'
+        echo
+        echo 'Available groups:'
+        echo '    asdf           Update asdf plugins, install defaults'
+        echo '    bat            Rebuild bat theme and filetype cache'
+        echo '    brew           Update brew packages, install defaults'
+        echo '    home           Update dotfiles and home directories, fixup terminfo database'
+        echo '    mas            Update Mac App Store packages'
+        echo '    node           Update global node packages, install defaults'
+        echo '    python         Update global python packages, install defaults'
+        echo '    tmux           Update tpm packages'
+        echo '    vim            Update vim plugins'
+        echo '    zsh            Update zsh plugins'
+    elif [[ $1 == -* ]]; then
+        echo "Unknown option $1"
+        exit 1
+    else
+        dotfiles-$1
+        log "Done"
+    fi
 else
     dotfiles-home
     dotfiles-brew
@@ -430,6 +456,6 @@ else
     dotfiles-tmux
     dotfiles-vim
     dotfiles-bat
-fi
 
-log "Done"
+    log "Done"
+fi
