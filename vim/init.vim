@@ -530,10 +530,10 @@ if has('nvim')
     command! -nargs=? Term call s:openTerminal("<args>")
 
     " Tell Neovim.app which Python to use
-    if executable('$HOMEBREW_BASE/bin/python2')
+    if executable(expand('$HOMEBREW_BASE/bin/python2'))
         let g:python_host_prog='$HOMEBREW_BASE/bin/python2'
     endif
-    if executable('$HOMEBREW_BASE/bin/python3')
+    if executable(expand('$HOMEBREW_BASE/bin/python3'))
         let g:python3_host_prog='$HOMEBREW_BASE/bin/python3'
     endif
 endif
