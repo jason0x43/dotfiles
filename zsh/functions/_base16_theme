@@ -13,11 +13,22 @@
 #
 # ------------------------------------------------------------------------------
 
-local -a themes
+_base16_themes() {
+	local -a themes
+	themes=($(base16_theme -l))
+	_describe 'themes' themes
+}
 
-themes=($(base16_theme -l))
-_describe -t themes 'COMMANDS' themes
+_base16_theme() {
+  local -a args
+  args=(
+    '(- * 1)-l[List available themes]'
+    ': :_base16_themes'
+  )
+  _arguments -A "*" $args[@]
+  return 0
+}
 
-return 0
+_base16_theme
 
 # vim: ft=zsh sw=4 ts=4 noet

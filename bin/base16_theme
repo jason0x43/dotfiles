@@ -4,19 +4,18 @@ name=$1
 shift
 
 base16_shell=$ZPLUGDIR/chriskempson/base16-shell
-
-BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-eval "$($base16_shell/profile_helper.sh)"
-
 theme_path=$base16_shell/scripts
 
 if [[ $name == '-l' ]]; then
-	themes=($(ls $theme_path))
-	for theme in $themes; do
-		echo ${theme:7:-3}
+	for f in $theme_path/*; do
+		theme=$f:t
+		echo ${theme:7:r}
 	done
 	return
 fi
+
+BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+eval "$($base16_shell/profile_helper.sh)"
 
 theme_script="$theme_path/base16-$name.sh"
 
