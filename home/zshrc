@@ -16,11 +16,6 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
-if [[ ! -d "$ZPLUGDIR" ]]; then
-    mkdir -p "$ZPLUGDIR"
-fi
-
 zfetch $ZPLUGDIR zsh-users/zsh-completions
 zfetch $ZPLUGDIR chriskempson/base16-shell
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion

@@ -33,6 +33,13 @@ if [[ -d "$TMPDIR" ]]; then
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
+# Plugins
+# ----------------------------------------------------------------------------
+export ZPLUGDIR="$CACHEDIR/zsh/plugins"
+if [[ ! -d "$ZPLUGDIR" ]]; then
+    mkdir -p "$ZPLUGDIR"
+fi
+
 # General paths
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
