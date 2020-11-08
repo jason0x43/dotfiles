@@ -117,6 +117,19 @@ function dotfiles-home {
     fixterm
 }
 
+# Link and activate launchd scripts
+function dotfiles-launchd {
+    log "Linking and bootstrapping launchd scripts..."
+
+    for f in $dotfiles/launchd/*; do
+        if [[ ! -h $HOME/Library/LaunchAgents/$f:t ]]; then
+            link $f $HOME/Library/LaunchAgents/$f:t
+            launchctl bootstrap gui/$UID $HOME/Library/LaunchAgents/$f:t
+            logSub "Bootstrapped $f:t"
+        fi
+    done
+}
+
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
     if [[ ! -w $homebrew_base/bin ]]; then
@@ -428,6 +441,7 @@ if [[ -n $1 ]]; then
         echo '    bat            Rebuild bat theme and filetype cache'
         echo '    brew           Update brew packages, install defaults'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
+        echo '    launchd        Link and bootstrap launchd scripts'
         echo '    mas            Update Mac App Store packages'
         echo '    node           Update global node packages, install defaults'
         echo '    python         Update global python packages, install defaults'
@@ -456,6 +470,10 @@ else
     dotfiles-tmux
     dotfiles-vim
     dotfiles-bat
+
+    if [[ $OSTYPE == darwin* ]]; then
+        dotfiles-launchd
+    fi
 
     log "Done"
 fi

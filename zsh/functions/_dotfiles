@@ -7,6 +7,7 @@ _dotfiles_commands() {
     'bat:Rebuild bat theme and filetype cache'
     'brew:Update brew packages, install defaults'
     'home:Update dotfiles and home directories, fixup terminfo database'
+    'launchd:Link and bootstrap launchd scripts'
     'mas:Update Mac App Store packages'
     'node:Update global node packages, install defaults'
     'python:Update global python packages, install defaults'
