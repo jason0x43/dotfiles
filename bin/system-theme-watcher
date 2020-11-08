@@ -1,0 +1,33 @@
+#!/usr/bin/env swift
+
+// Based on dark-mode-notifier from
+// https://github.com/mnewt/dotemacs
+
+import Cocoa
+
+@discardableResult
+func shell(_ args: String...) -> Int32 {
+    let task = Process()
+    task.launchPath = "/usr/bin/env"
+    task.arguments = args
+    task.launch()
+    task.waitUntilExit()
+    return task.terminationStatus
+}
+
+func updateTheme() {
+    let isDark = UserDefaults.standard.string(
+	forKey: "AppleInterfaceStyle"
+    ) == "Dark"
+    shell("base16_theme", isDark ? "ashes" : "default-light");
+}
+
+updateTheme()
+
+DistributedNotificationCenter.default.addObserver(
+    forName: Notification.Name("AppleInterfaceThemeChangedNotification"),
+    object: nil,
+    queue: nil
+) { _ in updateTheme() }
+
+NSApplication.shared.run()
