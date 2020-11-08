@@ -1,5 +1,14 @@
-local name=$1
-local theme_path="$ZPLUGDIR/chriskempson/base16-shell/scripts"
+#!/usr/bin/env zsh
+
+name=$1
+shift
+
+base16_shell=$ZPLUGDIR/chriskempson/base16-shell
+
+BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+eval "$($base16_shell/profile_helper.sh)"
+
+theme_path=$base16_shell/scripts
 
 if [[ $name == '-l' ]]; then
 	themes=($(ls $theme_path))
@@ -9,7 +18,7 @@ if [[ $name == '-l' ]]; then
 	return
 fi
 
-local theme_script="$theme_path/base16-$name.sh"
+theme_script="$theme_path/base16-$name.sh"
 
 if [[ ! -f $theme_script ]]; then
 	echo "Unknown theme '$name'"
