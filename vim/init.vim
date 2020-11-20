@@ -81,6 +81,7 @@ set wildignorecase           " Case insensitive filename completion
 set lazyredraw               " Redraw less frequently
 set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
+set mouse=a                  " Enable mouse support
 
 " Improve completion experience with completion-nvim
 set completeopt=menuone,noinsert,noselect
