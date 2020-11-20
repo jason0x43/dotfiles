@@ -57,8 +57,8 @@ augroup vimrc
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
   endif
 
-  " nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-  " nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
+  nnoremap <nowait><expr><C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <nowait><expr><C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 augroup END
 
 command! Rg :CocList --interactive grep<CR>
