@@ -23,17 +23,18 @@
   "eslint.filetypes": [
     "javascript",
     "javascriptreact",
+    "javascript.jsx",
     "typescript",
-    "typescriptreact"
+    "typescriptreact",
+    "typescript.tsx"
   ],
-  // "explorer.file.autoReveal": false,
-  "explorer.file.column.git.icon.added": "✚",
-  "explorer.file.column.git.icon.deleted": "✖",
-  "explorer.file.column.git.icon.renamed": "➜",
-  "explorer.file.column.git.icon.unmerged": "═",
-  "explorer.file.column.git.icon.untracked": "?",
-  "explorer.file.column.git.icon.modified": "✹",
-  "explorer.file.column.git.icon.ignored": "☒",
+  "explorer.git.icon.status.added": "✚",
+  "explorer.git.icon.status.deleted": "✖",
+  "explorer.git.icon.status.renamed": "➜",
+  "explorer.git.icon.status.unmerged": "═",
+  "explorer.git.icon.status.untracked": "?",
+  "explorer.git.icon.status.modified": "✹",
+  "explorer.git.icon.status.ignored": "☒",
   "explorer.icon.enableNerdfont": true,
   "explorer.keyMappings.global": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
