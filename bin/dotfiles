@@ -23,19 +23,18 @@ asdf_installs=$HOME/.asdf/installs
 # Log output
 function log {
     msg=$1
-    echo "$fg_bold[green]>>>$reset_color $fg_bold[white]$msg$reset_color"
+    color=${2:-$fg_bold[green]}
+    echo "$color>>>$reset_color $fg_bold[white]$msg$reset_color"
 }
 
 # Log output
 function logSub {
-    msg=$1
-    echo "$fg_bold[blue]>>>$reset_color $fg_bold[white]$msg$reset_color"
+    log $1 $fg_bold[blue]
 }
 
 # Log error output
 function err {
-    msg=$1
-    echo "$fg_bold[red]>>>$reset_color $fg_bold[white]$msg$reset_color"
+    log $1 $fg_bold[red]
 }
 
 # Create a directory
