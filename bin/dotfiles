@@ -371,7 +371,18 @@ function dotfiles-asdf {
         logSub "Installed nodejs $VIM_NODE_VERSION"
     fi
 
-    asdf plugin-update --all
+    for dir in $HOME/.asdf/plugins/*; do
+        local plugin=${dir:t}
+        head=$(git -C $dir rev-parse HEAD)
+        git -C $dir pull -q
+        if (( $? != 0 )); then 
+            err "Problem updating $plugin"
+        else
+            if [[ $(git -C $dir rev-parse HEAD) != $head ]]; then 
+                logSub "Updated $plugin"
+            fi
+        fi
+    done
 }
 
 # Update vim plugins
