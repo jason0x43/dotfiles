@@ -4,9 +4,7 @@
 # This file should be kept light and fast. Anything that's slow or involves
 # user interaction should go in zshrc.
 
-# Dotfiles
-# ----------------------------------------------------------------------------
-export DOTFILES=$HOME/.dotfiles
+source $HOME/.dotfiles/zsh/common.zsh
 
 # Language
 # ----------------------------------------------------------------------------
@@ -16,16 +14,9 @@ export DOTFILES=$HOME/.dotfiles
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
-export CACHEDIR=$HOME/.cache
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
-
-export ZCACHEDIR=$CACHEDIR/zsh
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
-
-export DATADIR=$HOME/.local/share
 [[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
-
-export ZFUNCDIR=$DATADIR/zsh/functions
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -35,7 +26,6 @@ fi
 
 # Plugins
 # ----------------------------------------------------------------------------
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
 if [[ ! -d "$ZPLUGDIR" ]]; then
     mkdir -p "$ZPLUGDIR"
 fi
@@ -43,12 +33,6 @@ fi
 # General paths
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
-
-if [[ -d /home/linuxbrew ]]; then
-	export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
-else
-	export HOMEBREW_BASE=/usr/local
-fi
 
 # Groovy
 # ----------------------------------------------------------------------------

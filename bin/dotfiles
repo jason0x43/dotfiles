@@ -2,23 +2,13 @@
 
 autoload colors; colors
 
-dotfiles=$HOME/.dotfiles
-configdir=$HOME/.config
-cachedir=$HOME/.cache
-
-if [[ $OSTYPE == linux* ]]; then
-    homebrew_base=/home/linuxbrew/.linuxbrew
-else
-    homebrew_base=/usr/local
-fi
+source $HOME/.dotfiles/zsh/common.zsh
 
 typeset -U path
 path=(
-    $homebrew_base/bin
+    $HOMEBREW_BASE/bin
     $path
 )
-
-asdf_installs=$HOME/.asdf/installs
 
 # Log output
 function log {
@@ -83,33 +73,33 @@ function dotfiles-home {
     log "Updating home directory files..."
 
     # Remove broken links
-    for f in $HOME/.*(@) $configdir/*(@); do
+    for f in $HOME/.*(@) $CONFIGDIR/*(@); do
         if [[ ! -e $f ]]; then
             rm $f
             logSub "Removed $f"
         fi
     done
 
-    for f in $dotfiles/home/*(.); do
+    for f in $DOTFILES/home/*(.); do
         link $f $HOME/.$f:t
     done
 
-    for f in $dotfiles/config/*; do
-        link $f $configdir/$f:t
+    for f in $DOTFILES/config/*; do
+        link $f $CONFIGDIR/$f:t
     done
 
-    link $dotfiles/vim $HOME/.vim
+    link $DOTFILES/vim $HOME/.vim
 
-    makedir $cachedir/tmux/resurrect
-    makedir $cachedir/vim/session
-    makedir $cachedir/vim/swap
-    makedir $cachedir/vim/backup
-    makedir $cachedir/vim/undo
-    makedir $cachedir/zsh
-    makedir $cachedir/direnv/allow
+    makedir $CACHEDIR/tmux/resurrect
+    makedir $CACHEDIR/vim/session
+    makedir $CACHEDIR/vim/swap
+    makedir $CACHEDIR/vim/backup
+    makedir $CACHEDIR/vim/undo
+    makedir $CACHEDIR/zsh
+    makedir $CACHEDIR/direnv/allow
 
-    makedir $configdir
-    link $dotfiles/vim $configdir/nvim
+    makedir $CONFIGDIR
+    link $DOTFILES/vim $CONFIGDIR/nvim
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
@@ -120,7 +110,7 @@ function dotfiles-home {
 function dotfiles-launchd {
     log "Linking and bootstrapping launchd scripts..."
 
-    for f in $dotfiles/launchd/*; do
+    for f in $DOTFILES/launchd/*; do
         if [[ ! -h $HOME/Library/LaunchAgents/$f:t ]]; then
             link $f $HOME/Library/LaunchAgents/$f:t
             launchctl bootstrap gui/$UID $HOME/Library/LaunchAgents/$f:t
@@ -131,7 +121,7 @@ function dotfiles-launchd {
 
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping homebrew update (no write permissions)"
         return
     fi
@@ -151,7 +141,7 @@ function dotfiles-brew {
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
         # If homebrew was just installed, ensure it's in the path
-        export PATH=$homebrew_base/bin:$PATH
+        export PATH=$HOMEBREW_BASE/bin:$PATH
 
         rehash
     fi
@@ -197,8 +187,8 @@ function dotfiles-brew {
     brew upgrade
 
     # Remove git's included zsh completions in favor of the system completions
-    if [[ -f $homebrew_base/share/zsh/site-functions/_git ]]; then
-        rm -f $homebrew_base/share/zsh/site-functions/_git
+    if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
+        rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
     fi
 }
 
@@ -217,38 +207,41 @@ function dotfiles-zsh {
         return
     fi
 
-    cd $ZPLUGDIR
-    for org in *; do
-        cd $org 
-        for plugin in *; do
-            cd $plugin
-            head=$(git rev-parse HEAD)
-            git pull -q --recurse-submodules
-            git submodule update --remote
-            if [[ $(git rev-parse HEAD) != $head ]]; then 
-                logSub "Updated $org/$plugin"
-            fi
-            cd ..
-        done
-        cd ..
+    for plugin in $ZPLUGDIR/*/*; do
+        head=$(git -C $plugin rev-parse HEAD)
+        git -C $plugin pull -q --recurse-submodules
+        git -C $plugin submodule update --remote
+        if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
+            logSub "Updated ${plugin:h:t}/${plugin:t}"
+        fi
     done
 }
 
 # Update global python packages
 function dotfiles-python {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping python update (no write permissions)"
         return
     fi
 
     log "Updating global python packages..."
-    $homebrew_base/bin/pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
-    logSub "Updated Python packages"
+    $HOMEBREW_BASE/bin/pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
+
+    if [[ ! -d $HOME/.poetry ]]; then
+        log "Installing poetry..."
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+    else
+        log "Updating poetry..."
+        $HOME/.poetry/bin/poetry self update
+    fi
+
+    log "Updating poetry completions..."
+    $HOME/.poetry/bin/poetry completions zsh > $ZCOMPDIR/_poetry
 }
 
 # Update global npm packages
 function dotfiles-node {
-    if [[ ! -w $homebrew_base/bin ]]; then
+    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
         log "Skipping node update (no write permissions)"
         return
     fi
@@ -256,7 +249,7 @@ function dotfiles-node {
     local node_path=$1
     if [[ -z $node_path ]]; then
         log "Updating global node packages..."
-        node_path=$homebrew_base/bin
+        node_path=$HOMEBREW_BASE/bin
     fi
 
     # if a node_path was provided, the function was called from another
@@ -318,16 +311,13 @@ function dotfiles-tmux {
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
-        cd $TMUX_PLUGIN_MANAGER_PATH
-        for plugin in *; do
-            cd $plugin 
-            head=$(git rev-parse HEAD)
-            git pull -q --recurse-submodules
-            git submodule update --remote -q
-            if [[ $(git rev-parse HEAD) != $head ]]; then 
-                logSub "Updated $plugin"
+        for plugin in $TMUX_PLUGIN_MANAGER_PATH/*; do
+            head=$(git -C $plugin rev-parse HEAD)
+            git -C $plugin pull -q --recurse-submodules
+            git -C $plugin submodule update --remote -q
+            if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
+                logSub "Updated ${plugin:t}"
             fi
-            cd ..
         done
     fi
 }
@@ -342,16 +332,16 @@ function dotfiles-asdf {
         logSub "Installed asdf-direnv"
     fi
 
-    if [[ ! -d $asdf_installs/direnv/system/bin ]]; then
-        makedir $asdf_installs/direnv/system/bin
-        link $homebrew_base/bin/direnv $asdf_installs/direnv/system/bin/direnv
+    if [[ ! -d $ASDF_DATA/installs/direnv/system/bin ]]; then
+        makedir $ASDF_DATA/installs/direnv/system/bin
+        link $HOMEBREW_BASE/bin/direnv $ASDF_DATA/installs/direnv/system/bin/direnv
         asdf reshim
         logSub "Linked system direnv"
     fi
 
     if (( ! $asdf_plugins[(Ie)nodejs] )); then
         asdf plugin-add nodejs
-        bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+        bash $ASDF_DATA/plugins/nodejs/bin/import-release-team-keyring
         logSub "Installed asdf-nodejs"
     fi
 
@@ -366,12 +356,12 @@ function dotfiles-asdf {
     fi
 
     # Vim may need a dedicated version of Node
-    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $HOME/.asdf/installs/nodejs/$VIM_NODE_VERSION ]]; then
+    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $ASDF_DATA/installs/nodejs/$VIM_NODE_VERSION ]]; then
         asdf install nodejs $VIM_NODE_VERSION
         logSub "Installed nodejs $VIM_NODE_VERSION"
     fi
 
-    for dir in $HOME/.asdf/plugins/*; do
+    for dir in $ASDF_DATA/plugins/*; do
         local plugin=${dir:t}
         head=$(git -C $dir rev-parse HEAD)
         git -C $dir pull -q
@@ -379,7 +369,7 @@ function dotfiles-asdf {
             err "Problem updating $plugin"
         else
             if [[ $(git -C $dir rev-parse HEAD) != $head ]]; then 
-                logSub "Updated $plugin"
+                logSub "Updated ${plugin:t}"
             fi
         fi
     done
@@ -389,47 +379,44 @@ function dotfiles-asdf {
 function dotfiles-vim {
     log "Updating vim plugins..."
 
-    local node_path=$homebrew_base/bin
+    local node_path=$HOMEBREW_BASE/bin
     if [[ -n $VIM_NODE_VERSION ]]; then
-        node_path=$asdf_installs/nodejs/$VIM_NODE_VERSION/bin
+        node_path=$ASDF_DATA/installs/nodejs/$VIM_NODE_VERSION/bin
         log "Updating vim's node packages..."
         dotfiles-node $node_path
     fi
 
-    if [[ -a $HOME/.vim/autoload/plug.vim ]]; then
-        cd $HOME/.vim/autoload
-        existing=$(<plug.vim)
+    local plug_vim=$HOME/.vim/autoload/plug.vim
+    if [[ -a $plug_vim ]]; then
+        existing=$(<$plug_vim)
         current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
         if [[ -z "$current" ]]; then
             err "Problem updating plug.vim"
         elif [[ "$existing" != "$current" ]]; then
-            mv plug.vim plug.old
-            echo -E "$current" > plug.vim
+            mv $plug_vim $plug_vim.old
+            echo -E "$current" > $plug_vim
             logSub "Updated vim-plug"
         fi
 
-        cd $CACHEDIR/vim/plugins
-        for plugin in *; do
-            cd $plugin 
-            head=$(git rev-parse HEAD)
-            git pull -q --recurse-submodules
+        for plugin in $CACHEDIR/vim/plugins/*; do
+            head=$(git -C $plugin rev-parse HEAD)
+            git -C $plugin pull -q --recurse-submodules
             if (( $? != 0 )); then 
                 err "Problem updating $plugin"
             else
                 # If the current head is different than the original head,
                 # check for a package.json
-                if [[ $(git rev-parse HEAD) != $head ]]; then 
-                    if [[ -e package.json ]]; then
-                        if [[ -e yarn.lock ]]; then
-                            $node_path/yarn install --registry=https://registry.npmjs.org --frozen-lockfile --silent
+                if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
+                    if [[ -e $plugin/package.json ]]; then
+                        if [[ -e $plugin/yarn.lock ]]; then
+                            $node_path/yarn --cwd $plugin install --registry=https://registry.npmjs.org --frozen-lockfile --silent
                         else
-                            $node_path/npm install --registry=https://registry.npmjs.org --silent
+                            $node_path/npm --prefix $plugin install --registry=https://registry.npmjs.org --silent
                         fi
                     fi
-                    logSub "Updated $plugin"
+                    logSub "Updated ${plugin:t}"
                 fi
             fi
-            cd ..
         done
     fi
 }

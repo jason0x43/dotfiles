@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+source $HOME/.dotfiles/zsh/common.zsh
+
 name=$1
 shift
 
