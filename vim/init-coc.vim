@@ -53,9 +53,8 @@ endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 augroup vimrc
-  if exists('CocActionAsync')
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-  endif
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 
   nnoremap <nowait><expr><C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
   nnoremap <nowait><expr><C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
