@@ -54,6 +54,7 @@
   "git.changedSign.text": "┃",
   "git.removedSign.text": "┃",
   "java.errors.incompleteClasspath.severity": "ignore",
+  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml",
   "javascript.referencesCodeLens.enable": true,
   "javascript.suggestionActions.enabled": true,
   "json.schemas": [
@@ -76,9 +77,11 @@
   "suggest.enablePreview": true,
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
-  // "tsserver.npm": "/usr/local/bin/npm",
   "tsserver.log": "verbose",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": true,
-  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml"
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow": [".github/workflows/*.yaml"]
+  },
+  "yaml.trace.server": "verbose"
 }
