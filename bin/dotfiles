@@ -224,7 +224,7 @@ function dotfiles-python {
         return
     fi
 
-    if [[ ! -l $HOMEBREW_BASE/bin/python ]]; then
+    if [[ ! -h $HOMEBREW_BASE/bin/python ]]; then
         logSub "Creating python link..."
         link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
     fi
