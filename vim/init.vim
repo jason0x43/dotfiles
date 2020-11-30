@@ -675,21 +675,12 @@ Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
-Plug 'yasuhiroki/github-actions-yaml.vim'
 
  " Show version info in package.json files
 Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
-Plug 'neoclide/jsonc.vim'
-Plug 'digitaltoad/vim-jade'
-Plug 'keith/swift.vim'
-Plug 'groenewege/vim-less'
-Plug 'rust-lang/rust.vim'
-Plug 'wavded/vim-stylus'
-Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'udalov/kotlin-vim'
-Plug 'cespare/vim-toml'
+Plug 'sheerun/vim-polyglot'
 
 " Completion
 Plug 'neoclide/coc.nvim', {
@@ -708,11 +699,6 @@ Plug 'neoclide/coc.nvim', {
 " Flashier syntax highlighting
 if has('nvim-0.5')
   Plug 'nvim-treesitter/nvim-treesitter'
-else
-  Plug 'leafgarland/typescript-vim'
-  Plug 'peitalin/vim-jsx-typescript'
-  hi link xmlTag Function
-  hi link xmlTagName Function
 endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
