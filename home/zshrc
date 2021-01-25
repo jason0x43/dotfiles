@@ -383,7 +383,6 @@ alias tks='tmux kill-session -t'
 
 # xcode
 alias xcr='xcrun'
-alias xcb='xcodebuild'
 
 # Pretty print json
 alias json='python -m json.tool'

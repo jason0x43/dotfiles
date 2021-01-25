@@ -1,0 +1,58 @@
+#!/bin/zsh
+
+zmodload zsh/zutil
+zparseopts -D -E -F - -scheme:=scheme -workspace:=workspace s=showcmd -out:=out
+
+args=("$@")
+
+if [[ -n $out ]]; then
+	args+="CONFIGURATION_BUILD_DIR=${out:#--out}"
+elif [[ -n "$XC_OUTDIR" ]]; then
+	args+="CONFIGURATION_BUILD_DIR=$XC_OUTDIR"
+fi
+
+if [[ -n $workspace ]]; then
+	args+="-workspace"
+	args+=${workspace:#--workspace}
+elif [[ -n "$XC_WORKSPACE" ]]; then
+	args+="-workspace"
+	args+=$XC_WORKSPACE
+fi
+
+if [[ -n $scheme ]]; then
+	args+="-scheme"
+	args+=${scheme:#--scheme}
+elif [[ -n "$XC_SCHEME" ]]; then
+	args+="-scheme"
+	args+=$XC_SCHEME
+fi
+
+if [[ -n "$XC_SDK" ]]; then
+	args+="-sdk"
+	args+=$XC_SDK
+fi
+
+if [[ -n "$XC_DEST" ]]; then
+	args+="-destination"
+	args+=$XC_DEST
+fi
+
+if (( $+commands[xcbeautify] )); then
+	if [[ -n $showcmd ]]; then
+		echo "xcodebuild $args | xcbeautify"
+	else
+		xcodebuild $args | xcbeautify
+	fi
+elif (( $+commands[xcpretty] )); then
+	if [[ -n $showcmd ]]; then
+		echo "xcodebuild $args | xcpretty"
+	else
+		xcodebuild $args | xcpretty
+	fi
+else
+	if [[ -n $showcmd ]]; then
+		echo "xcodebuild $args"
+	else
+		xcodebuild $args
+	fi
+fi
