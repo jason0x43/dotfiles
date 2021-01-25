@@ -320,6 +320,9 @@ alias gcp='git cp'
 alias gcpe='git cp -e'
 alias gcpn='git cpn'
 
+# Kitty shortcuts
+alias ktn="kitty @ set-tab-title"
+
 # Cleanup
 alias gcln='git clean -nxd'
 alias gclf='git clean -fxd'

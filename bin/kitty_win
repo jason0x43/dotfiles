@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+cat $HOME/kitty_win.txt
+exec zsh
