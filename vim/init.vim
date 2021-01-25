@@ -183,6 +183,10 @@ function! s:textMode()
     map <buffer> <silent> $ g$
 endfunction
 
+function! s:showViewWidth()
+    let &colorcolumn=join(range(81, 81+256), ",")
+endfunction
+
 " General autocommands
 augroup vimrc
     " Make text files easier to work with
@@ -190,6 +194,9 @@ augroup vimrc
     autocmd FileType textile call s:textMode()
     autocmd FileType markdown call s:textMode()
     autocmd FileType html call s:textMode()
+
+	" Dim columns past 80
+	autocmd BufEnter *.* call s:showViewWidth()
 
     " If vim is resized, resize any splits
     autocmd VimResized * wincmd =
