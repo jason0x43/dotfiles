@@ -720,7 +720,7 @@ Plug 'lervag/vimtex', {
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
     " Need to include both the plugin in fzf itself and the standalone plugin
-    Plug $FZF_PATH
+    set rtp+=/usr/local/opt/fzf
     Plug 'junegunn/fzf.vim'
 
     " Override the default files and buffers mappings with fzf ones
