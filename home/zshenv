@@ -58,7 +58,7 @@ fi
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
 	case "$OSTYPE" in
-		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
+		darwin*) export GOPATH=$HOME/Code/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
 	esac
 fi
