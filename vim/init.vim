@@ -650,7 +650,6 @@ Plug 'sgur/vim-editorconfig'          " EditorConfig
 Plug 'mhinz/vim-startify'             " Useful startup text
 Plug 'tpope/vim-commentary'           " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'               " POSIX command wrappers
-Plug 'tpope/vim-sleuth'               " Setup buffer options based on content
 Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
