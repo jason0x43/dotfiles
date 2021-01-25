@@ -83,6 +83,9 @@
   "tsserver.log": "verbose",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": true,
+  "yaml.customTags": [
+    "!secret"
+  ],
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow": [".github/workflows/*.yaml"]
   },
