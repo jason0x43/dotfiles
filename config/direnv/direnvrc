@@ -113,9 +113,17 @@ use_xcode_cpath() {
 
 # Add Android SDK to path
 use_android() {
-  if [[ -z $ANDROID_HOME ]]; then
-    log_error 'ANDROID_HOME must be set.'
+  local java=$HOME/.asdf/installs/java/adopt-openjdk-8u252-b09.1
+  if [[ ! -d $java ]]; then
+    log_error 'adoptopenjdk-8 must be installed'
     return
+  fi
+
+  export JAVA_HOME=$java
+  export PATH=$java/bin:$PATH
+
+  if [[ -z $ANDROID_HOME ]]; then
+    export ANDROID_HOME=$HOME/Library/Android/sdk
   fi
 
   export ANDROID_SDK_HOME=$ANDROID_HOME
