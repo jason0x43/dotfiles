@@ -21,15 +21,6 @@
     "typescript.tsx",
     "typescriptreact"
   ],
-  "eslint.enable": true,
-  "eslint.filetypes": [
-    "javascript",
-    "javascriptreact",
-    "javascript.jsx",
-    "typescript",
-    "typescriptreact",
-    "typescript.tsx"
-  ],
   "explorer.floating.width": 60,
   "explorer.floating.position": "center",
   "explorer.git.icon.status.added": "✚",
