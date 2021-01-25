@@ -696,9 +696,9 @@ endif
 " Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 
 " Flashier syntax highlighting
-if has('nvim-0.5')
-  Plug 'nvim-treesitter/nvim-treesitter'
-endif
+" if has('nvim-0.5')
+"   Plug 'nvim-treesitter/nvim-treesitter'
+" endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
@@ -741,6 +741,6 @@ Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 " Load all the plugins
 call plug#end()
 
-if has('nvim-0.5')
-  lua require("treesitter_config")
-endif 
+" if has('nvim-0.5')
+"   lua require("treesitter_config")
+" endif 
