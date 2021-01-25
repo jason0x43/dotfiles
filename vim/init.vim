@@ -379,26 +379,6 @@ function! s:base16_customize()
         let g:terminal_color_21 = '#' . g:base16_gui06
     endif
 
-    let g:chadtree_colours = {
-        \ "8_bit": {
-        \   "Black":         { "hl24": g:terminal_color_0 },
-        \   "Red":           { "hl24": g:terminal_color_1 },
-        \   "Green":         { "hl24": g:terminal_color_2 },
-        \   "Yellow":        { "hl24": g:terminal_color_3 },
-        \   "Blue":          { "hl24": g:terminal_color_4 },
-        \   "Magenta":       { "hl24": g:terminal_color_5 },
-        \   "Cyan":          { "hl24": g:terminal_color_6 },
-        \   "White":         { "hl24": g:terminal_color_7 },
-        \   "BrightBlack":   { "hl24": g:terminal_color_8 },
-        \   "BrightRed":     { "hl24": g:terminal_color_9 },
-        \   "BrightGreen":   { "hl24": g:terminal_color_10 },
-        \   "BrightYellow":  { "hl24": g:terminal_color_11 },
-        \   "BrightBlue":    { "hl24": g:terminal_color_12 },
-        \   "BrightMagenta": { "hl24": g:terminal_color_13 },
-        \   "BrightCyan":    { "hl24": g:terminal_color_14 },
-        \   "BrightWhite":   { "hl24": g:terminal_color_15 },
-        \ }}
-
     exec 'hi LspDiagnosticsWarning guibg=NONE guifg=#' . g:base16_gui0F . ' gui=italic'
     exec 'hi LspDiagnosticsWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=bold'
     exec 'hi LspDiagnosticsWarningFloating guibg=NONE guifg=#' . g:base16_gui0F
