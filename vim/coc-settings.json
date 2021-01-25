@@ -3,6 +3,7 @@
   "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
   "coc.preferences.hoverTarget": "float",
   "css.lint.unknownProperties": "ignore",
+  "css.validate": false,
   "codeLens.enable": false,
   "diagnostic.enableMessage": "jump",
   "diagnostic.errorSign": "",
@@ -74,11 +75,13 @@
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
   "npm.binPath": "/usr/local/bin/npm",
   "python.formatting.provider": "black",
+  "scss.validate": false,
   "snippets.extends": {
     "javascriptreact": ["javascript"],
     "typescript": ["javascript"],
     "typescriptreact": ["typescript", "javascriptreact"]
   },
+  "stylelintplus.autoFixOnFormat": true,
   "suggest.enablePreview": true,
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
