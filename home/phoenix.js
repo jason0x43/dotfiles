@@ -5,7 +5,7 @@
 
 Phoenix.set({
   daemon: false,
-  openAtLogin: true
+  openAtLogin: true,
 });
 
 Event.on('willTerminate', () => {
@@ -43,7 +43,7 @@ const NORTH = 'north';
 const SOUTH = 'south';
 
 const MODAL_TIMEOUT = 750;
-const THIN_WIDTH = 1020 / 3840 * 1.6;
+const THIN_WIDTH = (1020 / 3840) * 1.6;
 
 let helpTimer;
 let helpCloser;
@@ -62,12 +62,42 @@ const keys = [
   ['Move to SW corner', 'a', CONTROL_SHIFT, () => moveTo(SW)],
   ['Move to center', 'z', CONTROL_SHIFT, () => moveTo(CENTER)],
 
-  ['Fill NW quadrant', 'q', CONTROL_ALT_SHIFT, () => fill(NW, { portion: 1 - THIN_WIDTH })],
-  ['Fill SW quadrant', 'a', CONTROL_ALT_SHIFT, () => fill(SW, { portion: 1 - THIN_WIDTH })],
-  ['Fill SE quadrant', 's', CONTROL_ALT_SHIFT, () => fill(SE, { portion: THIN_WIDTH })],
-  ['Fill NE quadrant', 'w', CONTROL_ALT_SHIFT, () => fill(NE, { portion: THIN_WIDTH })],
-  ['Fill left half', 'h', CONTROL_ALT_SHIFT, () => fill(LEFT, { portion: 1 - THIN_WIDTH })],
-  ['Fill right half', 'l', CONTROL_ALT_SHIFT, () => fill(RIGHT, { portion: THIN_WIDTH })],
+  [
+    'Fill NW quadrant',
+    'q',
+    CONTROL_ALT_SHIFT,
+    () => fill(NW, { portion: 1 - THIN_WIDTH }),
+  ],
+  [
+    'Fill SW quadrant',
+    'a',
+    CONTROL_ALT_SHIFT,
+    () => fill(SW, { portion: 1 - THIN_WIDTH }),
+  ],
+  [
+    'Fill SE quadrant',
+    's',
+    CONTROL_ALT_SHIFT,
+    () => fill(SE, { portion: THIN_WIDTH }),
+  ],
+  [
+    'Fill NE quadrant',
+    'w',
+    CONTROL_ALT_SHIFT,
+    () => fill(NE, { portion: THIN_WIDTH }),
+  ],
+  [
+    'Fill left half',
+    'h',
+    CONTROL_ALT_SHIFT,
+    () => fill(LEFT, { portion: 1 - THIN_WIDTH }),
+  ],
+  [
+    'Fill right half',
+    'l',
+    CONTROL_ALT_SHIFT,
+    () => fill(RIGHT, { portion: THIN_WIDTH }),
+  ],
   ['Fill screen', 'f', CONTROL_ALT_SHIFT, () => toggleFillScreen()],
   ['Fill center', 'z', CONTROL_ALT_SHIFT, () => center()],
 
@@ -75,25 +105,25 @@ const keys = [
     'Increase height',
     "'",
     CONTROL_SHIFT,
-    () => resize({ height: heightPercent(INCREMENT) })
+    () => resize({ height: heightPercent(INCREMENT) }),
   ],
   [
     'Decrease height',
     ';',
     CONTROL_SHIFT,
-    () => resize({ height: -heightPercent(INCREMENT) })
+    () => resize({ height: -heightPercent(INCREMENT) }),
   ],
   [
     'Increase width',
     ']',
     CONTROL_SHIFT,
-    () => resize({ width: widthPercent(INCREMENT) })
+    () => resize({ width: widthPercent(INCREMENT) }),
   ],
   [
     'Decrease width',
     '[',
     CONTROL_SHIFT,
-    () => resize({ width: -widthPercent(INCREMENT) })
+    () => resize({ width: -widthPercent(INCREMENT) }),
   ],
 
   ['Focus western neighbor', 'h', CONTROL_SHIFT, () => focusNeighbor(WEST)],
@@ -105,7 +135,7 @@ const keys = [
   ['Move to left display', 'left', CONTROL_SHIFT, () => moveToScreen(LEFT)],
 
   ['Move to right space', 'right', CONTROL_ALT_SHIFT, () => moveToSpace(RIGHT)],
-  ['Move to left space', 'left', CONTROL_ALT_SHIFT, () => moveToSpace(LEFT)]
+  ['Move to left space', 'left', CONTROL_ALT_SHIFT, () => moveToSpace(LEFT)],
 ];
 
 for (const binding of keys) {
@@ -130,7 +160,7 @@ function center(window) {
 
   window.setSize({
     width: Math.round(screenFrame.width * 0.6),
-    height: Math.round(screenFrame.height * 0.8)
+    height: Math.round(screenFrame.height * 0.8),
   });
 
   moveTo(CENTER);
@@ -174,37 +204,62 @@ function fill(area, options = {}) {
   Phoenix.log(`windowFrame: ${JSON.stringify(frame)}`);
   Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
 
+  const isLargeScreen = screenFrame.width > 2000;
+  const bounds = {};
+
   // size
   switch (area) {
     case NW:
     case NE:
     case SW:
     case SE:
-      frame.height = screenFrame.height / 2 - 0.5 * PADDING;
-      frame.width = width - 0.5 * PADDING;
+      bounds.height = screenFrame.height / 2 - 0.5 * PADDING;
+      bounds.width = width - 0.5 * PADDING;
       break;
     case LEFT:
     case RIGHT:
-      frame.height = screenFrame.height;
-      frame.width = width - 0.5 * PADDING;
+      bounds.height = screenFrame.height;
+      bounds.width = width - 0.5 * PADDING;
       break;
     case CENTER:
-      frame.height = screenFrame.height;
-      frame.width = screenFrame.width;
+      bounds.height = screenFrame.height;
+      bounds.width = screenFrame.width;
+      break;
+  }
+
+  frame.height = bounds.height;
+  frame.width = bounds.width;
+
+  if (isLargeScreen) {
+    switch (area) {
+      case LEFT:
+      case RIGHT:
+      case CENTER:
+        frame.height *= 0.9;
+        frame.width *= 0.9;
+        break;
+    }
   }
 
   // x-coordinate
   switch (area) {
     case NW:
     case SW:
-    case LEFT:
-    case CENTER:
       frame.x = screenFrame.x;
+      break;
+    case LEFT:
+      frame.x = screenFrame.x + (bounds.width - frame.width - PADDING) / 2;
+      break;
+    case CENTER:
+      frame.x = screenFrame.x + (screenFrame.width - frame.width) / 2;
       break;
     case NE:
     case SE:
     case RIGHT:
-      frame.x = screenFrame.x + screenFrame.width - frame.width;
+      frame.x =
+        screenFrame.x +
+        (screenFrame.width - bounds.width) +
+        (bounds.width - frame.width - PADDING) / 2;
       break;
   }
 
@@ -212,10 +267,11 @@ function fill(area, options = {}) {
   switch (area) {
     case NW:
     case NE:
+      frame.y = screenFrame.y;
     case RIGHT:
     case LEFT:
     case CENTER:
-      frame.y = screenFrame.y;
+      frame.y = screenFrame.y + (screenFrame.height - frame.height) / 2;
       break;
     case SE:
     case SW:
@@ -254,7 +310,7 @@ function focusWindowUnderMouse(position) {
   clearTimeout(focusTimer);
   const args = Array.prototype.slice.call(arguments);
   focusTimer = setTimeout(() => {
-    Phoenix.log("Focus event: " + JSON.stringify(args));
+    Phoenix.log('Focus event: ' + JSON.stringify(args));
     const window = getWindowAt(position);
     if (window) {
       Phoenix.log('Focusing window', JSON.stringify(window.app().name()));
@@ -297,7 +353,7 @@ function getDeltaFrame(window) {
     x: screen.x - frame.x,
     y: screen.y - frame.y,
     width: screen.width - frame.width,
-    height: screen.height - frame.height
+    height: screen.height - frame.height,
   };
 }
 
@@ -311,6 +367,9 @@ function getScreenFrame(window) {
   }
 
   const screenFrame = window.screen().flippedVisibleFrame();
+
+  Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
+
   return padScreenFrame(screenFrame);
 }
 
@@ -321,22 +380,22 @@ function getWindowAt(position) {
   // If Window.at works, take it
   let win = Window.at(position);
   if (win) {
-    Phoenix.log("Returning Window.at");
+    Phoenix.log('Returning Window.at');
     return win;
   }
 
   // If the mouse is still within the bounds of the currently focused window,
   // keep focus there
-  let focused = Window.focused()
+  let focused = Window.focused();
   if (focused && isWithin(position, focused.frame())) {
-    Phoenix.log("Returning focused window");
+    Phoenix.log('Returning focused window');
     return focused;
   }
 
   // Return the first window that the mouse is within
   for (const w of Window.all({ visible: true })) {
     if (isWithin(position, w.frame())) {
-      Phoenix.log("May be " + w.app().name());
+      Phoenix.log('May be ' + w.app().name());
       if (!win) {
         win = w;
       }
@@ -504,7 +563,7 @@ function padScreenFrame(frame) {
     x: frame.x + PADDING,
     y: frame.y + PADDING,
     width: frame.width - 2 * PADDING,
-    height: frame.height - 2 * PADDING
+    height: frame.height - 2 * PADDING,
   };
 }
 
