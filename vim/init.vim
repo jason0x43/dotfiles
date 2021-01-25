@@ -681,6 +681,11 @@ Plug 'neoclide/coc.nvim', {
     \ 'do': 'yarn install --frozen-lockfile'
     \ }
 
+if has('nvim')
+  let g:cursorhold_updatetime = 100
+  Plug 'antoinemadec/FixCursorHold.nvim'
+endif
+
 " nvim-lsp
 " if has('nvim')
 "   Plug 'neovim/nvim-lspconfig'
