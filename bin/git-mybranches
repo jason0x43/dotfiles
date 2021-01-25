@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+user_name=$(git config user.name)
+branches=("${(@f)$(git for-each-ref --format='%(refname:short)|%(authorname)|%(authordate:format:%Y-%m-%d)' --sort=authordate)}")
+for branch in $branches; do
+	parts=("${(@s/|/)branch}")
+	tail=${parts[1]:t}
+
+	if [[ $tail == main || $tail == master || $tail == HEAD ]]; then
+		continue
+	fi
+
+	if [[ $parts[2] == $user_name ]]; then
+		echo $parts[3] $parts[1]
+	fi
+done
