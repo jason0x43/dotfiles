@@ -28,6 +28,8 @@
     "typescriptreact",
     "typescript.tsx"
   ],
+  "explorer.floating.width": 60,
+  "explorer.floating.position": "center",
   "explorer.git.icon.status.added": "✚",
   "explorer.git.icon.status.deleted": "✖",
   "explorer.git.icon.status.renamed": "➜",
@@ -39,6 +41,7 @@
   "explorer.keyMappings.global": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
+  "explorer.position": "floating",
   "explorer.previewAction.onHover": false,
   "explorer.sources": [
     {

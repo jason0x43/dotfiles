@@ -144,6 +144,8 @@ function! s:coc_customize_colors()
   exec 'hi CocHintSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=bold'
   exec 'hi CocHintVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=NONE'
   exec 'hi CocHintHighlight gui=undercurl guisp=#' . g:base16_gui0C
+
+  exec 'hi CocExplorerGitContentChange guifg=#' . g:base16_gui0B
 endfunction
 
 augroup vimrc
@@ -169,3 +171,12 @@ let g:lightline['component_function']['currentfunction'] = 'CocCurrentFunction'
 let g:lightline['component_function']['gitbranch'] = 'LightlineGitBranch'
 let g:lightline['component_function']['gitblame'] = 'LightlineGitBlame'
 let g:lightline['active']['right'][1] = ['cocstatus', 'sleuth']
+
+let g:coc_explorer_global_presets = {
+\   'floating': {
+\     'position': 'floating',
+\     'open-action-strategy': 'sourceWindow',
+\     'floating-position': 'left-center',
+\     'floating-width': 50,
+\   }
+\ }
