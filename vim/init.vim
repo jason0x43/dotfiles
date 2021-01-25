@@ -694,6 +694,7 @@ Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
 Plug 'sheerun/vim-polyglot'
+Plug 'neoclide/jsonc.vim'
 
 " Completion
 Plug 'neoclide/coc.nvim', {
