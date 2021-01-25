@@ -71,6 +71,7 @@
     }
   ],
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
+  "npm.binPath": "/usr/local/bin/npm",
   "python.formatting.provider": "black",
   "snippets.extends": {
     "javascriptreact": ["javascript"],
