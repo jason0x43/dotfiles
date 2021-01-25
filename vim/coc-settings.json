@@ -10,6 +10,7 @@
   "diagnostic.infoSign": "",
   "diagnostic.maxWindowHeight": 20,
   "diagnostic.refreshOnInsertMode": true,
+  "diagnostic.showUnused": false,
   "diagnostic.virtualText": false,
   "diagnostic.warningSign": "",
   "emmet.excludeLanguages": [
