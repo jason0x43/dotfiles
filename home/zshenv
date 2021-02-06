@@ -213,6 +213,11 @@ if [[ -d $HOME/.deno/bin ]]; then
 	)
 fi
 
+# Homebrew
+# ----------------------------------------------------------------------------
+# Use Bootsnap to speed up repeated brew calls
+export HOMEBREW_BOOTSNAP=1
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
