@@ -148,6 +148,15 @@ for (const binding of keys) {
 //
 
 /**
+ * Add icon space to a screen frame
+ */
+function addIconSpace(frame) {
+  return {
+    ...frame,
+    width: frame.width - 90
+  };
+}
+/**
  * Center a window on the screen and make it take up a large portion of the screen
  */
 function center(window) {
@@ -188,8 +197,13 @@ function fill(area, options = {}) {
     return;
   }
 
-  const screenFrame = getScreenFrame(window);
+  let screenFrame = getScreenFrame(window);
+  const isLargeScreen = screenFrame.width > 2000;
   const frame = window.frame();
+
+  if (isLargeScreen) {
+    screenFrame = addIconSpace(screenFrame);
+  }
 
   if (portion) {
     width = screenFrame.width * portion;
@@ -204,7 +218,6 @@ function fill(area, options = {}) {
   Phoenix.log(`windowFrame: ${JSON.stringify(frame)}`);
   Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
 
-  const isLargeScreen = screenFrame.width > 2000;
   const bounds = {};
 
   // size
@@ -235,8 +248,8 @@ function fill(area, options = {}) {
       case LEFT:
       case RIGHT:
       case CENTER:
-        frame.height *= 0.9;
-        frame.width *= 0.9;
+        frame.height *= 0.95;
+        frame.width *= 0.95;
         break;
     }
   }
