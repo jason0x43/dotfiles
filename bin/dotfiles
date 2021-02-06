@@ -159,7 +159,7 @@ function dotfiles-brew {
         'jq'          # used with asdf to manage java
         'neovim'      # better vim
         'node'        # NodeJS
-        'python@3.8'  # update from system stock Python3
+        'python@3.9'  # use Python3 (update to just 'python' when possible)
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
