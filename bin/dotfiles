@@ -415,8 +415,10 @@ function dotfiles-vim {
                     if [[ -e $plugin/package.json ]]; then
                         if [[ -e $plugin/yarn.lock ]]; then
                             $node_path/yarn --cwd $plugin install --registry=https://registry.npmjs.org --frozen-lockfile --silent
+                        elif [[ -e $plugin/package-lock.json ]]; then
+                            $node_path/npm --prefix $plugin ci --registry=https://registry.npmjs.org --silent
                         else
-                            $node_path/npm --prefix $plugin install --registry=https://registry.npmjs.org --silent
+                            $node_path/npm --prefix $plugin install --registry=https://registry.npmjs.org --no-save --silent
                         fi
                     fi
                     logSub "Updated ${plugin:t}"
