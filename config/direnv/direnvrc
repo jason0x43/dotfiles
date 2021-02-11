@@ -50,23 +50,23 @@ use_tools() {
 
 # Use a local python env, creating it if necessary
 use_pyenv() {
-  asdf_version=$(asdf current python)
-  version=${asdf_version%% *}
+  version=$(asdf current python | awk '{ print $2 }')
   if [[ ! -d .asdf/python-$version ]]; then
     python -m venv .asdf/python-$version
     .asdf/python-$version/bin/pip install --upgrade pip
+    .asdf/python-$version/$dir/bin/pip install wheel
   fi
   export PATH=$PWD/.asdf/python-$version/bin:$PATH
 }
 
 # Use a central python env, creating it if necessary
 use_pyenv_home() {
-  asdf_version=$(asdf current python)
-  version=${asdf_version%% *}
+  version=$(asdf current python | awk '{ print $2 }')
   dir=${PWD//\//_}
   if [[ ! -d ~/.asdf/python-$version/$dir ]]; then
     python -m venv ~/.asdf/python-$version/$dir
     ~/.asdf/python-$version/$dir/bin/pip install --upgrade pip
+    ~/.asdf/python-$version/$dir/bin/pip install wheel
   fi
   export PATH=$HOME/.asdf/python-$version/$dir/bin:$PATH
 }
