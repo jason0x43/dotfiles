@@ -719,18 +719,7 @@ Plug 'lervag/vimtex', {
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
-    " Need to include both the plugin in fzf itself and the standalone plugin
-    set rtp+=/usr/local/opt/fzf
-    Plug 'junegunn/fzf.vim'
-
-    " Override the default files and buffers mappings with fzf ones
-    map <silent> <Leader>f :Files<CR>
-    map <silent> <Leader>b :Buffers<CR>
-    " Show untracked files, too
-    map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
-    map <silent> <Leader>m :GFiles?<CR>
-
-    let g:fzf_layout = { 'down': 10 }
+  runtime! init-fzf.vim
 endif
 
 " Load devicons near the end so it can integrate with everything it needs to
