@@ -81,6 +81,7 @@ set wildignorecase           " Case insensitive filename completion
 set lazyredraw               " Redraw less frequently
 set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
+set mouse=a                  " Enable mouse support
 
 " Improve completion experience with completion-nvim
 set completeopt=menuone,noinsert,noselect
@@ -182,6 +183,10 @@ function! s:textMode()
     map <buffer> <silent> $ g$
 endfunction
 
+function! s:showViewWidth()
+    let &colorcolumn=join(range(81, 81+256), ",")
+endfunction
+
 " General autocommands
 augroup vimrc
     " Make text files easier to work with
@@ -189,6 +194,9 @@ augroup vimrc
     autocmd FileType textile call s:textMode()
     autocmd FileType markdown call s:textMode()
     autocmd FileType html call s:textMode()
+
+	" Dim columns past 80
+	autocmd BufEnter *.* call s:showViewWidth()
 
     " If vim is resized, resize any splits
     autocmd VimResized * wincmd =
@@ -309,13 +317,6 @@ command! ToggleChrome call s:toggleChrome()
 " Plugin config
 " =====================================================================
 
-" auto-save
-" ---------------------------------------------------------------------
-" Enable auto-save by default
-let g:auto_save = 0 
-" Auto-saving when the cursor is still
-let g:auto_save_events = ["CursorHold", "CursorHoldI"]
-
 " Base16
 " ---------------------------------------------------------------------
 function! s:base16_load_theme()
@@ -371,26 +372,6 @@ function! s:base16_customize()
         let g:terminal_color_21 = '#' . g:base16_gui06
     endif
 
-    let g:chadtree_colours = {
-        \ "8_bit": {
-        \   "Black":         { "hl24": g:terminal_color_0 },
-        \   "Red":           { "hl24": g:terminal_color_1 },
-        \   "Green":         { "hl24": g:terminal_color_2 },
-        \   "Yellow":        { "hl24": g:terminal_color_3 },
-        \   "Blue":          { "hl24": g:terminal_color_4 },
-        \   "Magenta":       { "hl24": g:terminal_color_5 },
-        \   "Cyan":          { "hl24": g:terminal_color_6 },
-        \   "White":         { "hl24": g:terminal_color_7 },
-        \   "BrightBlack":   { "hl24": g:terminal_color_8 },
-        \   "BrightRed":     { "hl24": g:terminal_color_9 },
-        \   "BrightGreen":   { "hl24": g:terminal_color_10 },
-        \   "BrightYellow":  { "hl24": g:terminal_color_11 },
-        \   "BrightBlue":    { "hl24": g:terminal_color_12 },
-        \   "BrightMagenta": { "hl24": g:terminal_color_13 },
-        \   "BrightCyan":    { "hl24": g:terminal_color_14 },
-        \   "BrightWhite":   { "hl24": g:terminal_color_15 },
-        \ }}
-
     exec 'hi LspDiagnosticsWarning guibg=NONE guifg=#' . g:base16_gui0F . ' gui=italic'
     exec 'hi LspDiagnosticsWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=bold'
     exec 'hi LspDiagnosticsWarningFloating guibg=NONE guifg=#' . g:base16_gui0F
@@ -410,10 +391,6 @@ endfunction
 augroup vimrc
     autocmd ColorScheme * call s:base16_customize()
 augroup END
-
-" chadtree
-" ---------------------------------------------------------------------
-nnoremap <leader>n <cmd>CHADopen<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -530,13 +507,17 @@ if has('nvim')
     command! -nargs=? Term call s:openTerminal("<args>")
 
     " Tell Neovim.app which Python to use
-    if executable('$HOMEBREW_BASE/bin/python2')
+    if executable(expand('$HOMEBREW_BASE/bin/python2'))
         let g:python_host_prog='$HOMEBREW_BASE/bin/python2'
     endif
-    if executable('$HOMEBREW_BASE/bin/python3')
+    if executable(expand('$HOMEBREW_BASE/bin/python3'))
         let g:python3_host_prog='$HOMEBREW_BASE/bin/python3'
     endif
 endif
+
+" plug
+" --------------------------------------------------------------------- 
+let g:plug_window = 'new'
 
 " startify
 " --------------------------------------------------------------------- 
@@ -658,60 +639,56 @@ let g:vimtex_compiler_progname = 'nvr'
 call plug#begin('$CACHEDIR/vim/plugins')
 
 Plug 'andymass/vim-matchup'           " Better start/end matching
-Plug 'sgur/vim-editorconfig'          " EditorConfig
+Plug 'editorconfig/editorconfig-vim'  " EditorConfig
 Plug 'mhinz/vim-startify'             " Useful startup text
 Plug 'tpope/vim-commentary'           " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'               " POSIX command wrappers
-Plug 'tpope/vim-sleuth'               " Setup buffer options based on content
 Plug 'tpope/vim-fugitive'             " Git utilities
 Plug 'tpope/vim-unimpaired'           " useful pairs of mappings
 Plug 'tpope/vim-repeat'               " support for repeating mapped commands
 Plug 'tpope/vim-surround'             " for manipulating parens and such
 Plug 'moll/vim-bbye'                  " Preserve layout when closing buffers
-Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
 Plug 'junegunn/vim-easy-align'        " Easy vertical alignment of code elements
 Plug 'mbbill/undotree'                " Visualize the undo tree
 Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
-Plug 'yasuhiroki/github-actions-yaml.vim'
+Plug 'powerman/vim-plugin-AnsiEsc'    " Render ANSI escape sequences
+Plug 'drzel/vim-repo-edit'            " Easily clone and view VIM repos
+Plug 'chrisbra/unicode.vim'           " Easier unicode character entry
 
- " Show version info in package.json files
+if exists('$TMUX')
+    Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
+else
+    Plug 'knubie/vim-kitty-navigator'     " Easy movement between vim and kitty panes
+endif
+
+" Show version info in package.json files
 Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
+Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/jsonc.vim'
-Plug 'digitaltoad/vim-jade'
-Plug 'keith/swift.vim'
-Plug 'groenewege/vim-less'
-Plug 'rust-lang/rust.vim'
-Plug 'wavded/vim-stylus'
-Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'udalov/kotlin-vim'
-Plug 'cespare/vim-toml'
 
 " Completion
 Plug 'neoclide/coc.nvim', {
     \ 'do': 'yarn install --frozen-lockfile'
     \ }
 
-" nvim-lsp
-" if has('nvim')
-"   Plug 'neovim/nvim-lspconfig'
-"   Plug 'nvim-lua/completion-nvim'
-"   Plug 'nvim-lua/diagnostic-nvim'
-"   Plug 'nvim-treesitter/completion-treesitter'
-" endif
-" Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+if has('nvim')
+  let g:cursorhold_updatetime = 100
+  Plug 'antoinemadec/FixCursorHold.nvim'
+endif
 
-" Flashier syntax highlighting
 if has('nvim-0.5')
-  Plug 'nvim-treesitter/nvim-treesitter'
-else
-  Plug 'leafgarland/typescript-vim'
-  Plug 'peitalin/vim-jsx-typescript'
-  hi link xmlTag Function
-  hi link xmlTagName Function
+    " nvim LSP
+    " Plug 'neovim/nvim-lspconfig'
+    " Plug 'nvim-lua/completion-nvim'
+    " Plug 'nvim-lua/diagnostic-nvim'
+    " Plug 'nvim-treesitter/completion-treesitter'
+
+    " Flashier syntax highlighting
+    Plug 'nvim-treesitter/nvim-treesitter'
 endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
@@ -734,23 +711,11 @@ Plug 'lervag/vimtex', {
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
-    " Need to include both the plugin in fzf itself and the standalone plugin
-    Plug $FZF_PATH
-    Plug 'junegunn/fzf.vim'
-
-    " Override the default files and buffers mappings with fzf ones
-    map <silent> <Leader>f :Files<CR>
-    map <silent> <Leader>b :Buffers<CR>
-    " Show untracked files, too
-    map <silent> <Leader>g :GFiles --cached --others --exclude-standard<CR>
-    map <silent> <Leader>m :GFiles?<CR>
-
-    let g:fzf_layout = { 'down': 10 }
+  runtime! init-fzf.vim
 endif
 
 " Load devicons near the end so it can integrate with everything it needs to
 Plug 'ryanoasis/vim-devicons'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 
 " Load all the plugins
 call plug#end()

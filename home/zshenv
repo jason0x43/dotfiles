@@ -5,9 +5,7 @@
 # user interaction should go in zshrc.
 #
 
-# Dotfiles
-# ----------------------------------------------------------------------------
-export DOTFILES=$HOME/.dotfiles
+source $HOME/.dotfiles/zsh/common.zsh
 
 # Language
 # ----------------------------------------------------------------------------
@@ -17,16 +15,9 @@ export DOTFILES=$HOME/.dotfiles
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
-export CACHEDIR=$HOME/.cache
 [[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
-
-export ZCACHEDIR=$CACHEDIR/zsh
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
-
-export DATADIR=$HOME/.local/share
 [[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
-
-export ZFUNCDIR=$DATADIR/zsh/functions
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -34,15 +25,26 @@ if [[ -d "$TMPDIR" ]]; then
 	[[ -d "$TMPPREFIX" ]] || mkdir -p "$TMPPREFIX"
 fi
 
+# Plugins
+# ----------------------------------------------------------------------------
+if [[ ! -d "$ZPLUGDIR" ]]; then
+    mkdir -p "$ZPLUGDIR"
+fi
+
 # General paths
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
 
-if [[ -d /home/linuxbrew ]]; then
-	export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
-else
-	export HOMEBREW_BASE=/usr/local
-fi
+# Path
+# --------------------------------------------------------------------------
+path=(
+	$HOME/Applications
+	$HOME/.local/bin
+	$DOTFILES/bin
+	$HOMEBREW_BASE/bin
+	$HOMEBREW_BASE/sbin
+	$path
+)
 
 # Groovy
 # ----------------------------------------------------------------------------
@@ -68,7 +70,7 @@ fi
 # ----------------------------------------------------------------------------
 if (( $+commands[go] )); then
 	case "$OSTYPE" in
-		darwin*) export GOPATH=$HOME/Documents/Programming/go ;;
+		darwin*) export GOPATH=$HOME/Code/go ;;
 		linux*)  export GOPATH=$HOME/go ;;
 	esac
 fi
@@ -77,6 +79,7 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
+	export ANDROID_AVD_HOME=$HOME/.android/avd
 fi
 
 # Terminal
@@ -92,17 +95,6 @@ fi
 # Tmux
 # --------------------------------------------------------------------------
 export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
-
-# Path
-# --------------------------------------------------------------------------
-path=(
-	$HOME/Applications
-	$HOME/.local/bin
-	$DOTFILES/bin
-	$HOMEBREW_BASE/bin
-	$HOMEBREW_BASE/sbin
-	$path
-)
 
 # pkg-config
 typeset -U pkg_config_path=$PKG_CONFIG_PATH
@@ -222,6 +214,11 @@ if [[ -d $HOME/.deno/bin ]]; then
 		$HOME/.deno/bin
 	)
 fi
+
+# Homebrew
+# ----------------------------------------------------------------------------
+# Use Bootsnap to speed up repeated brew calls
+export HOMEBREW_BOOTSNAP=1
 
 # Local config
 # --------------------------------------------------------------------------

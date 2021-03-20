@@ -1,7 +1,7 @@
 " Set the registry for VIM to make COC happy
 let $npm_config_registry='https://registry.npmjs.org'
 
-let g:coc_node_path = '$HOMEBREW_BASE/bin/node'
+let g:coc_node_path = expand('$HOMEBREW_BASE/bin/node')
 
 call coc#config('session.directory', expand('$CACHEDIR') . '/vim/sessions')
 
@@ -53,12 +53,11 @@ endfunction
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 augroup vimrc
-  if exists('CocActionAsync')
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-  endif
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 
-  " nnoremap <expr><C-f> coc#util#has_float() ? coc#util#float_scroll(1) : "\<C-f>"
-  " nnoremap <expr><C-b> coc#util#has_float() ? coc#util#float_scroll(0) : "\<C-b>"
+  nnoremap <nowait><expr><C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <nowait><expr><C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 augroup END
 
 command! Rg :CocList --interactive grep<CR>
@@ -145,6 +144,8 @@ function! s:coc_customize_colors()
   exec 'hi CocHintSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=bold'
   exec 'hi CocHintVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0C . ' gui=NONE'
   exec 'hi CocHintHighlight gui=undercurl guisp=#' . g:base16_gui0C
+
+  exec 'hi CocExplorerGitContentChange guifg=#' . g:base16_gui0B
 endfunction
 
 augroup vimrc
@@ -170,3 +171,12 @@ let g:lightline['component_function']['currentfunction'] = 'CocCurrentFunction'
 let g:lightline['component_function']['gitbranch'] = 'LightlineGitBranch'
 let g:lightline['component_function']['gitblame'] = 'LightlineGitBlame'
 let g:lightline['active']['right'][1] = ['cocstatus', 'sleuth']
+
+let g:coc_explorer_global_presets = {
+\   'floating': {
+\     'position': 'floating',
+\     'open-action-strategy': 'sourceWindow',
+\     'floating-position': 'left-center',
+\     'floating-width': 50,
+\   }
+\ }

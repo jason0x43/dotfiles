@@ -1,0 +1,34 @@
+#compdef dotfiles
+
+_dotfiles_commands() {
+  local -a commands
+  commands=(
+    'asdf:Update asdf plugins, install defaults'
+    'bat:Rebuild bat theme and filetype cache'
+    'brew:Update brew packages, install defaults'
+    'home:Update dotfiles and home directories, fixup terminfo database'
+    'launchd:Link and bootstrap launchd scripts'
+    'mas:Update Mac App Store packages'
+    'node:Update global node packages, install defaults'
+    'python:Update global python packages, install defaults'
+    'tmux:Update tpm packages'
+    'vim:Update vim plugins'
+    'zsh:Update zsh plugins'
+  )
+  _describe -t commands 'dotfiles groups' commands "$@"
+}
+
+_dotfiles() {
+  local -a args
+  args=(
+    # If -h or --help are provided, don't complete any more options, files, or
+    # the first normal argument
+    '(- * 1)'{-h,--help}'[Prints help information]'
+    # Available normal arguments
+    ': :_dotfiles_commands'
+  )
+  _arguments -A "*" $args[@] && ret=0
+  return ret
+}
+
+_dotfiles

@@ -50,23 +50,23 @@ use_tools() {
 
 # Use a local python env, creating it if necessary
 use_pyenv() {
-  asdf_version=$(asdf current python)
-  version=${asdf_version%% *}
+  version=$(asdf current python | awk '{ print $2 }')
   if [[ ! -d .asdf/python-$version ]]; then
     python -m venv .asdf/python-$version
     .asdf/python-$version/bin/pip install --upgrade pip
+    .asdf/python-$version/$dir/bin/pip install wheel
   fi
   export PATH=$PWD/.asdf/python-$version/bin:$PATH
 }
 
 # Use a central python env, creating it if necessary
 use_pyenv_home() {
-  asdf_version=$(asdf current python)
-  version=${asdf_version%% *}
+  version=$(asdf current python | awk '{ print $2 }')
   dir=${PWD//\//_}
   if [[ ! -d ~/.asdf/python-$version/$dir ]]; then
     python -m venv ~/.asdf/python-$version/$dir
     ~/.asdf/python-$version/$dir/bin/pip install --upgrade pip
+    ~/.asdf/python-$version/$dir/bin/pip install wheel
   fi
   export PATH=$HOME/.asdf/python-$version/$dir/bin:$PATH
 }
@@ -113,9 +113,17 @@ use_xcode_cpath() {
 
 # Add Android SDK to path
 use_android() {
-  if [[ -z $ANDROID_HOME ]]; then
-    log_error 'ANDROID_HOME must be set.'
+  local java=$HOME/.asdf/installs/java/adopt-openjdk-8u252-b09.1
+  if [[ ! -d $java ]]; then
+    log_error 'adoptopenjdk-8 must be installed'
     return
+  fi
+
+  export JAVA_HOME=$java
+  export PATH=$java/bin:$PATH
+
+  if [[ -z $ANDROID_HOME ]]; then
+    export ANDROID_HOME=$HOME/Library/Android/sdk
   fi
 
   export ANDROID_SDK_HOME=$ANDROID_HOME

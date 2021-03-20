@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env zsh
 
 # Git remove a branch or branches from everywhere
 
@@ -7,10 +7,21 @@ if [[ $# == 0 ]]; then
 	exit 1
 fi
 
+all_branches=("${(@f)$(git for-each-ref --format='%(refname:short)')}")
+all_remotes=("${(@f)$(git remote)}")
+
 for branch in $*; do
+	if [[ $branch == main || $branch == master || $branch == HEAD ]]; then
+		echo Skipping $branch
+		continue
+	fi
+
 	git branch -D $branch
 
-	for r in $(git remote); do
-		git push $r :$branch
+	for r in $all_remotes; do
+		# Only kill branch in remotes where it exists
+		if (( $all_branches[(Ie)$r/$branch] )); then
+			git push $r :$branch
+		fi
 	done
 done

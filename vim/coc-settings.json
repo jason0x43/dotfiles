@@ -3,6 +3,7 @@
   "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
   "coc.preferences.hoverTarget": "float",
   "css.lint.unknownProperties": "ignore",
+  "css.validate": false,
   "codeLens.enable": false,
   "diagnostic.enableMessage": "jump",
   "diagnostic.errorSign": "",
@@ -10,6 +11,7 @@
   "diagnostic.infoSign": "",
   "diagnostic.maxWindowHeight": 20,
   "diagnostic.refreshOnInsertMode": true,
+  "diagnostic.showUnused": false,
   "diagnostic.virtualText": false,
   "diagnostic.warningSign": "",
   "emmet.excludeLanguages": [
@@ -19,25 +21,20 @@
     "typescript.tsx",
     "typescriptreact"
   ],
-  "eslint.enable": true,
-  "eslint.filetypes": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  // "explorer.file.autoReveal": false,
-  "explorer.file.column.git.icon.added": "✚",
-  "explorer.file.column.git.icon.deleted": "✖",
-  "explorer.file.column.git.icon.renamed": "➜",
-  "explorer.file.column.git.icon.unmerged": "═",
-  "explorer.file.column.git.icon.untracked": "?",
-  "explorer.file.column.git.icon.modified": "✹",
-  "explorer.file.column.git.icon.ignored": "☒",
+  "explorer.floating.width": 60,
+  "explorer.floating.position": "center",
+  "explorer.git.icon.status.added": "✚",
+  "explorer.git.icon.status.deleted": "✖",
+  "explorer.git.icon.status.renamed": "➜",
+  "explorer.git.icon.status.unmerged": "═",
+  "explorer.git.icon.status.untracked": "?",
+  "explorer.git.icon.status.modified": "✹",
+  "explorer.git.icon.status.ignored": "☒",
   "explorer.icon.enableNerdfont": true,
   "explorer.keyMappings.global": {
     "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]
   },
+  "explorer.position": "floating",
   "explorer.previewAction.onHover": false,
   "explorer.sources": [
     {
@@ -53,6 +50,7 @@
   "git.changedSign.text": "┃",
   "git.removedSign.text": "┃",
   "java.errors.incompleteClasspath.severity": "ignore",
+  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml",
   "javascript.referencesCodeLens.enable": true,
   "javascript.suggestionActions.enabled": true,
   "json.schemas": [
@@ -66,18 +64,26 @@
     }
   ],
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
+  "npm.binPath": "/usr/local/bin/npm",
   "python.formatting.provider": "black",
+  "scss.validate": false,
   "snippets.extends": {
     "javascriptreact": ["javascript"],
     "typescript": ["javascript"],
     "typescriptreact": ["typescript", "javascriptreact"]
   },
+  "stylelintplus.autoFixOnFormat": true,
   "suggest.enablePreview": true,
   "suggest.enablePreselect": false,
   "suggest.maxPreviewWidth": 100,
-  // "tsserver.npm": "/usr/local/bin/npm",
   "tsserver.log": "verbose",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enable": true,
-  "java.format.settings.url": "/Users/jason/.vim/coc-java-formatter.xml"
+  "yaml.customTags": [
+    "!secret"
+  ],
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow": [".github/workflows/*.yaml"]
+  },
+  "yaml.trace.server": "verbose"
 }

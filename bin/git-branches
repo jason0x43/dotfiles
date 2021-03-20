@@ -3,4 +3,4 @@
 # List branches last updated by a user
 
 #git for-each-ref --format='%(committerdate)%09%(authorname)%09%(authoremail)%09%(refname)' --sort=committerdate
-git for-each-ref --format='%(align:50,left)%(refname)%(end) %(align:25,left)%(color:cyan)%(authorname)%(end) %(color:yellow)%(authordate:format:%m/%d/%Y %I:%M %p)' --sort=authordate
+git for-each-ref --format='%(align:50,left)%(refname:short)%(end) %(align:25,left)%(color:cyan)%(authorname)%(end) %(color:yellow)%(authordate:format:%m/%d/%Y %I:%M %p)' --sort=authordate

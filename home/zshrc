@@ -16,11 +16,6 @@ fi
 
 # Plugin init
 # ----------------------------------------------------------------------------
-export ZPLUGDIR="$CACHEDIR/zsh/plugins"
-if [[ ! -d "$ZPLUGDIR" ]]; then
-    mkdir -p "$ZPLUGDIR"
-fi
-
 zfetch $ZPLUGDIR zsh-users/zsh-completions
 zfetch $ZPLUGDIR chriskempson/base16-shell
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
@@ -312,7 +307,10 @@ alias dps='docker ps --format "{{.Names}}"'
 alias ga='git a'
 alias gb='git b'
 alias gba='git ba'
-alias gbd='git bd'
+alias gbd='git branch -D'
+alias gbk='git killbranch'
+alias gbdo='git push -d origin' 
+alias gbm='git mybranches' 
 alias gbf='git bf'
 alias gc='git c'
 alias gca='git ca'
@@ -321,6 +319,9 @@ alias gco='git co'
 alias gcp='git cp'
 alias gcpe='git cp -e'
 alias gcpn='git cpn'
+
+# Kitty shortcuts
+alias ktn="kitty @ set-tab-title"
 
 # Cleanup
 alias gcln='git clean -nxd'
@@ -382,7 +383,6 @@ alias tks='tmux kill-session -t'
 
 # xcode
 alias xcr='xcrun'
-alias xcb='xcodebuild'
 
 # Pretty print json
 alias json='python -m json.tool'
@@ -456,6 +456,8 @@ fi
 alias l='ls -1A'         # Lists in one column, hidden files
 alias ll='ls -lh'        # Lists human readable sizes
 alias lld='ll -d'        # List directories
+alias llt='ls -lh -t'    # Lists human readable ordered by time
+alias lls='ls -lh -S'    # Lists human readable ordered by size
 alias la='ll -A'         # Lists human readable sizes, hidden files
 
 # Space usage
