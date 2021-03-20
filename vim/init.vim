@@ -317,13 +317,6 @@ command! ToggleChrome call s:toggleChrome()
 " Plugin config
 " =====================================================================
 
-" auto-save
-" ---------------------------------------------------------------------
-" Enable auto-save by default
-let g:auto_save = 0 
-" Auto-saving when the cursor is still
-let g:auto_save_events = ["CursorHold", "CursorHoldI"]
-
 " Base16
 " ---------------------------------------------------------------------
 function! s:base16_load_theme()
@@ -398,10 +391,6 @@ endfunction
 augroup vimrc
     autocmd ColorScheme * call s:base16_customize()
 augroup END
-
-" chadtree
-" ---------------------------------------------------------------------
-nnoremap <leader>n <cmd>CHADopen<cr>
 
 " EasyAlign
 " ---------------------------------------------------------------------
