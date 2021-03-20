@@ -107,7 +107,7 @@ let g:coc_global_extensions = [
   \ 'coc-lists',
   \ 'coc-lua',
   \ 'coc-prettier',
-  \ 'coc-python',
+  \ 'coc-pyright',
   \ 'coc-rls',
   \ 'coc-sh',
   \ 'coc-snippets',
@@ -133,7 +133,7 @@ function! s:coc_customize_colors()
   exec 'hi CocErrorVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui0F . ' gui=NONE'
   exec 'hi CocErrorHighlight gui=undercurl guisp=#' . g:base16_gui0F
 
-  exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=bold'
+  exec 'hi CocWarningSign guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui09 . ' gui=bold'
   exec 'hi CocWarningVirtualText guibg=#' . g:base16_gui01 . ' guifg=#' . g:base16_gui08 . ' gui=NONE'
   exec 'hi CocWarningHighlight gui=undercurl guisp=#' . g:base16_gui08
 
