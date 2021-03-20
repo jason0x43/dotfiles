@@ -674,19 +674,16 @@ if has('nvim')
   Plug 'antoinemadec/FixCursorHold.nvim'
 endif
 
-" nvim-lsp
-" if has('nvim')
-"   Plug 'neovim/nvim-lspconfig'
-"   Plug 'nvim-lua/completion-nvim'
-"   Plug 'nvim-lua/diagnostic-nvim'
-"   Plug 'nvim-treesitter/completion-treesitter'
-" endif
-" Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+if has('nvim-0.5')
+    " nvim LSP
+    " Plug 'neovim/nvim-lspconfig'
+    " Plug 'nvim-lua/completion-nvim'
+    " Plug 'nvim-lua/diagnostic-nvim'
+    " Plug 'nvim-treesitter/completion-treesitter'
 
-" Flashier syntax highlighting
-" if has('nvim-0.5')
-"   Plug 'nvim-treesitter/nvim-treesitter'
-" endif
+    " Flashier syntax highlighting
+    Plug 'nvim-treesitter/nvim-treesitter'
+endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
@@ -713,11 +710,10 @@ endif
 
 " Load devicons near the end so it can integrate with everything it needs to
 Plug 'ryanoasis/vim-devicons'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 
 " Load all the plugins
 call plug#end()
 
-" if has('nvim-0.5')
-"   lua require("treesitter_config")
-" endif 
+if has('nvim-0.5')
+  lua require("treesitter_config")
+endif 
