@@ -654,6 +654,8 @@ Plug 'jremmen/vim-ripgrep'            " RipGrep for file searching
 Plug 'itchyny/lightline.vim'          " Flashy status bar
 Plug 'chriskempson/base16-vim'        " Color schemes
 Plug 'powerman/vim-plugin-AnsiEsc'    " Render ANSI escape sequences
+Plug 'drzel/vim-repo-edit'            " Easily clone and view VIM repos
+Plug 'chrisbra/unicode.vim'           " Easier unicode character entry
 
 if exists('$TMUX')
     Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
