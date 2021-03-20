@@ -34,6 +34,17 @@ fi
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
 
+# Path
+# --------------------------------------------------------------------------
+path=(
+	$HOME/Applications
+	$HOME/.local/bin
+	$DOTFILES/bin
+	$HOMEBREW_BASE/bin
+	$HOMEBREW_BASE/sbin
+	$path
+)
+
 # Groovy
 # ----------------------------------------------------------------------------
 if [[ -z "$GROOVY_HOME" ]]; then
@@ -82,17 +93,6 @@ fi
 # Tmux
 # --------------------------------------------------------------------------
 export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
-
-# Path
-# --------------------------------------------------------------------------
-path=(
-	$HOME/Applications
-	$HOME/.local/bin
-	$DOTFILES/bin
-	$HOMEBREW_BASE/bin
-	$HOMEBREW_BASE/sbin
-	$path
-)
 
 # pkg-config
 typeset -U pkg_config_path=$PKG_CONFIG_PATH
