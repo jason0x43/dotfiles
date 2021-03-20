@@ -455,6 +455,8 @@ fi
 alias l='ls -1A'         # Lists in one column, hidden files
 alias ll='ls -lh'        # Lists human readable sizes
 alias lld='ll -d'        # List directories
+alias llt='ls -lh -t'    # Lists human readable ordered by time
+alias lls='ls -lh -S'    # Lists human readable ordered by size
 alias la='ll -A'         # Lists human readable sizes, hidden files
 
 # Space usage
