@@ -639,7 +639,7 @@ let g:vimtex_compiler_progname = 'nvr'
 call plug#begin('$CACHEDIR/vim/plugins')
 
 Plug 'andymass/vim-matchup'           " Better start/end matching
-Plug 'sgur/vim-editorconfig'          " EditorConfig
+Plug 'editorconfig/editorconfig-vim'  " EditorConfig
 Plug 'mhinz/vim-startify'             " Useful startup text
 Plug 'tpope/vim-commentary'           " gc for commenting code blocks
 Plug 'tpope/vim-eunuch'               " POSIX command wrappers
