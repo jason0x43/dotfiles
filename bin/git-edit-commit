@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+hash=$(git rev-parse --short $1)
+echo "editing commit $hash"
+
+GIT_SEQUENCE_EDITOR="sed -i -re 's/^pick $hash/edit $hash/'" git rebase -i "$hash"^
