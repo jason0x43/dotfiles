@@ -167,13 +167,6 @@ function dotfiles-brew {
         'zsh'         # newer zsh
     )
 
-    if [[ $OSTYPE == darwin* ]]; then
-        brew_packages=(
-            $brew_packages
-            'mas'
-        )
-    fi
-
     local installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
 
     for pkg in $brew_packages; do
@@ -190,12 +183,6 @@ function dotfiles-brew {
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
     fi
-}
-
-# Update Mac App Store apps
-function dotfiles-mas {
-    logSub "Updating installed App Store apps..."
-    mas upgrade
 }
 
 # Update zsh plugins
@@ -446,7 +433,6 @@ if [[ -n $1 ]]; then
         echo '    brew           Update brew packages, install defaults'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
         echo '    launchd        Link and bootstrap launchd scripts'
-        echo '    mas            Update Mac App Store packages'
         echo '    node           Update global node packages, install defaults'
         echo '    python         Update global python packages, install defaults'
         echo '    tmux           Update tpm packages'
@@ -462,10 +448,6 @@ if [[ -n $1 ]]; then
 else
     dotfiles-home
     dotfiles-brew
-
-    if (( $+commands[mas] )); then
-        dotfiles-mas
-    fi
 
     dotfiles-zsh
     dotfiles-asdf
