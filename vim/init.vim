@@ -82,6 +82,7 @@ set lazyredraw               " Redraw less frequently
 set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
 set mouse=a                  " Enable mouse support
+set termguicolors        " Enable truecolor mode
 
 " Improve completion experience with completion-nvim
 set completeopt=menuone,noinsert,noselect
@@ -101,9 +102,6 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 if has('pythonx')
     set pyxversion=3
 endif
-
-" Enable truecolor mode
-set termguicolors
 
 if has('nvim')
     " Better diff
@@ -179,8 +177,6 @@ function! s:textMode()
     setlocal wrap linebreak nolist display+=lastline
     map <buffer> <silent> k gk
     map <buffer> <silent> j gj
-    map <buffer> <silent> 0 g0
-    map <buffer> <silent> $ g$
 endfunction
 
 function! s:showViewWidth()
@@ -195,8 +191,8 @@ augroup vimrc
     autocmd FileType markdown call s:textMode()
     autocmd FileType html call s:textMode()
 
-	" Dim columns past 80
-	autocmd BufEnter *.* call s:showViewWidth()
+    " Dim columns past 80
+    autocmd BufEnter *.* call s:showViewWidth()
 
     " If vim is resized, resize any splits
     autocmd VimResized * wincmd =
@@ -391,6 +387,11 @@ endfunction
 augroup vimrc
     autocmd ColorScheme * call s:base16_customize()
 augroup END
+
+" Editorconfig
+" ---------------------------------------------------------------------
+" see https://github.com/editorconfig/editorconfig-vim#excluded-patterns
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " EasyAlign
 " ---------------------------------------------------------------------
@@ -656,6 +657,7 @@ Plug 'chriskempson/base16-vim'        " Color schemes
 Plug 'powerman/vim-plugin-AnsiEsc'    " Render ANSI escape sequences
 Plug 'drzel/vim-repo-edit'            " Easily clone and view VIM repos
 Plug 'chrisbra/unicode.vim'           " Easier unicode character entry
+Plug 'tpope/vim-markdown'             " Markdown support
 
 if exists('$TMUX')
     Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
@@ -667,7 +669,6 @@ endif
 Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
-Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/jsonc.vim'
 
 " Completion

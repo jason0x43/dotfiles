@@ -166,10 +166,13 @@ function center(window) {
   }
 
   const screenFrame = getScreenFrame(window);
+  const isLargeScreen = screenFrame.width > 2000;
+  const widthScale = isLargeScreen ? 0.6 : 0.8;
+  const heightScale = isLargeScreen ? 0.8 : 0.9;
 
   window.setSize({
-    width: Math.round(screenFrame.width * 0.6),
-    height: Math.round(screenFrame.height * 0.8),
+    width: Math.round(screenFrame.width * widthScale),
+    height: Math.round(screenFrame.height * heightScale),
   });
 
   moveTo(CENTER);
