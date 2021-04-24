@@ -29,7 +29,6 @@
 	b = branch
 	ba = branch -a
 	bd = branch -d
-	bD = branch -D
 	bf = branch --contains
 	c = commit
 	ca = commit --all
@@ -77,7 +76,7 @@
 	s = -c status.color=always status --short
 	sh = show
 	ss = show --stat
-	su = "!git s | grep UU"
+	su = !git s | grep UU
 	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
 	unstage = reset HEAD
