@@ -688,8 +688,11 @@ if has('nvim-0.5')
     " Plug 'nvim-lua/diagnostic-nvim'
     " Plug 'nvim-treesitter/completion-treesitter'
 
-    " Flashier syntax highlighting
+    " Advanced filetype handling
     Plug 'nvim-treesitter/nvim-treesitter'
+else
+    " Fallback to polyglot if we can't use treesitter
+	Plug 'sheerun/vim-polyglot'
 endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
