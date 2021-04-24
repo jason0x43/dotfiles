@@ -420,7 +420,6 @@ alias swiftc="xcrun -sdk macosx swiftc"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
-alias vi="nvim"
 # Color themes
 alias light='base16_theme solarized-light'
 alias dark='base16_theme ashes'
