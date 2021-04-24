@@ -179,8 +179,6 @@ function! s:textMode()
     setlocal wrap linebreak nolist display+=lastline
     map <buffer> <silent> k gk
     map <buffer> <silent> j gj
-    map <buffer> <silent> 0 g0
-    map <buffer> <silent> $ g$
 endfunction
 
 function! s:showViewWidth()
