@@ -107,7 +107,7 @@ let g:coc_global_extensions = [
   \ 'coc-lists',
   \ 'coc-lua',
   \ 'coc-prettier',
-  \ 'coc-python',
+  \ 'coc-pyright',
   \ 'coc-rls',
   \ 'coc-sh',
   \ 'coc-snippets',
