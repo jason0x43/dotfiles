@@ -78,7 +78,6 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[android] )); then
 	export ANDROID_HOME=`echo $(which android)(:A:h:h)`
-	export ANDROID_AVD_HOME=$HOME/.android/avd
 fi
 
 # Terminal
