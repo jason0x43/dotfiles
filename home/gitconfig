@@ -142,7 +142,7 @@
 [rerere]
 	enabled = true
 
-[includeIf "gitdir:~/Documents/Work/projects/"]
+[includeIf "gitdir:~/Work/projects/"]
 	path = ~/.gitconfig-work
 
 [help]
