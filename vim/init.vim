@@ -390,6 +390,11 @@ augroup vimrc
     autocmd ColorScheme * call s:base16_customize()
 augroup END
 
+" Editorconfig
+" ---------------------------------------------------------------------
+" see https://github.com/editorconfig/editorconfig-vim#excluded-patterns
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+
 " EasyAlign
 " ---------------------------------------------------------------------
 " To align end-of-line comments, do <Leader>a-<space>
