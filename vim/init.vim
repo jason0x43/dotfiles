@@ -82,6 +82,7 @@ set lazyredraw               " Redraw less frequently
 set updatetime=500           " More responsive UI updates
 set noshowmode               " Don't show the mode on the last line
 set mouse=a                  " Enable mouse support
+set termguicolors        " Enable truecolor mode
 
 " Improve completion experience with completion-nvim
 set completeopt=menuone,noinsert,noselect
@@ -101,9 +102,6 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 if has('pythonx')
     set pyxversion=3
 endif
-
-" Enable truecolor mode
-set termguicolors
 
 if has('nvim')
     " Better diff
@@ -193,8 +191,8 @@ augroup vimrc
     autocmd FileType markdown call s:textMode()
     autocmd FileType html call s:textMode()
 
-	" Dim columns past 80
-	autocmd BufEnter *.* call s:showViewWidth()
+    " Dim columns past 80
+    autocmd BufEnter *.* call s:showViewWidth()
 
     " If vim is resized, resize any splits
     autocmd VimResized * wincmd =
