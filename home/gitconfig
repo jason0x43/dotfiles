@@ -105,6 +105,7 @@
 	generic = G move-first-line
 	status = S !?git stash save --keep-index %(prompt)
 	status = + !git commit --amend
+	main = = !git edit-commit %(commit)
 
 [url "git@github.com:"]
 	insteadOf = gh:
