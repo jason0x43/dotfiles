@@ -22,9 +22,7 @@
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	# pager = less -F -X
-	; pager = diff-so-fancy | less -RFX
-	pager = delta --plus-color="#003300"
+	pager = less --chop-long-lines --QUIT-AT-EOF
 
 [alias]
 	a = add
@@ -132,14 +130,6 @@
 	instructionFormat = [%an @ %ar] %s
 	autostash = true
 
-[pager]
-	#diff = diff-so-fancy | less --tabs=4 -RFX
-	#show = diff-so-fancy | less --tabs=4 -RFX
-	#log = diff-so-fancy | less --tabs=4 -RFX
-	#
-[interactive]
-	# diffFilter = diff-so-fancy
-
 [commit]
 	verbose = true
 
@@ -154,16 +144,6 @@
 
 [includeIf "gitdir:~/Documents/Work/projects/"]
 	path = ~/.gitconfig-work
-
-[color "diff"]
-	old = 5
-	new = 2
-
-[color "diff-highlight"]
-	oldNormal = 5
-	oldHighlight = 5 bold 18
-	newNormal = 2
-	newHighlight = 2 bold 18
 
 [help]
 	autoCorrect = 20
