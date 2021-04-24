@@ -93,12 +93,12 @@
 	main-view-date = relative-compact
 
 [tig "color"]
-	cursor = color0 color2 normal
 	default = color7 default normal
-	diff-del = color5 default normal
+	cursor = color15 color18 normal
+	diff-del = color1 default normal
 	diff-add = color2 default normal
-	title-focus = color0 color1 normal
-	title-blur = color0 color6 normal
+	title-focus = color0 color19 normal
+	title-blur = color19 color18 normal
 
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
