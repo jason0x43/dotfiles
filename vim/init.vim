@@ -654,6 +654,7 @@ Plug 'chriskempson/base16-vim'        " Color schemes
 Plug 'powerman/vim-plugin-AnsiEsc'    " Render ANSI escape sequences
 Plug 'drzel/vim-repo-edit'            " Easily clone and view VIM repos
 Plug 'chrisbra/unicode.vim'           " Easier unicode character entry
+Plug 'tpope/vim-markdown'             " Markdown support
 
 if exists('$TMUX')
     Plug 'christoomey/vim-tmux-navigator' " Easy movement between vim and tmux panes
@@ -665,7 +666,6 @@ endif
 Plug 'meain/vim-package-info', { 'do': 'npm install' }
 
 " Base filetype plugins (these detect filetypes)
-Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/jsonc.vim'
 
 " Completion
