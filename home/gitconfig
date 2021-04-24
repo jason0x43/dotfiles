@@ -22,16 +22,13 @@
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	# pager = less -F -X
-	; pager = diff-so-fancy | less -RFX
-	pager = delta --plus-color="#003300"
+	pager = less --chop-long-lines --QUIT-AT-EOF
 
 [alias]
 	a = add
 	b = branch
 	ba = branch -a
 	bd = branch -d
-	bD = branch -D
 	bf = branch --contains
 	c = commit
 	ca = commit --all
@@ -79,7 +76,7 @@
 	s = -c status.color=always status --short
 	sh = show
 	ss = show --stat
-	su = "!git s | grep UU"
+	su = !git s | grep UU
 	staged = diff --staged --name-status
 	unignore = update-index --no-assume-unchanged
 	unstage = reset HEAD
@@ -96,18 +93,19 @@
 	main-view-date = relative-compact
 
 [tig "color"]
-	cursor = color0 color2 normal
 	default = color7 default normal
-	diff-del = color5 default normal
+	cursor = color15 color18 normal
+	diff-del = color1 default normal
 	diff-add = color2 default normal
-	title-focus = color0 color1 normal
-	title-blur = color0 color6 normal
+	title-focus = color0 color19 normal
+	title-blur = color19 color18 normal
 
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
 	generic = G move-first-line
 	status = S !?git stash save --keep-index %(prompt)
 	status = + !git commit --amend
+	main = = !git edit-commit %(commit)
 
 [url "git@github.com:"]
 	insteadOf = gh:
@@ -136,14 +134,6 @@
 	instructionFormat = [%an @ %ar] %s
 	autostash = true
 
-[pager]
-	#diff = diff-so-fancy | less --tabs=4 -RFX
-	#show = diff-so-fancy | less --tabs=4 -RFX
-	#log = diff-so-fancy | less --tabs=4 -RFX
-	#
-[interactive]
-	# diffFilter = diff-so-fancy
-
 [commit]
 	verbose = true
 
@@ -156,18 +146,8 @@
 [rerere]
 	enabled = true
 
-[includeIf "gitdir:~/Documents/Work/projects/"]
+[includeIf "gitdir:~/Work/projects/"]
 	path = ~/.gitconfig-work
-
-[color "diff"]
-	old = 5
-	new = 2
-
-[color "diff-highlight"]
-	oldNormal = 5
-	oldHighlight = 5 bold 18
-	newNormal = 2
-	newHighlight = 2 bold 18
 
 [help]
 	autoCorrect = 20
@@ -177,3 +157,6 @@
 
 [pull]
 	rebase = true
+
+[init]
+	defaultBranch = main
