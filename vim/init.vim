@@ -616,11 +616,11 @@ let g:markdown_fenced_languages = [
     \ 'js=javascript',
     \ 'json',
     \ 'json5=javascript',
-    \ 'jsx=javascript.jsx',
+    \ 'jsx=javascriptreact',
     \ 'python',
     \ 'sh',
     \ 'ts=typescript',
-    \ 'tsx=typescript.tsx',
+    \ 'tsx=typescriptreact',
     \ 'vim',
     \ 'xml',
     \ ]
