@@ -327,7 +327,7 @@ alias ktn="kitty @ set-tab-title"
 alias gcln='git clean -nxd'
 alias gclf='git clean -fxd'
 
-alias gd='git d'
+alias gd='git diff-fuzzy'
 alias gds='git ds'
 alias gdv='git dv'
 alias gf='git f'
