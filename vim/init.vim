@@ -697,10 +697,10 @@ if has('nvim-0.5') && get(g:, 'use_treesitter')
     " Plug 'nvim-treesitter/completion-treesitter'
 
     " Advanced filetype handling
-    Plug 'nvim-treesitter/nvim-treesitter'
+    Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 else
     " Fallback to polyglot if we can't use treesitter
-	Plug 'sheerun/vim-polyglot'
+    Plug 'sheerun/vim-polyglot'
 endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
