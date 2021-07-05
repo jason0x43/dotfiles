@@ -209,6 +209,7 @@ augroup vimrc
     " Close help files and quickfix panes on 'q' or Escape
     autocmd FileType help nnoremap <buffer> <silent> q :bd<CR>
     autocmd FileType qf nnoremap <buffer> <silent> q :bd<CR>
+    autocmd FileType fugitiveblame nnoremap <buffer> <silent> q :bd<CR>
     autocmd BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>
 
     " More predictable syntax highlighting
