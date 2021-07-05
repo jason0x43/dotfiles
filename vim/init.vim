@@ -705,21 +705,11 @@ endif
 
 " Filetype plugins (these provide filetype specific functionality, but don't
 " themselves detect filetypes)
-Plug 'vim-scripts/applescript.vim', {
-    \ 'for': 'applescript'
-    \ }
-Plug 'vim-scripts/Textile-for-VIM', {
-    \ 'for': 'textile'
-    \ }
-Plug 'mzlogin/vim-markdown-toc', {
-    \ 'for': 'markdown'
-    \ }
-Plug 'tpope/vim-classpath', {
-    \ 'for': 'java'
-    \ }
-Plug 'lervag/vimtex', {
-    \ 'for': ['tex', 'latex']
-    \ }
+Plug 'vim-scripts/applescript.vim', { 'for': 'applescript' }
+Plug 'vim-scripts/Textile-for-VIM', { 'for': 'textile' }
+Plug 'mzlogin/vim-markdown-toc', { 'for': 'markdown' }
+Plug 'tpope/vim-classpath', { 'for': 'java' }
+Plug 'lervag/vimtex', { 'for': ['tex', 'latex'] }
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
