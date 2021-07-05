@@ -1,7 +1,6 @@
 {
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.formatOnSaveFiletypes": ["python", "markdown", "go"],
-  "coc.preferences.hoverTarget": "float",
   "css.lint.unknownProperties": "ignore",
   "css.validate": false,
   "codeLens.enable": false,
