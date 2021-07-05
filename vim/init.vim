@@ -180,7 +180,10 @@ function! s:textMode()
 endfunction
 
 function! s:showViewWidth()
-    let &colorcolumn=join(range(81, 81+256), ",")
+    if &textwidth
+        let w = &textwidth
+        let &colorcolumn=join(range(w + 1, w + 1 + 256), ",")
+    endif
 endfunction
 
 " General autocommands
