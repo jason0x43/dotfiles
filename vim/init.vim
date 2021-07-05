@@ -595,6 +595,10 @@ let g:startify_lists = [
 
 nnoremap <Leader>s :Startify<CR>
 
+" treesitter
+" --------------------------------------------------------------------- 
+let g:use_treesitter = 1
+
 " undotree
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
@@ -685,7 +689,7 @@ if has('nvim')
   Plug 'antoinemadec/FixCursorHold.nvim'
 endif
 
-if has('nvim-0.5')
+if has('nvim-0.5') && get(g:, 'use_treesitter')
     " nvim LSP
     " Plug 'neovim/nvim-lspconfig'
     " Plug 'nvim-lua/completion-nvim'
@@ -728,6 +732,6 @@ Plug 'ryanoasis/vim-devicons'
 " Load all the plugins
 call plug#end()
 
-if has('nvim-0.5')
+if get(g:, 'use_treesitter')
   lua require("treesitter_config")
 endif 
