@@ -151,6 +151,7 @@ function dotfiles-brew {
         'asdf'        # for managing devtools
         'bash'        # update from system stock version
         'bat'         # better cat
+        'deno'        # JS/TS scripting runner
         'direnv'      # local environment management
         'fd'          # better find
         'fzf'         # fuzzy finder
