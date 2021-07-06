@@ -14,7 +14,8 @@ require 'paq' {
 	'andymass/vim-matchup';
 
 	-- flashy status bar
-	'itchyny/lightline.vim';
+  'hoob3rt/lualine.nvim';
+  { 'kyazdani42/nvim-web-devicons', opt = true };
 
 	-- preserve layout when closing buffers; used for <leader>k
 	'moll/vim-bbye';

@@ -159,24 +159,6 @@ util.augroup('vimrc', {
 
 util.keys.lmap('n', ':CocCommand explorer<cr>')
 
-local function lightline_git_branch()
-  return vim.g.coc_git_status or ''
-end
-
-local function lightline_git_blame()
-  local blame = vim.b.coc_git_blame
-  if blame == nil or blame[0] == 'Not committed yet' then
-    return ''
-  end
-  return vim.fn.matchstr(blame, '^\\zs([^)]\\+)\\ze')
-end
-
--- vim.g.lightline['component_function']['cocstatus'] = 'coc#status'
--- vim.g.lightline['component_function']['currentfunction'] = 'CocCurrentFunction'
--- vim.g.lightline['component_function']['gitbranch'] = 'LightlineGitBranch'
--- vim.g.lightline['component_function']['gitblame'] = 'LightlineGitBlame'
--- vim.g.lightline['active']['right'][1] = {'cocstatus', 'sleuth'}
-
 vim.g.coc_explorer_global_presets = {
   floating = {
     position = 'floating',
