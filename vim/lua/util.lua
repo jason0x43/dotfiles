@@ -131,4 +131,12 @@ function util.adjust_window_height(minheight, maxheight)
 	vim.cmd('max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"')
 end
 
+-- trim characters from a string
+function util.trim(str, char)
+  if char == nil then
+    char = '%s'
+  end
+  return str:gsub('^' .. char .. '+', ''):gsub(char .. '+$', '')
+end
+
 return util

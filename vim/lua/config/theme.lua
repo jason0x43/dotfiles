@@ -1,14 +1,8 @@
 local util = require('util')
+local base16 = require('base16')
 
 _G.theme = {}
 local theme = _G.theme
-
-function theme.base16_load_theme()
-  local theme_file = util.home .. '/.vimrc_background'
-  if util.file_exists(theme_file) then
-    vim.cmd('source ' .. theme_file)
-  end
-end
 
 local function hi(group, props)
   local props_list = {}
@@ -19,7 +13,7 @@ local function hi(group, props)
   vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
 end
 
-function theme.base16_customize()
+local function base16_customize()
   local cmd = vim.cmd
   local g = vim.g
 
@@ -134,6 +128,17 @@ function theme.base16_customize()
     gui = 'undercurl',
     guisp = '#' .. g.base16_gui0B
   })
+end
+
+function theme.base16_load_theme()
+  local theme_file = util.home .. '/.vimrc_background'
+  if util.file_exists(theme_file) then
+    local lines = vim.fn.readfile(theme_file, '', 1)
+    local words = vim.split(lines[1], '%s')
+    local name = util.trim(words[#words], "'"):sub(8)
+    base16(base16.themes[name], true)
+    base16_customize()
+  end
 end
 
 -- set the theme

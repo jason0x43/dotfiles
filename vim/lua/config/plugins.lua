@@ -5,7 +5,7 @@ require 'paq' {
 	'savq/paq-nvim';
 
 	-- Color schemes
-	'chriskempson/base16-vim';
+	'jason0x43/nvim-base16.lua';
 
 	-- Useful startup text, menu
 	'mhinz/vim-startify';
