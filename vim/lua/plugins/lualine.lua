@@ -23,7 +23,7 @@ local colors = {
 local base16_theme = {
   normal = {
     a = { fg = colors.base0, bg = colors.baseC, gui = 'bold' },
-    b = { fg = colors.base7, bg = colors.base2 },
+    b = { fg = colors.base0, bg = colors.base2 },
     c = { fg = colors.base6, bg = colors.base1 }
   },
   insert = {
@@ -43,5 +43,10 @@ local base16_theme = {
 }
 
 require('lualine').setup({
-  options = { theme = base16_theme }
+  options = {
+    theme = base16_theme,
+    section_separators = { ' ', ' ' },
+    component_separators = { '|', '|' },
+    extensions = { 'fzf' }
+  }
 })

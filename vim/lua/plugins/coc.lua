@@ -47,7 +47,7 @@ function coc.show_documentation()
 	end
 end
 
-util.keys.map('K', ':lua require("config.coc").show_documentation()<cr>')
+util.keys.map('K', ':lua require("plugins.coc").show_documentation()<cr>')
 
 util.augroup('vimrc', {
 	'User CocJumpPlaceholder call CocActionAsync("showSignatureHelp")',
@@ -154,7 +154,7 @@ function coc.customize_colors()
 end
 
 util.augroup('vimrc', {
-	'ColorScheme * lua require("config.coc").customize_colors()',
+	'ColorScheme * lua require("plugins.coc").customize_colors()',
 })
 
 util.keys.lmap('n', ':CocCommand explorer<cr>')
