@@ -7,6 +7,11 @@ util.home = os.getenv('HOME')
 -- the local nvim data directory
 util.data_home = os.getenv('XDG_DATA_HOME') or (util.home .. '/.local/share')
 
+-- if we're in a repo, find the project root
+util.project_root = vim.trim(vim.fn.system(
+  'git rev-parse --show-toplevel 2> /dev/null'
+))
+
 -- check if a file exists
 function util.file_exists(file)
 	local f = io.open(file, 'rb')
@@ -30,12 +35,26 @@ end
 util.keys = {}
 
 -- map a key in a particular mode
+-- for a buffer-specific map pass a `buffer` option
 local function map_in_mode(mode, key, cmd, opts)
 	local options = { noremap = true, silent = true }
+  local buf
+
+  if opts and opts.buffer then
+    buf = opts.buffer == true and 0 or opts.buffer
+  end
+
 	if opts then
 		options = vim.tbl_extend('force', options, opts)
 	end
-	vim.api.nvim_set_keymap(mode, key, cmd, options)
+
+  if buf then
+    options.buffer = nil
+    vim.api.nvim_buf_set_keymap(buf, mode, key, cmd, options)
+  else
+    vim.api.nvim_set_keymap(mode, key, cmd, options)
+  end
+
 end
 
 -- map a key in all modes

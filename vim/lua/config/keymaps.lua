@@ -45,3 +45,6 @@ keys.map('<space>', ':noh<cr>')
 -- yank to and paste from system clipboard
 keys.lmap('y', 'y:<C-U>lua require("util").yank(vim.fn.getreg("0"))<CR>')
 keys.lmap('p', '"*p')
+
+-- open startify
+keys.lmap('s', ':Startify<cr>')
