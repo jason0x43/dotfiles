@@ -1,4 +1,5 @@
 local g = vim.g
+local util = require('util')
 
 _G.startify = {}
 local startify = _G.startify
@@ -73,3 +74,6 @@ g.startify_lists = {
   { header = { '    MRU' }, type = 'files' },
   { header = { '    Commits' }, type = startify.list_commits }
 }
+
+-- open startify
+util.keys.lmap('s', ':Startify<cr>')

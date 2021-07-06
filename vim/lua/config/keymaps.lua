@@ -19,10 +19,6 @@ keys.lmap('Q', ':qall!<cr>')
 -- close a window
 keys.lmap('c', ':close<cr>')
 
--- kill a buffer without closing its window
-keys.lmap('k', ':Bdelete<cr>')
-keys.lmap('K', ':Bdelete!<cr>')
-
 -- show the syntax highlight state of the character under the cursor
 keys.lmap(
 	'h',
@@ -45,6 +41,3 @@ keys.map('<space>', ':noh<cr>')
 -- yank to and paste from system clipboard
 keys.lmap('y', 'y:<C-U>lua require("util").yank(vim.fn.getreg("0"))<CR>')
 keys.lmap('p', '"*p')
-
--- open startify
-keys.lmap('s', ':Startify<cr>')
