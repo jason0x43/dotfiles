@@ -23,7 +23,4 @@ util.augroup('init_autocommands', {
 
 	-- auto-set quickfix height
 	'FileType qf call v:lua.util.adjust_window_height(1, 10)',
-
-  -- apply customizations when the color scheme is updated
-  'ColorScheme * call v:lua.theme.base16_customize()',
 })

@@ -13,7 +13,7 @@ local function hi(group, props)
   vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
 end
 
-local function base16_customize()
+function theme.customize()
   local cmd = vim.cmd
   local g = vim.g
 
@@ -130,18 +130,24 @@ local function base16_customize()
   })
 end
 
-function theme.base16_load_theme()
+function theme.load_theme()
   local theme_file = util.home .. '/.vimrc_background'
   if util.file_exists(theme_file) then
     local lines = vim.fn.readfile(theme_file, '', 1)
     local words = vim.split(lines[1], '%s')
     local name = util.trim(words[#words], "'"):sub(8)
     base16(base16.themes[name], true)
-    base16_customize()
+    vim.g.colors_name = 'base16'
   end
 end
 
+
+-- apply customizations when the color scheme is updated
+util.augroup('init_theme', {
+  'ColorScheme * call v:lua.theme.customize()',
+})
+
 -- set the theme
-theme.base16_load_theme()
+theme.load_theme()
 
 return theme
