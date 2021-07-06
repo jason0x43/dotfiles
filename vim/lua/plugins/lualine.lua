@@ -47,6 +47,9 @@ require('lualine').setup({
     theme = base16_theme,
     section_separators = { ' ', ' ' },
     component_separators = { '|', '|' },
-    extensions = { 'fzf' }
-  }
+  },
+  sections = {
+    lualine_x = { { 'diagnostics', sources = { 'coc' } }, 'g:coc_status', 'filetype' }
+  },
+  extensions = { 'fzf' },
 })
