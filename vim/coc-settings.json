@@ -62,6 +62,12 @@
       "url": "https://theintern.io/intern/resources/4/schemas/config.json"
     }
   ],
+  "Lua.workspace.library": {
+	  "/usr/local/share/nvim/runtime/lua": true,
+	  "/usr/local/share/nvim/runtime/lua/vim": true,
+	  "/usr/local/share/nvim/runtime/lua/vim/lsp": true
+  },
+  "Lua.diagnostics.globals": ["vim"],
   "list.source.files.defaultArgs": ["--hidden", "--unrestricted"],
   "npm.binPath": "/usr/local/bin/npm",
   "python.formatting.provider": "black",

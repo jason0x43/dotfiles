@@ -1,8 +1,6 @@
-local map = function(type, key, value)
-	vim.fn.nvim_buf_set_keymap(0, type, key, value, {noremap=true, silent=true})
-end
+local util = require('util')
 
-local sign = function(name, symbol, hlgroup)
+local function sign(name, symbol, hlgroup)
 	vim.fn.sign_define(name, {text=symbol, texthl=hlgroup or name})
 end
 
@@ -149,12 +147,12 @@ lsp.sumneko_lua.setup{
 	}
 }
 
-map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
-map('n', '<leader>e', '<cmd>OpenDiagnostic<CR>')
-map('n', '<leader>d', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
-map('n', '<leader>j', '<cmd>lua vim.lsp.buf.references()<CR>')
-map('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>')
-map('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>')
+util.keys.nmap('K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+util.keys.lmap('e', '<cmd>OpenDiagnostic<CR>')
+util.keys.lmap('d', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
+util.keys.lmap('j', '<cmd>lua vim.lsp.buf.references()<CR>')
+util.keys.lmap('r', '<cmd>lua vim.lsp.buf.rename()<CR>')
+util.keys.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>')
 
 sign('LspDiagnosticsHintSign', '')
 sign('LspDiagnosticsErrorSign', '')
