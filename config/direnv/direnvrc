@@ -85,6 +85,7 @@ use_rbenv() {
 # Use a custom/local npm registry.
 use_local_npm() {
   export npm_config_registry=https://npm.registry.local:4873
+  export npm_config_strict_ssl=false
 }
 
 layout_poetry() {
