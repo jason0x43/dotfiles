@@ -108,7 +108,6 @@ g.coc_global_extensions = {
   -- 'coc-explorer',
   'coc-git',
   'coc-github',
-  'coc-highlight',
   'coc-java',
   'coc-jest',
   'coc-json',

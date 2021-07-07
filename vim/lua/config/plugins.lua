@@ -10,6 +10,9 @@ require('paq')({
   -- Useful startup text, menu
   'mhinz/vim-startify';
 
+  -- highlight color strings
+  'norcalli/nvim-colorizer.lua';
+
   -- better start/end matching
   'andymass/vim-matchup';
 
@@ -58,11 +61,11 @@ require('paq')({
   'antoinemadec/coc-fzf';
 
   -- use treesitter for filetype handling
-    { 'nvim-treesitter/nvim-treesitter', run=':TSUpdate' };
+  { 'nvim-treesitter/nvim-treesitter', run=':TSUpdate' };
 
   -- fuzzy finding
   { 'junegunn/fzf', run=vim.fn['fzf#install'] };
-    'junegunn/fzf.vim';
+  'junegunn/fzf.vim';
 
   -- open files at the last edited position
   'farmergreg/vim-lastplace';
