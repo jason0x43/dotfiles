@@ -105,7 +105,7 @@ g.coc_global_extensions = {
   'coc-emmet',
   'coc-emoji',
   'coc-eslint',
-  'coc-explorer',
+  -- 'coc-explorer',
   'coc-git',
   'coc-github',
   'coc-highlight',
@@ -188,18 +188,18 @@ function coc.customize_colors()
     guisp = g.base16_gui0C
   })
 
-  hi('CocExplorerGitContentChange', { guifg = g.base16_gui0B })
+  -- hi('CocExplorerGitContentChange', { guifg = g.base16_gui0B })
 end
 
-util.keys.lmap('n', ':CocCommand explorer<cr>')
+-- util.keys.lmap('n', ':CocCommand explorer<cr>')
 
-g.coc_explorer_global_presets = {
-  floating = {
-    position = 'floating',
-    ['open-action-strategy'] = 'sourceWindow',
-    ['floating-position'] = 'left-center',
-    ['floating-width'] = 50,
-  }
-}
+-- g.coc_explorer_global_presets = {
+--   floating = {
+--     position = 'floating',
+--     ['open-action-strategy'] = 'sourceWindow',
+--     ['floating-position'] = 'left-center',
+--     ['floating-width'] = 50,
+--   }
+-- }
 
 return coc

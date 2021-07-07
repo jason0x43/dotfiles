@@ -67,6 +67,9 @@ require('paq')({
   -- open files at the last edited position
   'farmergreg/vim-lastplace';
 
+  -- tree
+  'kyazdani42/nvim-tree.lua';
+
   -- Lazy loaded --------------------------------
 
   -- easier movement between vim and tmux panes
