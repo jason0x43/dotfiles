@@ -5,4 +5,3 @@ function! s:detectApplescript()
 endfunction
 
 autocmd BufNewFile,BufRead * call s:detectApplescript()
-
