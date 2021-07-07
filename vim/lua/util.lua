@@ -117,10 +117,10 @@ end
 
 -- settings for text files
 function util.text_mode()
-	vim.b.wrap = true
-	vim.b.linebreak = true
-	vim.b.list = false
-	vim.b.display = vim.b.display + 'lastline'
+	vim.wo.wrap = true
+	vim.wo.linebreak = true
+	vim.wo.list = false
+	vim.wo.signcolumn = 'no'
 end
 
 -- set colorcolumn to show the current textwidth

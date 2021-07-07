@@ -2,7 +2,7 @@ local util = require('util')
 
 util.augroup('init_autocommands', {
 	-- make text files easier to work with
-	'FileType text,textile,markdown,html call v:lua.util.text_mode()',
+	'FileType text,textile,markdown,html,help call v:lua.util.text_mode()',
 
 	-- show the current textwidth
 	'BufEnter *.* call v:lua.util.show_view_width()',
