@@ -9,11 +9,11 @@ local coc = _G.coc
 -- Set the registry for VIM to make COC happy
 vim.fn.setenv('npm_config_registry', 'https://registry.npmjs.org')
 
-vim.g.coc_node_path = vim.fn.expand('$HOMEBREW_BASE/bin/node')
+g.coc_node_path = vim.fn.expand('$HOMEBREW_BASE/bin/node')
 
 vim.fn['coc#config']('session.directory', util.data_home .. '/nvim/sessions')
 
-if vim.g['fzf#vim#buffers'] == nil then
+if g['fzf#vim#buffers'] == nil then
   -- find files
   util.keys.lmap('f', 'CocList files')
 
@@ -32,8 +32,8 @@ util.keys.imap('<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { expr = true })
 
 -- Shift-Tab for cycling backwards through matches in a completion popup
 util.keys.imap(
-	'<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<C-h>"',
-	{ expr = true }
+  '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<C-h>"',
+  { expr = true }
 )
 
 -- Enter to confirm completion
@@ -41,15 +41,15 @@ util.keys.imap('<CR>', 'pumvisible() ? "\\<C-y>" : "\\<CR>"', { expr = true })
 
 -- K to show documentation in a preview window
 function coc.show_documentation()
-	local filetype = vim.bo.filetype
-	if filetype == 'vim' or filetype == 'help' then
-		vim.cmd('execute "h " . expand("<cword>")')
-	elseif vim.fn['CocAction'] then
-		vim.fn['CocAction']('doHover')
-	end
+  local filetype = vim.bo.filetype
+  if filetype == 'vim' or filetype == 'help' then
+    vim.cmd('execute "h " . expand("<cword>")')
+  elseif vim.fn['CocAction'] then
+    vim.fn['CocAction']('doHover')
+  end
 end
 
-util.keys.map('K', ':lua require("plugins.coc").show_documentation()<cr>')
+util.keys.map('K', ':call v:lua.coc.show_documentation()<cr>')
 
 util.augroup('init_coc', {
   'User CocJumpPlaceholder call CocActionAsync("showSignatureHelp")',
@@ -58,28 +58,28 @@ util.augroup('init_coc', {
 })
 
 util.keys.map(
-	'<C-f>',
-	'coc#float#has_scroll() ? coc#float#scroll(1) : "\\<C-f>"',
-	{ expr = true, nowait = true }
+  '<C-f>',
+  'coc#float#has_scroll() ? coc#float#scroll(1) : "\\<C-f>"',
+  { expr = true, nowait = true }
 )
 util.keys.map(
-	'<C-b>',
-	'coc#float#has_scroll() ? coc#float#scroll(0) : "\\<C-b>"',
-	{ expr = true, nowait = true }
+  '<C-b>',
+  'coc#float#has_scroll() ? coc#float#scroll(0) : "\\<C-b>"',
+  { expr = true, nowait = true }
 )
 
 util.cmd('Rg', ':CocList --interactive grep<cr>')
 
-util.keys.lmap('e', ':CocList diagnostics<cr>')
-util.keys.lmap('l', ':CocList<cr>')
+util.keys.lmap('e', ':CocFzfList diagnostics<cr>')
+util.keys.lmap('l', ':CocFzfList<cr>')
 util.keys.lmap('x', '<Plug>(coc-codeaction)')
 
 util.keys.map('<M-f>', '<Plug>(coc-format)')
-util.keys.map('<C-]>', '<Plug>(coc-defintion)')
+util.keys.nmap('<C-]>', '<Plug>(coc-definition)')
 util.keys.lmap('t', '<Plug>(coc-format-selected)')
 util.keys.lmap('r', '<Plug>(coc-rename)')
 util.keys.lmap('j', '<Plug>(coc-references)')
-util.keys.lmap('d', '<Plug>(coc-diagnostic-info')
+util.keys.lmap('d', '<Plug>(coc-diagnostic-info)')
 
 -- navigate chunks of current buffer
 util.keys.nmap('g[', '<Plug>(coc-git-prevchunk')
@@ -99,7 +99,7 @@ util.cmd('OrganizeImports', '-nargs=0', ':CocCommand editor.action.organizeImpor
 util.cmd('Prettier', '-nargs=0', ':CocCommand prettier.formatFile')
 util.cmd('Format', '-nargs=0', ':call CocAction("format")')
 
-vim.g.coc_global_extensions = {
+g.coc_global_extensions = {
   'coc-calc',
   'coc-css',
   'coc-emmet',
@@ -127,14 +127,14 @@ vim.g.coc_global_extensions = {
   'coc-yaml',
 }
 
-vim.g.coc_status_error_sign = ' '
-vim.g.coc_status_info_sign = ' '
-vim.g.coc_status_hint_sign = ' '
-vim.g.coc_status_warning_sign = ' '
+g.coc_status_error_sign = ' '
+g.coc_status_info_sign = ' '
+g.coc_status_hint_sign = ' '
+g.coc_status_warning_sign = ' '
 
-vim.g.coc_snippet_next = '<tab>'
-vim.g.coc_snippet_prev = '<S-tab>'
-vim.g.coc_disable_startup_warning = 1
+g.coc_snippet_next = '<tab>'
+g.coc_snippet_prev = '<S-tab>'
+g.coc_disable_startup_warning = 1
 
 function coc.customize_colors()
   hi('CocErrorSign', {
@@ -193,7 +193,7 @@ end
 
 util.keys.lmap('n', ':CocCommand explorer<cr>')
 
-vim.g.coc_explorer_global_presets = {
+g.coc_explorer_global_presets = {
   floating = {
     position = 'floating',
     ['open-action-strategy'] = 'sourceWindow',
