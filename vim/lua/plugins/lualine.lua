@@ -38,7 +38,7 @@ local base16_theme = {
   inactive = {
     a = { fg = colors.base6, bg = colors.base5, gui = 'bold' },
     b = { fg = colors.base5, bg = colors.base0 },
-    c = { fg = colors.base6, bg = colors.base0 }
+    c = { fg = colors.base3, bg = colors.base1 }
   }
 }
 
@@ -50,6 +50,10 @@ require('lualine').setup({
   },
   sections = {
     lualine_x = { { 'diagnostics', sources = { 'coc' } }, 'g:coc_status', 'filetype' }
+  },
+  inactive_sections = {
+    lualine_c = { 'filename' },
+    lualine_x = { },
   },
   extensions = { 'fzf' },
 })
