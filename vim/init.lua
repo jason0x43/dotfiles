@@ -6,7 +6,7 @@ require('config.keymaps')
 require('config.theme')
 require('config.autocommands')
 require('config.project')
-require('config.lazy')
+require('config.optional')
 
 require('plugins.lualine')
 require('plugins.startify')
