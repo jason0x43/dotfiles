@@ -139,4 +139,21 @@ function util.trim(str, char)
   return str:gsub('^' .. char .. '+', ''):gsub(char .. '+$', '')
 end
 
+-- Define a syntax highlight group
+function util.hi(group, props)
+  local props_list = {}
+  for k, v in pairs(props) do
+    -- replace an empty value with NONE
+    local val = v == '' and 'NONE' or v
+
+    -- if gui{fg,bg,sp} don't start with a '#', prepend it
+    if k:find('gui%a') and v:sub(1, 1) ~= '#' then
+      val = '#' .. val
+    end
+
+    table.insert(props_list, k .. '=' .. val)
+  end
+  vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
+end
+
 return util

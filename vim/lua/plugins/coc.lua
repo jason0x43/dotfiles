@@ -1,4 +1,6 @@
 local util = require('util')
+local hi = util.hi
+local g = vim.g
 
 -- Create a global namespace for the coc utilities
 _G.coc = {}
@@ -49,9 +51,10 @@ end
 
 util.keys.map('K', ':lua require("plugins.coc").show_documentation()<cr>')
 
-util.augroup('vimrc', {
-	'User CocJumpPlaceholder call CocActionAsync("showSignatureHelp")',
-	'CursorHold * silent call CocActionAsync("highlight")',
+util.augroup('init_coc', {
+  'User CocJumpPlaceholder call CocActionAsync("showSignatureHelp")',
+  'CursorHold * silent call CocActionAsync("highlight")',
+  'ColorScheme * call v:lua.coc.customize_colors()',
 })
 
 util.keys.map(
@@ -134,28 +137,59 @@ vim.g.coc_snippet_prev = '<S-tab>'
 vim.g.coc_disable_startup_warning = 1
 
 function coc.customize_colors()
-	vim.fn.execute('hi CocErrorSign guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0F .. ' gui=bold')
-	vim.fn.execute('hi CocErrorVirtualText guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0F .. ' gui=NONE')
-	vim.fn.execute('hi CocErrorHighlight gui=undercurl guisp=#' .. vim.g.base16_gui0F)
+  hi('CocErrorSign', {
+    guibg = g.base16_gui01k,
+    guifg = g.base16_gui0F,
+    gui = 'bold'
+  })
+  hi('CocErrorVirtualText', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui0F,
+    gui = ''
+  })
+  hi('CocErrorHighlight', { gui = 'undercurl', guisp = g.base16_gui0F })
 
-	vim.fn.execute('hi CocWarningSign guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui08 .. ' gui=bold')
-	vim.fn.execute('hi CocWarningVirtualText guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui08 .. ' gui=NONE')
-	vim.fn.execute('hi CocWarningHighlight gui=undercurl guisp=#' .. vim.g.base16_gui08)
+  hi('CocWarningSign', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui08,
+    gui = 'bold'
+  })
+  hi('CocWarningVirtualText', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui08,
+    gui = ''
+  })
+  hi('CocWarningHighlight', { gui = 'undercurl', guisp = g.base16_gui08 })
 
-	vim.fn.execute('hi CocInfoSign guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0B .. ' gui=bold')
-	vim.fn.execute('hi CocInfoVirtualText guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0B .. ' gui=NONE')
-	vim.fn.execute('hi CocInfoHighlight gui=undercurl guisp=#' .. vim.g.base16_gui0B)
+  hi('CocInfoSign', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui0B,
+    gui = 'bold'
+  })
+  hi('CocInfoVirtualText', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui0B,
+    gui = ''
+  })
+  hi('CocInfoHighlight', { gui = 'undercurl', guisp = g.base16_gui0B })
 
-	vim.fn.execute('hi CocHintSign guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0C .. ' gui=bold')
-	vim.fn.execute('hi CocHintVirtualText guibg=#' .. vim.g.base16_gui01 .. ' guifg=#' .. vim.g.base16_gui0C .. ' gui=NONE')
-	vim.fn.execute('hi CocHintHighlight gui=undercurl guisp=#' .. vim.g.base16_gui0C)
+  hi('CocHintSign', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui0C,
+    gui = 'bold'
+  })
+  hi('CocHintVirtualText', {
+    guibg = g.base16_gui01,
+    guifg = g.base16_gui0C,
+    gui = ''
+  })
+  hi('CocHintHighlight', {
+    gui = 'undercurl',
+    guisp = g.base16_gui0C
+  })
 
-	vim.fn.execute('hi CocExplorerGitContentChange guifg=#' .. vim.g.base16_gui0B)
+  hi('CocExplorerGitContentChange', { guifg = g.base16_gui0B })
 end
-
-util.augroup('vimrc', {
-	'ColorScheme * lua require("plugins.coc").customize_colors()',
-})
 
 util.keys.lmap('n', ':CocCommand explorer<cr>')
 
