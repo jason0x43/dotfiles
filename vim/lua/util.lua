@@ -40,6 +40,12 @@ local function map_in_mode(mode, key, cmd, opts)
 	local options = { noremap = true, silent = true }
   local buf
 
+  -- <plug> mappings won't work with noremap
+  local cmd_lower = cmd:lower()
+  if cmd_lower:find('<plug>') then
+    options.noremap = nil
+  end
+
   if opts and opts.buffer then
     buf = opts.buffer == true and 0 or opts.buffer
   end
@@ -64,8 +70,7 @@ end
 
 -- map a key in normal mode using the leader key
 function util.keys.lmap(key, cmd, opts)
-	local real_key = '<leader>' .. key
-	map_in_mode('n', real_key, cmd, opts)
+	map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
