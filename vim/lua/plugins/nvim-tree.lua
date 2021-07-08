@@ -1,12 +1,19 @@
 local util = require('util')
+local g = vim.g
 
 -- show hierarchy lines
-vim.g.nvim_tree_indent_markers = 1
+g.nvim_tree_indent_markers = 1
 
 -- append a slash to folder names
-vim.g.nvim_tree_add_trailing = 1
+g.nvim_tree_add_trailing = 1
 
 -- close the tree after opening a file
-vim.g.nvim_tree_auto_close = 1
+g.nvim_tree_auto_close = 1
+
+-- open the tree on the right side
+g.nvim_tree_side = 'right'
+
+-- wider tree
+g.nvim_tree_width = '30%'
 
 util.keys.lmap('n', ':NvimTreeFindFile<CR>')
