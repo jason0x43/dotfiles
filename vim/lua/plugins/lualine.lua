@@ -42,6 +42,13 @@ local base16_theme = {
   }
 }
 
+local diag_sources = g.use_native_lsp and { 'nvim_lsp' } or { 'coc' }
+local lualine_x = { { 'diagnostics', sources = diag_sources } }
+if not g.use_native_lsp then
+  table.insert(lualine_x, 'g:coc_status')
+end
+table.insert(lualine_x, 'filetype')
+
 require('lualine').setup({
   options = {
     theme = base16_theme,
@@ -49,7 +56,7 @@ require('lualine').setup({
     component_separators = { '|', '|' },
   },
   sections = {
-    lualine_x = { { 'diagnostics', sources = { 'coc' } }, 'g:coc_status', 'filetype' }
+    lualine_x = lualine_x
   },
   inactive_sections = {
     lualine_c = { 'filename' },

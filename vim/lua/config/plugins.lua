@@ -1,6 +1,4 @@
-require('paq')({
-  -- Always start -------------------------------
-
+local plugins = {
   -- manage the package manager
   'savq/paq-nvim';
 
@@ -27,7 +25,7 @@ require('paq')({
   'antoinemadec/FixCursorHold.nvim';
 
   -- gc for commenting code blocks
-  { 'tpope/vim-commentary' };
+  'tpope/vim-commentary';
 
   -- EditorConfig
   'editorconfig/editorconfig-vim';
@@ -56,10 +54,6 @@ require('paq')({
   -- support the jsonc filetype
   'neoclide/jsonc.vim';
 
-  -- completion
-  { 'neoclide/coc.nvim', run='yarn install --frozen-lockfile' };
-  'antoinemadec/coc-fzf';
-
   -- use treesitter for filetype handling
   { 'nvim-treesitter/nvim-treesitter', run=':TSUpdate' };
 
@@ -72,9 +66,22 @@ require('paq')({
 
   -- tree
   'kyazdani42/nvim-tree.lua';
+}
 
-  -- Lazy loaded --------------------------------
+if vim.g.use_native_lsp then
+  vim.list_extend(plugins, {
+    'neovim/nvim-lspconfig',
+    'kabouzeid/nvim-lspinstall',
+    'hrsh7th/nvim-compe',
+  });
+else
+  vim.list_extend(plugins, {
+    { 'neoclide/coc.nvim', run='yarn install --frozen-lockfile' },
+    'antoinemadec/coc-fzf',
+  });
+end
 
+local optional = {
   -- easier movement between vim and tmux panes
   { 'christoomey/vim-tmux-navigator', opt=true };
 
@@ -88,4 +95,6 @@ require('paq')({
   { 'mzlogin/vim-markdown-toc', opt=true };
   { 'tpope/vim-classpath', opt=true };
   { 'lervag/vimtex', opt=true };
-})
+}
+
+require('paq')(vim.list_extend(plugins, optional))

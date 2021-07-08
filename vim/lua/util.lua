@@ -125,15 +125,17 @@ end
 
 -- set colorcolumn to show the current textwidth
 function util.show_view_width()
-	local tw = vim.b.textwidth
+	local tw = vim.bo.textwidth
 	if tw and tw > 0 then
-		vim.b.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
+		vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
 	end
 end
 
 -- set window height
 function util.adjust_window_height(minheight, maxheight)
-	vim.cmd('max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"')
+  local line = vim.fn.line('$')
+  local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
+	vim.cmd(val .. 'wincmd _')
 end
 
 -- trim characters from a string
@@ -144,7 +146,7 @@ function util.trim(str, char)
   return str:gsub('^' .. char .. '+', ''):gsub(char .. '+$', '')
 end
 
--- Define a syntax highlight group
+-- define a syntax highlight group
 function util.hi(group, props)
   local props_list = {}
   for k, v in pairs(props) do

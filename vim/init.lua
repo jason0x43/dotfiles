@@ -1,3 +1,5 @@
+vim.g.use_native_lsp = false
+
 require('config.variables')
 require('config.options')
 require('config.plugins')
@@ -7,10 +9,10 @@ require('config.theme')
 require('config.autocommands')
 require('config.project')
 require('config.optional')
+require('config.lsp')
 
 require('plugins.lualine')
 require('plugins.startify')
-require('plugins.coc')
 require('plugins.fzf')
 require('plugins.undotree')
 require('plugins.vim-bbye')
