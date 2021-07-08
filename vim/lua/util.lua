@@ -24,6 +24,7 @@ end
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
 function util.yank(text)
+  print('yanking')
 	local escape = vim.fn.system('term_copy', text)
 	if vim.v.shell_error == 1 then
 		vim.cmd('echoerr ' .. escape)
@@ -35,7 +36,14 @@ end
 util.keys = {}
 
 -- map a key in a particular mode
--- for a buffer-specific map pass a `buffer` option
+--   mode - one or more mode characters
+--   key  - the key to map
+--   cmd  - the command to run for the key
+--   opts - mapping options
+--     noremap - if true, use a non-remappable mapping
+--     silent  - if true, set the silent option
+--     buffer  - a buffer number, or true for buffer 0
+--     mode    - a mode; overrides the mode arg
 local function map_in_mode(mode, key, cmd, opts)
 	local options = { noremap = true, silent = true }
   local buf
@@ -46,21 +54,42 @@ local function map_in_mode(mode, key, cmd, opts)
     options.noremap = nil
   end
 
+  -- pull buffer out of opts if specified
   if opts and opts.buffer then
     buf = opts.buffer == true and 0 or opts.buffer
+    opts.buffer = nil
   end
 
+  -- pull mode out of opts if specified
+  if opts and opts.mode then
+    mode = opts.mode
+    opts.mode = nil
+  end
+
+  -- add any remaining opts to options
 	if opts then
 		options = vim.tbl_extend('force', options, opts)
 	end
 
+  -- get a referenced to a key mapper function; what is used depends on whether
+  -- or not the map is being set for a specific buffer
+  local set_keymap
   if buf then
-    options.buffer = nil
-    vim.api.nvim_buf_set_keymap(buf, mode, key, cmd, options)
+    set_keymap = function (_mode, _key, _cmd, _options)
+      vim.api.nvim_buf_set_keymap(buf, _mode, _key, _cmd, _options)
+    end
   else
-    vim.api.nvim_set_keymap(mode, key, cmd, options)
+    set_keymap = vim.api.nvim_set_keymap
   end
 
+  -- create a mapping for every mode in the mode string
+  if mode == '' then
+    set_keymap(mode, key, cmd, options)
+  else
+    mode:gsub('.', function (m)
+      set_keymap(m, key, cmd, options)
+    end)
+  end
 end
 
 -- map a key in all modes
