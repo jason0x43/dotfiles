@@ -12,7 +12,7 @@ util.augroup('init_autocommands', {
 
   -- wrap lines in quickfix windows
   'FileType qf setlocal wrap linebreak nolist breakindent'
-      .. ' breakindentopt=shift:2',
+      .. ' breakindentopt=shift:2 colorcolumn=""',
 
   -- close help files and qf panes with 'q' or Esc
   'FileType help,qf,fugitiveblame noremap <buffer> <silent> q :bd<CR>',
