@@ -47,8 +47,8 @@ o.signcolumn = 'yes'
 o.splitbelow = true
 o.splitright = true
 
-o.formatoptions = o.formatoptions
-  + 'r' -- automatically insert comment leader after CR
+o.formatoptions =
+  o.formatoptions + 'r' -- automatically insert comment leader after CR
   + 'o' -- automatically insert comment leader for o/O
   + 'n' -- recognize numbered lists
 
@@ -89,10 +89,10 @@ o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
 
 -- set python version for pyx commands
 if vim.fn.has('pythonx') == 1 then
-	o.pyxversion = 3
+  o.pyxversion = 3
 end
 
 -- use ripgrep if available
- if vim.fn.executable('rg') then
- 	o.grepprg = 'rg --no-heading --color=never'
- end
+if vim.fn.executable('rg') then
+  o.grepprg = 'rg --no-heading --color=never'
+end

@@ -17,7 +17,7 @@ local colors = {
   baseC = '#' .. g.base16_gui0C, -- blue
   baseD = '#' .. g.base16_gui0D, -- purple
   baseE = '#' .. g.base16_gui0E, -- red
-  baseF = '#' .. g.base16_gui0F, -- brown
+  baseF = '#' .. g.base16_gui0F -- brown
 }
 
 local base16_theme = {
@@ -26,15 +26,9 @@ local base16_theme = {
     b = { fg = colors.base0, bg = colors.base2 },
     c = { fg = colors.base6, bg = colors.base1 }
   },
-  insert = {
-    a = { fg = colors.base0, bg = colors.baseA, gui = 'bold' }
-  },
-  visual = {
-    a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' }
-  },
-  replace = {
-    a = { fg = colors.base0, bg = colors.baseE, gui = 'bold' }
-  },
+  insert = { a = { fg = colors.base0, bg = colors.baseA, gui = 'bold' } },
+  visual = { a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' } },
+  replace = { a = { fg = colors.base0, bg = colors.baseE, gui = 'bold' } },
   inactive = {
     a = { fg = colors.base6, bg = colors.base5, gui = 'bold' },
     b = { fg = colors.base5, bg = colors.base0 },
@@ -49,18 +43,15 @@ if not g.use_native_lsp then
 end
 table.insert(lualine_x, 'filetype')
 
-require('lualine').setup({
-  options = {
-    theme = base16_theme,
-    section_separators = { ' ', ' ' },
-    component_separators = { '|', '|' },
-  },
-  sections = {
-    lualine_x = lualine_x
-  },
-  inactive_sections = {
-    lualine_c = { 'filename' },
-    lualine_x = { },
-  },
-  extensions = { 'fzf' },
-})
+require('lualine').setup(
+  {
+    options = {
+      theme = base16_theme,
+      section_separators = { ' ', ' ' },
+      component_separators = { '|', '|' }
+    },
+    sections = { lualine_x = lualine_x },
+    inactive_sections = { lualine_c = { 'filename' }, lualine_x = {} },
+    extensions = { 'fzf' }
+  }
+)

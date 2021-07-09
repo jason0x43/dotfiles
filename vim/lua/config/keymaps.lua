@@ -21,14 +21,10 @@ keys.lmap('c', ':close<cr>')
 
 -- show the syntax highlight state of the character under the cursor
 keys.lmap(
-	'h',
-	':echo "hi<" . '
-		.. 'synIDattr(synID(line("."),col("."),1),"name") . '
-		.. '"> trans<" . '
-		.. 'synIDattr(synID(line("."),col("."),0),"name") . '
-		.. '"> lo<" . '
-		.. 'synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . '
-		.. '">"<cr>'
+  'h', ':echo "hi<synIDattr(synID(line("."),col("."),1),"name") . ' ..
+    '"> trans<" . synIDattr(synID(line("."),col("."),0),"name") . ' ..
+    '"> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ' ..
+    '">"<cr>'
 )
 
 -- use tab for completions

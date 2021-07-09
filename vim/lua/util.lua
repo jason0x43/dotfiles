@@ -192,4 +192,9 @@ function util.hi(group, props)
   vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
 end
 
+-- extend a table
+function util.extend(src1, src2)
+  return vim.tbl_extend('force', src1, src2)
+end
+
 return util

@@ -1,4 +1,4 @@
-vim.g.use_native_lsp = false
+vim.g.use_native_lsp = true
 
 require('config.variables')
 require('config.options')

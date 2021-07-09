@@ -7,35 +7,21 @@ local theme = _G.theme
 
 -- apply customizations to the loaded theme
 function theme.customize()
-  local cmd = vim.cmd
   local g = vim.g
 
   hi('Normal', { guibg = '', ctermbg = '' })
+  hi('NormalFloat', { guibg = g.base16_gui01, ctermbg = '' })
+  hi(
+    'FloatBorder',
+    { guibg = g.base16_gui01, guifg = g.base16_gui02, ctermbg = '' }
+  )
   hi('Comment', { gui = 'italic' })
-  hi('Visual', {
-    guibg = g.base16_gui02,
-    guifg = g.base16_gui00
-  })
-  hi('MatchParen', {
-    guibg = g.base16_gui02,
-    guifg = g.base16_gui01
-  })
-  hi('MatchParenCur', {
-    guibg = g.base16_gui03,
-    guifg = g.base16_gui00
-  })
-  hi('Search', {
-    guibg = g.base16_gui0D,
-    guifg = g.base16_gui00
-  })
-  hi('IncSearch', {
-    guibg = g.base16_gui0D,
-    guifg = g.base16_gui00
-  })
-  hi('IncSearch', {
-    guibg = g.base16_gui0D,
-    guifg = g.base16_gui00
-  })
+  hi('Visual', { guibg = g.base16_gui02, guifg = g.base16_gui00 })
+  hi('MatchParen', { guibg = g.base16_gui02, guifg = g.base16_gui01 })
+  hi('MatchParenCur', { guibg = g.base16_gui03, guifg = g.base16_gui00 })
+  hi('Search', { guibg = g.base16_gui0D, guifg = g.base16_gui00 })
+  hi('IncSearch', { guibg = g.base16_gui0D, guifg = g.base16_gui00 })
+  hi('IncSearch', { guibg = g.base16_gui0D, guifg = g.base16_gui00 })
   hi('Error', { guibg = '', guifg = g.base16_gui0E })
 
   -- high visibility cursor
@@ -65,62 +51,36 @@ function theme.customize()
   g.terminal_color_20 = g.base16_gui04
   g.terminal_color_21 = g.base16_gui06
 
-  hi('LspDiagnosticsWarning', {
-    guibg = '',
-    guifg = g.base16_gui0F,
-    gui = 'italic'
-  })
-  hi('LspDiagnosticsWarningSign', {
-    guibg = g.base16_gui01,
-    guifg = g.base16_gui0F,
-    gui = 'bold'
-  })
-  hi('LspDiagnosticsWarningFloating', {
-    guibg = '',
-    guifg = g.base16_gui0F
-  })
-  hi('LspDiagnosticsUnderlineWarning', {
-    gui = 'undercurl',
-    guisp = g.base16_gui0F
-  })
+  local error_fg = g.base16_gui08
+  local info_fg = g.base16_gui0D
+  local warning_fg = g.base16_gui0A
+  local hint_fg = g.base16_gui03
+  local sign_bg = g.base16_gui01
 
-  hi('LspDiagnosticsError', {
-    guibg = '',
-    guifg = g.base16_gui0E,
-    gui = 'italic'
-  })
-  hi('LspDiagnosticsErrorSign', {
-    guibg = g.base16_gui01,
-    guifg = g.base16_gui0E,
-    gui = 'bold'
-  })
-  hi('LspDiagnosticsErrorFloating', {
-    guibg = '',
-    guifg = g.base16_gui0E
-  })
-  hi('LspDiagnosticsUnderlineError', {
-    gui = 'undercurl',
-    guisp = g.base16_gui0E
-  })
+  hi('LspDiagnosticsDefaultError', { guifg = error_fg })
+  hi(
+    'LspDiagnosticsSignError',
+    { guifg = error_fg, guibg = sign_bg, gui = 'bold' }
+  )
 
-  hi('LspDiagnosticsHintSign', {
-    guibg = g.base16_gui01,
-    guifg = g.base16_gui0B,
-    gui = 'bold'
-  })
-  hi('LspDiagnosticsHint', {
-    guibg = '',
-    guifg = g.base16_gui02,
-    gui = 'italic'
-  })
-  hi('LspDiagnosticsHintFloating', {
-    guibg = '',
-    guifg = g.base16_gui0B
-  })
-  hi('LspDiagnosticsUnderlineHint', {
-    gui = 'undercurl',
-    guisp = g.base16_gui0B
-  })
+  hi('LspDiagnosticsDefaultHint', { guifg = hint_fg })
+  hi(
+    'LspDiagnosticsSignHint', { guifg = hint_fg, guibg = sign_bg, gui = 'bold' }
+  )
+
+  hi('LspDiagnosticsDefaultInformation', { guifg = info_fg })
+  hi(
+    'LspDiagnosticsSignInformation',
+    { guifg = info_fg, guibg = sign_bg, gui = 'bold' }
+  )
+
+  hi('LspDiagnosticsDefaultWarning', { guifg = warning_fg })
+  hi(
+    'LspDiagnosticsSignWarning',
+    { guifg = warning_fg, guibg = sign_bg, gui = 'bold' }
+  )
+
+  hi('LspDiagnosticsUnderlineError', { gui = 'undercurl', guisp = error_fg })
 end
 
 -- set the theme based on the value specified in ~/.vimrc_background
@@ -129,16 +89,14 @@ function theme.load_theme()
   if util.file_exists(theme_file) then
     local lines = vim.fn.readfile(theme_file, '', 1)
     local words = vim.split(lines[1], '%s')
-    local name = util.trim(words[#words], "'"):sub(8)
+    local name = util.trim(words[#words], '\''):sub(8)
     base16(base16.themes[name], true)
     vim.g.colors_name = 'base16'
   end
 end
 
 -- apply customizations when the color scheme is updated
-util.augroup('init_theme', {
-  'ColorScheme * call v:lua.theme.customize()',
-})
+util.augroup('init_theme', { 'ColorScheme * call v:lua.theme.customize()' })
 
 -- set the theme
 theme.load_theme()
