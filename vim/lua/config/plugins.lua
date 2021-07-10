@@ -56,6 +56,7 @@ local plugins = {
 
   -- use treesitter for filetype handling
   { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' },
+  'p00f/nvim-ts-rainbow',
 
   -- fuzzy finding
   { 'junegunn/fzf', run = vim.fn['fzf#install'] },

@@ -10,6 +10,7 @@ require('config.autocommands')
 require('config.project')
 require('config.optional')
 require('config.lsp')
+require('config.treesitter')
 
 require('plugins.lualine')
 require('plugins.startify')
