@@ -40,6 +40,8 @@ local function on_attach(client, bufnr)
   end
 
   -- perform general setup
+  require('illuminate').on_attach(client)
+
   if client.resolved_capabilities.goto_definition then
     util.keys.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
