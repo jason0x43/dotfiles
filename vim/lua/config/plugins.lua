@@ -2,9 +2,6 @@ local plugins = {
   -- manage the package manager
   'savq/paq-nvim',
 
-  -- Color schemes
-  'jason0x43/nvim-base16.lua',
-
   -- Useful startup text, menu
   'mhinz/vim-startify',
 
