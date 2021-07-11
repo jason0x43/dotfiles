@@ -1,3 +1,6 @@
+vim.cmd('packadd! lualine.nvim')
+vim.cmd('packadd! nvim-web-devicons')
+
 local g = vim.g
 
 local colors = {
@@ -17,7 +20,7 @@ local colors = {
   baseC = '#' .. g.base16_gui0C, -- blue
   baseD = '#' .. g.base16_gui0D, -- purple
   baseE = '#' .. g.base16_gui0E, -- red
-  baseF = '#' .. g.base16_gui0F -- brown
+  baseF = '#' .. g.base16_gui0F, -- brown
 }
 
 local base16_theme = {
@@ -48,7 +51,7 @@ require('lualine').setup(
     options = {
       theme = base16_theme,
       section_separators = { ' ', ' ' },
-      component_separators = { '|', '|' }
+      component_separators = { '│', '│' }
     },
     sections = { lualine_x = lualine_x },
     inactive_sections = { lualine_c = { 'filename' }, lualine_x = {} },
