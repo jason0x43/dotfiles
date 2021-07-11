@@ -51,7 +51,8 @@ efm.config = {
     'javascriptreact',
     'typescript',
     'typescriptreact',
-    'lua'
+    'markdown',
+    'lua',
   },
 
   init_options = { documentFormatting = true },
@@ -63,6 +64,7 @@ efm.config = {
       javacriptreact = { eslint, prettier },
       typescript = { eslint, prettier },
       typecriptreact = { eslint, prettier },
+      markdown = { prettier },
       lua = { lua_format }
     }
   }
