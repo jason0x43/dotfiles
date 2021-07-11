@@ -66,7 +66,7 @@ local plugins = {
   'kyazdani42/nvim-tree.lua',
 
   -- highlight current word
-  'RRethy/vim-illuminate'
+  'RRethy/vim-illuminate',
 }
 
 local optional = {
@@ -91,7 +91,7 @@ local optional = {
 
   -- coc
   { 'neoclide/coc.nvim', run = 'yarn install --frozen-lockfile', opt = true },
-  { 'antoinemadec/coc-fzf', opt = true }
+  { 'antoinemadec/coc-fzf', opt = true },
 }
 
 require('paq')(vim.list_extend(plugins, optional))

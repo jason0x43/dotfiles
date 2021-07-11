@@ -14,14 +14,14 @@ end
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
-function util.yank(text)
+util.yank = function(text)
   print('yanking')
-	local escape = vim.fn.system('term_copy', text)
-	if vim.v.shell_error == 1 then
-		vim.cmd('echoerr ' .. escape)
-	else
-		vim.fn.writefile({ escape }, '/dev/tty', 'b')
-	end
+  local escape = vim.fn.system('term_copy', text)
+  if vim.v.shell_error == 1 then
+    vim.cmd('echoerr ' .. escape)
+  else
+    vim.fn.writefile({ escape }, '/dev/tty', 'b')
+  end
 end
 
 util.keys = {}
@@ -35,8 +35,8 @@ util.keys = {}
 --     silent  - if true, set the silent option
 --     buffer  - a buffer number, or true for buffer 0
 --     mode    - a mode; overrides the mode arg
-local function map_in_mode(mode, key, cmd, opts)
-	local options = { noremap = true, silent = true }
+local map_in_mode = function(mode, key, cmd, opts)
+  local options = { noremap = true, silent = true }
   local buf
 
   -- <plug> mappings won't work with noremap
@@ -58,15 +58,15 @@ local function map_in_mode(mode, key, cmd, opts)
   end
 
   -- add any remaining opts to options
-	if opts then
-		options = vim.tbl_extend('force', options, opts)
-	end
+  if opts then
+    options = vim.tbl_extend('force', options, opts)
+  end
 
   -- get a referenced to a key mapper function; what is used depends on whether
   -- or not the map is being set for a specific buffer
   local set_keymap
   if buf then
-    set_keymap = function (_mode, _key, _cmd, _options)
+    set_keymap = function(_mode, _key, _cmd, _options)
       vim.api.nvim_buf_set_keymap(buf, _mode, _key, _cmd, _options)
     end
   else
@@ -77,89 +77,91 @@ local function map_in_mode(mode, key, cmd, opts)
   if mode == '' then
     set_keymap(mode, key, cmd, options)
   else
-    mode:gsub('.', function (m)
-      set_keymap(m, key, cmd, options)
-    end)
+    mode:gsub(
+      '.', function(m)
+        set_keymap(m, key, cmd, options)
+      end
+    )
   end
 end
 
 -- map a key in all modes
-function util.keys.map(key, cmd, opts)
-	map_in_mode('', key, cmd, opts)
+util.keys.map = function(key, cmd, opts)
+  map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in normal mode using the leader key
-function util.keys.lmap(key, cmd, opts)
-	map_in_mode('n', '<leader>' .. key, cmd, opts)
+util.keys.lmap = function(key, cmd, opts)
+  map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function util.keys.imap(key, cmd, opts)
-	map_in_mode('i', key, cmd, opts)
+util.keys.imap = function(key, cmd, opts)
+  map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function util.keys.nmap(key, cmd, opts)
-	map_in_mode('n', key, cmd, opts)
+util.keys.nmap = function(key, cmd, opts)
+  map_in_mode('n', key, cmd, opts)
 end
 
 -- create an augroup from a name and list of commands
 -- commands are of the form
 --   { group, definition }
-function util.augroup(name, commands)
-	vim.cmd('augroup ' .. name)
-	vim.cmd('autocmd!')
-	for _, def in ipairs(commands) do
-		vim.cmd('autocmd ' .. def)
-	end
-	vim.cmd('augroup END')
+util.augroup = function(name, commands)
+  vim.cmd('augroup ' .. name)
+  vim.cmd('autocmd!')
+  for _, def in ipairs(commands) do
+    vim.cmd('autocmd ' .. def)
+  end
+  vim.cmd('augroup END')
 end
 
 -- create a vim command
-function util.cmd(name, argsOrCmd, cmd)
-	local args = cmd and argsOrCmd or nil
-	cmd = cmd and cmd or argsOrCmd
+util.cmd = function(name, argsOrCmd, cmd)
+  local args = cmd and argsOrCmd or nil
+  cmd = cmd and cmd or argsOrCmd
 
-	if args == nil then
-		vim.cmd('command! ' .. name .. ' ' .. cmd)
-	else
-		vim.cmd('command! ' .. args .. ' ' .. name .. ' ' .. cmd)
-	end
+  if args == nil then
+    vim.cmd('command! ' .. name .. ' ' .. cmd)
+  else
+    vim.cmd('command! ' .. args .. ' ' .. name .. ' ' .. cmd)
+  end
 end
 
 -- restore cursor position
-function util.restore_cursor()
-	if vim.bo.filetype == 'gitcommit' or vim.bo.buftype == 'nofile' then
-		return
-	end
-	vim.cmd('g`"')
+util.restore_cursor = function()
+  if vim.bo.filetype == 'gitcommit' or vim.bo.buftype == 'nofile' then
+    return
+  end
+  vim.cmd('g`"')
 end
 
 -- settings for text files
-function util.text_mode()
-	vim.wo.wrap = true
-	vim.wo.linebreak = true
-	vim.wo.list = false
-	vim.wo.signcolumn = 'no'
+util.text_mode = function()
+  vim.wo.wrap = true
+  vim.wo.linebreak = true
+  vim.wo.list = false
+  vim.wo.signcolumn = 'no'
 end
 
 -- set colorcolumn to show the current textwidth
-function util.show_view_width()
-	local tw = vim.bo.textwidth
-	if tw and tw > 0 then
-		vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
-	end
+util.show_view_width = function()
+  local tw = vim.bo.textwidth
+  if tw and tw > 0 then
+    vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
+  end
 end
 
--- set window height
-function util.adjust_window_height(minheight, maxheight)
+-- set window height within a min/max range
+util.adjust_window_height = function(minheight, maxheight)
   local line = vim.fn.line('$')
   local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
-	vim.cmd(val .. 'wincmd _')
+  vim.cmd(val .. 'wincmd _')
 end
 
 -- trim characters from a string
-function util.trim(str, char)
+util.trim = function(str, char)
   if char == nil then
     char = '%s'
   end
@@ -167,7 +169,7 @@ function util.trim(str, char)
 end
 
 -- define a syntax highlight group
-function util.hi(group, props)
+util.hi = function(group, props)
   local props_list = {}
   for k, v in pairs(props) do
     -- replace an empty value with NONE
@@ -184,7 +186,7 @@ function util.hi(group, props)
 end
 
 -- extend a table
-function util.extend(src1, src2)
+util.extend = function(src1, src2)
   return vim.tbl_extend('force', src1, src2)
 end
 
