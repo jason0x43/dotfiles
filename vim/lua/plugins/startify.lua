@@ -35,7 +35,7 @@ function startify.show_commit(commit)
   vim.bo.filetype = 'git'
   vim.wo.wrap = false
   vim.wo.number = false
-  vim.cmd('$read !Git -C "' .. util.project_root .. '" show ' .. commit)
+  vim.cmd('$read !Git -C "' .. util.project_root() .. '" show ' .. commit)
   -- Jump to the first line
   vim.cmd('normal 1G')
   -- Remove the first line, which will be empty
@@ -57,13 +57,15 @@ local function startify_commit_cmd(index, str)
 end
 
 function startify.list_commits()
+  local root = util.project_root()
+
   -- Don't bother looking for commits if we're not in a git project
-  if util.project_root == '' then
+  if root == '' then
     return {}
   end
 
   local commits = vim.fn.systemlist(
-    'git -C "' .. util.project_root ..
+    'git -C "' .. root ..
       '" log --format=format:"%h %s <%an, %ar>" -n ' .. g.startify_files_number
   )
 

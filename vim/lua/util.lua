@@ -8,17 +8,8 @@ util.home = os.getenv('HOME')
 util.data_home = os.getenv('XDG_DATA_HOME') or (util.home .. '/.local/share')
 
 -- if we're in a repo, find the project root
-util.project_root = vim.trim(vim.fn.system(
-  'git rev-parse --show-toplevel 2> /dev/null'
-))
-
--- check if a file exists
-function util.file_exists(file)
-	local f = io.open(file, 'rb')
-	if f then
-		f:close()
-	end
-	return f ~= nil
+util.project_root = function()
+  return vim.fn.finddir('.git', os.getenv('PWD') .. ';')
 end
 
 -- yank to terminal
