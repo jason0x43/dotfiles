@@ -13,7 +13,7 @@ end
 
 -- recompile the packer config whenever this file is edited
 util.augroup(
-  'init_packer', { 'BufWritePost plugins.lua source <afile> | PackerCompile' }
+  'init_packer', { 'BufWritePost */plugins/init.lua source <afile> | PackerCompile' }
 )
 
 require('packer').startup(
