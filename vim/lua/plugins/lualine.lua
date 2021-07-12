@@ -24,7 +24,7 @@ local base16_theme = {
   normal = {
     a = { fg = colors.base0, bg = colors.baseC, gui = 'bold' },
     b = { fg = colors.base0, bg = colors.base2 },
-    c = { fg = colors.base6, bg = colors.base1 }
+    c = { fg = colors.base4, bg = colors.base1 }
   },
   insert = { a = { fg = colors.base0, bg = colors.baseA, gui = 'bold' } },
   visual = { a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' } },
@@ -33,51 +33,6 @@ local base16_theme = {
     a = { fg = colors.base6, bg = colors.base5, gui = 'bold' },
     b = { fg = colors.base5, bg = colors.base0 },
     c = { fg = colors.base3, bg = colors.base1 }
-  }
-}
-
-local progress = {
-  'lsp_progress',
-  -- display_components = { 'lsp_client_name', { 'title', 'percentage', 'message' } },
-  -- With spinner
-  -- display_components = { 'lsp_client_name', 'spinner', { 'title', 'percentage', 'message' }},
-  colors = {
-    percentage = colors.cyan,
-    title = colors.cyan,
-    message = colors.cyan,
-    spinner = colors.cyan,
-    lsp_client_name = colors.magenta,
-    use = true
-  },
-  separators = {
-    component = ' ',
-    progress = ' | ',
-    -- message = { pre = '(', post = ')' },
-    percentage = { pre = '', post = '%% ' },
-    title = { pre = '', post = ': ' },
-    lsp_client_name = { pre = '[', post = ']' },
-    spinner = { pre = '', post = '' },
-    message = { commenced = 'In Progress', completed = 'Completed' }
-  },
-  display_components = {
-    'lsp_client_name',
-    'spinner',
-    { 'title', 'percentage', 'message' }
-  },
-  -- timer = {
-  --   progress_enddelay = 500,
-  --   spinner = 1000,
-  --   lsp_client_name_enddelay = 1000
-  -- },
-  spinner_symbols = {
-    '🌑 ',
-    '🌒 ',
-    '🌓 ',
-    '🌔 ',
-    '🌕 ',
-    '🌖 ',
-    '🌗 ',
-    '🌘 '
   }
 }
 
@@ -113,14 +68,17 @@ require('lualine').setup(
       component_separators = { '│', '│' }
     },
     sections = {
-      lualine_c = {
-        { 'filename', path = 1 }
-      },
+      lualine_c = { { 'filename', path = 1 } },
       lualine_x = {
-        'lsp_progress',
         { 'diagnostics', sources = { 'nvim_lsp' } },
         { 'filetype', colored = false },
-        language_servers
+        language_servers,
+        {
+          'lsp_progress',
+          display_components = { 'spinner' },
+          colors = { spinner = colors.base2 },
+          spinner_symbols = { '/', '-', '\\', '|' }
+        }
       }
     },
     inactive_sections = { lualine_c = { 'filename' }, lualine_x = {} },
