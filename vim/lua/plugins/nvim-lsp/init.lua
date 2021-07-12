@@ -2,11 +2,10 @@ local util = require('util')
 local lspconfig = require('lspconfig')
 local lspinstall = require('lspinstall')
 local lsp = vim.lsp
+local modbase = ...
 
 _G.lsp_util = {}
 local lsp_util = _G.lsp_util
-
-lspinstall.setup()
 
 -- UI
 vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
@@ -62,11 +61,12 @@ local function on_attach(client, bufnr)
   util.keys.lmap('d', '<cmd>lua lsp_util.show_line_diagnostics()<cr>', opts)
 end
 
-local servers_with_config = { 'efm', 'lua', 'json' }
-local disabled_servers = { 'deno' }
-
 -- setup all the currently installed servers
 local function setup_servers()
+  lspinstall.setup()
+
+  local servers_with_config = { 'efm', 'lua', 'json' }
+  local disabled_servers = { 'deno' }
   local servers = vim.tbl_filter(
     function(name)
       return not vim.tbl_contains(disabled_servers, name)
@@ -79,8 +79,7 @@ local function setup_servers()
 
     -- add server-specific config if applicable
     if vim.tbl_contains(servers_with_config, server) then
-      config =
-        util.extend(config, require('plugins.nvim-lsp.' .. server).config)
+      config = util.extend(config, require(modbase .. '.' .. server).config)
     end
 
     lspconfig[server].setup(config)
@@ -97,7 +96,7 @@ end
 
 -- list the currently installed servers
 function lsp_util.list_servers()
-  print(vim.inspect(lspinstall.installed_servers()))
+  print(table.concat(lspinstall.installed_servers(), ', '))
 end
 
 -- update the currently installed servers
