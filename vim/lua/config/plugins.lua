@@ -173,13 +173,15 @@ require('packer').startup(
       use(
         {
           'hoob3rt/lualine.nvim',
-          requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+          requires = {
+            'kyazdani42/nvim-web-devicons',
+            'arkav/lualine-lsp-progress'
+          },
           config = function()
             require('plugins/lualine')
           end
         }
       )
-      use({ 'arkav/lualine-lsp-progress', after = 'nvim-lspconfig' })
     end,
 
     config = {
