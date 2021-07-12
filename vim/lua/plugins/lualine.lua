@@ -37,25 +37,18 @@ local base16_theme = {
 }
 
 local function language_servers()
-  local msg = ''
-  local buf_ft = vim.bo.filetype
-  local clients = vim.lsp.get_active_clients()
+  local clients = vim.lsp.buf_get_clients()
+  local client_names = {}
 
-  if not vim.tbl_isempty(clients) then
-    local lsps = {}
-    for _, client in ipairs(clients) do
-      local filetypes = client.config.filetypes
-      if filetypes and vim.tbl_contains(filetypes, buf_ft) then
-        table.insert(lsps, client.name)
-      end
-    end
-
-    if #lsps > 0 then
-      msg = table.concat(lsps, ', ')
-    end
+  for _, client in pairs(clients) do
+    table.insert(client_names, client.name)
   end
 
-  return msg
+  if not vim.tbl_isempty(client_names) then
+    return table.concat(client_names, ', ')
+  end
+
+  return ''
 end
 
 local function filetype_icon()
