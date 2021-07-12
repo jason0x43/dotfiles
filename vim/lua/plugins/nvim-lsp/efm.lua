@@ -1,4 +1,4 @@
-local efm = {}
+local exports = {}
 
 if vim.fn.executable('eslint_d') == 0 then
   print('WARNING: Missing eslint_d')
@@ -45,13 +45,14 @@ local lua_format = {
   formatStdin = true
 }
 
-efm.config = {
+exports.config = {
   filetypes = {
     'javascript',
     'javascriptreact',
     'typescript',
     'typescriptreact',
     'markdown',
+    'html',
     'lua',
   },
 
@@ -65,9 +66,10 @@ efm.config = {
       typescript = { eslint, prettier },
       typecriptreact = { eslint, prettier },
       markdown = { prettier },
+      html = { prettier },
       lua = { lua_format }
     }
   }
 }
 
-return efm
+return exports

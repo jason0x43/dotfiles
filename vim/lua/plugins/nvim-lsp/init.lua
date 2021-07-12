@@ -4,8 +4,7 @@ local lspinstall = require('lspinstall')
 local lsp = vim.lsp
 local modbase = ...
 
-_G.lsp_util = {}
-local lsp_util = _G.lsp_util
+local exports = {}
 
 -- UI
 vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
@@ -25,7 +24,7 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
   lsp.handlers.signature_help, { border = 'rounded' }
 )
 
-function lsp_util.show_line_diagnostics()
+function exports.show_line_diagnostics()
   vim.lsp.diagnostic.show_line_diagnostics({ border = 'rounded' })
 end
 
@@ -91,12 +90,12 @@ function lspinstall.post_install_hook()
 end
 
 -- list the currently installed servers
-function lsp_util.list_servers()
+function exports.list_servers()
   print(table.concat(lspinstall.installed_servers(), ', '))
 end
 
 -- update the currently installed servers
-function lsp_util.update_servers()
+function exports.update_servers()
   for _, server in pairs(lspinstall.installed_servers()) do
     lspinstall.install_server(server)
   end
@@ -105,3 +104,6 @@ end
 -- add some useful support commands
 util.cmd('LspList', ':lua lsp_util.list_servers()<cr>')
 util.cmd('LspUpdate', ':lua lsp_util.update_servers()<cr>')
+
+_G.lsp_util = exports
+return exports

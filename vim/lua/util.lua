@@ -1,15 +1,13 @@
-_G.util = {}
-local util = _G.util
-
+local exports = {}
 
 -- if we're in a repo, find the project root
-function util.project_root()
+function exports.project_root()
   return vim.fn.finddir('.git', os.getenv('PWD') .. ';')
 end
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
-function util.yank(text)
+function exports.yank(text)
   print('yanking')
   local escape = vim.fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
@@ -19,7 +17,7 @@ function util.yank(text)
   end
 end
 
-util.keys = {}
+exports.keys = {}
 
 -- map a key in a particular mode
 --   mode - one or more mode characters
@@ -81,29 +79,29 @@ local map_in_mode = function(mode, key, cmd, opts)
 end
 
 -- map a key in all modes
-function util.keys.map(key, cmd, opts)
+function exports.keys.map(key, cmd, opts)
   map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in normal mode using the leader key
-function util.keys.lmap(key, cmd, opts)
+function exports.keys.lmap(key, cmd, opts)
   map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function util.keys.imap(key, cmd, opts)
+function exports.keys.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function util.keys.nmap(key, cmd, opts)
+function exports.keys.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
 end
 
 -- create an augroup from a name and list of commands
 -- commands are of the form
 --   { group, definition }
-function util.augroup(name, commands)
+function exports.augroup(name, commands)
   vim.cmd('augroup ' .. name)
   vim.cmd('autocmd!')
   for _, def in ipairs(commands) do
@@ -113,7 +111,7 @@ function util.augroup(name, commands)
 end
 
 -- create a vim command
-function util.cmd(name, argsOrCmd, cmd)
+function exports.cmd(name, argsOrCmd, cmd)
   local args = cmd and argsOrCmd or nil
   cmd = cmd and cmd or argsOrCmd
 
@@ -125,7 +123,7 @@ function util.cmd(name, argsOrCmd, cmd)
 end
 
 -- restore cursor position
-function util.restore_cursor()
+function exports.restore_cursor()
   if vim.bo.filetype == 'gitcommit' or vim.bo.buftype == 'nofile' then
     return
   end
@@ -133,7 +131,7 @@ function util.restore_cursor()
 end
 
 -- settings for text files
-function util.text_mode()
+function exports.text_mode()
   vim.wo.wrap = true
   vim.wo.linebreak = true
   vim.wo.list = false
@@ -141,7 +139,7 @@ function util.text_mode()
 end
 
 -- set colorcolumn to show the current textwidth
-function util.show_view_width()
+function exports.show_view_width()
   local tw = vim.bo.textwidth
   if tw and tw > 0 then
     vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
@@ -149,14 +147,14 @@ function util.show_view_width()
 end
 
 -- set window height within a min/max range
-function util.adjust_window_height(minheight, maxheight)
+function exports.adjust_window_height(minheight, maxheight)
   local line = vim.fn.line('$')
   local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
   vim.cmd(val .. 'wincmd _')
 end
 
 -- trim characters from a string
-function util.trim(str, char)
+function exports.trim(str, char)
   if char == nil then
     char = '%s'
   end
@@ -164,7 +162,7 @@ function util.trim(str, char)
 end
 
 -- define a syntax highlight group
-function util.hi(group, props)
+function exports.hi(group, props)
   local props_list = {}
   for k, v in pairs(props) do
     -- replace an empty value with NONE
@@ -181,8 +179,9 @@ function util.hi(group, props)
 end
 
 -- extend a table
-function util.extend(src1, src2)
+function exports.assign(src1, src2)
   return vim.tbl_extend('force', src1, src2)
 end
 
-return util
+_G.util = exports
+return exports

@@ -1,7 +1,6 @@
-_G.typescript = {}
-local typescript = _G.typescript
+local exports = {}
 
-function typescript.organize_imports()
+function exports.organize_imports()
   vim.lsp.buf.execute_command(
       {
         command = '_typescript.organizeImports',
@@ -10,7 +9,7 @@ function typescript.organize_imports()
   )
 end
 
-function typescript.on_attach(client)
+function exports.on_attach(client)
   util.cmd(
       'OrganizeImports', '-buffer',
       '<cmd>call v:lua.typescript.organize_imports()<cr>'
@@ -20,4 +19,5 @@ function typescript.on_attach(client)
   client.resolved_capabilities.document_formatting = false
 end
 
-return typescript
+_G.typescript = exports
+return exports

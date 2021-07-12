@@ -1,5 +1,5 @@
-local json = {}
+local exports = {}
 
-json.config = {filetypes = {'json', 'jsonc'}}
+exports.config = {filetypes = {'json', 'jsonc'}}
 
-return json
+return exports

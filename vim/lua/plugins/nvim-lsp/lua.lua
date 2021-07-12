@@ -1,5 +1,7 @@
-local lua = {}
+local exports = {}
 
-lua.config = {settings = {Lua = {diagnostics = {globals = {'vim'}}}}}
+exports.config = {
+  settings = { Lua = { diagnostics = { globals = { 'vim' } } } }
+}
 
-return lua
+return exports
