@@ -95,6 +95,6 @@ require('lualine').setup(
       }
     },
     inactive_sections = { lualine_c = { 'filename' }, lualine_x = {} },
-    extensions = { 'fzf' }
+    extensions = { 'fzf', 'nvim-tree', 'quickfix', 'fugitive' }
   }
 )
