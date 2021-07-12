@@ -56,6 +56,26 @@ local function filetype_icon()
   return devicons.get_icon(vim.fn.expand('%:t'), vim.fn.expand('%:e'))
 end
 
+local function edge(which, opts)
+  local char = ''
+  if which == 'right' then
+    char = ''
+  end
+  local config = {
+    function()
+      return char
+    end,
+    left_padding = 0,
+    right_padding = 0,
+    separator = '',
+    color = { gui = 'inverse' }
+  }
+  if opts ~= nil then
+    config = util.assign(config, opts)
+  end
+  return config
+end
+
 require('lualine').setup(
   {
     options = {
@@ -64,6 +84,7 @@ require('lualine').setup(
       component_separators = { '│', '│' }
     },
     sections = {
+      lualine_a = { edge('left'), { 'mode', left_padding = 0 } },
       lualine_b = { { 'branch', left_padding = 0, icon = '' } },
       lualine_c = {
         {
@@ -86,9 +107,22 @@ require('lualine').setup(
           left_padding = 1,
           right_padding = 0
         }
+      },
+      lualine_z = {
+        { 'location', separator = '', right_padding = 0 },
+        edge('right')
       }
     },
-    inactive_sections = { lualine_c = { 'filename' }, lualine_x = {} },
+    inactive_sections = {
+      lualine_c = {
+        edge('left', { color = { fg = colors.base1, bg = colors.base0 } }),
+        { 'filename', left_padding = 0 }
+      },
+      lualine_x = {
+        { 'location', right_padding = 0 },
+        edge('right', { color = { fg = colors.base1, bg = colors.base0 } })
+      }
+    },
     extensions = { 'fzf', 'nvim-tree', 'quickfix', 'fugitive' }
   }
 )
