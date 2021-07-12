@@ -76,6 +76,10 @@ local function edge(which, opts)
   return config
 end
 
+-- make statusline transparent so we don't get a flash before lualine renders
+util.hi('StatusLine', { guibg = '', ctermbg = '' })
+util.hi('StatusLineNC', { guibg = '', ctermbg = '' })
+
 require('lualine').setup(
   {
     options = {
