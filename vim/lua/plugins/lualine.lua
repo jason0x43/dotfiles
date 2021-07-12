@@ -71,6 +71,7 @@ require('lualine').setup(
       component_separators = { '│', '│' }
     },
     sections = {
+      lualine_b = { { 'branch', left_padding = 0, icon = '' } },
       lualine_c = {
         {
           filetype_icon,
