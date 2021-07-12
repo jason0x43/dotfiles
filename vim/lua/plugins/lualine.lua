@@ -55,9 +55,12 @@ local function language_servers()
     end
   end
 
-  if msg ~= '' then
-    return ' ' .. msg
-  end
+  return msg
+end
+
+local function filetype_icon()
+  local devicons = require('nvim-web-devicons')
+  return devicons.get_icon(vim.fn.expand('%:t'), vim.fn.expand('%:e'))
 end
 
 require('lualine').setup(
@@ -68,16 +71,26 @@ require('lualine').setup(
       component_separators = { '│', '│' }
     },
     sections = {
-      lualine_c = { { 'filename', path = 1 } },
+      lualine_c = {
+        {
+          filetype_icon,
+          separator = '',
+          left_padding = 0,
+          color = { fg = colors.baseC }
+        },
+        { 'filename', path = 1, left_padding = 0 }
+      },
       lualine_x = {
         { 'diagnostics', sources = { 'nvim_lsp' } },
-        { 'filetype', colored = false },
-        language_servers,
+        { language_servers, icon = '', separator = '', right_padding = 0 },
         {
           'lsp_progress',
           display_components = { 'spinner' },
-          colors = { spinner = colors.base2 },
-          spinner_symbols = { '/', '-', '\\', '|' }
+          colors = { spinner = colors.baseC },
+          spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
+          timer = { spinner = 250 },
+          left_padding = 1,
+          right_padding = 0
         }
       }
     },
