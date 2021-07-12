@@ -1,7 +1,7 @@
 local util = require('util')
 local g = vim.g
 
-local hi = function(group, guifg, guibg, ctermfg, ctermbg, attr, guisp)
+local function hi(group, guifg, guibg, ctermfg, ctermbg, attr, guisp)
   util.hi(
     group, {
       guifg = guifg,
@@ -16,7 +16,7 @@ local hi = function(group, guifg, guibg, ctermfg, ctermbg, attr, guisp)
 end
 
 -- Modified from https://github.com/chriskempson/base16-vim
-local apply_theme = function(theme_name)
+local function apply_theme(theme_name)
   local theme = require('base16.themes')[theme_name]
 
   -- Terminal color definitions

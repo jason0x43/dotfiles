@@ -90,7 +90,7 @@ end
 setup_servers()
 
 -- automatically reload servers after `:LspInstall <server>`
-lspinstall.post_install_hook = function()
+function lspinstall.post_install_hook()
   setup_servers()
   vim.cmd('bufdo e')
 end
