@@ -13,7 +13,8 @@ end
 
 -- recompile the packer config whenever this file is edited
 util.augroup(
-  'init_packer', { 'BufWritePost */plugins/init.lua source <afile> | PackerCompile' }
+  'init_packer',
+    { 'BufWritePost */plugins/init.lua source <afile> | PackerCompile' }
 )
 
 require('packer').startup(
@@ -145,9 +146,6 @@ require('packer').startup(
 
       -- easier movement between vim and tmux panes, and between vim panes
       use({ 'christoomey/vim-tmux-navigator' })
-
-      -- show version info in package.json files
-      use({ 'meain/vim-package-info', run = 'npm install', opt = true })
 
       -- filetype plugins
       use({ 'tpope/vim-markdown', opt = true, ft = { 'markdown' } })
