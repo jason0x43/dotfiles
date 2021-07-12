@@ -28,13 +28,18 @@ function exports.show_line_diagnostics()
   vim.lsp.diagnostic.show_line_diagnostics({ border = 'rounded' })
 end
 
+local function load_client_config(server_name)
+  local _, client_config = pcall(require, modbase .. '.' .. server_name)
+  return client_config or {}
+end
+
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   -- run any client-specific attach functions
-  local loaded, client_config = pcall(require, modbase .. '.' .. client.name)
-  if loaded ~= false and client_config.on_attach then
+  local client_config = load_client_config(client.name)
+  if client_config.on_attach then
     client_config.on_attach(client)
   end
 
@@ -70,14 +75,12 @@ local function setup_servers()
     local config = { on_attach = on_attach }
 
     -- add server-specific config if applicable
-    local _, client_config = pcall(require, modbase .. '.' .. server)
-    if client_config and client_config.config then
+    local client_config = load_client_config(server)
+    if client_config.config then
       config = util.assign(config, client_config.config)
     end
 
-    if not client_config or not client_config.disabled then
-      lspconfig[server].setup(config)
-    end
+    lspconfig[server].setup(config)
   end
 end
 

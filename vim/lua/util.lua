@@ -183,5 +183,15 @@ function exports.assign(src1, src2)
   return vim.tbl_extend('force', src1, src2)
 end
 
+-- TS filetypes
+exports.ts_types = table.concat({
+  'typescript',
+  'typescriptreact',
+  'typescriptreact.jsx',
+  'javascript',
+  'javascriptreact',
+  'javascriptreact.jsx',
+}, ',')
+
 _G.util = exports
 return exports
