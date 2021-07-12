@@ -1,11 +1,6 @@
 _G.util = {}
 local util = _G.util
 
--- the user's home directory
-util.home = os.getenv('HOME')
-
--- the local nvim data directory
-util.data_home = os.getenv('XDG_DATA_HOME') or (util.home .. '/.local/share')
 
 -- if we're in a repo, find the project root
 function util.project_root()
