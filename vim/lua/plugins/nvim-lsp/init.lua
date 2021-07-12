@@ -34,8 +34,9 @@ local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   -- run any client-specific attach functions
-  if client.name == 'typescript' then
-    require('plugins.nvim-lsp.typescript').on_attach(client)
+  local loaded, client_config = pcall(require, modbase .. '.' .. client.name)
+  if loaded ~= false and client_config.on_attach then
+    client_config.on_attach(client)
   end
 
   -- perform general setup
@@ -65,24 +66,19 @@ end
 local function setup_servers()
   lspinstall.setup()
 
-  local servers_with_config = { 'efm', 'lua', 'json' }
-  local disabled_servers = { 'deno' }
-  local servers = vim.tbl_filter(
-    function(name)
-      return not vim.tbl_contains(disabled_servers, name)
-    end, lspinstall.installed_servers()
-  )
-
-  for _, server in pairs(servers) do
+  for _, server in pairs(lspinstall.installed_servers()) do
     -- default config for all servers
     local config = { on_attach = on_attach }
 
     -- add server-specific config if applicable
-    if vim.tbl_contains(servers_with_config, server) then
-      config = util.extend(config, require(modbase .. '.' .. server).config)
+    local _, client_config = pcall(require, modbase .. '.' .. server)
+    if client_config and client_config.config then
+      config = util.assign(config, client_config.config)
     end
 
-    lspconfig[server].setup(config)
+    if not client_config or not client_config.disabled then
+      lspconfig[server].setup(config)
+    end
   end
 end
 
