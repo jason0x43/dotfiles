@@ -1,97 +1,198 @@
-local plugins = {
-  -- manage the package manager
-  'savq/paq-nvim',
+local util = require('util')
+local fn = vim.fn
 
-  -- Useful startup text, menu
-  'mhinz/vim-startify',
+-- bootstrap packer
+local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+local packer_exists = fn.isdirectory(install_path) ~= 0
+if not packer_exists then
+  fn.system(
+    { 'git', 'clone', 'git@github.com:wbthomason/packer.nvim', install_path }
+  )
+  vim.cmd('packadd packer.nvim')
+end
 
-  -- highlight color strings
-  'norcalli/nvim-colorizer.lua',
+-- recompile the packer config whenever this file is edited
+util.augroup(
+  'init_packer', { 'BufWritePost plugins.lua source <afile> | PackerCompile' }
+)
 
-  -- better start/end matching
-  'andymass/vim-matchup',
+require('packer').startup(
+  {
+    function(use)
+      -- manage the package manager
+      use('wbthomason/packer.nvim')
 
-  -- flashy status bar
-  'hoob3rt/lualine.nvim',
-  { 'kyazdani42/nvim-web-devicons', opt = true },
+      -- Useful startup text, menu
+      use(
+        {
+          'mhinz/vim-startify',
+          config = function()
+            require('plugins.startify')
+          end
+        }
+      )
 
-  -- preserve layout when closing buffers; used for <leader>k
-  'moll/vim-bbye',
+      -- highlight color strings
+      use(
+        {
+          'norcalli/nvim-colorizer.lua',
+          config = function()
+            require('plugins.colorizer')
+          end
+        }
+      )
 
-  -- more efficient cursorhold behavior
-  'antoinemadec/FixCursorHold.nvim',
+      -- better start/end matching
+      use('andymass/vim-matchup')
 
-  -- gc for commenting code blocks
-  'tpope/vim-commentary',
+      -- preserve layout when closing buffers; used for <leader>k
+      use(
+        {
+          'moll/vim-bbye',
+          config = function()
+            require('plugins.vim-bbye')
+          end
+        }
+      )
 
-  -- EditorConfig
-  'editorconfig/editorconfig-vim',
+      -- more efficient cursorhold behavior
+      use('antoinemadec/FixCursorHold.nvim')
 
-  -- git utilities
-  'tpope/vim-fugitive',
+      -- gc for commenting code blocks
+      use('tpope/vim-commentary')
 
-  -- useful pairs of mappings
-  'tpope/vim-unimpaired',
+      -- EditorConfig
+      use('editorconfig/editorconfig-vim')
 
-  -- support for repeating mapped commands
-  'tpope/vim-repeat',
+      -- git utilities
+      use('tpope/vim-fugitive')
 
-  -- for manipulating parens and such
-  'tpope/vim-surround',
+      -- useful pairs of mappings
+      use('tpope/vim-unimpaired')
 
-  -- easy vertical alignment of code elements
-  'junegunn/vim-easy-align',
+      -- support for repeating mapped commands
+      use('tpope/vim-repeat')
 
-  -- visualize the undo tree
-  'mbbill/undotree',
+      -- for manipulating parens and such
+      use('tpope/vim-surround')
 
-  -- render ANSI escape sequences
-  'powerman/vim-plugin-AnsiEsc',
+      -- easy vertical alignment of code elements
+      use('junegunn/vim-easy-align')
 
-  -- support the jsonc filetype
-  'neoclide/jsonc.vim',
+      -- visualize the undo tree
+      use(
+        {
+          'mbbill/undotree',
+          config = function()
+            require('plugins.undotree')
+          end
+        }
+      )
 
-  -- use treesitter for filetype handling
-  { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' },
-  'p00f/nvim-ts-rainbow',
+      -- render ANSI escape sequences
+      use('powerman/vim-plugin-AnsiEsc')
 
-  -- fuzzy finding
-  { 'junegunn/fzf', run = vim.fn['fzf#install'] },
-  'junegunn/fzf.vim',
+      -- support the jsonc filetype
+      use('neoclide/jsonc.vim')
 
-  -- open files at the last edited position
-  'farmergreg/vim-lastplace',
+      -- use treesitter for filetype handling
+      use(
+        {
+          'nvim-treesitter/nvim-treesitter',
+          run = ':TSUpdate',
+          config = function()
+            require('config.treesitter')
+          end
+        }
+      )
 
-  -- tree
-  'kyazdani42/nvim-tree.lua',
+      -- fuzzy finding
+      use(
+        {
+          'junegunn/fzf.vim',
+          requires = 'junegunn/fzf',
+          run = function()
+            fn['fzf#install']()
+          end,
+          config = function()
+            require('plugins.fzf')
+          end
+        }
+      )
 
-  -- highlight current word
-  'RRethy/vim-illuminate',
-}
+      -- open files at the last edited position
+      use('farmergreg/vim-lastplace')
 
-local optional = {
-  -- easier movement between vim and tmux panes
-  { 'christoomey/vim-tmux-navigator', opt = true },
+      -- tree
+      use(
+        {
+          'kyazdani42/nvim-tree.lua',
+          config = function()
+            require('plugins.nvim-tree')
+          end
+        }
+      )
 
-  -- show version info in package.json files
-  { 'meain/vim-package-info', run = 'npm install', opt = true },
+      -- highlight current word
+      use(
+        {
+          'RRethy/vim-illuminate',
+          config = function()
+            require('plugins.illuminate')
+          end
+        }
+      )
 
-  -- filetype plugins
-  { 'tpope/vim-markdown', opt = true },
-  { 'vim-scripts/applescript.vim', opt = true },
-  { 'vim-scripts/Textile-for-VIM', opt = true },
-  { 'mzlogin/vim-markdown-toc', opt = true },
-  { 'tpope/vim-classpath', opt = true },
-  { 'lervag/vimtex', opt = true },
+      -- easier movement between vim and tmux panes, and between vim panes
+      use({ 'christoomey/vim-tmux-navigator' })
 
-  -- native LSP
-  { 'neovim/nvim-lspconfig', opt = true },
-  { 'kabouzeid/nvim-lspinstall', opt = true },
-  { 'hrsh7th/nvim-compe', opt = true },
+      -- show version info in package.json files
+      use({ 'meain/vim-package-info', run = 'npm install', opt = true })
 
-  -- coc
-  { 'neoclide/coc.nvim', run = 'yarn install --frozen-lockfile', opt = true },
-  { 'antoinemadec/coc-fzf', opt = true },
-}
+      -- filetype plugins
+      use({ 'tpope/vim-markdown', opt = true, ft = { 'markdown' } })
+      use({ 'vim-scripts/applescript.vim', opt = true, ft = { 'applescript' } })
+      use({ 'vim-scripts/Textile-for-VIM', opt = true, ft = { 'textile' } })
+      use({ 'mzlogin/vim-markdown-toc', opt = true, ft = { 'markdown' } })
+      use({ 'tpope/vim-classpath', opt = true, ft = { 'java' } })
+      use({ 'lervag/vimtex', opt = true, ft = { 'tex', 'latex' } })
 
-require('paq')(vim.list_extend(plugins, optional))
+      -- native LSP
+      use(
+        {
+          'neovim/nvim-lspconfig',
+          requires = { 'kabouzeid/nvim-lspinstall', 'hrsh7th/nvim-compe' },
+          config = function()
+            require('plugins.nvim-lsp')
+            require('plugins.nvim-compe')
+          end
+        }
+      )
+
+      -- flashy status bar
+      use(
+        {
+          'hoob3rt/lualine.nvim',
+          requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+          config = function()
+            require('plugins/lualine')
+          end
+        }
+      )
+      use({ 'arkav/lualine-lsp-progress', after = 'nvim-lspconfig' })
+    end,
+
+    config = {
+      display = {
+        open_fn = function()
+          -- show packer output in a float
+          return require('packer.util').float { border = 'rounded' }
+        end
+      }
+    }
+  }
+)
+
+if not packer_exists then
+  vim.cmd('PackerInstall')
+end

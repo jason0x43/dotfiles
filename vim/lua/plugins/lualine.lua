@@ -1,6 +1,3 @@
-vim.cmd('packadd! lualine.nvim')
-vim.cmd('packadd! nvim-web-devicons')
-
 local g = vim.g
 
 local colors = {
@@ -41,9 +38,6 @@ local base16_theme = {
 
 local diag_sources = g.use_native_lsp and { 'nvim_lsp' } or { 'coc' }
 local lualine_x = { { 'diagnostics', sources = diag_sources } }
-if not g.use_native_lsp then
-  table.insert(lualine_x, 'g:coc_status')
-end
 table.insert(lualine_x, 'filetype')
 
 require('lualine').setup(

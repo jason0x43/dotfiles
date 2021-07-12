@@ -19,9 +19,5 @@ require('nvim-treesitter.configs').setup(
         'javascript.jsx'
       }
     },
-    autopairs = { enable = true },
-    rainbow = { enable = true },
-    autotag  = { enable = true },
-    context_commentstring  = { enable = true },
   }
 )

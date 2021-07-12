@@ -8,13 +8,13 @@ util.home = os.getenv('HOME')
 util.data_home = os.getenv('XDG_DATA_HOME') or (util.home .. '/.local/share')
 
 -- if we're in a repo, find the project root
-util.project_root = function()
+function util.project_root()
   return vim.fn.finddir('.git', os.getenv('PWD') .. ';')
 end
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
-util.yank = function(text)
+function util.yank(text)
   print('yanking')
   local escape = vim.fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
@@ -86,29 +86,29 @@ local map_in_mode = function(mode, key, cmd, opts)
 end
 
 -- map a key in all modes
-util.keys.map = function(key, cmd, opts)
+function util.keys.map(key, cmd, opts)
   map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in normal mode using the leader key
-util.keys.lmap = function(key, cmd, opts)
+function util.keys.lmap(key, cmd, opts)
   map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-util.keys.imap = function(key, cmd, opts)
+function util.keys.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-util.keys.nmap = function(key, cmd, opts)
+function util.keys.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
 end
 
 -- create an augroup from a name and list of commands
 -- commands are of the form
 --   { group, definition }
-util.augroup = function(name, commands)
+function util.augroup(name, commands)
   vim.cmd('augroup ' .. name)
   vim.cmd('autocmd!')
   for _, def in ipairs(commands) do
@@ -118,7 +118,7 @@ util.augroup = function(name, commands)
 end
 
 -- create a vim command
-util.cmd = function(name, argsOrCmd, cmd)
+function util.cmd(name, argsOrCmd, cmd)
   local args = cmd and argsOrCmd or nil
   cmd = cmd and cmd or argsOrCmd
 
@@ -130,7 +130,7 @@ util.cmd = function(name, argsOrCmd, cmd)
 end
 
 -- restore cursor position
-util.restore_cursor = function()
+function util.restore_cursor()
   if vim.bo.filetype == 'gitcommit' or vim.bo.buftype == 'nofile' then
     return
   end
@@ -138,7 +138,7 @@ util.restore_cursor = function()
 end
 
 -- settings for text files
-util.text_mode = function()
+function util.text_mode()
   vim.wo.wrap = true
   vim.wo.linebreak = true
   vim.wo.list = false
@@ -146,7 +146,7 @@ util.text_mode = function()
 end
 
 -- set colorcolumn to show the current textwidth
-util.show_view_width = function()
+function util.show_view_width()
   local tw = vim.bo.textwidth
   if tw and tw > 0 then
     vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
@@ -154,14 +154,14 @@ util.show_view_width = function()
 end
 
 -- set window height within a min/max range
-util.adjust_window_height = function(minheight, maxheight)
+function util.adjust_window_height(minheight, maxheight)
   local line = vim.fn.line('$')
   local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
   vim.cmd(val .. 'wincmd _')
 end
 
 -- trim characters from a string
-util.trim = function(str, char)
+function util.trim(str, char)
   if char == nil then
     char = '%s'
   end
@@ -169,7 +169,7 @@ util.trim = function(str, char)
 end
 
 -- define a syntax highlight group
-util.hi = function(group, props)
+function util.hi(group, props)
   local props_list = {}
   for k, v in pairs(props) do
     -- replace an empty value with NONE
@@ -186,7 +186,7 @@ util.hi = function(group, props)
 end
 
 -- extend a table
-util.extend = function(src1, src2)
+function util.extend(src1, src2)
   return vim.tbl_extend('force', src1, src2)
 end
 

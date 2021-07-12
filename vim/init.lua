@@ -1,22 +1,8 @@
-vim.g.use_native_lsp = true
+vim.g.node_host_prog = '$HOMEBREW_BASE/bin/neovim-node-host'
 
-require('config.variables')
 require('config.options')
 require('config.plugins')
 require('config.commands')
 require('config.keymaps')
 require('config.theme')
 require('config.autocommands')
-require('config.project')
-require('config.optional')
-require('config.lsp')
-require('config.treesitter')
-
-require('plugins.lualine')
-require('plugins.startify')
-require('plugins.fzf')
-require('plugins.undotree')
-require('plugins.vim-bbye')
-require('plugins.nvim-tree')
-require('plugins.colorizer')
-require('plugins.illuminate')
