@@ -145,10 +145,17 @@ require('packer').startup({
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      requires = { 'kabouzeid/nvim-lspinstall', 'hrsh7th/nvim-compe' },
+      requires = {
+        'kabouzeid/nvim-lspinstall',
+        'hrsh7th/nvim-compe',
+        'folke/lsp-colors.nvim',
+        'folke/trouble.nvim',
+      },
       config = function()
         require('plugins.nvim-lsp')
         require('plugins.nvim-compe')
+        require('lsp-colors').setup({})
+        require('plugins.trouble')
       end,
     })
 

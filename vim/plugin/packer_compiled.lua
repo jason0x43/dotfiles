@@ -100,6 +100,10 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/jsonc.vim"
   },
+  ["lsp-colors.nvim"] = {
+    loaded = true,
+    path = "/Users/jason/.local/share/nvim/site/pack/packer/start/lsp-colors.nvim"
+  },
   ["lualine-lsp-progress"] = {
     loaded = true,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/lualine-lsp-progress"
@@ -110,7 +114,7 @@ _G.packer_plugins = {
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/lualine.nvim"
   },
   ["nvim-colorizer.lua"] = {
-    config = { "\27LJ\2\n1\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\22plugins.colorizer\frequire\0" },
+    config = { "\27LJ\2\n;\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\14colorizer\frequire\0" },
     loaded = true,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/nvim-colorizer.lua"
   },
@@ -119,7 +123,7 @@ _G.packer_plugins = {
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/nvim-compe"
   },
   ["nvim-lspconfig"] = {
-    config = { "\27LJ\2\nO\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0016\0\0\0'\2\2\0B\0\2\1K\0\1\0\23plugins.nvim-compe\21plugins.nvim-lsp\frequire\0" },
+    config = { "\27LJ\2\n”\1\0\0\3\0\6\0\0166\0\0\0'\2\1\0B\0\2\0016\0\0\0'\2\2\0B\0\2\0016\0\0\0'\2\3\0B\0\2\0029\0\4\0004\2\0\0B\0\2\0016\0\0\0'\2\5\0B\0\2\1K\0\1\0\20plugins.trouble\nsetup\15lsp-colors\23plugins.nvim-compe\21plugins.nvim-lsp\frequire\0" },
     loaded = true,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/nvim-lspconfig"
   },
@@ -144,6 +148,10 @@ _G.packer_plugins = {
   ["packer.nvim"] = {
     loaded = true,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/start/packer.nvim"
+  },
+  ["trouble.nvim"] = {
+    loaded = true,
+    path = "/Users/jason/.local/share/nvim/site/pack/packer/start/trouble.nvim"
   },
   undotree = {
     config = { "\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21plugins.undotree\frequire\0" },
@@ -228,6 +236,10 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+-- Config for: nvim-colorizer.lua
+time([[Config for nvim-colorizer.lua]], true)
+try_loadstring("\27LJ\2\n;\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\14colorizer\frequire\0", "config", "nvim-colorizer.lua")
+time([[Config for nvim-colorizer.lua]], false)
 -- Config for: vim-startify
 time([[Config for vim-startify]], true)
 try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21plugins.startify\frequire\0", "config", "vim-startify")
@@ -242,20 +254,20 @@ try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21plugins
 time([[Config for undotree]], false)
 -- Config for: nvim-lspconfig
 time([[Config for nvim-lspconfig]], true)
-try_loadstring("\27LJ\2\nO\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0016\0\0\0'\2\2\0B\0\2\1K\0\1\0\23plugins.nvim-compe\21plugins.nvim-lsp\frequire\0", "config", "nvim-lspconfig")
+try_loadstring("\27LJ\2\n”\1\0\0\3\0\6\0\0166\0\0\0'\2\1\0B\0\2\0016\0\0\0'\2\2\0B\0\2\0016\0\0\0'\2\3\0B\0\2\0029\0\4\0004\2\0\0B\0\2\0016\0\0\0'\2\5\0B\0\2\1K\0\1\0\20plugins.trouble\nsetup\15lsp-colors\23plugins.nvim-compe\21plugins.nvim-lsp\frequire\0", "config", "nvim-lspconfig")
 time([[Config for nvim-lspconfig]], false)
--- Config for: fzf.vim
-time([[Config for fzf.vim]], true)
-try_loadstring("\27LJ\2\n+\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\16plugins.fzf\frequire\0", "config", "fzf.vim")
-time([[Config for fzf.vim]], false)
+-- Config for: vim-bbye
+time([[Config for vim-bbye]], true)
+try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21plugins.vim-bbye\frequire\0", "config", "vim-bbye")
+time([[Config for vim-bbye]], false)
 -- Config for: nvim-tree.lua
 time([[Config for nvim-tree.lua]], true)
 try_loadstring("\27LJ\2\n1\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\22plugins.nvim-tree\frequire\0", "config", "nvim-tree.lua")
 time([[Config for nvim-tree.lua]], false)
--- Config for: nvim-colorizer.lua
-time([[Config for nvim-colorizer.lua]], true)
-try_loadstring("\27LJ\2\n1\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\22plugins.colorizer\frequire\0", "config", "nvim-colorizer.lua")
-time([[Config for nvim-colorizer.lua]], false)
+-- Config for: fzf.vim
+time([[Config for fzf.vim]], true)
+try_loadstring("\27LJ\2\n+\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\16plugins.fzf\frequire\0", "config", "fzf.vim")
+time([[Config for fzf.vim]], false)
 -- Config for: lualine.nvim
 time([[Config for lualine.nvim]], true)
 try_loadstring("\27LJ\2\n/\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\20plugins/lualine\frequire\0", "config", "lualine.nvim")
@@ -264,10 +276,6 @@ time([[Config for lualine.nvim]], false)
 time([[Config for nvim-treesitter]], true)
 try_loadstring("\27LJ\2\n1\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\22config.treesitter\frequire\0", "config", "nvim-treesitter")
 time([[Config for nvim-treesitter]], false)
--- Config for: vim-bbye
-time([[Config for vim-bbye]], true)
-try_loadstring("\27LJ\2\n0\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\21plugins.vim-bbye\frequire\0", "config", "vim-bbye")
-time([[Config for vim-bbye]], false)
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Filetype lazy-loads

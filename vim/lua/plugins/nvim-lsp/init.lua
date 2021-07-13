@@ -65,7 +65,9 @@ local function on_attach(client, bufnr)
     util.cmd('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 10000)')
   end
 
-  util.keys.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+  if not packer_plugins['trouble.nvim'] then
+    util.keys.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+  end
   util.keys.lmap('d', '<cmd>lua lsp_util.show_line_diagnostics()<cr>', opts)
 end
 

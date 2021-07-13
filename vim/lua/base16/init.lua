@@ -526,6 +526,17 @@ local function apply_theme(theme_name)
     nil,
     nil
   )
+
+  -- trouble
+  hi('TroubleCount', theme.base0B, nil, cterm0B, nil, 'none', nil)
+  hi('TroubleSignError', error_fg, nil, error_cfg, nil, 'none', nil)
+  hi('TroubleSignWarning', warning_fg, nil, warning_cfg, nil, 'none', nil)
+  hi('TroubleSignInformation', info_fg, nil, info_cfg, nil, 'none', nil)
+  hi('TroubleSignHint', hint_fg, nil, hint_cfg, nil, 'none', nil)
+  hi('TroubleSignOther', theme.base02, nil, cterm02, nil, 'none', nil)
+  hi('TroubleFoldIcon', theme.base02, nil, cterm02, nil, 'none', nil)
+  hi('TroubleIndent', theme.base02, nil, cterm02, nil, 'none', nil)
+  hi('TroubleLocation', theme.base02, nil, cterm02, nil, 'none', nil)
 end
 
 return { apply_theme = apply_theme }
