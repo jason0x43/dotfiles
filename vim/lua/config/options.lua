@@ -1,4 +1,3 @@
-local util = require('util')
 local o = vim.opt
 
 -- overwrite the original file when saving
@@ -11,7 +10,6 @@ o.undofile = true
 o.breakindent = true
 
 -- show commands in the command area, don't show 'Press Enter to continue'
-o.cmdheight = 2
 o.showcmd = true
 
 -- use hidden buffers
