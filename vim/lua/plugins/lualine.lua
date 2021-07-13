@@ -30,9 +30,7 @@ local base16_theme = {
   visual = { a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' } },
   replace = { a = { fg = colors.base0, bg = colors.baseE, gui = 'bold' } },
   inactive = {
-    a = { fg = colors.base6, bg = colors.base5, gui = 'bold' },
-    b = { fg = colors.base5, bg = colors.base0 },
-    c = { fg = colors.base3, bg = colors.base1 }
+    a = { fg = colors.base0, bg = colors.base2 },
   }
 }
 
@@ -56,12 +54,15 @@ local function filetype_icon()
   return devicons.get_icon(vim.fn.expand('%:t'), vim.fn.expand('%:e'))
 end
 
-local function edge(which, opts)
+-- add round edges to a status bar
+-- the given section is mutated and returned
+local function edgify(section, edge, opts)
   local char = ''
-  if which == 'right' then
+  if edge == 'right' then
     char = ''
   end
-  local config = {
+
+  local edge_config = {
     function()
       return char
     end,
@@ -70,15 +71,56 @@ local function edge(which, opts)
     separator = '',
     color = { gui = 'inverse' }
   }
+
   if opts ~= nil then
-    config = util.assign(config, opts)
+    edge_config = util.assign(edge_config, opts)
   end
-  return config
+
+  if edge == 'left' then
+    -- remove the first component, add the round cap, the re-add the first
+    -- component with its left padding removed
+    local first = table.remove(section, 1)
+    table.insert(section, 1, edge_config)
+    if type(first) ~= 'table' then
+      first = { first }
+    end
+    first.left_padding = 0
+    table.insert(section, 2, first)
+  else
+    -- remove the last component, re-add it with its right padding removed,
+    -- then add an end cap
+    local last = table.remove(section)
+    if type(last) ~= 'table' then
+      last = { last }
+    end
+    last.right_padding = 0
+    last.separator = ''
+    table.insert(section, last)
+    table.insert(section, edge_config)
+  end
+
+  return section
 end
 
 -- make statusline transparent so we don't get a flash before lualine renders
 util.hi('StatusLine', { guibg = '', ctermbg = '' })
 util.hi('StatusLineNC', { guibg = '', ctermbg = '' })
+
+-- add round edges to quickfix extension
+local quickfix = require('lualine.extensions.quickfix')
+edgify(quickfix.sections.lualine_a, 'left')
+edgify(quickfix.sections.lualine_z, 'right')
+
+-- add round edges to tree extension
+local tree = require('lualine.extensions.nvim-tree')
+edgify(tree.sections.lualine_a, 'left')
+tree.sections.lualine_x = edgify(
+  {
+    function()
+      return ' '
+    end
+  }, 'right', { color = { fg = colors.base1, bg = colors.base0 } }
+)
 
 require('lualine').setup(
   {
@@ -88,7 +130,7 @@ require('lualine').setup(
       component_separators = { '│', '│' }
     },
     sections = {
-      lualine_a = { edge('left'), { 'mode', left_padding = 0 } },
+      lualine_a = edgify({ 'mode' }, 'left'),
       lualine_b = { { 'branch', left_padding = 0, icon = '' } },
       lualine_c = {
         {
@@ -112,21 +154,18 @@ require('lualine').setup(
           right_padding = 0
         }
       },
-      lualine_z = {
-        { 'location', separator = '', right_padding = 0 },
-        edge('right')
-      }
+      lualine_z = edgify({ 'location' }, 'right')
     },
     inactive_sections = {
-      lualine_c = {
-        edge('left', { color = { fg = colors.base1, bg = colors.base0 } }),
-        { 'filename', left_padding = 0 }
-      },
-      lualine_x = {
-        { 'location', right_padding = 0 },
-        edge('right', { color = { fg = colors.base1, bg = colors.base0 } })
-      }
+      lualine_c = edgify(
+        { 'filename' }, 'left',
+          { color = { fg = colors.base1, bg = colors.base0 } }
+      ),
+      lualine_x = edgify(
+        { 'location' }, 'right',
+          { color = { fg = colors.base1, bg = colors.base0 } }
+      )
     },
-    extensions = { 'fzf', 'nvim-tree', 'quickfix', 'fugitive' }
+    extensions = { 'nvim-tree', 'quickfix' }
   }
 )
