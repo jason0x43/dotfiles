@@ -1,38 +1,4 @@
-local g = vim.g
-
-local colors = {
-  -- the color names are based on base16_ashes
-  base0 = '#' .. g.base16_gui00, -- black
-  base1 = '#' .. g.base16_gui01, -- darker gray
-  base2 = '#' .. g.base16_gui02, -- dark gray
-  base3 = '#' .. g.base16_gui03, -- gray
-  base4 = '#' .. g.base16_gui04, -- light gray
-  base5 = '#' .. g.base16_gui05, -- lighter gray
-  base6 = '#' .. g.base16_gui06, -- lightest gray
-  base7 = '#' .. g.base16_gui07, -- white
-  base8 = '#' .. g.base16_gui08, -- orange
-  base9 = '#' .. g.base16_gui09, -- yellow
-  baseA = '#' .. g.base16_gui0A, -- green
-  baseB = '#' .. g.base16_gui0B, -- teal
-  baseC = '#' .. g.base16_gui0C, -- blue
-  baseD = '#' .. g.base16_gui0D, -- purple
-  baseE = '#' .. g.base16_gui0E, -- red
-  baseF = '#' .. g.base16_gui0F, -- brown
-}
-
-local base16_theme = {
-  normal = {
-    a = { fg = colors.base0, bg = colors.baseC, gui = 'bold' },
-    b = { fg = colors.base0, bg = colors.base2 },
-    c = { fg = colors.base4, bg = colors.base1 },
-  },
-  insert = { a = { fg = colors.base0, bg = colors.baseA, gui = 'bold' } },
-  visual = { a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' } },
-  replace = { a = { fg = colors.base0, bg = colors.baseE, gui = 'bold' } },
-  inactive = {
-    a = { fg = colors.base0, bg = colors.base2 },
-  },
-}
+local c = require('config.theme').get_colors()
 
 local function language_servers()
   local clients = vim.lsp.buf_get_clients()
@@ -119,12 +85,12 @@ tree.sections.lualine_x = edgify({
     return ' '
   end,
 }, 'right', {
-  color = { fg = colors.base1, bg = colors.base0 },
+  color = { fg = c('bg_status'), bg = c('bg') },
 })
 
 require('lualine').setup({
   options = {
-    theme = base16_theme,
+    theme = 'base16',
     section_separators = { ' ', ' ' },
     component_separators = { '│', '│' },
   },
@@ -136,7 +102,7 @@ require('lualine').setup({
         filetype_icon,
         separator = '',
         left_padding = 0,
-        color = { fg = colors.baseC },
+        color = { fg = c('blue') },
       },
       { 'filename', path = 1, left_padding = 0 },
     },
@@ -146,7 +112,7 @@ require('lualine').setup({
       {
         'lsp_progress',
         display_components = { 'spinner' },
-        colors = { spinner = colors.baseC },
+        colors = { spinner = c('blue') },
         spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
         timer = { spinner = 250 },
         left_padding = 1,
@@ -159,12 +125,12 @@ require('lualine').setup({
     lualine_c = edgify(
       { 'filename' },
       'left',
-      { color = { fg = colors.base1, bg = colors.base0 } }
+      { color = { fg = c('bg_status'), bg = c('bg') } }
     ),
     lualine_x = edgify(
       { 'location' },
       'right',
-      { color = { fg = colors.base1, bg = colors.base0 } }
+      { color = { fg = c('bg_status'), bg = c('bg') } }
     ),
   },
   extensions = { 'nvim-tree', 'quickfix' },

@@ -161,19 +161,43 @@ end
 
 -- define a syntax highlight group
 function exports.hi(group, props)
-  local props_list = {}
-  for k, v in pairs(props) do
-    -- replace an empty value with NONE
-    local val = v == '' and 'NONE' or v
+  if type(group) == 'table' then
+    for k, v in pairs(group) do
+      exports.hi(k, v)
+    end
+  else
+    local props_list = {}
+    for k, v in pairs(props) do
+      -- replace an empty value with NONE
+      local val = v == '' and 'NONE' or v
 
-    -- if gui{fg,bg,sp} don't start with a '#', prepend it
-    if k:find('gui%a') and v:sub(1, 1) ~= '#' then
-      val = '#' .. val
+      if k == 'sp' then
+        k = 'guisp'
+      elseif k == 'style' then
+        k = 'gui'
+      elseif k == 'fg' then
+        k = 'guifg'
+      elseif k == 'bg' then
+        k = 'guibg'
+      end
+
+      -- if gui{fg,bg,sp} don't start with a '#', prepend it
+      if
+        (k:find('gui%a') or k:find('^fg') or k:find('^bg'))
+        and v:sub(1, 1) ~= '#'
+      then
+        val = '#' .. val
+      end
+
+      table.insert(props_list, k .. '=' .. val)
     end
 
-    table.insert(props_list, k .. '=' .. val)
+    if vim.tbl_isempty(props_list) then
+      error('Empty props for highlight group ' .. group)
+    end
+
+    vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
   end
-  vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
 end
 
 -- extend a table

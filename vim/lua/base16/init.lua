@@ -1,542 +1,389 @@
 local util = require('util')
-local g = vim.g
+local exports = {}
 
-local function hi(group, guifg, guibg, ctermfg, ctermbg, attr, guisp)
+local function hi(group, fg, bg, attr, sp)
   util.hi(group, {
-    guifg = guifg,
-    guibg = guibg,
-    ctermfg = ctermfg,
-    ctermbg = ctermbg,
+    guifg = fg,
+    guibg = bg,
     gui = attr,
     cterm = attr,
-    guisp = guisp,
+    guisp = sp,
   })
 end
 
 -- Modified from https://github.com/chriskempson/base16-vim
-local function apply_theme(theme_name)
+function exports.apply_theme(theme_name)
+  assert(theme_name ~= nil, 'Theme name must not be nil')
+
   local theme = require('base16.themes')[theme_name]
+  local colors = {}
 
-  -- Terminal color definitions
-  local cterm00 = '00'
-  local cterm03 = '08'
-  local cterm05 = '07'
-  local cterm07 = '15'
-  local cterm08 = '01'
-  local cterm0A = '03'
-  local cterm0B = '02'
-  local cterm0C = '06'
-  local cterm0D = '04'
-  local cterm0E = '05'
+  colors.gui00 = theme.base00
+  colors.gui01 = theme.base01
+  colors.gui02 = theme.base02
+  colors.gui03 = theme.base03
+  colors.gui04 = theme.base04
+  colors.gui05 = theme.base05
+  colors.gui06 = theme.base06
+  colors.gui07 = theme.base07
+  colors.gui08 = theme.base08
+  colors.gui09 = theme.base09
+  colors.gui0A = theme.base0A
+  colors.gui0B = theme.base0B
+  colors.gui0C = theme.base0C
+  colors.gui0D = theme.base0D
+  colors.gui0E = theme.base0E
+  colors.gui0F = theme.base0F
 
-  local cterm01
-  local cterm02
-  local cterm04
-  local cterm06
-  local cterm09
-  local cterm0F
-
-  if g.use_256_colorspace then
-    cterm01 = '18'
-    cterm02 = '19'
-    cterm04 = '20'
-    cterm06 = '21'
-    cterm09 = '16'
-    cterm0F = '17'
-  else
-    cterm01 = '10'
-    cterm02 = '11'
-    cterm04 = '12'
-    cterm06 = '13'
-    cterm09 = '09'
-    cterm0F = '14'
-  end
-
-  g.base16_gui00 = theme.base00
-  g.base16_gui01 = theme.base01
-  g.base16_gui02 = theme.base02
-  g.base16_gui03 = theme.base03
-  g.base16_gui04 = theme.base04
-  g.base16_gui05 = theme.base05
-  g.base16_gui06 = theme.base06
-  g.base16_gui07 = theme.base07
-  g.base16_gui08 = theme.base08
-  g.base16_gui09 = theme.base09
-  g.base16_gui0A = theme.base0A
-  g.base16_gui0B = theme.base0B
-  g.base16_gui0C = theme.base0C
-  g.base16_gui0D = theme.base0D
-  g.base16_gui0E = theme.base0E
-  g.base16_gui0F = theme.base0F
-
-  g.base16_cterm00 = cterm00
-  g.base16_cterm01 = cterm01
-  g.base16_cterm02 = cterm02
-  g.base16_cterm03 = cterm03
-  g.base16_cterm04 = cterm04
-  g.base16_cterm05 = cterm05
-  g.base16_cterm06 = cterm06
-  g.base16_cterm07 = cterm07
-  g.base16_cterm08 = cterm08
-  g.base16_cterm09 = cterm09
-  g.base16_cterm0A = cterm0A
-  g.base16_cterm0B = cterm0B
-  g.base16_cterm0C = cterm0C
-  g.base16_cterm0D = cterm0D
-  g.base16_cterm0E = cterm0E
-  g.base16_cterm0F = cterm0F
+  colors.error_fg = theme.base08
+  colors.error_cfg = colors.cterm08
+  colors.info_fg = theme.base0D
+  colors.info_cfg = colors.cterm0D
+  colors.warning_fg = theme.base0A
+  colors.warning_cfg = colors.cterm0A
+  colors.hint_fg = theme.base03
+  colors.hint_cfg = colors.cterm03
+  colors.sign_bg = theme.base01
+  colors.sign_cbg = colors.cterm01
 
   -- standard colors
-  local error_fg = theme.base08
-  local error_cfg = cterm08
-  local info_fg = theme.base0D
-  local info_cfg = cterm0D
-  local warning_fg = theme.base0A
-  local warning_cfg = cterm0A
-  local hint_fg = theme.base03
-  local hint_cfg = cterm03
-  local sign_bg = theme.base01
-  local sign_cbg = cterm01
-
   -- Vim editor colors
-  hi('Normal', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('NormalFloat', nil, theme.base01, nil, nil, nil, nil)
-  hi('Bold', nil, nil, nil, nil, 'bold', nil)
-  hi('Debug', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('Directory', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('Error', error_fg, nil, error_cfg, nil, nil, nil)
-  hi('ErrorMsg', error_fg, theme.base00, error_cfg, cterm00, nil, nil)
-  hi('Exception', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('FloatBorder', theme.base02, theme.base01, cterm02, cterm01, nil, nil)
-  hi('FoldColumn', theme.base0C, theme.base01, cterm0C, cterm01, nil, nil)
-  hi('Folded', theme.base03, theme.base01, cterm03, cterm01, nil, nil)
-  hi('IncSearch', theme.base00, theme.base0D, cterm00, cterm0D, 'none', nil)
-  hi('Italic', nil, nil, nil, nil, 'none', nil)
-  hi('Macro', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('MatchParen', nil, theme.base01, nil, cterm01, nil, nil)
-  hi('MatchParenCur', nil, theme.base01, nil, cterm01, nil, nil)
-  hi('ModeMsg', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('MoreMsg', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('Question', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('Search', theme.base00, theme.base0D, cterm00, cterm0D, nil, nil)
-  hi('Substitute', theme.base01, theme.base0A, cterm01, cterm0A, 'none', nil)
-  hi('SpecialKey', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('TooLong', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('Underlined', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('Visual', theme.base00, theme.base02, cterm00, cterm02, nil, nil)
-  hi('VisualNOS', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('WarningMsg', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('WildMenu', theme.base08, theme.base0A, cterm08, nil, nil, nil)
-  hi('Title', theme.base0D, nil, cterm0D, nil, 'none', nil)
-  hi('Conceal', theme.base0D, theme.base00, cterm0D, cterm00, nil, nil)
-  hi('Cursor', theme.base00, theme.base08, cterm00, cterm05, nil, nil)
-  hi('NonText', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('LineNr', theme.base03, theme.base01, cterm03, cterm01, nil, nil)
-  hi('SignColumn', theme.base03, theme.base01, cterm03, cterm01, nil, nil)
-  hi('StatusLine', theme.base04, theme.base02, cterm04, cterm02, 'none', nil)
-  hi('StatusLineNC', theme.base03, theme.base01, cterm03, cterm01, 'none', nil)
-  hi('VertSplit', theme.base02, theme.base02, cterm02, cterm02, 'none', nil)
-  hi('ColorColumn', nil, theme.base01, nil, cterm01, 'none', nil)
-  hi('CursorColumn', nil, theme.base01, nil, cterm01, 'none', nil)
-  hi('CursorLine', nil, theme.base01, nil, cterm01, 'none', nil)
-  hi('CursorLineNr', theme.base04, theme.base01, cterm04, cterm01, nil, nil)
-  hi('QuickFixLine', nil, theme.base01, nil, cterm01, 'none', nil)
-  hi('PMenu', theme.base05, theme.base01, cterm05, cterm01, 'none', nil)
-  hi('PMenuSel', theme.base01, theme.base05, cterm01, cterm05, nil, nil)
-  hi('TabLine', theme.base03, theme.base01, cterm03, cterm01, 'none', nil)
-  hi('TabLineFill', theme.base03, theme.base01, cterm03, cterm01, 'none', nil)
-  hi('TabLineSel', theme.base0B, theme.base01, cterm0B, cterm01, 'none', nil)
+  hi('Normal', colors.gui05, nil, nil, nil)
+  hi('NormalFloat', nil, colors.gui01, nil, nil)
+  hi('Bold', nil, nil, 'bold', nil)
+  hi('Debug', colors.gui08, nil, nil, nil)
+  hi('Directory', colors.gui0D, nil, nil, nil)
+  hi('Error', colors.error_fg, nil, nil, nil)
+  hi('ErrorMsg', colors.error_fg, colors.gui00, nil, nil)
+  hi('Exception', colors.gui08, nil, nil, nil)
+  hi('FloatBorder', colors.gui02, colors.gui01, nil, nil)
+  hi('FoldColumn', colors.gui0C, colors.gui01, nil, nil)
+  hi('Folded', colors.gui03, colors.gui01, nil, nil)
+  hi('IncSearch', colors.gui00, colors.gui0D, 'none', nil)
+  hi('Italic', nil, nil, 'none', nil)
+  hi('Macro', colors.gui08, nil, nil, nil)
+  hi('MatchParen', nil, colors.gui01, nil, nil)
+  hi('MatchParenCur', nil, colors.gui01, nil, nil)
+  hi('ModeMsg', colors.gui0B, nil, nil, nil)
+  hi('MoreMsg', colors.gui0B, nil, nil, nil)
+  hi('Question', colors.gui0D, nil, nil, nil)
+  hi('Search', colors.gui00, colors.gui0D, nil, nil)
+  hi('Substitute', colors.gui01, colors.gui0A, 'none', nil)
+  hi('SpecialKey', colors.gui03, nil, nil, nil)
+  hi('TooLong', colors.gui08, nil, nil, nil)
+  hi('Underlined', colors.gui08, nil, nil, nil)
+  hi('Visual', colors.gui00, colors.gui02, nil, nil)
+  hi('VisualNOS', colors.gui08, nil, nil, nil)
+  hi('WarningMsg', colors.gui08, nil, nil, nil)
+  hi('WildMenu', colors.gui08, colors.gui0A, nil, nil)
+  hi('Title', colors.gui0D, nil, 'none', nil)
+  hi('Conceal', colors.gui0D, colors.gui00, nil, nil)
+  hi('Cursor', colors.gui00, colors.gui08, nil, nil)
+  hi('NonText', colors.gui03, nil, nil, nil)
+  hi('LineNr', colors.gui03, colors.gui01, nil, nil)
+  hi('SignColumn', colors.gui03, colors.gui01, nil, nil)
+  hi('StatusLine', colors.gui04, colors.gui02, 'none', nil)
+  hi('StatusLineNC', colors.gui03, colors.gui01, 'none', nil)
+  hi('VertSplit', colors.gui02, colors.gui02, 'none', nil)
+  hi('ColorColumn', nil, colors.gui01, 'none', nil)
+  hi('CursorColumn', nil, colors.gui01, 'none', nil)
+  hi('CursorLine', nil, colors.gui01, 'none', nil)
+  hi('CursorLineNr', colors.gui04, colors.gui01, nil, nil)
+  hi('QuickFixLine', nil, colors.gui01, 'none', nil)
+  hi('PMenu', colors.gui05, colors.gui01, 'none', nil)
+  hi('PMenuSel', colors.gui01, colors.gui05, nil, nil)
+  hi('TabLine', colors.gui03, colors.gui01, 'none', nil)
+  hi('TabLineFill', colors.gui03, colors.gui01, 'none', nil)
+  hi('TabLineSel', colors.gui0B, colors.gui01, 'none', nil)
 
   -- Standard syntax highlighting
-  hi('Boolean', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('Character', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('Comment', theme.base03, nil, cterm03, nil, 'italic', nil)
-  hi('Conditional', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('Constant', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('Define', theme.base0E, nil, cterm0E, nil, 'none', nil)
-  hi('Delimiter', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('Float', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('Function', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('Identifier', theme.base08, nil, cterm08, nil, 'none', nil)
-  hi('Include', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('Keyword', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('Label', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('Number', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('Operator', theme.base05, nil, cterm05, nil, 'none', nil)
-  hi('PreProc', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('Repeat', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('Special', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('SpecialChar', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('Statement', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('StorageClass', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('String', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('Structure', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('Tag', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('Todo', theme.base0A, theme.base01, cterm0A, cterm01, nil, nil)
-  hi('Type', theme.base0A, nil, cterm0A, nil, 'none', nil)
-  hi('Typedef', theme.base0A, nil, cterm0A, nil, nil, nil)
+  hi('Boolean', colors.gui09, nil, nil, nil)
+  hi('Character', colors.gui08, nil, nil, nil)
+  hi('Comment', colors.gui03, nil, 'italic', nil)
+  hi('Conditional', colors.gui0E, nil, nil, nil)
+  hi('Constant', colors.gui09, nil, nil, nil)
+  hi('Define', colors.gui0E, nil, 'none', nil)
+  hi('Delimiter', colors.gui0F, nil, nil, nil)
+  hi('Float', colors.gui09, nil, nil, nil)
+  hi('Function', colors.gui0D, nil, nil, nil)
+  hi('Identifier', colors.gui08, nil, 'none', nil)
+  hi('Include', colors.gui0D, nil, nil, nil)
+  hi('Keyword', colors.gui0E, nil, nil, nil)
+  hi('Label', colors.gui0A, nil, nil, nil)
+  hi('Number', colors.gui09, nil, nil, nil)
+  hi('Operator', colors.gui05, nil, 'none', nil)
+  hi('PreProc', colors.gui0A, nil, nil, nil)
+  hi('Repeat', colors.gui0A, nil, nil, nil)
+  hi('Special', colors.gui0C, nil, nil, nil)
+  hi('SpecialChar', colors.gui0F, nil, nil, nil)
+  hi('Statement', colors.gui08, nil, nil, nil)
+  hi('StorageClass', colors.gui0A, nil, nil, nil)
+  hi('String', colors.gui0B, nil, nil, nil)
+  hi('Structure', colors.gui0E, nil, nil, nil)
+  hi('Tag', colors.gui0A, nil, nil, nil)
+  hi('Todo', colors.gui0A, colors.gui01, nil, nil)
+  hi('Type', colors.gui0A, nil, 'none', nil)
+  hi('Typedef', colors.gui0A, nil, nil, nil)
 
   ---
   -- Extra definitions
   ---
 
   -- C highlighting
-  hi('cOperator', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('cPreCondit', theme.base0E, nil, cterm0E, nil, nil, nil)
+  hi('cOperator', colors.gui0C, nil, nil, nil)
+  hi('cPreCondit', colors.gui0E, nil, nil, nil)
 
   -- C# highlighting
-  hi('csClass', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('csAttribute', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('csModifier', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('csType', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('csUnspecifiedStatement', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('csContextualStatement', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('csNewDecleration', theme.base08, nil, cterm08, nil, nil, nil)
+  hi('csClass', colors.gui0A, nil, nil, nil)
+  hi('csAttribute', colors.gui0A, nil, nil, nil)
+  hi('csModifier', colors.gui0E, nil, nil, nil)
+  hi('csType', colors.gui08, nil, nil, nil)
+  hi('csUnspecifiedStatement', colors.gui0D, nil, nil, nil)
+  hi('csContextualStatement', colors.gui0E, nil, nil, nil)
+  hi('csNewDecleration', colors.gui08, nil, nil, nil)
 
   -- CSS highlighting
-  hi('cssBraces', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('cssClassName', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('cssColor', theme.base0C, nil, cterm0C, nil, nil, nil)
+  hi('cssBraces', colors.gui05, nil, nil, nil)
+  hi('cssClassName', colors.gui0E, nil, nil, nil)
+  hi('cssColor', colors.gui0C, nil, nil, nil)
 
   -- Diff highlighting
-  hi('DiffAdd', theme.base0B, theme.base01, cterm0B, cterm01, nil, nil)
-  hi('DiffChange', theme.base03, theme.base01, cterm03, cterm01, nil, nil)
-  hi('DiffDelete', theme.base08, theme.base01, cterm08, cterm01, nil, nil)
-  hi('DiffText', theme.base0D, theme.base01, cterm0D, cterm01, nil, nil)
-  hi('DiffAdded', theme.base0B, nil, cterm0B, cterm00, nil, nil)
-  hi('DiffFile', theme.base08, nil, cterm08, cterm00, nil, nil)
-  hi('DiffNewFile', theme.base0B, nil, cterm0B, cterm00, nil, nil)
-  hi('DiffLine', theme.base0D, nil, cterm0D, cterm00, nil, nil)
-  hi('DiffRemoved', theme.base08, nil, cterm08, cterm00, nil, nil)
+  hi('DiffAdd', colors.gui0B, colors.gui01, nil, nil)
+  hi('DiffChange', colors.gui03, colors.gui01, nil, nil)
+  hi('DiffDelete', colors.gui08, colors.gui01, nil, nil)
+  hi('DiffText', colors.gui0D, colors.gui01, nil, nil)
+  hi('DiffAdded', colors.gui0B, nil, nil, nil)
+  hi('DiffFile', colors.gui08, nil, nil, nil)
+  hi('DiffNewFile', colors.gui0B, nil, nil, nil)
+  hi('DiffLine', colors.gui0D, nil, nil, nil)
+  hi('DiffRemoved', colors.gui08, nil, nil, nil)
 
   -- Git highlighting
-  hi('gitcommitOverflow', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('gitcommitSummary', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('gitcommitComment', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('gitcommitUntracked', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('gitcommitDiscarded', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('gitcommitSelected', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('gitcommitHeader', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('gitcommitSelectedType', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('gitcommitUnmergedType', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('gitcommitDiscardedType', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('gitcommitBranch', theme.base09, nil, cterm09, nil, 'bold', nil)
-  hi('gitcommitUntrackedFile', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('gitcommitUnmergedFile', theme.base08, nil, cterm08, nil, 'bold', nil)
-  hi('gitcommitDiscardedFile', theme.base08, nil, cterm08, nil, 'bold', nil)
-  hi('gitcommitSelectedFile', theme.base0B, nil, cterm0B, nil, 'bold', nil)
+  hi('gitcommitOverflow', colors.gui08, nil, nil, nil)
+  hi('gitcommitSummary', colors.gui0B, nil, nil, nil)
+  hi('gitcommitComment', colors.gui03, nil, nil, nil)
+  hi('gitcommitUntracked', colors.gui03, nil, nil, nil)
+  hi('gitcommitDiscarded', colors.gui03, nil, nil, nil)
+  hi('gitcommitSelected', colors.gui03, nil, nil, nil)
+  hi('gitcommitHeader', colors.gui0E, nil, nil, nil)
+  hi('gitcommitSelectedType', colors.gui0D, nil, nil, nil)
+  hi('gitcommitUnmergedType', colors.gui0D, nil, nil, nil)
+  hi('gitcommitDiscardedType', colors.gui0D, nil, nil, nil)
+  hi('gitcommitBranch', colors.gui09, nil, 'bold', nil)
+  hi('gitcommitUntrackedFile', colors.gui0A, nil, nil, nil)
+  hi('gitcommitUnmergedFile', colors.gui08, nil, 'bold', nil)
+  hi('gitcommitDiscardedFile', colors.gui08, nil, 'bold', nil)
+  hi('gitcommitSelectedFile', colors.gui0B, nil, 'bold', nil)
 
   -- GitGutter highlighting
-  hi('GitGutterAdd', theme.base0B, theme.base01, cterm0B, cterm01, nil, nil)
-  hi('GitGutterChange', theme.base0D, theme.base01, cterm0D, cterm01, nil, nil)
-  hi('GitGutterDelete', theme.base08, theme.base01, cterm08, cterm01, nil, nil)
-  hi(
-    'GitGutterChangeDelete',
-    theme.base0E,
-    theme.base01,
-    cterm0E,
-    cterm01,
-    nil,
-    nil
-  )
+  hi('GitGutterAdd', colors.gui0B, colors.gui01, nil, nil)
+  hi('GitGutterChange', colors.gui0D, colors.gui01, nil, nil)
+  hi('GitGutterDelete', colors.gui08, colors.gui01, nil, nil)
+  hi('GitGutterChangeDelete', colors.gui0E, colors.gui01, nil, nil)
 
   -- HTML highlighting
-  hi('htmlBold', nil, nil, nil, nil, 'bold', nil)
-  hi('htmlItalic', nil, nil, nil, nil, 'italic', nil)
-  hi('htmlBoldItalic', nil, nil, nil, nil, 'bold,italic', nil)
-  hi('htmlEndTag', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('htmlTag', theme.base05, nil, cterm05, nil, nil, nil)
+  hi('htmlBold', nil, nil, 'bold', nil)
+  hi('htmlItalic', nil, nil, 'italic', nil)
+  hi('htmlBoldItalic', nil, nil, 'bold,italic', nil)
+  hi('htmlEndTag', colors.gui05, nil, nil, nil)
+  hi('htmlTag', colors.gui05, nil, nil, nil)
 
   -- JavaScript highlighting
-  hi('javaScript', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('javaScriptBraces', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('javaScriptNumber', theme.base09, nil, cterm09, nil, nil, nil)
+  hi('javaScript', colors.gui05, nil, nil, nil)
+  hi('javaScriptBraces', colors.gui05, nil, nil, nil)
+  hi('javaScriptNumber', colors.gui09, nil, nil, nil)
   -- pangloss/vim-javascript highlighting
-  hi('jsOperator', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('jsStatement', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('jsReturn', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('jsThis', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('jsClassDefinition', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('jsFunction', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('jsFuncName', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('jsFuncCall', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('jsClassFuncName', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('jsClassMethodType', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('jsRegexpString', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('jsGlobalObjects', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('jsGlobalNodeObjects', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('jsExceptions', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('jsBuiltins', theme.base0A, nil, cterm0A, nil, nil, nil)
+  hi('jsOperator', colors.gui0D, nil, nil, nil)
+  hi('jsStatement', colors.gui0E, nil, nil, nil)
+  hi('jsReturn', colors.gui0E, nil, nil, nil)
+  hi('jsThis', colors.gui08, nil, nil, nil)
+  hi('jsClassDefinition', colors.gui0A, nil, nil, nil)
+  hi('jsFunction', colors.gui0E, nil, nil, nil)
+  hi('jsFuncName', colors.gui0D, nil, nil, nil)
+  hi('jsFuncCall', colors.gui0D, nil, nil, nil)
+  hi('jsClassFuncName', colors.gui0D, nil, nil, nil)
+  hi('jsClassMethodType', colors.gui0E, nil, nil, nil)
+  hi('jsRegexpString', colors.gui0C, nil, nil, nil)
+  hi('jsGlobalObjects', colors.gui0A, nil, nil, nil)
+  hi('jsGlobalNodeObjects', colors.gui0A, nil, nil, nil)
+  hi('jsExceptions', colors.gui0A, nil, nil, nil)
+  hi('jsBuiltins', colors.gui0A, nil, nil, nil)
 
   -- Mail highlighting
-  hi('mailQuoted1', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('mailQuoted2', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('mailQuoted3', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('mailQuoted4', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('mailQuoted5', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('mailQuoted6', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('mailURL', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('mailEmail', theme.base0D, nil, cterm0D, nil, nil, nil)
+  hi('mailQuoted1', colors.gui0A, nil, nil, nil)
+  hi('mailQuoted2', colors.gui0B, nil, nil, nil)
+  hi('mailQuoted3', colors.gui0E, nil, nil, nil)
+  hi('mailQuoted4', colors.gui0C, nil, nil, nil)
+  hi('mailQuoted5', colors.gui0D, nil, nil, nil)
+  hi('mailQuoted6', colors.gui0A, nil, nil, nil)
+  hi('mailURL', colors.gui0D, nil, nil, nil)
+  hi('mailEmail', colors.gui0D, nil, nil, nil)
 
   -- Markdown highlighting
-  hi('markdownCode', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('markdownError', error_fg, theme.base00, cterm05, cterm00, nil, nil)
-  hi('markdownCodeBlock', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('markdownHeadingDelimiter', theme.base0D, nil, cterm0D, nil, nil, nil)
+  hi('markdownCode', colors.gui0B, nil, nil, nil)
+  hi('markdownError', colors.error_fg, colors.gui00, nil, nil)
+  hi('markdownCodeBlock', colors.gui0B, nil, nil, nil)
+  hi('markdownHeadingDelimiter', colors.gui0D, nil, nil, nil)
 
   -- NERDTree highlighting
-  hi('NERDTreeDirSlash', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('NERDTreeExecFile', theme.base05, nil, cterm05, nil, nil, nil)
+  hi('NERDTreeDirSlash', colors.gui0D, nil, nil, nil)
+  hi('NERDTreeExecFile', colors.gui05, nil, nil, nil)
 
   -- PHP highlighting
-  hi('phpMemberSelector', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('phpComparison', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('phpParent', theme.base05, nil, cterm05, nil, nil, nil)
-  hi('phpMethodsVar', theme.base0C, nil, cterm0C, nil, nil, nil)
+  hi('phpMemberSelector', colors.gui05, nil, nil, nil)
+  hi('phpComparison', colors.gui05, nil, nil, nil)
+  hi('phpParent', colors.gui05, nil, nil, nil)
+  hi('phpMethodsVar', colors.gui0C, nil, nil, nil)
 
   -- Python highlighting
-  hi('pythonOperator', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('pythonRepeat', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('pythonInclude', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('pythonStatement', theme.base0E, nil, cterm0E, nil, nil, nil)
+  hi('pythonOperator', colors.gui0E, nil, nil, nil)
+  hi('pythonRepeat', colors.gui0E, nil, nil, nil)
+  hi('pythonInclude', colors.gui0E, nil, nil, nil)
+  hi('pythonStatement', colors.gui0E, nil, nil, nil)
 
   -- Ruby highlighting
-  hi('rubyAttribute', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('rubyConstant', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('rubyInterpolationDelimiter', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('rubyRegexp', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('rubySymbol', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('rubyStringDelimiter', theme.base0B, nil, cterm0B, nil, nil, nil)
+  hi('rubyAttribute', colors.gui0D, nil, nil, nil)
+  hi('rubyConstant', colors.gui0A, nil, nil, nil)
+  hi('rubyInterpolationDelimiter', colors.gui0F, nil, nil, nil)
+  hi('rubyRegexp', colors.gui0C, nil, nil, nil)
+  hi('rubySymbol', colors.gui0B, nil, nil, nil)
+  hi('rubyStringDelimiter', colors.gui0B, nil, nil, nil)
 
   -- SASS highlighting
-  hi('sassidChar', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('sassClassChar', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('sassInclude', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('sassMixing', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('sassMixinName', theme.base0D, nil, cterm0D, nil, nil, nil)
+  hi('sassidChar', colors.gui08, nil, nil, nil)
+  hi('sassClassChar', colors.gui09, nil, nil, nil)
+  hi('sassInclude', colors.gui0E, nil, nil, nil)
+  hi('sassMixing', colors.gui0E, nil, nil, nil)
+  hi('sassMixinName', colors.gui0D, nil, nil, nil)
 
   -- Signify highlighting
-  hi('SignifySignAdd', theme.base0B, theme.base01, cterm0B, cterm01, nil, nil)
-  hi(
-    'SignifySignChange',
-    theme.base0D,
-    theme.base01,
-    cterm0D,
-    cterm01,
-    nil,
-    nil
-  )
-  hi(
-    'SignifySignDelete',
-    theme.base08,
-    theme.base01,
-    cterm08,
-    cterm01,
-    nil,
-    nil
-  )
+  hi('SignifySignAdd', colors.gui0B, colors.gui01, nil, nil)
+  hi('SignifySignChange', colors.gui0D, colors.gui01, nil, nil)
+  hi('SignifySignDelete', colors.gui08, colors.gui01, nil, nil)
 
   -- Spelling highlighting
-  hi('SpellBad', nil, nil, nil, nil, 'undercurl', theme.base08)
-  hi('SpellLocal', nil, nil, nil, nil, 'undercurl', theme.base0C)
-  hi('SpellCap', nil, nil, nil, nil, 'undercurl', theme.base0D)
-  hi('SpellRare', nil, nil, nil, nil, 'undercurl', theme.base0E)
+  hi('SpellBad', nil, nil, 'undercurl', colors.gui08)
+  hi('SpellLocal', nil, nil, 'undercurl', colors.gui0C)
+  hi('SpellCap', nil, nil, 'undercurl', colors.gui0D)
+  hi('SpellRare', nil, nil, 'undercurl', colors.gui0E)
 
   -- Startify highlighting
-  hi('StartifyBracket', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('StartifyFile', theme.base07, nil, cterm07, nil, nil, nil)
-  hi('StartifyFooter', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('StartifyHeader', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('StartifyNumber', theme.base09, nil, cterm09, nil, nil, nil)
-  hi('StartifyPath', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('StartifySection', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('StartifySelect', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('StartifySlash', theme.base03, nil, cterm03, nil, nil, nil)
-  hi('StartifySpecial', theme.base03, nil, cterm03, nil, nil, nil)
+  hi('StartifyBracket', colors.gui03, nil, nil, nil)
+  hi('StartifyFile', colors.gui07, nil, nil, nil)
+  hi('StartifyFooter', colors.gui03, nil, nil, nil)
+  hi('StartifyHeader', colors.gui0B, nil, nil, nil)
+  hi('StartifyNumber', colors.gui09, nil, nil, nil)
+  hi('StartifyPath', colors.gui03, nil, nil, nil)
+  hi('StartifySection', colors.gui0E, nil, nil, nil)
+  hi('StartifySelect', colors.gui0C, nil, nil, nil)
+  hi('StartifySlash', colors.gui03, nil, nil, nil)
+  hi('StartifySpecial', colors.gui03, nil, nil, nil)
 
   -- Java highlighting
-  hi('javaOperator', theme.base0D, nil, cterm0D, nil, nil, nil)
+  hi('javaOperator', colors.gui0D, nil, nil, nil)
 
   -- Treesitter
-  hi('TSNone', theme.base05, theme.base00, cterm05, cterm00, nil, nil)
-  hi('TSPunctDelimiter', theme.base07, nil, cterm07, nil, nil, nil)
-  hi('TSPunctBracket', theme.base07, nil, cterm07, nil, nil, nil)
-  hi('TSPunctSpecial', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('TSConstant', theme.base09, nil, cterm0B, nil, 'bold', nil)
-  hi('TSConstBuiltin', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('TSConstMacro', theme.base0E, nil, cterm0E, nil, 'none', nil)
-  hi('TSString', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('TSStringRegex', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('TSStringEscape', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('TSCharacter', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('TSNumber', theme.bae0B, nil, cterm0B, nil, nil, nil)
-  hi('TSBoolean', theme.base0B, nil, cterm0B, nil, 'bold', nil)
-  hi('TSFloat', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('TSFunction', theme.base0D, nil, cterm0D, nil, 'bold', nil)
-  hi('TSFuncBuiltin', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('TSFuncMacro', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('TSParameter', theme.base08, nil, cterm08, nil, 'none', nil)
-  hi('TSParameterReference', theme.base08, nil, cterm08, nil, 'none', nil)
-  hi('TSMethod', theme.base0D, nil, cterm0D, nil, 'bold', nil)
-  hi('TSField', theme.base0A, nil, cterm0A, nil, 'none', nil)
-  hi('TSProperty', theme.base08, nil, cterm08, nil, 'none', nil)
-  hi('TSConstructor', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('TSAnnotation', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('TSAttribute', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('TSNamespace', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('TSConditional', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('TSRepeat', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('TSLabel', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('TSOperator', theme.base07, nil, cterm07, nil, 'none', nil)
-  hi('TSKeyword', theme.base0E, nil, cterm0E, nil, nil, nil)
-  hi('TSKeywordFunction', theme.base0E, nil, cterm0E, nil, 'bold', nil)
-  hi('TSKeywordOperator', theme.base05, nil, cterm05, nil, 'none', nil)
-  hi('TSException', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('TSType', theme.base0A, nil, cterm0A, nil, 'bold', nil)
-  hi('TSTypeBuiltin', theme.base0A, nil, cterm0A, nil, 'bold', nil)
-  hi('TSInclude', theme.base0D, nil, cterm0D, nil, nil, nil)
-  hi('TSVariableBuiltin', theme.base0C, nil, cterm0C, nil, nil, nil)
-  hi('TSText', theme.base05, theme.base00, cterm05, cterm00, nil, nil)
-  hi('TSStrong', theme.base07, theme.base00, cterm07, cterm00, 'bold', nil)
-  hi('TSEmphasis', theme.base06, theme.base00, cterm06, cterm00, 'italic', nil)
-  hi(
-    'TSUnderline',
-    theme.base05,
-    theme.base00,
-    cterm05,
-    cterm00,
-    'underline',
-    nil
-  )
-  hi('TSTitle', theme.base0D, nil, cterm0D, nil, 'none', nil)
-  hi('TSLiteral', theme.base0B, nil, cterm0B, nil, nil, nil)
-  hi('TSURI', theme.base08, nil, cterm08, nil, nil, nil)
-  hi('TSTag', theme.base0A, nil, cterm0A, nil, nil, nil)
-  hi('TSTagDelimiter', theme.base0F, nil, cterm0F, nil, nil, nil)
-  hi('TSDefinitionUsage', nil, theme.base02, nil, cterm02, nil, nil)
-  hi('TSDefinition', theme.base01, theme.base0A, cterm01, cterm0A, nil, nil)
-  hi('TSCurrentScope', nil, theme.base01, nil, cterm01, 'none', nil)
+  hi('TSNone', colors.gui05, colors.gui00, nil, nil)
+  hi('TSPunctDelimiter', colors.gui07, nil, nil, nil)
+  hi('TSPunctBracket', colors.gui07, nil, nil, nil)
+  hi('TSPunctSpecial', colors.gui0F, nil, nil, nil)
+  hi('TSConstant', colors.gui09, nil, 'bold', nil)
+  hi('TSConstBuiltin', colors.gui0C, nil, nil, nil)
+  hi('TSConstMacro', colors.gui0E, nil, 'none', nil)
+  hi('TSString', colors.gui0B, nil, nil, nil)
+  hi('TSStringRegex', colors.gui0B, nil, nil, nil)
+  hi('TSStringEscape', colors.gui0F, nil, nil, nil)
+  hi('TSCharacter', colors.gui08, nil, nil, nil)
+  hi('TSNumber', colors.gui0B, nil, nil, nil)
+  hi('TSBoolean', colors.gui0B, nil, 'bold', nil)
+  hi('TSFloat', colors.gui0B, nil, nil, nil)
+  hi('TSFunction', colors.gui0D, nil, 'bold', nil)
+  hi('TSFuncBuiltin', colors.gui0C, nil, nil, nil)
+  hi('TSFuncMacro', colors.gui08, nil, nil, nil)
+  hi('TSParameter', colors.gui08, nil, 'none', nil)
+  hi('TSParameterReference', colors.gui08, nil, 'none', nil)
+  hi('TSMethod', colors.gui0D, nil, 'bold', nil)
+  hi('TSField', colors.gui0A, nil, 'none', nil)
+  hi('TSProperty', colors.gui08, nil, 'none', nil)
+  hi('TSConstructor', colors.gui0C, nil, nil, nil)
+  hi('TSAnnotation', colors.gui0A, nil, nil, nil)
+  hi('TSAttribute', colors.gui0A, nil, nil, nil)
+  hi('TSNamespace', colors.gui0D, nil, nil, nil)
+  hi('TSConditional', colors.gui0E, nil, nil, nil)
+  hi('TSRepeat', colors.gui0A, nil, nil, nil)
+  hi('TSLabel', colors.gui0A, nil, nil, nil)
+  hi('TSOperator', colors.gui07, nil, 'none', nil)
+  hi('TSKeyword', colors.gui0E, nil, nil, nil)
+  hi('TSKeywordFunction', colors.gui0E, nil, 'bold', nil)
+  hi('TSKeywordOperator', colors.gui05, nil, 'none', nil)
+  hi('TSException', colors.gui08, nil, nil, nil)
+  hi('TSType', colors.gui0A, nil, 'bold', nil)
+  hi('TSTypeBuiltin', colors.gui0A, nil, 'bold', nil)
+  hi('TSInclude', colors.gui0D, nil, nil, nil)
+  hi('TSVariableBuiltin', colors.gui0C, nil, nil, nil)
+  hi('TSText', colors.gui05, colors.gui00, nil, nil)
+  hi('TSStrong', colors.gui07, colors.gui00, 'bold', nil)
+  hi('TSEmphasis', colors.gui06, colors.gui00, 'italic', nil)
+  hi('TSUnderline', colors.gui05, colors.gui00, 'underline', nil)
+  hi('TSTitle', colors.gui0D, nil, 'none', nil)
+  hi('TSLiteral', colors.gui0B, nil, nil, nil)
+  hi('TSURI', colors.gui08, nil, nil, nil)
+  hi('TSTag', colors.gui0A, nil, nil, nil)
+  hi('TSTagDelimiter', colors.gui0F, nil, nil, nil)
+  hi('TSDefinitionUsage', nil, colors.gui02, nil, nil)
+  hi('TSDefinition', colors.gui01, colors.gui0A, nil, nil)
+  hi('TSCurrentScope', nil, colors.gui01, 'none', nil)
 
   -- LSP
-  hi('LspDiagnosticsDefaultError', error_fg, nil, error_cfg, nil, nil, nil)
-  hi(
-    'LspDiagnosticsSignError',
-    error_fg,
-    sign_bg,
-    error_cfg,
-    sign_cbg,
-    'bold',
-    nil
-  )
-  hi('LspDiagnosticsDefaultHint', hint_fg, nil, hint_cfg, nil, nil, nil)
-  hi(
-    'LspDiagnosticsSignHint',
-    hint_fg,
-    sign_bg,
-    hint_cfg,
-    sign_cbg,
-    'bold',
-    nil
-  )
-  hi('LspDiagnosticsDefaultInformation', info_fg, nil, info_cfg, nil, nil, nil)
+  hi('LspDiagnosticsDefaultError', colors.error_fg, nil, nil, nil)
+  hi('LspDiagnosticsSignError', colors.error_fg, colors.sign_bg, 'bold', nil)
+  hi('LspDiagnosticsDefaultHint', colors.hint_fg, nil, nil, nil)
+  hi('LspDiagnosticsSignHint', colors.hint_fg, colors.sign_bg, 'bold', nil)
+  hi('LspDiagnosticsDefaultInformation', colors.info_fg, nil, nil, nil)
   hi(
     'LspDiagnosticsSignInformation',
-    info_fg,
-    sign_bg,
-    info_cfg,
-    sign_cbg,
+    colors.info_fg,
+    colors.sign_bg,
     'bold',
     nil
   )
-  hi(
-    'LspDiagnosticsDefaultWarning',
-    warning_fg,
-    nil,
-    warning_cfg,
-    nil,
-    nil,
-    nil
-  )
+  hi('LspDiagnosticsDefaultWarning', colors.warning_fg, nil, nil, nil)
   hi(
     'LspDiagnosticsSignWarning',
-    warning_fg,
-    sign_bg,
-    warning_cfg,
-    sign_cbg,
+    colors.warning_fg,
+    colors.sign_bg,
     'bold',
     nil
   )
-  hi('LspDiagnosticsUnderlineError', nil, nil, nil, nil, 'undercurl', error_fg)
+  hi('LspDiagnosticsUnderlineError', nil, nil, 'undercurl', colors.error_fg)
 
   -- status line extra
-  hi('StatusLineOuter', theme.base00, theme.base05, cterm00, cterm05, nil, nil)
-  hi('StatusLineMiddle', theme.base00, theme.base02, cterm00, cterm02, nil, nil)
-  hi('StatusLineInner', theme.base05, theme.base01, cterm06, cterm01, nil, nil)
-  hi(
-    'StatusLineFileInfo',
-    theme.base05,
-    theme.base01,
-    cterm06,
-    cterm01,
-    'bold',
-    nil
-  )
-  hi(
-    'StatusLineInnerSep',
-    theme.base02,
-    theme.base01,
-    cterm02,
-    cterm01,
-    nil,
-    nil
-  )
-  hi(
-    'StatusLineLspDiagnosticsError',
-    error_fg,
-    theme.base01,
-    error_cfg,
-    cterm01,
-    nil,
-    nil
-  )
+  hi('StatusLineOuter', colors.gui00, colors.gui05, nil, nil)
+  hi('StatusLineMiddle', colors.gui00, colors.gui02, nil, nil)
+  hi('StatusLineInner', colors.gui05, colors.gui01, nil, nil)
+  hi('StatusLineFileInfo', colors.gui05, colors.gui01, 'bold', nil)
+  hi('StatusLineInnerSep', colors.gui02, colors.gui01, nil, nil)
+  hi('StatusLineLspDiagnosticsError', colors.error_fg, colors.gui01, nil, nil)
   hi(
     'StatusLineLspDiagnosticsWarning',
-    warning_fg,
-    theme.base01,
-    warning_cfg,
-    cterm01,
+    colors.warning_fg,
+    colors.gui01,
     nil,
     nil
   )
-  hi(
-    'StatusLineLspDiagnosticsHint',
-    hint_fg,
-    theme.base01,
-    hint_cfg,
-    cterm01,
-    nil,
-    nil
-  )
-  hi(
-    'StatusLineTreeSitter',
-    theme.base0B,
-    theme.base01,
-    cterm0B,
-    cterm01,
-    nil,
-    nil
-  )
+  hi('StatusLineLspDiagnosticsHint', colors.hint_fg, colors.gui01, nil, nil)
+  hi('StatusLineTreeSitter', colors.gui0B, colors.gui01, nil, nil)
 
   -- trouble
-  hi('TroubleCount', theme.base0B, nil, cterm0B, nil, 'none', nil)
-  hi('TroubleSignError', error_fg, nil, error_cfg, nil, 'none', nil)
-  hi('TroubleSignWarning', warning_fg, nil, warning_cfg, nil, 'none', nil)
-  hi('TroubleSignInformation', info_fg, nil, info_cfg, nil, 'none', nil)
-  hi('TroubleSignHint', hint_fg, nil, hint_cfg, nil, 'none', nil)
-  hi('TroubleSignOther', theme.base02, nil, cterm02, nil, 'none', nil)
-  hi('TroubleFoldIcon', theme.base02, nil, cterm02, nil, 'none', nil)
-  hi('TroubleIndent', theme.base02, nil, cterm02, nil, 'none', nil)
-  hi('TroubleLocation', theme.base02, nil, cterm02, nil, 'none', nil)
+  hi('TroubleCount', colors.gui0B, nil, 'none', nil)
+  hi('TroubleSignError', colors.error_fg, nil, 'none', nil)
+  hi('TroubleSignWarning', colors.warning_fg, nil, 'none', nil)
+  hi('TroubleSignInformation', colors.info_fg, nil, 'none', nil)
+  hi('TroubleSignHint', colors.hint_fg, nil, 'none', nil)
+  hi('TroubleSignOther', colors.gui02, nil, 'none', nil)
+  hi('TroubleFoldIcon', colors.gui02, nil, 'none', nil)
+  hi('TroubleIndent', colors.gui02, nil, 'none', nil)
+  hi('TroubleLocation', colors.gui02, nil, 'none', nil)
 end
 
-return { apply_theme = apply_theme }
+return exports

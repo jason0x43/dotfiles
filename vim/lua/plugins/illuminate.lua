@@ -1,5 +1,6 @@
 local util = require('util')
+local c = require('config.theme').get_colors()
 
-util.hi('LspReferenceText', { guibg = vim.g.base16_gui01 })
-util.hi('LspReferenceRead', { guibg = vim.g.base16_gui01 })
-util.hi('LspReferenceWrite', { guibg = vim.g.base16_gui01 })
+util.hi('LspReferenceText', { guibg = c('bg_status') })
+util.hi('LspReferenceRead', { guibg = c('bg_status') })
+util.hi('LspReferenceWrite', { guibg = c('bg_status') })
