@@ -70,11 +70,9 @@ local map_in_mode = function(mode, key, cmd, opts)
   if mode == '' then
     set_keymap(mode, key, cmd, options)
   else
-    mode:gsub(
-      '.', function(m)
-        set_keymap(m, key, cmd, options)
-      end
-    )
+    mode:gsub('.', function(m)
+      set_keymap(m, key, cmd, options)
+    end)
   end
 end
 

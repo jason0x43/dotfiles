@@ -2,18 +2,17 @@ local util = require('util')
 local exports = {}
 
 function exports.organize_imports()
-  vim.lsp.buf.execute_command(
-      {
-        command = '_typescript.organizeImports',
-        arguments = { vim.fn.expand('%:p') }
-      }
-  )
+  vim.lsp.buf.execute_command({
+    command = '_typescript.organizeImports',
+    arguments = { vim.fn.expand('%:p') },
+  })
 end
 
 function exports.on_attach(client)
   util.cmd(
-      'OrganizeImports', '-buffer',
-      '<cmd>call v:lua.typescript.organize_imports()<cr>'
+    'OrganizeImports',
+    '-buffer',
+    '<cmd>call v:lua.typescript.organize_imports()<cr>'
   )
 
   -- disable formatting for typescript; we'll use prettier instead
@@ -21,7 +20,7 @@ function exports.on_attach(client)
 end
 
 exports.config = {
-  autostart = false
+  autostart = false,
 }
 
 function exports.check_start()
@@ -32,7 +31,7 @@ function exports.check_start()
 end
 
 util.augroup('init_typescript', {
-  'FileType ' .. util.ts_types .. ' lua typescript.check_start()'
+  'FileType ' .. util.ts_types .. ' lua typescript.check_start()',
 })
 
 _G.typescript = exports

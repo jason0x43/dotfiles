@@ -15,7 +15,7 @@ return {
     base0C = 'b5e4f4',
     base0D = '01a0e4',
     base0E = 'a16a94',
-    base0F = 'cdab53'
+    base0F = 'cdab53',
   },
   ['apathy'] = {
     base00 = '031A16',
@@ -33,7 +33,7 @@ return {
     base0C = '963E4C',
     base0D = '96883E',
     base0E = '4C963E',
-    base0F = '3E965B'
+    base0F = '3E965B',
   },
   ['ashes'] = {
     base00 = '1C2023',
@@ -51,7 +51,7 @@ return {
     base0C = '95AEC7',
     base0D = 'AE95C7',
     base0E = 'C795AE',
-    base0F = 'C79595'
+    base0F = 'C79595',
   },
   ['atelier-cave-light'] = {
     base00 = 'efecf4',
@@ -69,7 +69,7 @@ return {
     base0C = '398bc6',
     base0D = '576ddb',
     base0E = '955ae7',
-    base0F = 'bf40bf'
+    base0F = 'bf40bf',
   },
   ['atelier-cave'] = {
     base00 = '19171c',
@@ -87,7 +87,7 @@ return {
     base0C = '398bc6',
     base0D = '576ddb',
     base0E = '955ae7',
-    base0F = 'bf40bf'
+    base0F = 'bf40bf',
   },
   ['atelier-dune-light'] = {
     base00 = 'fefbec',
@@ -105,7 +105,7 @@ return {
     base0C = '1fad83',
     base0D = '6684e1',
     base0E = 'b854d4',
-    base0F = 'd43552'
+    base0F = 'd43552',
   },
   ['atelier-dune'] = {
     base00 = '20201d',
@@ -123,7 +123,7 @@ return {
     base0C = '1fad83',
     base0D = '6684e1',
     base0E = 'b854d4',
-    base0F = 'd43552'
+    base0F = 'd43552',
   },
   ['atelier-estuary-light'] = {
     base00 = 'f4f3ec',
@@ -141,7 +141,7 @@ return {
     base0C = '5b9d48',
     base0D = '36a166',
     base0E = '5f9182',
-    base0F = '9d6c7c'
+    base0F = '9d6c7c',
   },
   ['atelier-estuary'] = {
     base00 = '22221b',
@@ -159,7 +159,7 @@ return {
     base0C = '5b9d48',
     base0D = '36a166',
     base0E = '5f9182',
-    base0F = '9d6c7c'
+    base0F = '9d6c7c',
   },
   ['atelier-forest-light'] = {
     base00 = 'f1efee',
@@ -177,7 +177,7 @@ return {
     base0C = '3d97b8',
     base0D = '407ee7',
     base0E = '6666ea',
-    base0F = 'c33ff3'
+    base0F = 'c33ff3',
   },
   ['atelier-forest'] = {
     base00 = '1b1918',
@@ -195,7 +195,7 @@ return {
     base0C = '3d97b8',
     base0D = '407ee7',
     base0E = '6666ea',
-    base0F = 'c33ff3'
+    base0F = 'c33ff3',
   },
   ['atelier-heath-light'] = {
     base00 = 'f7f3f7',
@@ -213,7 +213,7 @@ return {
     base0C = '159393',
     base0D = '516aec',
     base0E = '7b59c0',
-    base0F = 'cc33cc'
+    base0F = 'cc33cc',
   },
   ['atelier-heath'] = {
     base00 = '1b181b',
@@ -231,7 +231,7 @@ return {
     base0C = '159393',
     base0D = '516aec',
     base0E = '7b59c0',
-    base0F = 'cc33cc'
+    base0F = 'cc33cc',
   },
   ['atelier-lakeside-light'] = {
     base00 = 'ebf8ff',
@@ -249,7 +249,7 @@ return {
     base0C = '2d8f6f',
     base0D = '257fad',
     base0E = '6b6bb8',
-    base0F = 'b72dd2'
+    base0F = 'b72dd2',
   },
   ['atelier-lakeside'] = {
     base00 = '161b1d',
@@ -267,7 +267,7 @@ return {
     base0C = '2d8f6f',
     base0D = '257fad',
     base0E = '6b6bb8',
-    base0F = 'b72dd2'
+    base0F = 'b72dd2',
   },
   ['atelier-plateau-light'] = {
     base00 = 'f4ecec',
@@ -285,7 +285,7 @@ return {
     base0C = '5485b6',
     base0D = '7272ca',
     base0E = '8464c4',
-    base0F = 'bd5187'
+    base0F = 'bd5187',
   },
   ['atelier-plateau'] = {
     base00 = '1b1818',
@@ -303,7 +303,7 @@ return {
     base0C = '5485b6',
     base0D = '7272ca',
     base0E = '8464c4',
-    base0F = 'bd5187'
+    base0F = 'bd5187',
   },
   ['atelier-savanna-light'] = {
     base00 = 'ecf4ee',
@@ -321,7 +321,7 @@ return {
     base0C = '1c9aa0',
     base0D = '478c90',
     base0E = '55859b',
-    base0F = '867469'
+    base0F = '867469',
   },
   ['atelier-savanna'] = {
     base00 = '171c19',
@@ -339,7 +339,7 @@ return {
     base0C = '1c9aa0',
     base0D = '478c90',
     base0E = '55859b',
-    base0F = '867469'
+    base0F = '867469',
   },
   ['atelier-seaside-light'] = {
     base00 = 'f4fbf4',
@@ -357,7 +357,7 @@ return {
     base0C = '1999b3',
     base0D = '3d62f5',
     base0E = 'ad2bee',
-    base0F = 'e619c3'
+    base0F = 'e619c3',
   },
   ['atelier-seaside'] = {
     base00 = '131513',
@@ -375,7 +375,7 @@ return {
     base0C = '1999b3',
     base0D = '3d62f5',
     base0E = 'ad2bee',
-    base0F = 'e619c3'
+    base0F = 'e619c3',
   },
   ['atelier-sulphurpool-light'] = {
     base00 = 'f5f7ff',
@@ -393,7 +393,7 @@ return {
     base0C = '22a2c9',
     base0D = '3d8fd1',
     base0E = '6679cc',
-    base0F = '9c637a'
+    base0F = '9c637a',
   },
   ['atelier-sulphurpool'] = {
     base00 = '202746',
@@ -411,7 +411,7 @@ return {
     base0C = '22a2c9',
     base0D = '3d8fd1',
     base0E = '6679cc',
-    base0F = '9c637a'
+    base0F = '9c637a',
   },
   ['atlas'] = {
     base00 = '002635',
@@ -429,7 +429,7 @@ return {
     base0C = '14747e',
     base0D = '5dd7b9',
     base0E = '9a70a4',
-    base0F = 'c43060'
+    base0F = 'c43060',
   },
   ['bespin'] = {
     base00 = '28211c',
@@ -447,7 +447,7 @@ return {
     base0C = 'afc4db',
     base0D = '5ea6ea',
     base0E = '9b859d',
-    base0F = '937121'
+    base0F = '937121',
   },
   ['black-metal-bathory'] = {
     base00 = '000000',
@@ -465,7 +465,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-burzum'] = {
     base00 = '000000',
@@ -483,7 +483,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-dark-funeral'] = {
     base00 = '000000',
@@ -501,7 +501,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-gorgoroth'] = {
     base00 = '000000',
@@ -519,7 +519,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-immortal'] = {
     base00 = '000000',
@@ -537,7 +537,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-khold'] = {
     base00 = '000000',
@@ -555,7 +555,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-marduk'] = {
     base00 = '000000',
@@ -573,7 +573,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-mayhem'] = {
     base00 = '000000',
@@ -591,7 +591,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-nile'] = {
     base00 = '000000',
@@ -609,7 +609,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal-venom'] = {
     base00 = '000000',
@@ -627,7 +627,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['black-metal'] = {
     base00 = '000000',
@@ -645,7 +645,7 @@ return {
     base0C = 'aaaaaa',
     base0D = '888888',
     base0E = '999999',
-    base0F = '444444'
+    base0F = '444444',
   },
   ['brewer'] = {
     base00 = '0c0d0e',
@@ -663,7 +663,7 @@ return {
     base0C = '80b1d3',
     base0D = '3182bd',
     base0E = '756bb1',
-    base0F = 'b15928'
+    base0F = 'b15928',
   },
   ['bright'] = {
     base00 = '000000',
@@ -681,7 +681,7 @@ return {
     base0C = '76c7b7',
     base0D = '6fb3d2',
     base0E = 'd381c3',
-    base0F = 'be643c'
+    base0F = 'be643c',
   },
   ['brogrammer'] = {
     base00 = '1f1f1f',
@@ -699,7 +699,7 @@ return {
     base0C = '1081d6',
     base0D = '5350b9',
     base0E = '0f7ddb',
-    base0F = 'ffffff'
+    base0F = 'ffffff',
   },
   ['brushtrees-dark'] = {
     base00 = '485867',
@@ -717,7 +717,7 @@ return {
     base0C = '86b3b3',
     base0D = '868cb3',
     base0E = 'b386b2',
-    base0F = 'b39f9f'
+    base0F = 'b39f9f',
   },
   ['brushtrees'] = {
     base00 = 'E3EFEF',
@@ -735,7 +735,7 @@ return {
     base0C = '86b3b3',
     base0D = '868cb3',
     base0E = 'b386b2',
-    base0F = 'b39f9f'
+    base0F = 'b39f9f',
   },
   ['chalk'] = {
     base00 = '151515',
@@ -753,7 +753,7 @@ return {
     base0C = '12cfc0',
     base0D = '6fc2ef',
     base0E = 'e1a3ee',
-    base0F = 'deaf8f'
+    base0F = 'deaf8f',
   },
   ['circus'] = {
     base00 = '191919',
@@ -771,7 +771,7 @@ return {
     base0C = '4bb1a7',
     base0D = '639ee4',
     base0E = 'b888e2',
-    base0F = 'b888e2'
+    base0F = 'b888e2',
   },
   ['classic-dark'] = {
     base00 = '151515',
@@ -789,7 +789,7 @@ return {
     base0C = '75B5AA',
     base0D = '6A9FB5',
     base0E = 'AA759F',
-    base0F = '8F5536'
+    base0F = '8F5536',
   },
   ['classic-light'] = {
     base00 = 'F5F5F5',
@@ -807,7 +807,7 @@ return {
     base0C = '75B5AA',
     base0D = '6A9FB5',
     base0E = 'AA759F',
-    base0F = '8F5536'
+    base0F = '8F5536',
   },
   ['codeschool'] = {
     base00 = '232c31',
@@ -825,7 +825,7 @@ return {
     base0C = 'b02f30',
     base0D = '484d79',
     base0E = 'c59820',
-    base0F = 'c98344'
+    base0F = 'c98344',
   },
   ['cupcake'] = {
     base00 = 'fbf1f2',
@@ -843,7 +843,7 @@ return {
     base0C = '69A9A7',
     base0D = '7297B9',
     base0E = 'BB99B4',
-    base0F = 'BAA58C'
+    base0F = 'BAA58C',
   },
   ['cupertino'] = {
     base00 = 'ffffff',
@@ -861,7 +861,7 @@ return {
     base0C = '318495',
     base0D = '0000ff',
     base0E = 'a90d91',
-    base0F = '826b28'
+    base0F = '826b28',
   },
   ['darktooth'] = {
     base00 = '1D2021',
@@ -879,7 +879,7 @@ return {
     base0C = '8BA59B',
     base0D = '0D6678',
     base0E = '8F4673',
-    base0F = 'A87322'
+    base0F = 'A87322',
   },
   ['default-dark'] = {
     base00 = '181818',
@@ -897,7 +897,7 @@ return {
     base0C = '86c1b9',
     base0D = '7cafc2',
     base0E = 'ba8baf',
-    base0F = 'a16946'
+    base0F = 'a16946',
   },
   ['default-light'] = {
     base00 = 'f8f8f8',
@@ -915,7 +915,7 @@ return {
     base0C = '86c1b9',
     base0D = '7cafc2',
     base0E = 'ba8baf',
-    base0F = 'a16946'
+    base0F = 'a16946',
   },
   ['dracula'] = {
     base00 = '282936',
@@ -933,7 +933,7 @@ return {
     base0C = 'a1efe4',
     base0D = '62d6e8',
     base0E = 'b45bcf',
-    base0F = '00f769'
+    base0F = '00f769',
   },
   ['eighties'] = {
     base00 = '2d2d2d',
@@ -951,7 +951,7 @@ return {
     base0C = '66cccc',
     base0D = '6699cc',
     base0E = 'cc99cc',
-    base0F = 'd27b53'
+    base0F = 'd27b53',
   },
   ['embers'] = {
     base00 = '16130F',
@@ -969,7 +969,7 @@ return {
     base0C = '576D82',
     base0D = '6D5782',
     base0E = '82576D',
-    base0F = '825757'
+    base0F = '825757',
   },
   ['flat'] = {
     base00 = '2C3E50',
@@ -987,7 +987,7 @@ return {
     base0C = '1ABC9C',
     base0D = '3498DB',
     base0E = '9B59B6',
-    base0F = 'be643c'
+    base0F = 'be643c',
   },
   ['fruit-soda'] = {
     base00 = 'f1ecf1',
@@ -1005,7 +1005,7 @@ return {
     base0C = '0f9cfd',
     base0D = '2931df',
     base0E = '611fce',
-    base0F = 'b16f40'
+    base0F = 'b16f40',
   },
   ['github'] = {
     base00 = 'ffffff',
@@ -1023,7 +1023,7 @@ return {
     base0C = '183691',
     base0D = '795da3',
     base0E = 'a71d5d',
-    base0F = '333333'
+    base0F = '333333',
   },
   ['google-dark'] = {
     base00 = '1d1f21',
@@ -1041,7 +1041,7 @@ return {
     base0C = '3971ED',
     base0D = '3971ED',
     base0E = 'A36AC7',
-    base0F = '3971ED'
+    base0F = '3971ED',
   },
   ['google-light'] = {
     base00 = 'ffffff',
@@ -1059,7 +1059,7 @@ return {
     base0C = '3971ED',
     base0D = '3971ED',
     base0E = 'A36AC7',
-    base0F = '3971ED'
+    base0F = '3971ED',
   },
   ['grayscale-dark'] = {
     base00 = '101010',
@@ -1077,7 +1077,7 @@ return {
     base0C = '868686',
     base0D = '686868',
     base0E = '747474',
-    base0F = '5e5e5e'
+    base0F = '5e5e5e',
   },
   ['grayscale-light'] = {
     base00 = 'f7f7f7',
@@ -1095,7 +1095,7 @@ return {
     base0C = '868686',
     base0D = '686868',
     base0E = '747474',
-    base0F = '5e5e5e'
+    base0F = '5e5e5e',
   },
   ['greenscreen'] = {
     base00 = '001100',
@@ -1113,7 +1113,7 @@ return {
     base0C = '005500',
     base0D = '009900',
     base0E = '00bb00',
-    base0F = '005500'
+    base0F = '005500',
   },
   ['gruvbox-dark-hard'] = {
     base00 = '1d2021',
@@ -1131,7 +1131,7 @@ return {
     base0C = '8ec07c',
     base0D = '83a598',
     base0E = 'd3869b',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-dark-medium'] = {
     base00 = '282828',
@@ -1149,7 +1149,7 @@ return {
     base0C = '8ec07c',
     base0D = '83a598',
     base0E = 'd3869b',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-dark-pale'] = {
     base00 = '262626',
@@ -1167,7 +1167,7 @@ return {
     base0C = '85ad85',
     base0D = '83adad',
     base0E = 'd485ad',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-dark-soft'] = {
     base00 = '32302f',
@@ -1185,7 +1185,7 @@ return {
     base0C = '8ec07c',
     base0D = '83a598',
     base0E = 'd3869b',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-light-hard'] = {
     base00 = 'f9f5d7',
@@ -1203,7 +1203,7 @@ return {
     base0C = '427b58',
     base0D = '076678',
     base0E = '8f3f71',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-light-medium'] = {
     base00 = 'fbf1c7',
@@ -1221,7 +1221,7 @@ return {
     base0C = '427b58',
     base0D = '076678',
     base0E = '8f3f71',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['gruvbox-light-soft'] = {
     base00 = 'f2e5bc',
@@ -1239,7 +1239,7 @@ return {
     base0C = '427b58',
     base0D = '076678',
     base0E = '8f3f71',
-    base0F = 'd65d0e'
+    base0F = 'd65d0e',
   },
   ['harmonic-dark'] = {
     base00 = '0b1c2c',
@@ -1257,7 +1257,7 @@ return {
     base0C = '568bbf',
     base0D = '8b56bf',
     base0E = 'bf568b',
-    base0F = 'bf5656'
+    base0F = 'bf5656',
   },
   ['harmonic-light'] = {
     base00 = 'f7f9fb',
@@ -1275,7 +1275,7 @@ return {
     base0C = '568bbf',
     base0D = '8b56bf',
     base0E = 'bf568b',
-    base0F = 'bf5656'
+    base0F = 'bf5656',
   },
   ['heetch-light'] = {
     base00 = 'feffff',
@@ -1293,7 +1293,7 @@ return {
     base0C = 'c33678',
     base0D = '47f9f5',
     base0E = 'bd0152',
-    base0F = 'dedae2'
+    base0F = 'dedae2',
   },
   ['heetch'] = {
     base00 = '190134',
@@ -1311,7 +1311,7 @@ return {
     base0C = 'F80059',
     base0D = 'BD0152',
     base0E = '82034C',
-    base0F = '470546'
+    base0F = '470546',
   },
   ['helios'] = {
     base00 = '1d2021',
@@ -1329,7 +1329,7 @@ return {
     base0C = '1ba595',
     base0D = '1e8bac',
     base0E = 'be4264',
-    base0F = 'c85e0d'
+    base0F = 'c85e0d',
   },
   ['hopscotch'] = {
     base00 = '322931',
@@ -1347,7 +1347,7 @@ return {
     base0C = '149b93',
     base0D = '1290bf',
     base0E = 'c85e7c',
-    base0F = 'b33508'
+    base0F = 'b33508',
   },
   ['horizon-dark'] = {
     base00 = '1C1E26',
@@ -1365,7 +1365,7 @@ return {
     base0C = '24A8B4',
     base0D = 'DF5273',
     base0E = 'B072D1',
-    base0F = 'E4A382'
+    base0F = 'E4A382',
   },
   ['ia-dark'] = {
     base00 = '1a1a1a',
@@ -1383,7 +1383,7 @@ return {
     base0C = '7c9cae',
     base0D = '8eccdd',
     base0E = 'b98eb2',
-    base0F = '8b6c37'
+    base0F = '8b6c37',
   },
   ['ia-light'] = {
     base00 = 'f6f6f6',
@@ -1401,7 +1401,7 @@ return {
     base0C = '2d6bb1',
     base0D = '48bac2',
     base0E = 'a94598',
-    base0F = '8b6c37'
+    base0F = '8b6c37',
   },
   ['icy'] = {
     base00 = '021012',
@@ -1419,7 +1419,7 @@ return {
     base0C = '26c6da',
     base0D = '00bcd4',
     base0E = '00acc1',
-    base0F = '0097a7'
+    base0F = '0097a7',
   },
   ['irblack'] = {
     base00 = '000000',
@@ -1437,7 +1437,7 @@ return {
     base0C = 'c6c5fe',
     base0D = '96cbfe',
     base0E = 'ff73fd',
-    base0F = 'b18a3d'
+    base0F = 'b18a3d',
   },
   ['isotope'] = {
     base00 = '000000',
@@ -1455,7 +1455,7 @@ return {
     base0C = '00ffff',
     base0D = '0066ff',
     base0E = 'cc00ff',
-    base0F = '3300ff'
+    base0F = '3300ff',
   },
   ['macintosh'] = {
     base00 = '000000',
@@ -1473,7 +1473,7 @@ return {
     base0C = '02abea',
     base0D = '0000d3',
     base0E = '4700a5',
-    base0F = '90713a'
+    base0F = '90713a',
   },
   ['marrakesh'] = {
     base00 = '201602',
@@ -1491,7 +1491,7 @@ return {
     base0C = '75a738',
     base0D = '477ca1',
     base0E = '8868b3',
-    base0F = 'b3588e'
+    base0F = 'b3588e',
   },
   ['materia'] = {
     base00 = '263238',
@@ -1509,7 +1509,7 @@ return {
     base0C = '80CBC4',
     base0D = '89DDFF',
     base0E = '82AAFF',
-    base0F = 'EC5F67'
+    base0F = 'EC5F67',
   },
   ['material-darker'] = {
     base00 = '212121',
@@ -1527,7 +1527,7 @@ return {
     base0C = '89DDFF',
     base0D = '82AAFF',
     base0E = 'C792EA',
-    base0F = 'FF5370'
+    base0F = 'FF5370',
   },
   ['material-lighter'] = {
     base00 = 'FAFAFA',
@@ -1545,7 +1545,7 @@ return {
     base0C = '39ADB5',
     base0D = '6182B8',
     base0E = '7C4DFF',
-    base0F = 'E53935'
+    base0F = 'E53935',
   },
   ['material-palenight'] = {
     base00 = '292D3E',
@@ -1563,7 +1563,7 @@ return {
     base0C = '89DDFF',
     base0D = '82AAFF',
     base0E = 'C792EA',
-    base0F = 'FF5370'
+    base0F = 'FF5370',
   },
   ['material-vivid'] = {
     base00 = '202124',
@@ -1581,7 +1581,7 @@ return {
     base0C = '00bcd4',
     base0D = '2196f3',
     base0E = '673ab7',
-    base0F = '8d6e63'
+    base0F = '8d6e63',
   },
   ['material'] = {
     base00 = '263238',
@@ -1599,7 +1599,7 @@ return {
     base0C = '89DDFF',
     base0D = '82AAFF',
     base0E = 'C792EA',
-    base0F = 'FF5370'
+    base0F = 'FF5370',
   },
   ['mellow-purple'] = {
     base00 = '1e0528',
@@ -1617,7 +1617,7 @@ return {
     base0C = 'b900b1',
     base0D = '550068',
     base0E = '8991bb',
-    base0F = '4d6fff'
+    base0F = '4d6fff',
   },
   ['mexico-light'] = {
     base00 = 'f8f8f8',
@@ -1635,7 +1635,7 @@ return {
     base0C = '4b8093',
     base0D = '7cafc2',
     base0E = '96609e',
-    base0F = 'a16946'
+    base0F = 'a16946',
   },
   ['mocha'] = {
     base00 = '3B3228',
@@ -1653,7 +1653,7 @@ return {
     base0C = '7bbda4',
     base0D = '8ab3b5',
     base0E = 'a89bb9',
-    base0F = 'bb9584'
+    base0F = 'bb9584',
   },
   ['monokai'] = {
     base00 = '272822',
@@ -1671,7 +1671,7 @@ return {
     base0C = 'a1efe4',
     base0D = '66d9ef',
     base0E = 'ae81ff',
-    base0F = 'cc6633'
+    base0F = 'cc6633',
   },
   ['nord'] = {
     base00 = '2E3440',
@@ -1689,7 +1689,7 @@ return {
     base0C = 'D08770',
     base0D = 'EBCB8B',
     base0E = 'A3BE8C',
-    base0F = 'B48EAD'
+    base0F = 'B48EAD',
   },
   ['ocean'] = {
     base00 = '2b303b',
@@ -1707,7 +1707,7 @@ return {
     base0C = '96b5b4',
     base0D = '8fa1b3',
     base0E = 'b48ead',
-    base0F = 'ab7967'
+    base0F = 'ab7967',
   },
   ['oceanicnext'] = {
     base00 = '1B2B34',
@@ -1725,7 +1725,7 @@ return {
     base0C = '5FB3B3',
     base0D = '6699CC',
     base0E = 'C594C5',
-    base0F = 'AB7967'
+    base0F = 'AB7967',
   },
   ['one-light'] = {
     base00 = 'fafafa',
@@ -1743,7 +1743,7 @@ return {
     base0C = '0184bc',
     base0D = '4078f2',
     base0E = 'a626a4',
-    base0F = '986801'
+    base0F = '986801',
   },
   ['onedark'] = {
     base00 = '282c34',
@@ -1761,7 +1761,7 @@ return {
     base0C = '56b6c2',
     base0D = '61afef',
     base0E = 'c678dd',
-    base0F = 'be5046'
+    base0F = 'be5046',
   },
   ['outrun-dark'] = {
     base00 = '00002A',
@@ -1779,7 +1779,7 @@ return {
     base0C = '0EF0F0',
     base0D = '66B0FF',
     base0E = 'F10596',
-    base0F = 'F003EF'
+    base0F = 'F003EF',
   },
   ['papercolor-dark'] = {
     base00 = '1c1c1c',
@@ -1797,7 +1797,7 @@ return {
     base0C = 'ffaf00',
     base0D = 'ff5faf',
     base0E = '00afaf',
-    base0F = '5f8787'
+    base0F = '5f8787',
   },
   ['papercolor-light'] = {
     base00 = 'eeeeee',
@@ -1815,7 +1815,7 @@ return {
     base0C = 'd75f00',
     base0D = 'd75f00',
     base0E = '005faf',
-    base0F = '005f87'
+    base0F = '005f87',
   },
   ['paraiso'] = {
     base00 = '2f1e2e',
@@ -1833,7 +1833,7 @@ return {
     base0C = '5bc4bf',
     base0D = '06b6ef',
     base0E = '815ba4',
-    base0F = 'e96ba8'
+    base0F = 'e96ba8',
   },
   ['phd'] = {
     base00 = '061229',
@@ -1851,7 +1851,7 @@ return {
     base0C = '72b9bf',
     base0D = '5299bf',
     base0E = '9989cc',
-    base0F = 'b08060'
+    base0F = 'b08060',
   },
   ['pico'] = {
     base00 = '000000',
@@ -1869,7 +1869,7 @@ return {
     base0C = '29adff',
     base0D = '83769c',
     base0E = 'ff77a8',
-    base0F = 'ffccaa'
+    base0F = 'ffccaa',
   },
   ['pop'] = {
     base00 = '000000',
@@ -1887,7 +1887,7 @@ return {
     base0C = '00aabb',
     base0D = '0e5a94',
     base0E = 'b31e8d',
-    base0F = '7a2d00'
+    base0F = '7a2d00',
   },
   ['porple'] = {
     base00 = '292c36',
@@ -1905,7 +1905,7 @@ return {
     base0C = '64878f',
     base0D = '8485ce',
     base0E = 'b74989',
-    base0F = '986841'
+    base0F = '986841',
   },
   ['railscasts'] = {
     base00 = '2b2b2b',
@@ -1923,7 +1923,7 @@ return {
     base0C = '519f50',
     base0D = '6d9cbe',
     base0E = 'b6b3eb',
-    base0F = 'bc9458'
+    base0F = 'bc9458',
   },
   ['rebecca'] = {
     base00 = '292a44',
@@ -1941,7 +1941,7 @@ return {
     base0C = '8eaee0',
     base0D = '2de0a7',
     base0E = '7aa5ff',
-    base0F = 'ff79c6'
+    base0F = 'ff79c6',
   },
   ['seti'] = {
     base00 = '151718',
@@ -1959,7 +1959,7 @@ return {
     base0C = '55dbbe',
     base0D = '55b5db',
     base0E = 'a074c4',
-    base0F = '8a553f'
+    base0F = '8a553f',
   },
   ['shapeshifter'] = {
     base00 = 'f9f9f9',
@@ -1977,7 +1977,7 @@ return {
     base0C = '23edda',
     base0D = '3b48e3',
     base0E = 'f996e2',
-    base0F = '69542d'
+    base0F = '69542d',
   },
   ['snazzy'] = {
     base00 = '282a36',
@@ -1995,7 +1995,7 @@ return {
     base0C = '9aedfe',
     base0D = '57c7ff',
     base0E = 'ff6ac1',
-    base0F = 'b2643c'
+    base0F = 'b2643c',
   },
   ['solarflare'] = {
     base00 = '18262F',
@@ -2013,7 +2013,7 @@ return {
     base0C = '52CBB0',
     base0D = '33B5E1',
     base0E = 'A363D5',
-    base0F = 'D73C9A'
+    base0F = 'D73C9A',
   },
   ['solarized-dark'] = {
     base00 = '002b36',
@@ -2031,7 +2031,7 @@ return {
     base0C = '2aa198',
     base0D = '268bd2',
     base0E = '6c71c4',
-    base0F = 'd33682'
+    base0F = 'd33682',
   },
   ['solarized-light'] = {
     base00 = 'fdf6e3',
@@ -2049,7 +2049,7 @@ return {
     base0C = '2aa198',
     base0D = '268bd2',
     base0E = '6c71c4',
-    base0F = 'd33682'
+    base0F = 'd33682',
   },
   ['spacemacs'] = {
     base00 = '1f2022',
@@ -2067,7 +2067,7 @@ return {
     base0C = '2d9574',
     base0D = '4f97d7',
     base0E = 'a31db1',
-    base0F = 'b03060'
+    base0F = 'b03060',
   },
   ['summerfruit-dark'] = {
     base00 = '151515',
@@ -2085,7 +2085,7 @@ return {
     base0C = '1FAAAA',
     base0D = '3777E6',
     base0E = 'AD00A1',
-    base0F = 'CC6633'
+    base0F = 'CC6633',
   },
   ['summerfruit-light'] = {
     base00 = 'FFFFFF',
@@ -2103,7 +2103,7 @@ return {
     base0C = '1FAAAA',
     base0D = '3777E6',
     base0E = 'AD00A1',
-    base0F = 'CC6633'
+    base0F = 'CC6633',
   },
   ['synth-midnight-dark'] = {
     base00 = '040404',
@@ -2121,7 +2121,7 @@ return {
     base0C = '7CEDE9',
     base0D = '03AEFF',
     base0E = 'EA5CE2',
-    base0F = '9D4D0E'
+    base0F = '9D4D0E',
   },
   ['tomorrow-night-eighties'] = {
     base00 = '2d2d2d',
@@ -2139,7 +2139,7 @@ return {
     base0C = '66cccc',
     base0D = '6699cc',
     base0E = 'cc99cc',
-    base0F = 'a3685a'
+    base0F = 'a3685a',
   },
   ['tomorrow-night'] = {
     base00 = '1d1f21',
@@ -2157,7 +2157,7 @@ return {
     base0C = '8abeb7',
     base0D = '81a2be',
     base0E = 'b294bb',
-    base0F = 'a3685a'
+    base0F = 'a3685a',
   },
   ['tomorrow'] = {
     base00 = 'ffffff',
@@ -2175,7 +2175,7 @@ return {
     base0C = '3e999f',
     base0D = '4271ae',
     base0E = '8959a8',
-    base0F = 'a3685a'
+    base0F = 'a3685a',
   },
   ['tube'] = {
     base00 = '231f20',
@@ -2193,7 +2193,7 @@ return {
     base0C = '85cebc',
     base0D = '009ddc',
     base0E = '98005d',
-    base0F = 'b06110'
+    base0F = 'b06110',
   },
   ['twilight'] = {
     base00 = '1e1e1e',
@@ -2211,7 +2211,7 @@ return {
     base0C = 'afc4db',
     base0D = '7587a6',
     base0E = '9b859d',
-    base0F = '9b703f'
+    base0F = '9b703f',
   },
   ['unikitty-dark'] = {
     base00 = '2e2a31',
@@ -2229,7 +2229,7 @@ return {
     base0C = '149bda',
     base0D = '796af5',
     base0E = 'bb60ea',
-    base0F = 'c720ca'
+    base0F = 'c720ca',
   },
   ['unikitty-light'] = {
     base00 = 'ffffff',
@@ -2247,7 +2247,7 @@ return {
     base0C = '149bda',
     base0D = '775dff',
     base0E = 'aa17e6',
-    base0F = 'e013d0'
+    base0F = 'e013d0',
   },
   ['woodland'] = {
     base00 = '231e18',
@@ -2265,7 +2265,7 @@ return {
     base0C = '6eb958',
     base0D = '88a4d3',
     base0E = 'bb90e2',
-    base0F = 'b49368'
+    base0F = 'b49368',
   },
   ['xcode-dusk'] = {
     base00 = '282B35',
@@ -2283,7 +2283,7 @@ return {
     base0C = '00A0BE',
     base0D = '790EAD',
     base0E = 'B21889',
-    base0F = 'C77C48'
+    base0F = 'C77C48',
   },
   ['zenburn'] = {
     base00 = '383838',
@@ -2301,6 +2301,6 @@ return {
     base0C = '93e0e3',
     base0D = '7cb8bb',
     base0E = 'dc8cc3',
-    base0F = '000000'
-  }
+    base0F = '000000',
+  },
 }

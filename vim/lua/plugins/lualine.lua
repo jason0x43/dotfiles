@@ -17,21 +17,21 @@ local colors = {
   baseC = '#' .. g.base16_gui0C, -- blue
   baseD = '#' .. g.base16_gui0D, -- purple
   baseE = '#' .. g.base16_gui0E, -- red
-  baseF = '#' .. g.base16_gui0F -- brown
+  baseF = '#' .. g.base16_gui0F, -- brown
 }
 
 local base16_theme = {
   normal = {
     a = { fg = colors.base0, bg = colors.baseC, gui = 'bold' },
     b = { fg = colors.base0, bg = colors.base2 },
-    c = { fg = colors.base4, bg = colors.base1 }
+    c = { fg = colors.base4, bg = colors.base1 },
   },
   insert = { a = { fg = colors.base0, bg = colors.baseA, gui = 'bold' } },
   visual = { a = { fg = colors.base0, bg = colors.baseD, gui = 'bold' } },
   replace = { a = { fg = colors.base0, bg = colors.baseE, gui = 'bold' } },
   inactive = {
     a = { fg = colors.base0, bg = colors.base2 },
-  }
+  },
 }
 
 local function language_servers()
@@ -69,7 +69,7 @@ local function edgify(section, edge, opts)
     left_padding = 0,
     right_padding = 0,
     separator = '',
-    color = { gui = 'inverse' }
+    color = { gui = 'inverse' },
   }
 
   if opts ~= nil then
@@ -114,58 +114,58 @@ edgify(quickfix.sections.lualine_z, 'right')
 -- add round edges to tree extension
 local tree = require('lualine.extensions.nvim-tree')
 edgify(tree.sections.lualine_a, 'left')
-tree.sections.lualine_x = edgify(
-  {
-    function()
-      return ' '
-    end
-  }, 'right', { color = { fg = colors.base1, bg = colors.base0 } }
-)
+tree.sections.lualine_x = edgify({
+  function()
+    return ' '
+  end,
+}, 'right', {
+  color = { fg = colors.base1, bg = colors.base0 },
+})
 
-require('lualine').setup(
-  {
-    options = {
-      theme = base16_theme,
-      section_separators = { ' ', ' ' },
-      component_separators = { '│', '│' }
-    },
-    sections = {
-      lualine_a = edgify({ 'mode' }, 'left'),
-      lualine_b = { { 'branch', left_padding = 0, icon = '' } },
-      lualine_c = {
-        {
-          filetype_icon,
-          separator = '',
-          left_padding = 0,
-          color = { fg = colors.baseC }
-        },
-        { 'filename', path = 1, left_padding = 0 }
+require('lualine').setup({
+  options = {
+    theme = base16_theme,
+    section_separators = { ' ', ' ' },
+    component_separators = { '│', '│' },
+  },
+  sections = {
+    lualine_a = edgify({ 'mode' }, 'left'),
+    lualine_b = { { 'branch', left_padding = 0, icon = '' } },
+    lualine_c = {
+      {
+        filetype_icon,
+        separator = '',
+        left_padding = 0,
+        color = { fg = colors.baseC },
       },
-      lualine_x = {
-        { 'diagnostics', sources = { 'nvim_lsp' } },
-        { language_servers, icon = '', separator = '', right_padding = 0 },
-        {
-          'lsp_progress',
-          display_components = { 'spinner' },
-          colors = { spinner = colors.baseC },
-          spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
-          timer = { spinner = 250 },
-          left_padding = 1,
-          right_padding = 0
-        }
+      { 'filename', path = 1, left_padding = 0 },
+    },
+    lualine_x = {
+      { 'diagnostics', sources = { 'nvim_lsp' } },
+      { language_servers, icon = '', separator = '', right_padding = 0 },
+      {
+        'lsp_progress',
+        display_components = { 'spinner' },
+        colors = { spinner = colors.baseC },
+        spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
+        timer = { spinner = 250 },
+        left_padding = 1,
+        right_padding = 0,
       },
-      lualine_z = edgify({ 'location' }, 'right')
     },
-    inactive_sections = {
-      lualine_c = edgify(
-        { 'filename' }, 'left',
-          { color = { fg = colors.base1, bg = colors.base0 } }
-      ),
-      lualine_x = edgify(
-        { 'location' }, 'right',
-          { color = { fg = colors.base1, bg = colors.base0 } }
-      )
-    },
-    extensions = { 'nvim-tree', 'quickfix' }
-  }
-)
+    lualine_z = edgify({ 'location' }, 'right'),
+  },
+  inactive_sections = {
+    lualine_c = edgify(
+      { 'filename' },
+      'left',
+      { color = { fg = colors.base1, bg = colors.base0 } }
+    ),
+    lualine_x = edgify(
+      { 'location' },
+      'right',
+      { color = { fg = colors.base1, bg = colors.base0 } }
+    ),
+  },
+  extensions = { 'nvim-tree', 'quickfix' },
+})

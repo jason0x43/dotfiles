@@ -10,7 +10,7 @@ g.startify_ascii_header = {
   '||n |||e |||o |||v |||i |||m ||',
   '||__|||__|||__|||__|||__|||__||',
   '|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|',
-  ''
+  '',
 }
 g.startify_custom_header = 'startify#pad(g:startify_ascii_header)'
 

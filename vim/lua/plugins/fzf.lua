@@ -22,7 +22,7 @@ local fzf_opts = {
   '--pointer " "',
 
   -- hide the info line
-  '--color "bg+:0"'
+  '--color "bg+:0"',
 }
 
 function fzf.floating_fzf()
@@ -42,7 +42,7 @@ function fzf.floating_fzf()
     col = horizontal,
     width = width,
     height = height,
-    style = 'minimal'
+    style = 'minimal',
   }
 
   local win = vim.api.nvim_open_win(buf, true, opts)

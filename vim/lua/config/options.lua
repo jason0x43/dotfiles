@@ -47,8 +47,8 @@ o.signcolumn = 'yes'
 o.splitbelow = true
 o.splitright = true
 
-o.formatoptions =
-  o.formatoptions + 'r' -- automatically insert comment leader after CR
+o.formatoptions = o.formatoptions
+  + 'r' -- automatically insert comment leader after CR
   + 'o' -- automatically insert comment leader for o/O
   + 'n' -- recognize numbered lists
 

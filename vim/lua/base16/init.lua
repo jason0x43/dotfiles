@@ -2,17 +2,15 @@ local util = require('util')
 local g = vim.g
 
 local function hi(group, guifg, guibg, ctermfg, ctermbg, attr, guisp)
-  util.hi(
-    group, {
-      guifg = guifg,
-      guibg = guibg,
-      ctermfg = ctermfg,
-      ctermbg = ctermbg,
-      gui = attr,
-      cterm = attr,
-      guisp = guisp
-    }
-  )
+  util.hi(group, {
+    guifg = guifg,
+    guibg = guibg,
+    ctermfg = ctermfg,
+    ctermbg = ctermbg,
+    gui = attr,
+    cterm = attr,
+    guisp = guisp,
+  })
 end
 
 -- Modified from https://github.com/chriskempson/base16-vim
@@ -233,8 +231,13 @@ local function apply_theme(theme_name)
   hi('GitGutterChange', theme.base0D, theme.base01, cterm0D, cterm01, nil, nil)
   hi('GitGutterDelete', theme.base08, theme.base01, cterm08, cterm01, nil, nil)
   hi(
-    'GitGutterChangeDelete', theme.base0E, theme.base01, cterm0E, cterm01, nil,
-      nil
+    'GitGutterChangeDelete',
+    theme.base0E,
+    theme.base01,
+    cterm0E,
+    cterm01,
+    nil,
+    nil
   )
 
   -- HTML highlighting
@@ -314,8 +317,24 @@ local function apply_theme(theme_name)
 
   -- Signify highlighting
   hi('SignifySignAdd', theme.base0B, theme.base01, cterm0B, cterm01, nil, nil)
-  hi('SignifySignChange', theme.base0D, theme.base01, cterm0D, cterm01, nil, nil)
-  hi('SignifySignDelete', theme.base08, theme.base01, cterm08, cterm01, nil, nil)
+  hi(
+    'SignifySignChange',
+    theme.base0D,
+    theme.base01,
+    cterm0D,
+    cterm01,
+    nil,
+    nil
+  )
+  hi(
+    'SignifySignDelete',
+    theme.base08,
+    theme.base01,
+    cterm08,
+    cterm01,
+    nil,
+    nil
+  )
 
   -- Spelling highlighting
   hi('SpellBad', nil, nil, nil, nil, 'undercurl', theme.base08)
@@ -381,8 +400,13 @@ local function apply_theme(theme_name)
   hi('TSStrong', theme.base07, theme.base00, cterm07, cterm00, 'bold', nil)
   hi('TSEmphasis', theme.base06, theme.base00, cterm06, cterm00, 'italic', nil)
   hi(
-    'TSUnderline', theme.base05, theme.base00, cterm05, cterm00, 'underline',
-      nil
+    'TSUnderline',
+    theme.base05,
+    theme.base00,
+    cterm05,
+    cterm00,
+    'underline',
+    nil
   )
   hi('TSTitle', theme.base0D, nil, cterm0D, nil, 'none', nil)
   hi('TSLiteral', theme.base0B, nil, cterm0B, nil, nil, nil)
@@ -396,20 +420,51 @@ local function apply_theme(theme_name)
   -- LSP
   hi('LspDiagnosticsDefaultError', error_fg, nil, error_cfg, nil, nil, nil)
   hi(
-    'LspDiagnosticsSignError', error_fg, sign_bg, error_cfg, sign_cbg, 'bold',
-      nil
+    'LspDiagnosticsSignError',
+    error_fg,
+    sign_bg,
+    error_cfg,
+    sign_cbg,
+    'bold',
+    nil
   )
   hi('LspDiagnosticsDefaultHint', hint_fg, nil, hint_cfg, nil, nil, nil)
-  hi('LspDiagnosticsSignHint', hint_fg, sign_bg, hint_cfg, sign_cbg, 'bold', nil)
+  hi(
+    'LspDiagnosticsSignHint',
+    hint_fg,
+    sign_bg,
+    hint_cfg,
+    sign_cbg,
+    'bold',
+    nil
+  )
   hi('LspDiagnosticsDefaultInformation', info_fg, nil, info_cfg, nil, nil, nil)
   hi(
-    'LspDiagnosticsSignInformation', info_fg, sign_bg, info_cfg, sign_cbg,
-      'bold', nil
+    'LspDiagnosticsSignInformation',
+    info_fg,
+    sign_bg,
+    info_cfg,
+    sign_cbg,
+    'bold',
+    nil
   )
-  hi('LspDiagnosticsDefaultWarning', warning_fg, nil, warning_cfg, nil, nil, nil)
   hi(
-    'LspDiagnosticsSignWarning', warning_fg, sign_bg, warning_cfg, sign_cbg,
-      'bold', nil
+    'LspDiagnosticsDefaultWarning',
+    warning_fg,
+    nil,
+    warning_cfg,
+    nil,
+    nil,
+    nil
+  )
+  hi(
+    'LspDiagnosticsSignWarning',
+    warning_fg,
+    sign_bg,
+    warning_cfg,
+    sign_cbg,
+    'bold',
+    nil
   )
   hi('LspDiagnosticsUnderlineError', nil, nil, nil, nil, 'undercurl', error_fg)
 
@@ -417,21 +472,60 @@ local function apply_theme(theme_name)
   hi('StatusLineOuter', theme.base00, theme.base05, cterm00, cterm05, nil, nil)
   hi('StatusLineMiddle', theme.base00, theme.base02, cterm00, cterm02, nil, nil)
   hi('StatusLineInner', theme.base05, theme.base01, cterm06, cterm01, nil, nil)
-  hi('StatusLineFileInfo', theme.base05, theme.base01, cterm06, cterm01, 'bold', nil)
-  hi('StatusLineInnerSep', theme.base02, theme.base01, cterm02, cterm01, nil, nil)
   hi(
-    'StatusLineLspDiagnosticsError', error_fg, theme.base01, error_cfg, cterm01,
-      nil, nil
+    'StatusLineFileInfo',
+    theme.base05,
+    theme.base01,
+    cterm06,
+    cterm01,
+    'bold',
+    nil
   )
   hi(
-    'StatusLineLspDiagnosticsWarning', warning_fg, theme.base01, warning_cfg,
-      cterm01, nil, nil
+    'StatusLineInnerSep',
+    theme.base02,
+    theme.base01,
+    cterm02,
+    cterm01,
+    nil,
+    nil
   )
   hi(
-    'StatusLineLspDiagnosticsHint', hint_fg, theme.base01, hint_cfg, cterm01,
-      nil, nil
+    'StatusLineLspDiagnosticsError',
+    error_fg,
+    theme.base01,
+    error_cfg,
+    cterm01,
+    nil,
+    nil
   )
-  hi('StatusLineTreeSitter', theme.base0B, theme.base01, cterm0B, cterm01, nil, nil)
+  hi(
+    'StatusLineLspDiagnosticsWarning',
+    warning_fg,
+    theme.base01,
+    warning_cfg,
+    cterm01,
+    nil,
+    nil
+  )
+  hi(
+    'StatusLineLspDiagnosticsHint',
+    hint_fg,
+    theme.base01,
+    hint_cfg,
+    cterm01,
+    nil,
+    nil
+  )
+  hi(
+    'StatusLineTreeSitter',
+    theme.base0B,
+    theme.base01,
+    cterm0B,
+    cterm01,
+    nil,
+    nil
+  )
 end
 
 return { apply_theme = apply_theme }

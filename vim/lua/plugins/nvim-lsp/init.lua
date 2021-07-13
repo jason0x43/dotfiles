@@ -13,15 +13,18 @@ vim.fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
 vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
 
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-  lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
+  lsp.diagnostic.on_publish_diagnostics,
+  { virtual_text = false }
 )
 
 lsp.handlers['textDocument/hover'] = lsp.with(
-  lsp.handlers.hover, { border = 'rounded' }
+  lsp.handlers.hover,
+  { border = 'rounded' }
 )
 
 lsp.handlers['textDocument/signatureHelp'] = lsp.with(
-  lsp.handlers.signature_help, { border = 'rounded' }
+  lsp.handlers.signature_help,
+  { border = 'rounded' }
 )
 
 function exports.show_line_diagnostics()
