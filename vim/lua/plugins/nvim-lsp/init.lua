@@ -75,6 +75,7 @@ end
 local function setup_servers()
   lspinstall.setup()
 
+  -- initialize the servers managed by lspinstall
   for _, server in pairs(lspinstall.installed_servers()) do
     -- default config for all servers
     local config = { on_attach = on_attach }
