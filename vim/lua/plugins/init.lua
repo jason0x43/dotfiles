@@ -38,7 +38,7 @@ require('packer').startup({
     use({
       'norcalli/nvim-colorizer.lua',
       config = function()
-        require('plugins.colorizer')
+        require('colorizer').setup({})
       end,
     })
 
