@@ -9,6 +9,7 @@ if not packer_exists then
     { 'git', 'clone', 'git@github.com:wbthomason/packer.nvim', install_path }
   )
   vim.cmd('packadd packer.nvim')
+  require('packer').init()
 end
 
 -- recompile the packer config whenever this file is edited
