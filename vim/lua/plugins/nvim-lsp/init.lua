@@ -87,6 +87,13 @@ local function setup_servers()
 
     lspconfig[server].setup(config)
   end
+
+  -- sourcekit isn't handled by lspinstall
+  lspconfig.sourcekit.setup({
+    -- use the cpp lsp for C/CPP
+    filetypes = { 'swift' },
+    on_attach = on_attach,
+  })
 end
 
 setup_servers()
