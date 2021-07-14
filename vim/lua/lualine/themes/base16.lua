@@ -1,9 +1,12 @@
-local c = require('config.theme').get_colors()
+local theme = require('config.theme')
 local exports = {}
+
+local c = theme.get_colors()
+local darken = theme.darken
 
 exports.normal = {
   a = { fg = c('bg'), bg = c('blue'), gui = 'bold' },
-  b = { fg = c('bg'), bg = c('dark_gray') },
+  b = { fg = c('fg_status'), bg = darken(c('bg_status'), 0.075) },
   c = { fg = c('fg_status'), bg = c('bg_status') },
 }
 
