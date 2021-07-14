@@ -136,6 +136,13 @@ function exports.text_mode()
   vim.wo.signcolumn = 'no'
 end
 
+-- settings for text files
+function exports.view_help()
+  vim.cmd('only')
+  vim.wo.signcolumn = 'no'
+  vim.bo.textwidth = 0
+end
+
 -- set colorcolumn to show the current textwidth
 function exports.show_view_width()
   local tw = vim.bo.textwidth
