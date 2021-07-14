@@ -47,12 +47,23 @@ require('telescope').setup({
     live_grep = {
       results_title = false,
     },
+    oldfiles = {
+      previewer = false,
+    },
+    file_browser = {
+      previewer = false,
+    },
   },
 })
 
 util.keys.lmap('ff', ':lua require("telescope.builtin").find_files()<cr>')
+util.keys.lmap('fb', ':lua require("telescope.builtin").file_browser()<cr>')
 util.keys.lmap('fg', ':lua require("telescope.builtin").live_grep()<cr>')
 util.keys.lmap('fr', ':lua require("telescope.builtin").oldfiles()<cr>')
 util.keys.lmap('b', ':lua require("telescope.builtin").buffers()<cr>')
 util.keys.lmap('g', ':lua require("telescope.builtin").git_files()<cr>')
 util.keys.lmap('h', ':lua require("telescope.builtin").help_tags()<cr>')
+util.keys.lmap('lr', ':lua require("telescope.builtin").lsp_references()<cr>')
+util.keys.lmap('ls', ':lua require("telescope.builtin").lsp_document_symbols()<cr>')
+util.keys.lmap('la', ':lua require("telescope.builtin").lsp_code_actions()<cr>')
+util.keys.lmap('ld', ':lua require("telescope.builtin").lsp_workspace_diagnostics()<cr>')
