@@ -1,4 +1,5 @@
 local util = require('util')
+local lighten = require('config.theme').lighten
 local exports = {}
 
 local function hi(group, fg, bg, attr, sp)
@@ -72,7 +73,7 @@ function exports.apply_theme(theme_name)
   hi('SpecialKey', colors.gui03, nil, nil, nil)
   hi('TooLong', colors.gui08, nil, nil, nil)
   hi('Underlined', colors.gui08, nil, nil, nil)
-  hi('Visual', nil, colors.gui01, nil, nil)
+  hi('Visual', nil, lighten(colors.gui0E, 0.7), nil, nil)
   hi('VisualNOS', colors.gui08, nil, nil, nil)
   hi('WarningMsg', colors.gui08, nil, nil, nil)
   hi('WildMenu', colors.gui08, colors.gui0A, nil, nil)

@@ -71,7 +71,7 @@ function exports.get_colors()
     warning = get_color('LspDiagnosticsDefaultWarning', 'fg'),
     hint = get_color('LspDiagnosticsDefaultHint', 'fg'),
     info = get_color('LspDiagnosticsDefaultInformation', 'fg'),
-    bg = get_color('Visual', 'fg'),
+    bg = get_color('Search', 'fg'),
     bg_status = exports.darken(get_color('LineNr', 'bg'), 0.025),
     fg = get_color('Normal', 'fg'),
     fg_status = get_color('Normal', 'bg'),
