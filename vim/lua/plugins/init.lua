@@ -102,13 +102,10 @@ require('packer').startup({
 
     -- fuzzy finding
     use({
-      'junegunn/fzf.vim',
-      requires = 'junegunn/fzf',
-      run = function()
-        fn['fzf#install']()
-      end,
+      'nvim-telescope/telescope.nvim',
+      requires = { 'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim' },
       config = function()
-        require('plugins.fzf')
+        require('plugins.telescope')
       end,
     })
 
