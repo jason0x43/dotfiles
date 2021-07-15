@@ -6,7 +6,9 @@ require('nvim-treesitter.configs').setup({
     enable = true,
     -- this option prevents treesitter highlighting from breaking indenting
     -- see https://github.com/nvim-treesitter/nvim-treesitter/discussions/1271#discussioncomment-795299
-    additional_vim_regex_highlighting = true,
+    -- this should be set to a list of filetypes, but that doesn't work
+    -- https://github.com/nvim-treesitter/nvim-treesitter#modules
+    additional_vim_regex_highlighting = true
   },
   indent = {
     enable = true,
