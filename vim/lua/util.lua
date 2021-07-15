@@ -213,14 +213,14 @@ function exports.assign(src1, src2)
 end
 
 -- TS filetypes
-exports.ts_types = table.concat({
+exports.ts_types = {
   'typescript',
+  'typescript.jsx',
   'typescriptreact',
-  'typescriptreact.jsx',
   'javascript',
+  'javascript.jsx',
   'javascriptreact',
-  'javascriptreact.jsx',
-}, ',')
+}
 
 _G.util = exports
 return exports

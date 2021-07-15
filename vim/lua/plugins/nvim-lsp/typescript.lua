@@ -30,8 +30,10 @@ function exports.check_start()
   end
 end
 
+local ts_types_str = table.concat(util.ts_types, ',')
+
 util.augroup('init_typescript', {
-  'FileType ' .. util.ts_types .. ' lua typescript.check_start()',
+  'FileType ' .. ts_types_str .. ' lua typescript.check_start()',
 })
 
 _G.typescript = exports

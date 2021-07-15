@@ -1,3 +1,5 @@
+local util = require('util')
+
 require('nvim-treesitter.configs').setup({
   ensure_installed = 'maintained',
   highlight = {
@@ -8,14 +10,10 @@ require('nvim-treesitter.configs').setup({
   },
   indent = {
     enable = true,
-    -- indenting is currently broken for JS/TS, particularly for doc comments
-    disable = {
-      'typescript',
-      'typescriptreact',
-      'typescript.tsx',
-      'javascript',
-      'javascriptreact',
-      'javascript.jsx',
-    },
+    -- indenting is currently broken for several languages, particularly for doc
+    -- comments
+    disable = vim.list_extend({
+      'cpp',
+    }, util.ts_types),
   },
 })

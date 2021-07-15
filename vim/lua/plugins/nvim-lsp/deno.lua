@@ -11,8 +11,10 @@ function exports.check_start()
   end
 end
 
+local ts_types_str = table.concat(util.ts_types, ',')
+
 util.augroup('init_deno', {
-  'FileType ' .. util.ts_types .. ' lua deno.check_start()',
+  'FileType ' .. ts_types_str .. ' lua deno.check_start()',
 })
 
 _G.deno = exports
