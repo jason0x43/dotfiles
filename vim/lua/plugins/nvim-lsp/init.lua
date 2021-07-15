@@ -28,7 +28,10 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
 )
 
 function exports.show_line_diagnostics()
-  vim.lsp.diagnostic.show_line_diagnostics({ border = 'rounded' })
+  vim.lsp.diagnostic.show_line_diagnostics({
+    border = 'rounded',
+    max_width = 80,
+  })
 end
 
 local function load_client_config(server_name)
