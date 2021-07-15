@@ -20,27 +20,6 @@ async def intercept_term_theme():
     )[0]
 
 
-async def get_iterm_sessions():
-    import iterm2
-
-    connection = await iterm2.Connection.async_create()
-    app = await iterm2.async_get_app(connection)
-    current_tab = app.current_terminal_window.current_tab
-
-    sessions = []
-    for window in app.terminal_windows:
-        for tab in [t for t in window.tabs if t != current_tab]:
-            for session in tab.sessions:
-                sessions.append(session)
-
-    return sessions
-
-
-async def update_iterm_sessions():
-    code, sessions = await asyncio.gather(intercept_term_theme(), get_iterm_sessions())
-    await asyncio.gather(*[s.async_inject(code) for s in sessions])
-
-
 def base16_to_kitty():
     global kitty_colors
 
@@ -147,10 +126,7 @@ async def main():
     kitty_running = any("kitty.app" in p for p in processes) or any(
         "kitty" in p for p in processes
     )
-    iterm_running = any("iTerm2" in p for p in processes)
 
-    if iterm_running:
-        tasks.append(update_iterm_sessions())
     if kitty_running:
         tasks.append(update_kitty_sessions())
         update_kitty_conf()
