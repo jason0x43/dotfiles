@@ -17,6 +17,8 @@ end
 function exports.apply_theme(theme_name)
   assert(theme_name ~= nil, 'Theme name must not be nil')
 
+  vim.g.colors_name = 'base16'
+
   local theme = require('base16.themes')[theme_name]
   local colors = {}
 
