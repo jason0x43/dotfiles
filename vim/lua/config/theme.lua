@@ -52,6 +52,27 @@ function exports.lighten(hex, amount, fg)
   return blend(hex, fg or '#ffffff', 1 - math.abs(amount))
 end
 
+-- shift a color by a percentage
+-- the shift direction depends on whether the shift amount is positive or
+-- negative and whether the current background is light or dark
+function exports.shift(hex, amount)
+  local shifter
+  if vim.go.background == 'dark' then
+    if amount > 0 then
+      shifter = exports.darken
+    else
+      shifter = exports.lighten
+    end
+  else
+    if amount > 0 then
+      shifter = exports.lighten
+    else
+      shifter = exports.darken
+    end
+  end
+  return shifter(hex, amount)
+end
+
 -- get a color from a vim highlight group
 local function get_color(hlgroup, attr)
   local col = vim.fn.synIDattr(
@@ -89,9 +110,13 @@ function exports.get_colors()
 
   local colors = util.assign(semantic, named)
 
-  return function(name)
+  return function(name, shift_amt)
     assert(colors[name] ~= nil, 'Accessed nil color "' .. name .. '"')
-    return colors[name]
+    local color = colors[name]
+    if shift_amt ~= nil then
+      return exports.shift(color, shift_amt)
+    end
+    return color
   end
 end
 
