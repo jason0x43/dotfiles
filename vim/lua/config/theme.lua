@@ -3,7 +3,7 @@ local exports = {}
 
 -- apply any theme customizations
 function exports.update_theme()
-  print('updating theme')
+  vim.cmd('colorscheme base16')
 end
 
 local hex_pat = '[abcdef0-9][abcdef0-9]'
