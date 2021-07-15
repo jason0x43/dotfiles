@@ -5,7 +5,7 @@ local c = theme.get_colors()
 
 exports.normal = {
   a = { fg = c('bg'), bg = c('blue'), gui = 'bold' },
-  b = { fg = c('fg_status'), bg = c('bg_status', 0.1) },
+  b = { fg = c('fg_status'), bg = c('bg_status', -0.1) },
   c = { fg = c('fg_status'), bg = c('bg_status') },
 }
 
