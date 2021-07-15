@@ -18,6 +18,11 @@ function exports.apply_theme(theme_name)
   assert(theme_name ~= nil, 'Theme name must not be nil')
 
   vim.g.colors_name = 'base16'
+  if theme_name:find('light') ~= nil then
+    vim.go.background = 'light'
+  else
+    vim.go.background = 'dark'
+  end
 
   local theme = require('base16.themes')[theme_name]
   local colors = {}
@@ -361,7 +366,7 @@ function exports.apply_theme(theme_name)
   )
   hi('LspDiagnosticsUnderlineError', nil, nil, 'undercurl', colors.error_fg)
 
-  -- status line extra
+  -- status line extra (for galaxyline)
   hi('StatusLineOuter', colors.gui00, colors.gui05, nil, nil)
   hi('StatusLineMiddle', colors.gui00, colors.gui02, nil, nil)
   hi('StatusLineInner', colors.gui05, colors.gui01, nil, nil)
