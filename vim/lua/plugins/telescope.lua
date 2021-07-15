@@ -1,5 +1,7 @@
 local actions = require('telescope.actions')
-require('telescope').setup({
+local telescope = require('telescope')
+
+telescope.setup({
   defaults = {
     mappings = {
       i = {
@@ -55,6 +57,8 @@ require('telescope').setup({
     },
   },
 })
+
+telescope.load_extension('fzy_native')
 
 util.keys.lmap('ff', ':lua require("telescope.builtin").find_files()<cr>')
 util.keys.lmap('fb', ':lua require("telescope.builtin").file_browser()<cr>')
