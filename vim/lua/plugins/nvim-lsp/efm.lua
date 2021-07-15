@@ -1,3 +1,5 @@
+local util = require('util')
+
 local exports = {}
 
 if vim.fn.executable('eslint_d') == 0 then
@@ -25,30 +27,27 @@ local stylua = {
   formatStdin = true,
 }
 
+local js_langs = {}
+for _, v in ipairs(util.ts_types) do
+  js_langs[v] = { eslint, prettier }
+end
+
 exports.config = {
-  filetypes = {
-    'javascript',
-    'javascriptreact',
-    'typescript',
-    'typescriptreact',
+  filetypes = vim.list_extend({
     'markdown',
     'html',
     'lua',
-  },
+  }, util.ts_types),
 
   init_options = { documentFormatting = true },
 
   settings = {
     rootMarkers = { '.git/' },
-    languages = {
-      javascript = { eslint, prettier },
-      javacriptreact = { eslint, prettier },
-      typescript = { eslint, prettier },
-      typecriptreact = { eslint, prettier },
+    languages = vim.tbl_extend('error', {
       markdown = { prettier },
       html = { prettier },
       lua = { stylua },
-    },
+    }, js_langs),
   },
 }
 
