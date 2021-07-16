@@ -61,6 +61,7 @@ const keys = [
   ['Move to SE corner', 's', CONTROL_SHIFT, () => moveTo(SE)],
   ['Move to SW corner', 'a', CONTROL_SHIFT, () => moveTo(SW)],
   ['Move to center', 'z', CONTROL_SHIFT, () => moveTo(CENTER)],
+  ['Development layout', 'space', CONTROL_SHIFT, () => devLayout()],
 
   [
     'Fill NW quadrant',
@@ -148,14 +149,54 @@ for (const binding of keys) {
 //
 
 /**
+ * Get the windows for an app in a space
+ *
+ * This is much, much more efficient than using Space.windows and finding the
+ * ones belonging to particular apps.
+ */
+function getWindowsInSpace(appName, space) {
+  const app = App.get(appName);
+  if (!app) {
+    return [];
+  }
+
+  return app
+    .windows({ visible: true })
+    .filter((win) => win.spaces().find((s) => s.isEqual(space)));
+}
+
+/**
+ * Layout a browser and terminal in a screen for development
+ */
+function devLayout() {
+  const space = Space.active();
+  if (space.isFullScreen()) {
+    return;
+  }
+
+  const browserWins = [
+    ...getWindowsInSpace('Safari', space),
+    ...getWindowsInSpace('Wavebox', space),
+    ...getWindowsInSpace('Chrome', space),
+  ];
+  const terminalWins = getWindowsInSpace('kitty', space);
+
+  if (browserWins.length === 1 && terminalWins.length === 1) {
+    fill(LEFT, { window: browserWins[0], portion: 1 - THIN_WIDTH });
+    fill(RIGHT, { window: terminalWins[0], portion: THIN_WIDTH });
+  }
+}
+
+/**
  * Add icon space to a screen frame
  */
 function addIconSpace(frame) {
   return {
     ...frame,
-    width: frame.width - 90
+    width: frame.width - 90,
   };
 }
+
 /**
  * Center a window on the screen and make it take up a large portion of the screen
  */
