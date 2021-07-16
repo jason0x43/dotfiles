@@ -61,7 +61,7 @@ const keys = [
   ['Move to SE corner', 's', CONTROL_SHIFT, () => moveTo(SE)],
   ['Move to SW corner', 'a', CONTROL_SHIFT, () => moveTo(SW)],
   ['Move to center', 'z', CONTROL_SHIFT, () => moveTo(CENTER)],
-  ['Development layout', 'space', CONTROL_SHIFT, () => devLayout()],
+  ['Development layout', 'space', CONTROL_SHIFT, () => autoLayout()],
 
   [
     'Fill NW quadrant',
@@ -168,22 +168,41 @@ function getWindowsInSpace(appName, space) {
 /**
  * Layout a browser and terminal in a screen for development
  */
-function devLayout() {
+function autoLayout() {
   const space = Space.active();
   if (space.isFullScreen()) {
     return;
   }
 
+  // space with one browser window and one terminal window
+
   const browserWins = [
     ...getWindowsInSpace('Safari', space),
     ...getWindowsInSpace('Wavebox', space),
     ...getWindowsInSpace('Chrome', space),
+    ...getWindowsInSpace('Firefox', space),
   ];
   const terminalWins = getWindowsInSpace('kitty', space);
-
   if (browserWins.length === 1 && terminalWins.length === 1) {
     fill(LEFT, { window: browserWins[0], portion: 1 - THIN_WIDTH });
     fill(RIGHT, { window: terminalWins[0], portion: THIN_WIDTH });
+    return;
+  }
+
+  // space with a reeder window
+
+  const reederWins = getWindowsInSpace('Reeder', space);
+  if (reederWins.length === 1) {
+    moveTo(CENTER, reederWins[0]);
+    return;
+  }
+
+  // space with a wavebox window
+
+  const waveboxWins = getWindowsInSpace('Wavebox', space);
+  if (waveboxWins.length === 1) {
+    fill(CENTER, { window: waveboxWins[0] });
+    return;
   }
 }
 
