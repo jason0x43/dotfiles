@@ -17,7 +17,7 @@ telescope.setup({
       end,
 
       height = function(_, _, max_lines)
-        return math.min(max_lines - 4, 15)
+        return math.min(max_lines - 4, 10)
       end,
     },
     layout_strategy = 'center',
@@ -43,7 +43,6 @@ telescope.setup({
       results_title = false,
     },
     help_tags = {
-      previewer = false,
       results_title = false,
     },
     live_grep = {
