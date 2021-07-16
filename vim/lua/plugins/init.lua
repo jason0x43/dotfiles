@@ -54,6 +54,7 @@ require('packer').startup({
     })
 
     -- more efficient cursorhold behavior
+    -- see https://github.com/neovim/neovim/issues/12587
     use('antoinemadec/FixCursorHold.nvim')
 
     -- gc for commenting code blocks
@@ -86,7 +87,7 @@ require('packer').startup({
     })
 
     -- render ANSI escape sequences
-    use('powerman/vim-plugin-AnsiEsc')
+    -- use('powerman/vim-plugin-AnsiEsc')
 
     -- support the jsonc filetype
     use('neoclide/jsonc.vim')
