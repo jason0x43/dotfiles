@@ -135,7 +135,12 @@ require('packer').startup({
     })
 
     -- easier movement between vim and tmux panes, and between vim panes
-    use({ 'christoomey/vim-tmux-navigator' })
+    use({
+      'numToStr/Navigator.nvim',
+      config = function()
+        require('plugins.Navigator')
+      end,
+    })
 
     -- filetype plugins
     use({ 'tpope/vim-markdown', opt = true, ft = { 'markdown' } })
