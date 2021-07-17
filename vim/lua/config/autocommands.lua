@@ -37,4 +37,7 @@ util.augroup('init_autocommands', {
 
   -- highlight yanked text
   'TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=150, on_visual=true}',
+
+  -- restore cursor position when opening a file
+  'BufReadPost * lua require("util").restore_cursor()',
 })

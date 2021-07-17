@@ -120,14 +120,6 @@ function exports.cmd(name, argsOrCmd, cmd)
   end
 end
 
--- restore cursor position
-function exports.restore_cursor()
-  if vim.bo.filetype == 'gitcommit' or vim.bo.buftype == 'nofile' then
-    return
-  end
-  vim.cmd('g`"')
-end
-
 -- settings for text files
 function exports.text_mode()
   vim.wo.wrap = true
@@ -221,6 +213,18 @@ exports.ts_types = {
   'javascript.jsx',
   'javascriptreact',
 }
+
+-- restore the cursor position in a file
+function exports.restore_cursor()
+  local line = vim.fn.line
+  if
+    line('\'"') >= 1
+    and line('\'"') <= line('$')
+    and vim.bo.filetype:find('commit') == nil
+  then
+    vim.cmd('normal! g`"')
+  end
+end
 
 _G.util = exports
 return exports

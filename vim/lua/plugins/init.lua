@@ -115,9 +115,6 @@ require('packer').startup({
       end,
     })
 
-    -- open files at the last edited position
-    use('farmergreg/vim-lastplace')
-
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
