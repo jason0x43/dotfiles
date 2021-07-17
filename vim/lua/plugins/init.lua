@@ -180,6 +180,25 @@ require('packer').startup({
         require('plugins/lualine')
       end,
     })
+
+    -- better git diff views
+    use({
+      'sindrets/diffview.nvim',
+      config = function()
+        require('diffview').setup()
+      end,
+    })
+
+    -- better git decorations
+    use({
+      'lewis6991/gitsigns.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim',
+      },
+      config = function()
+        require('gitsigns').setup()
+      end,
+    })
   end,
 
   config = {
