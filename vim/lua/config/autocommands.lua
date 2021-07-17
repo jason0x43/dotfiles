@@ -2,10 +2,10 @@ local util = require('util')
 
 util.augroup('init_autocommands', {
   -- make text files easier to work with
-  'FileType text,textile,markdown,html call v:lua.util.text_mode()',
+  'FileType text,textile,markdown,html lua require("util").text_mode()',
 
   -- show the current textwidth
-  'BufEnter *.* call v:lua.util.show_view_width()',
+  'BufEnter *.* lua require("util").show_view_width()',
 
   -- automatically resize splits
   'VimResized * wincmd =',
@@ -21,7 +21,7 @@ util.augroup('init_autocommands', {
   'CompleteDone * pclose',
 
   -- auto-set quickfix height
-  'FileType qf call v:lua.util.adjust_window_height(1, 10)',
+  'FileType qf lua require("util").adjust_window_height(1, 10)',
 
   -- identify filetypes
   'BufNewFile,BufRead .envrc setfiletype bash',

@@ -226,5 +226,4 @@ function exports.restore_cursor()
   end
 end
 
-_G.util = exports
 return exports

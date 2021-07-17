@@ -13,7 +13,7 @@ local function setup_servers()
     -- add server-specific config if applicable
     local client_config = lsp.load_client_config(server)
     if client_config.config then
-      config = util.assign(config, client_config.config)
+      config = require('util').assign(config, client_config.config)
     end
 
     lspconfig[server].setup(config)
@@ -47,8 +47,9 @@ function exports.setup()
   setup_servers()
 
   -- add some useful support commands
-  util.cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
-  util.cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
+  local cmd = require('util').cmd
+  cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
+  cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
 end
 
 return exports

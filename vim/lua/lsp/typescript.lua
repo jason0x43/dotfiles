@@ -44,8 +44,7 @@ end
 local ts_types_str = table.concat(util.ts_types, ',')
 
 util.augroup('init_typescript', {
-  'FileType ' .. ts_types_str .. ' lua typescript.check_start()',
+  'FileType ' .. ts_types_str .. ' lua require("lsp.typescript").check_start()',
 })
 
-_G.typescript = exports
 return exports
