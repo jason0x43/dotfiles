@@ -1,9 +1,14 @@
-local util = require('util')
+local exports = {}
 
-require('trouble').setup({})
+function exports.setup()
+  local util = require('util')
+  require('trouble').setup({})
 
-util.keys.lmap('e', ':TroubleToggle<cr>')
+  util.keys.lmap('e', ':TroubleToggle<cr>')
 
-util.augroup('init_trouble', {
-  'FileType Trouble setlocal cursorline'
-})
+  util.augroup('init_trouble', {
+    'FileType Trouble setlocal cursorline'
+  })
+end
+
+return exports

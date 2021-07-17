@@ -161,13 +161,13 @@ require('packer').startup({
         },
       },
       config = function()
-        require('lsp')
-        require('plugins.nvim-lspconfig')
-        require('plugins.nvim-lspinstall')
-        require('plugins.null-ls')
-        require('plugins.nvim-compe')
+        require('lsp').setup()
+        require('plugins.nvim-lspconfig').setup()
+        require('plugins.nvim-lspinstall').setup()
+        require('plugins.null-ls').setup()
+        require('plugins.nvim-compe').setup()
+        require('plugins.trouble').setup()
         require('lsp-colors').setup({})
-        require('plugins.trouble')
       end,
     })
 

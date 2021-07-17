@@ -1,9 +1,15 @@
-vim.o.completeopt = 'menuone,noselect'
+local exports = {}
 
-require('compe').setup({
-  enabled = true,
-  autocomplete = true,
-  source = { path = true, nvim_lsp = true, nvim_lua = true, ultisnips = true },
-})
+function exports.setup()
+  vim.o.completeopt = 'menuone,noselect'
 
-util.keys.imap('<cr>', 'compe#confirm("<cr>")', { expr = true })
+  require('compe').setup({
+    enabled = true,
+    autocomplete = true,
+    source = { path = true, nvim_lsp = true, nvim_lua = true, ultisnips = true },
+  })
+
+  util.keys.imap('<cr>', 'compe#confirm("<cr>")', { expr = true })
+end
+
+return exports

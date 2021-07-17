@@ -22,8 +22,6 @@ local function setup_servers()
   -- null-ls isn't handled by lspconfig
 end
 
-setup_servers()
-
 local exports = {}
 local lspinstall = require('lspinstall')
 
@@ -45,9 +43,12 @@ function exports.update_servers()
   end
 end
 
--- add some useful support commands
-util.cmd('LspList', ':lua lsp_util.list_servers()<cr>')
-util.cmd('LspUpdate', ':lua lsp_util.update_servers()<cr>')
+function exports.setup()
+  setup_servers()
 
-_G.lsp_util = exports
+  -- add some useful support commands
+  util.cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
+  util.cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
+end
+
 return exports

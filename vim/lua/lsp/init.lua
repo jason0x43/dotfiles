@@ -1,29 +1,7 @@
 local util = require('util')
-local lsp = vim.lsp
 local modbase = ...
 
 local exports = {}
-
--- UI
-vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignWarning', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
-
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-  lsp.diagnostic.on_publish_diagnostics,
-  { virtual_text = false }
-)
-
-lsp.handlers['textDocument/hover'] = lsp.with(
-  lsp.handlers.hover,
-  { border = 'rounded' }
-)
-
-lsp.handlers['textDocument/signatureHelp'] = lsp.with(
-  lsp.handlers.signature_help,
-  { border = 'rounded' }
-)
 
 function exports.show_line_diagnostics()
   vim.lsp.diagnostic.show_line_diagnostics({
@@ -77,6 +55,28 @@ function exports.on_attach(client, bufnr)
 end
 
 function exports.setup()
+  local lsp = vim.lsp
+
+  -- UI
+  vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
+  vim.fn.sign_define('LspDiagnosticsSignWarning', { text = '' })
+  vim.fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
+  vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
+
+  lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
+    lsp.diagnostic.on_publish_diagnostics,
+    { virtual_text = false }
+  )
+
+  lsp.handlers['textDocument/hover'] = lsp.with(
+    lsp.handlers.hover,
+    { border = 'rounded' }
+  )
+
+  lsp.handlers['textDocument/signatureHelp'] = lsp.with(
+    lsp.handlers.signature_help,
+    { border = 'rounded' }
+  )
 end
 
 return exports
