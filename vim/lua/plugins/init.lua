@@ -153,6 +153,10 @@ require('packer').startup({
         'hrsh7th/nvim-compe',
         'folke/lsp-colors.nvim',
         'folke/trouble.nvim',
+        {
+          'jose-elias-alvarez/null-ls.nvim',
+          requires = 'nvim-lua/plenary.nvim',
+        },
       },
       config = function()
         require('plugins.nvim-lsp')
@@ -161,6 +165,9 @@ require('packer').startup({
         require('plugins.trouble')
       end,
     })
+
+    -- better TS support
+    use('jose-elias-alvarez/nvim-lsp-ts-utils')
 
     -- flashy status bar
     use({

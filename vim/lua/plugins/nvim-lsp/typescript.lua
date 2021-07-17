@@ -9,14 +9,22 @@ function exports.organize_imports()
 end
 
 function exports.on_attach(client)
-  util.cmd(
-    'OrganizeImports',
-    '-buffer',
-    '<cmd>call v:lua.typescript.organize_imports()<cr>'
-  )
-
   -- disable formatting for typescript; we'll use prettier instead
   client.resolved_capabilities.document_formatting = false
+
+  local ts_utils = require('nvim-lsp-ts-utils')
+
+  ts_utils.setup({
+    enable_formatting = true,
+    eslint_enable_diagnostics = true,
+    require_confirmation_on_move = true,
+    update_imports_on_move = true,
+  })
+
+  ts_utils.setup_client(client)
+
+  util.keys.lmap('R', '<cmd>TSLspRenameFile<cr>')
+  util.cmd('OrganizeImports', '-buffer', 'TSLspOrganizeSync')
 end
 
 exports.config = {

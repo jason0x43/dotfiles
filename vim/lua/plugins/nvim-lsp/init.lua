@@ -76,9 +76,8 @@ end
 
 -- setup all the currently installed servers
 local function setup_servers()
-  lspinstall.setup()
-
   -- initialize the servers managed by lspinstall
+  lspinstall.setup()
   for _, server in pairs(lspinstall.installed_servers()) do
     -- default config for all servers
     local config = { on_attach = on_attach }
@@ -96,6 +95,23 @@ local function setup_servers()
   lspconfig.sourcekit.setup({
     -- use the cpp lsp for C/CPP
     filetypes = { 'swift' },
+    on_attach = on_attach,
+  })
+
+  -- null-ls isn't handled by lspconfig
+  local null_ls = require('null-ls')
+  null_ls.setup({
+    sources = {
+      null_ls.builtins.formatting.prettier,
+      null_ls.builtins.formatting.stylua.with({
+        arguments = {
+          '--stdin-filepath',
+          '$FILENAME',
+          '--search-parent-directories',
+          '-',
+        },
+      }),
+    },
     on_attach = on_attach,
   })
 end
