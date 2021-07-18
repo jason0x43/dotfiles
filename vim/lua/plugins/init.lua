@@ -163,6 +163,7 @@ require('packer').startup({
           'jose-elias-alvarez/null-ls.nvim',
           requires = 'nvim-lua/plenary.nvim',
         },
+        'jose-elias-alvarez/nvim-lsp-ts-utils',
       },
       config = function()
         require('lsp').setup()
@@ -174,9 +175,6 @@ require('packer').startup({
         require('lsp-colors').setup({})
       end,
     })
-
-    -- better TS support
-    use('jose-elias-alvarez/nvim-lsp-ts-utils')
 
     -- flashy status bar
     use({

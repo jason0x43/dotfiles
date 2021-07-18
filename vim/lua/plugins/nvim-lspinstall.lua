@@ -1,11 +1,13 @@
+local lspinstall = require('lspinstall')
+
 -- setup all the currently installed servers
 local function setup_servers()
-  local lspinstall = require('lspinstall')
   local lspconfig = require('lspconfig')
   local lsp = require('lsp')
 
-  -- initialize the servers managed by lspinstall
   lspinstall.setup()
+
+  -- initialize the servers managed by lspinstall
   for _, server in pairs(lspinstall.installed_servers()) do
     -- default config for all servers
     local config = { on_attach = lsp.on_attach }
@@ -18,12 +20,9 @@ local function setup_servers()
 
     lspconfig[server].setup(config)
   end
-
-  -- null-ls isn't handled by lspconfig
 end
 
 local exports = {}
-local lspinstall = require('lspinstall')
 
 -- automatically reload servers after `:LspInstall <server>`
 function lspinstall.post_install_hook()
