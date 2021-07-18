@@ -109,6 +109,10 @@ require('packer').startup({
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzy-native.nvim',
         'nvim-telescope/telescope-symbols.nvim',
+        {
+          'nvim-telescope/telescope-frecency.nvim',
+          requires = 'tami5/sql.nvim',
+        },
       },
       config = function()
         require('plugins.telescope')
