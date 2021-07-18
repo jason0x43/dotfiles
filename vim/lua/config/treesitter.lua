@@ -16,6 +16,7 @@ require('nvim-treesitter.configs').setup({
     -- comments
     disable = vim.list_extend({
       'cpp',
+      'python',
     }, util.ts_types),
   },
 })
