@@ -67,22 +67,24 @@ telescope.load_extension('frecency')
 
 local keys = require('util').keys
 
+-- quick maps
+keys.lmap('f', ':lua require("telescope.builtin").find_files()<cr>')
+keys.lmap('g', ':lua require("telescope.builtin").git_files()<cr>')
+keys.lmap('b', ':lua require("telescope.builtin").buffers()<cr>')
+
 -- "find" maps
-keys.lmap('ff', ':lua require("telescope.builtin").find_files()<cr>')
-keys.lmap(
-  'fr',
-  ':lua require("telescope").extensions.frecency.frecency({previewer = false })<cr>'
-)
-keys.lmap('fg', ':lua require("telescope.builtin").git_files()<cr>')
-keys.lmap('fb', ':lua require("telescope.builtin").buffers()<cr>')
-keys.lmap('fo', ':lua require("telescope.builtin").oldfiles()<cr>')
-keys.lmap('fh', ':lua require("telescope.builtin").help_tags()<cr>')
 
 -- "telescope" maps
 keys.lmap('tb', ':lua require("telescope.builtin").file_browser()<cr>')
-keys.lmap('tg', ':lua require("telescope.builtin").live_grep()<cr>')
 keys.lmap('tc', ':lua require("telescope.builtin").git_commits()<cr>')
+keys.lmap('tg', ':lua require("telescope.builtin").live_grep()<cr>')
+keys.lmap('th', ':lua require("telescope.builtin").help_tags()<cr>')
 keys.lmap('tl', ':lua require("telescope.builtin").highlights()<cr>')
+keys.lmap('to', ':lua require("telescope.builtin").oldfiles()<cr>')
+keys.lmap(
+  'tr',
+  ':lua require("telescope").extensions.frecency.frecency({previewer = false })<cr>'
+)
 keys.lmap('ts', ':lua require("telescope.builtin").symbols()<cr>')
 
 -- "lsp" maps
