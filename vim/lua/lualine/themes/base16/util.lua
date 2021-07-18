@@ -47,6 +47,9 @@ function exports.update_colors()
   update_group('b_normal_to_lualine_a_normal', t.normal.b)
   update_group('b_normal_to_lualine_c_normal', t.normal.c)
   update_group('c_normal_to_lualine_b_normal', t.normal.c)
+  update_group('c_filetype_icon_normal', t.normal.c)
+  update_group('a_normal_to_lualine_c_filetype_icon_normal', t.normal.c)
+  update_group('b_normal_to_lualine_c_filetype_icon_normal', t.normal.c)
 end
 
 return exports
