@@ -42,13 +42,11 @@ function exports.update_servers()
   end
 end
 
-function exports.setup()
-  setup_servers()
+setup_servers()
 
-  -- add some useful support commands
-  local cmd = require('util').cmd
-  cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
-  cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
-end
+-- add some useful support commands
+local cmd = require('util').cmd
+cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
+cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
 
 return exports

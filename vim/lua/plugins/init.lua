@@ -157,7 +157,6 @@ require('packer').startup({
       requires = {
         'kabouzeid/nvim-lspinstall',
         'hrsh7th/nvim-compe',
-        'folke/lsp-colors.nvim',
         'folke/trouble.nvim',
         {
           'jose-elias-alvarez/null-ls.nvim',
@@ -166,13 +165,12 @@ require('packer').startup({
         'jose-elias-alvarez/nvim-lsp-ts-utils',
       },
       config = function()
-        require('lsp').setup()
-        require('plugins.nvim-lspconfig').setup()
-        require('plugins.nvim-lspinstall').setup()
-        require('plugins.null-ls').setup()
-        require('plugins.nvim-compe').setup()
-        require('plugins.trouble').setup()
-        require('lsp-colors').setup({})
+        require('lsp')
+        require('plugins.nvim-lspconfig')
+        require('plugins.nvim-lspinstall')
+        require('plugins.null-ls')
+        require('plugins.nvim-compe')
+        require('plugins.trouble')
       end,
     })
 
