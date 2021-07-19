@@ -104,7 +104,7 @@ async def update_neovim_theme():
     await asyncio.gather(
         *[
             asyncio.create_subprocess_shell(
-                '''nvr --servername %s -c ":UpdateColors"''' % socket
+                '''nvr --servername %s -c ":colorscheme base16"''' % socket
             )
             for socket in sockets
         ]

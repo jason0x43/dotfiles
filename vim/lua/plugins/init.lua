@@ -184,7 +184,7 @@ require('packer').startup({
         'arkav/lualine-lsp-progress',
       },
       config = function()
-        require('plugins/lualine')
+        require('plugins.lualine')
       end,
     })
 

@@ -1,4 +1,4 @@
-local c = require('config.theme').get_colors()
+local c = require('util.theme').get_colors()
 
 -- make statusline transparent so we don't get a flash before lualine renders
 local hi = require('util').hi

@@ -1,5 +1,5 @@
 local util = require('util')
-local shift = require('config.theme').shift
+local shift = require('util.theme').shift
 
 local exports = {}
 

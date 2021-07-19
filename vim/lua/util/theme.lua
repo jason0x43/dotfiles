@@ -1,13 +1,8 @@
 local util = require('util')
-local exports = {}
-
--- apply any theme customizations
-function exports.update_theme()
-  vim.cmd('colorscheme base16')
-end
-
 local hex_pat = '[abcdef0-9][abcdef0-9]'
 local pat = '^#(' .. hex_pat .. ')(' .. hex_pat .. ')(' .. hex_pat .. ')$'
+
+local exports = {}
 
 -- convert a hex color to split RGB values
 local function hex_to_rgb(hex_str)
@@ -120,8 +115,9 @@ function exports.get_colors()
   end
 end
 
--- provide an externally callable command that can be used to dynamically
--- update the scheme in running neovim sessions
-util.cmd('UpdateColors', 'lua require("config.theme").update_theme()')
+-- apply any theme customizations
+function exports.update_theme()
+  vim.cmd('colorscheme base16')
+end
 
 return exports

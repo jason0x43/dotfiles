@@ -2,7 +2,7 @@ local exports = {}
 
 -- return a theme using colors from the active colorscheme
 function exports.get_theme()
-  local c = require('config.theme').get_colors()
+  local c = require('util.theme').get_colors()
   return {
     normal = {
       a = { fg = c('bg'), bg = c('blue'), gui = 'bold' },
@@ -31,6 +31,10 @@ function exports.update_colors()
 
   local function update_group(group, opts)
     local gname = 'lualine_' .. group
+    if h[gname] == nil then
+      -- skip a group if it isn't currently defined
+      return
+    end
     h[gname][2] = opts.fg
     h[gname][3] = opts.bg
     h[gname][4] = opts.gui
