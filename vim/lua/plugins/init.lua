@@ -194,6 +194,9 @@ require('packer').startup({
       end,
     })
 
+    -- allow Deno for plugins
+    use('vim-denops/denops.vim')
+
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
@@ -204,6 +207,9 @@ require('packer').startup({
         require('gitsigns').setup()
       end,
     })
+
+    -- git UI
+    use('TimUntersberger/neogit')
   end,
 
   config = {
