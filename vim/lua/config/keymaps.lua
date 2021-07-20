@@ -36,5 +36,9 @@ keys.imap('<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', { expr = true })
 keys.map('<space>', ':noh<cr>')
 
 -- yank to and paste from system clipboard
-keys.lmap('y', 'y:<C-U>call v:lua.util.yank(@0)<CR>', { mode = 'nvo' })
+keys.lmap(
+  'y',
+  'y:<C-U>lua require("util").yank(vim.fn.getreg("0"))<CR>',
+  { mode = 'nvo' }
+)
 keys.lmap('p', '"*p')

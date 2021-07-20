@@ -8,7 +8,6 @@ end
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
 function exports.yank(text)
-  print('yanking')
   local escape = vim.fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
     vim.cmd('echoerr ' .. escape)
