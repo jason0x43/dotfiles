@@ -35,7 +35,7 @@ setup_servers()
 
 -- add some useful support commands
 local cmd = require('util').cmd
-cmd('LspList', ':lua require("plugins.nvim-lspinstall").list_servers()<cr>')
-cmd('LspUpdate', ':lua require("plugins.nvim-lspinstall").update_servers()<cr>')
+cmd('LspList', 'lua require("plugins.nvim-lspinstall").list_servers()')
+cmd('LspUpdate', 'lua require("plugins.nvim-lspinstall").update_servers()')
 
 return exports
