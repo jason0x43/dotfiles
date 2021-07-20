@@ -216,6 +216,9 @@ require('packer').startup({
         require('plugins.neogit')
       end,
     })
+
+    -- startup time profiling
+    use('dstein64/vim-startuptime')
   end,
 
   config = {

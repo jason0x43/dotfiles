@@ -14,7 +14,7 @@ util.augroup('init_autocommands', {
   'FileType qf setlocal wrap linebreak nolist breakindent' .. ' breakindentopt=shift:2 colorcolumn=""',
 
   -- close help files and qf panes with 'q' or Esc
-  'FileType help,qf,fugitiveblame,lspinfo noremap <buffer> <silent> q :bd<CR>',
+  'FileType help,qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
   'BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>',
 
   -- auto-close preview windows after autocomplete
