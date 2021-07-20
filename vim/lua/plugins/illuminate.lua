@@ -1,12 +1,12 @@
 local exports = {}
 
 function exports.update_colors()
-  local util = require('util')
-  local c = require('util.theme').get_colors()
+  local theme = require('util.theme')
+  local c = theme.get_colors()
 
-  util.hi('LspReferenceText', { guibg = c('bg_status') })
-  util.hi('LspReferenceRead', { guibg = c('bg_status') })
-  util.hi('LspReferenceWrite', { guibg = c('bg_status') })
+  theme.hi('LspReferenceText', { guibg = c('bg_status') })
+  theme.hi('LspReferenceRead', { guibg = c('bg_status') })
+  theme.hi('LspReferenceWrite', { guibg = c('bg_status') })
 end
 
 exports.update_colors()

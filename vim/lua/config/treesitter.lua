@@ -1,5 +1,3 @@
-local util = require('util')
-
 require('nvim-treesitter.configs').setup({
   ensure_installed = 'maintained',
   highlight = {
@@ -17,6 +15,6 @@ require('nvim-treesitter.configs').setup({
     disable = vim.list_extend({
       'cpp',
       'python',
-    }, util.ts_types),
+    }, require('util').ts_types),
   },
 })

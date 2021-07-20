@@ -1,10 +1,7 @@
-local util = require('util')
-local shift = require('util.theme').shift
-
 local exports = {}
 
 local function hi(group, fg, bg, attr, sp)
-  util.hi(group, {
+  require('util.theme').hi(group, {
     guifg = fg,
     guibg = bg,
     gui = attr,
@@ -24,6 +21,7 @@ function exports.apply_theme(theme_name)
     vim.go.background = 'dark'
   end
 
+  local shift = require('util.theme').shift
   local theme = require('base16.themes')[theme_name]
   local colors = {}
 

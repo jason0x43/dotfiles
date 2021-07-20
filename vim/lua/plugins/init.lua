@@ -1,4 +1,3 @@
-local util = require('util')
 local fn = vim.fn
 
 -- bootstrap packer
@@ -16,7 +15,7 @@ if not packer_exists then
 end
 
 -- recompile the packer config whenever this file is edited
-util.augroup(
+require('util').augroup(
   'init_packer',
   { 'BufWritePost */plugins/init.lua source <afile> | PackerCompile' }
 )

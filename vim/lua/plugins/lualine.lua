@@ -1,9 +1,9 @@
-local c = require('util.theme').get_colors()
+local theme = require('util.theme')
+local c = theme.get_colors()
 
 -- make statusline transparent so we don't get a flash before lualine renders
-local hi = require('util').hi
-hi('StatusLine', { guibg = '', ctermbg = '' })
-hi('StatusLineNC', { guibg = '', ctermbg = '' })
+theme.hi('StatusLine', { bg = '' })
+theme.hi('StatusLineNC', { bg = '' })
 
 require('lualine').setup({
   options = {
