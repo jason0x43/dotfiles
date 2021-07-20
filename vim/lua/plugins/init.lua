@@ -26,9 +26,22 @@ require('packer').startup({
     -- manage the package manager
     use('wbthomason/packer.nvim')
 
+    -- flashy status bar
+    use({
+      'hoob3rt/lualine.nvim',
+      requires = {
+        'kyazdani42/nvim-web-devicons',
+        'arkav/lualine-lsp-progress',
+      },
+      config = function()
+        require('plugins.lualine')
+      end,
+    })
+
     -- Useful startup text, menu
     use({
       'mhinz/vim-startify',
+      after = 'lualine.nvim',
       config = function()
         require('plugins.startify')
       end,
@@ -96,6 +109,7 @@ require('packer').startup({
     use({
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
+      after = 'lualine.nvim',
       config = function()
         require('config.treesitter')
       end,
@@ -114,6 +128,7 @@ require('packer').startup({
           requires = 'tami5/sql.nvim',
         },
       },
+      after = 'lualine.nvim',
       config = function()
         require('plugins.telescope')
       end,
@@ -164,6 +179,7 @@ require('packer').startup({
         },
         'jose-elias-alvarez/nvim-lsp-ts-utils',
       },
+      after = 'lualine.nvim',
       config = function()
         -- null-ls adds itself to lspconfig, so it needs to be setup before
         -- general LSP setup
@@ -172,18 +188,6 @@ require('packer').startup({
         require('plugins.nvim-lspinstall')
         require('plugins.nvim-compe')
         require('plugins.trouble')
-      end,
-    })
-
-    -- flashy status bar
-    use({
-      'hoob3rt/lualine.nvim',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
-        'arkav/lualine-lsp-progress',
-      },
-      config = function()
-        require('plugins.lualine')
       end,
     })
 
@@ -204,6 +208,7 @@ require('packer').startup({
       requires = {
         'nvim-lua/plenary.nvim',
       },
+      after = 'lualine.nvim',
       config = function()
         require('gitsigns').setup()
       end,
