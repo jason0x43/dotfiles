@@ -397,6 +397,9 @@ function exports.apply_theme(theme_name)
   -- Neogit
   hi('NeogitHunkHeader', colors.gui0D, colors.gui01, 'none', nil)
   hi('NeogitFold', nil, colors.gui01, 'none', nil)
+
+  -- Indent-blankline
+  hi('IndentBlanklineChar', shift(colors.gui01, -0.15), nil, 'none', nil)
 end
 
 return exports

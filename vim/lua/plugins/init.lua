@@ -224,6 +224,15 @@ require('packer').startup({
 
     -- startup time profiling
     use('dstein64/vim-startuptime')
+
+    -- show indents
+    use({
+      'lukas-reineke/indent-blankline.nvim',
+      config = function()
+        vim.g.indent_blankline_char = '│'
+        vim.g.indent_blankline_enabled = false
+      end,
+    })
   end,
 
   config = {
