@@ -157,9 +157,9 @@ function exports.apply_theme(theme_name)
   hi('cssColor', colors.gui0C, nil, nil, nil)
 
   -- Diff highlighting
-  hi('DiffAdd', colors.gui0B, colors.gui01, nil, nil)
-  hi('DiffChange', colors.gui03, colors.gui01, nil, nil)
-  hi('DiffDelete', colors.gui08, colors.gui01, nil, nil)
+  hi('DiffAdd', colors.gui0B, shift(colors.gui0B, 0.88), nil, nil)
+  hi('DiffChange', colors.gui03, shift(colors.gui03, 0.88), nil, nil)
+  hi('DiffDelete', colors.gui08, shift(colors.gui08, 0.88), nil, nil)
   hi('DiffText', colors.gui0D, colors.gui01, nil, nil)
   hi('DiffAdded', colors.gui0B, nil, nil, nil)
   hi('DiffFile', colors.gui08, nil, nil, nil)
@@ -393,6 +393,10 @@ function exports.apply_theme(theme_name)
   hi('TroubleFoldIcon', colors.gui02, nil, 'none', nil)
   hi('TroubleIndent', colors.gui02, nil, 'none', nil)
   hi('TroubleLocation', colors.gui02, nil, 'none', nil)
+
+  -- Neogit
+  hi('NeogitHunkHeader', colors.gui0D, colors.gui01, 'none', nil)
+  hi('NeogitFold', nil, colors.gui01, 'none', nil)
 end
 
 return exports

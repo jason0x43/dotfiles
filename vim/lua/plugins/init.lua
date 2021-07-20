@@ -209,7 +209,12 @@ require('packer').startup({
     })
 
     -- git UI
-    use('TimUntersberger/neogit')
+    use({
+      'TimUntersberger/neogit',
+      config = function()
+        require('plugins.neogit')
+      end,
+    })
   end,
 
   config = {

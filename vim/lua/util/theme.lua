@@ -91,6 +91,8 @@ function exports.get_colors()
     bg_status = exports.darken(get_color('LineNr', 'bg'), 0.025),
     fg = get_color('Normal', 'fg'),
     fg_status = get_color('Normal', 'bg'),
+    bg_sign = get_color('SignColumn', 'bg'),
+    fg_sign = get_color('SignColumn', 'fg'),
     comment = get_color('Comment', 'fg'),
     selection = get_color('LineNr', 'bg'),
   }
