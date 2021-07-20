@@ -170,7 +170,10 @@ require('packer').startup({
       'neovim/nvim-lspconfig',
       requires = {
         'kabouzeid/nvim-lspinstall',
-        'hrsh7th/nvim-compe',
+        {
+          'hrsh7th/nvim-compe',
+          requires = 'ray-x/lsp_signature.nvim',
+        },
         'folke/trouble.nvim',
         {
           'jose-elias-alvarez/null-ls.nvim',

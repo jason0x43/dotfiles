@@ -19,8 +19,13 @@ local function on_attach(client, bufnr)
     client_config.on_attach(client)
   end
 
-  -- perform general setup
   require('illuminate').on_attach(client)
+  require('lsp_signature').on_attach({
+    bind = true,
+    max_width = 80
+  })
+
+  -- perform general setup
 
   local util = require('util')
 
