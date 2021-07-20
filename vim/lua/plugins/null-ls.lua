@@ -15,6 +15,5 @@ null_ls.setup({
       }
     }),
     null_ls.builtins.formatting.black,
-  },
-  on_attach = require('lsp').on_attach,
+  }
 })

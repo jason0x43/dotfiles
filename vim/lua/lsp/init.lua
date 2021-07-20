@@ -1,32 +1,28 @@
-local util = require('util')
 local modbase = ...
 
-local exports = {}
-
-function exports.show_line_diagnostics()
-  vim.lsp.diagnostic.show_line_diagnostics({
-    border = 'rounded',
-    max_width = 80,
-  })
-end
-
-function exports.load_client_config(server_name)
-  local _, client_config = pcall(require, modbase .. '.' .. server_name)
-  return client_config or {}
+-- load the config for a given client, if it exists
+local function load_client_config(server_name)
+  local status, client_config = pcall(require, modbase .. '.' .. server_name)
+  if not status then
+    return {}
+  end
+  return client_config
 end
 
 -- configure a client when it's attached to a buffer
-function exports.on_attach(client, bufnr)
+local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   -- run any client-specific attach functions
-  local client_config = exports.load_client_config(client.name)
+  local client_config = load_client_config(client.name)
   if client_config.on_attach then
     client_config.on_attach(client)
   end
 
   -- perform general setup
   require('illuminate').on_attach(client)
+
+  local util = require('util')
 
   if client.resolved_capabilities.goto_definition then
     util.keys.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
@@ -47,6 +43,7 @@ function exports.on_attach(client, bufnr)
   if not packer_plugins['trouble.nvim'] then
     util.keys.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
+
   util.keys.lmap(
     'd',
     '<cmd>lua require("lsp").show_line_diagnostics()<cr>',
@@ -54,13 +51,43 @@ function exports.on_attach(client, bufnr)
   )
 end
 
-local lsp = vim.lsp
+local exports = {}
+
+-- style the line diagnostics popup
+function exports.show_line_diagnostics()
+  vim.lsp.diagnostic.show_line_diagnostics({
+    border = 'rounded',
+    max_width = 80,
+  })
+end
+
+-- setup a server
+function exports.setup_server(server)
+  -- default config for all servers
+  local config = { on_attach = on_attach }
+
+  -- add server-specific config if applicable
+  local client_config = load_client_config(server)
+  if client_config.config then
+    config = require('util').assign(config, client_config.config)
+  end
+
+  require('lspconfig')[server].setup(config)
+end
+
+-- these are servers not managed by lspinstall
+local manual_servers = { 'null-ls', 'sourcekit' }
+for _, server in ipairs(manual_servers) do
+  exports.setup_server(server)
+end
 
 -- UI
 vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
 vim.fn.sign_define('LspDiagnosticsSignWarning', { text = '' })
 vim.fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
 vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
+
+local lsp = vim.lsp
 
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   lsp.diagnostic.on_publish_diagnostics,

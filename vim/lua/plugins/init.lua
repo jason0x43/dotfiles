@@ -165,10 +165,11 @@ require('packer').startup({
         'jose-elias-alvarez/nvim-lsp-ts-utils',
       },
       config = function()
-        require('lsp')
-        require('plugins.nvim-lspconfig')
-        require('plugins.nvim-lspinstall')
+        -- null-ls adds itself to lspconfig, so it needs to be setup before
+        -- general LSP setup
         require('plugins.null-ls')
+        require('lsp')
+        require('plugins.nvim-lspinstall')
         require('plugins.nvim-compe')
         require('plugins.trouble')
       end,
