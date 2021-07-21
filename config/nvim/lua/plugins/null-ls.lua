@@ -6,14 +6,18 @@ null_ls.setup({
       -- prettier for TS/JS is managed by nvim-lsp-ts-utils
       filetypes = { 'markdown', 'html', 'json', 'yaml' },
     }),
+
     null_ls.builtins.formatting.stylua.with({
       args = {
         '--stdin-filepath',
         '$FILENAME',
         '--search-parent-directories',
         '-',
-      }
+      },
     }),
+
     null_ls.builtins.formatting.black,
-  }
+
+    null_ls.builtins.diagnostics.vale,
+  },
 })
