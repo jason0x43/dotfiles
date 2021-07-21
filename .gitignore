@@ -12,5 +12,6 @@ fish/fish_history
 .mypy_cache/
 config/kitty/colors.conf
 config/kitty/local.conf
+config/kitty/*.py
 config/direnv/allow
 .tool-versions
