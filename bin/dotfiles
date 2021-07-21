@@ -88,18 +88,11 @@ function dotfiles-home {
         link $f $CONFIGDIR/$f:t
     done
 
-    link $DOTFILES/vim $HOME/.vim
-
     makedir $CACHEDIR/tmux/resurrect
-    makedir $CACHEDIR/vim/session
-    makedir $CACHEDIR/vim/swap
-    makedir $CACHEDIR/vim/backup
-    makedir $CACHEDIR/vim/undo
     makedir $CACHEDIR/zsh
     makedir $CACHEDIR/direnv/allow
 
     makedir $CONFIGDIR
-    link $DOTFILES/vim $CONFIGDIR/nvim
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
