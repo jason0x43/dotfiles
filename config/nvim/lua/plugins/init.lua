@@ -176,7 +176,7 @@ require('packer').startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
-      cmd = 'NvimTreeToggle',
+      event = 'VimEnter',
       config = function()
         require('plugins.nvim-tree')
       end,
