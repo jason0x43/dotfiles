@@ -1,11 +1,6 @@
 local o = vim.opt
 local g = vim.g
 
--- disable during initialization
-vim.cmd('syntax off')
-vim.cmd('filetype off')
-vim.cmd('filetype plugin indent off')
-
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
 
