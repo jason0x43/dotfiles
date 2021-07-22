@@ -38,6 +38,9 @@ o.tabstop = 4
 -- don't give ins-completion-menu messages
 o.shortmess = o.shortmess + 'c'
 
+-- ensure that BufRead autocommands run
+o.shortmess = o.shortmess - 'F'
+
 -- always show the sign column
 o.signcolumn = 'yes'
 

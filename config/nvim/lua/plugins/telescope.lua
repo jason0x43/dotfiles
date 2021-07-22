@@ -61,37 +61,3 @@ telescope.setup({
     },
   },
 })
-
-local keys = require('util').keys
-
--- quick maps
-keys.lmap('f', ':lua require("telescope.builtin").find_files()<cr>')
-keys.lmap('g', ':lua require("telescope.builtin").git_files()<cr>')
-keys.lmap('b', ':lua require("telescope.builtin").buffers()<cr>')
-
--- "find" maps
-
--- "telescope" maps
-keys.lmap('tb', ':lua require("telescope.builtin").file_browser()<cr>')
-keys.lmap('tc', ':lua require("telescope.builtin").git_commits()<cr>')
-keys.lmap('tg', ':lua require("telescope.builtin").live_grep()<cr>')
-keys.lmap('th', ':lua require("telescope.builtin").help_tags()<cr>')
-keys.lmap('tl', ':lua require("telescope.builtin").highlights()<cr>')
-keys.lmap('to', ':lua require("telescope.builtin").oldfiles()<cr>')
-keys.lmap(
-  'tr',
-  ':lua require("telescope").extensions.frecency.frecency({previewer = false })<cr>'
-)
-keys.lmap('ts', ':lua require("telescope.builtin").symbols()<cr>')
-
--- "lsp" maps
-keys.lmap('lr', ':lua require("telescope.builtin").lsp_references()<cr>')
-keys.lmap('ls', ':lua require("telescope.builtin").lsp_document_symbols()<cr>')
-keys.lmap('la', ':lua require("telescope.builtin").lsp_code_actions()<cr>')
-keys.lmap(
-  'ld',
-  ':lua require("telescope.builtin").lsp_workspace_diagnostics()<cr>'
-)
-
--- allow symbol access in insert mode
-keys.imap('<C-e>', '<C-o>:lua require("telescope.builtin").symbols()<cr>')

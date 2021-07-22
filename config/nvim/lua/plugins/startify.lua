@@ -1,5 +1,4 @@
 local g = vim.g
-local util = require('util')
 
 g.startify_session_persistence = 0
 g.startify_relative_path = 1
@@ -19,6 +18,3 @@ g.startify_lists = {
   { header = { '   MRU ' .. vim.fn.getcwd() }, type = 'dir' },
   { header = { '   MRU' }, type = 'files' },
 }
-
--- open startify
-util.keys.lmap('s', ':Startify<cr>')
