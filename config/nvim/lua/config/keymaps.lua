@@ -67,7 +67,7 @@ keys.imap('<C-e>', '<cmd>Telescope symbols<cr>')
 keys.lmap('s', '<cmd>Startify<cr>')
 
 -- open NvimTree
-keys.lmap('n', ':NvimTreeToggle<CR>')
+keys.lmap('n', '<cmd>NvimTreeToggle<cr>')
 
 -- open UndoTree
-keys.lmap('u', ':UndotreeToggle<cr>')
+keys.lmap('u', '<cmd>UndotreeToggle<cr>')
