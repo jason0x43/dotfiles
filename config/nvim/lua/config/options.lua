@@ -1,4 +1,10 @@
 local o = vim.opt
+local g = vim.g
+
+-- disable during initialization
+vim.cmd('syntax off')
+vim.cmd('filetype off')
+vim.cmd('filetype plugin indent off')
 
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
@@ -97,3 +103,16 @@ end
 if vim.fn.executable('rg') then
   o.grepprg = 'rg --no-heading --color=never'
 end
+
+-- disable builtin plugins
+-- the value of the loaded var doesn't matter, just that it's defined
+g.loaded_gzip = 0
+g.loaded_tar = 0
+g.loaded_tarPlugin = 0
+g.loaded_zipPlugin = 0
+g.loaded_2html_plugin = 0
+g.loaded_netrw = 0
+g.loaded_netrwPlugin = 0
+g.loaded_matchit = 0
+g.loaded_matchparen = 0
+g.loaded_spec = 0
