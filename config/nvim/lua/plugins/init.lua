@@ -26,12 +26,6 @@ require('packer').startup({
     -- manage the package manager
     use('wbthomason/packer.nvim')
 
-    -- plenary is needed by many things
-    use({
-      'nvim-lua/plenary.nvim',
-      event = 'VimEnter',
-    })
-
     -- devicons are needed by many things
     use({
       'kyazdani42/nvim-web-devicons',
@@ -41,14 +35,16 @@ require('packer').startup({
     -- flashy status bar
     use({
       'hoob3rt/lualine.nvim',
-      after = 'nvim-web-devicons',
-    })
-    use({
-      'arkav/lualine-lsp-progress',
-      after = 'lualine.nvim',
+      event = 'VimEnter',
       config = function()
         require('plugins.lualine')
       end,
+    })
+
+    -- plenary is needed by many things
+    use({
+      'nvim-lua/plenary.nvim',
+      event = 'VimEnter',
     })
 
     -- Useful startup text, menu
@@ -232,6 +228,10 @@ require('packer').startup({
       config = function()
         require('plugins.trouble')
       end,
+    })
+    use({
+      'arkav/lualine-lsp-progress',
+      after = 'nvim-lspconfig',
     })
 
     -- completion
