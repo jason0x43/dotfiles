@@ -111,6 +111,7 @@ require('packer').startup({
     -- visualize the undo tree
     use({
       'mbbill/undotree',
+      cmd = 'UndotreeToggle',
       config = function()
         require('plugins.undotree')
       end,

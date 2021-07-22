@@ -68,3 +68,6 @@ keys.lmap('s', '<cmd>Startify<cr>')
 
 -- open NvimTree
 keys.lmap('n', ':NvimTreeToggle<CR>')
+
+-- open UndoTree
+keys.lmap('u', ':UndotreeToggle<cr>')
