@@ -26,6 +26,9 @@ require('packer').startup({
     -- manage the package manager
     use('wbthomason/packer.nvim')
 
+    -- allow Deno for plugins
+    use('vim-denops/denops.vim')
+
     -- devicons are needed by many things
     use({
       'kyazdani42/nvim-web-devicons',
@@ -41,10 +44,16 @@ require('packer').startup({
       end,
     })
 
-    -- plenary is needed by many things
+    -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
       event = 'VimEnter',
+    })
+
+    -- popup is a common dependency
+    use({
+      'nvim-lua/popup.nvim',
+      after = 'plenary.nvim',
     })
 
     -- Useful startup text, menu
@@ -94,19 +103,28 @@ require('packer').startup({
     })
 
     -- git utilities
-    use('tpope/vim-fugitive')
-
-    -- useful pairs of mappings
-    use('tpope/vim-unimpaired')
+    use({
+      'tpope/vim-fugitive',
+      event = 'BufRead'
+    })
 
     -- support for repeating mapped commands
-    use('tpope/vim-repeat')
+    use({
+      'tpope/vim-repeat',
+      event = 'BufRead'
+    })
 
     -- for manipulating parens and such
-    use('tpope/vim-surround')
+    use({
+      'tpope/vim-surround',
+      event = 'BufRead'
+    })
 
     -- easy vertical alignment of code elements
-    use('junegunn/vim-easy-align')
+    use({
+      'junegunn/vim-easy-align',
+      cmd = 'EasyAlign'
+    })
 
     -- visualize the undo tree
     use({
@@ -121,7 +139,10 @@ require('packer').startup({
     -- use('powerman/vim-plugin-AnsiEsc')
 
     -- support the jsonc filetype
-    use('neoclide/jsonc.vim')
+    use({
+      'neoclide/jsonc.vim',
+      event = 'VimEnter'
+    })
 
     -- use treesitter for filetype handling
     use({
@@ -131,11 +152,6 @@ require('packer').startup({
       config = function()
         require('plugins.nvim-treesitter')
       end,
-    })
-
-    use({
-      'nvim-lua/popup.nvim',
-      after = 'plenary.nvim',
     })
 
     -- fuzzy finding
@@ -252,9 +268,6 @@ require('packer').startup({
         require('diffview').setup()
       end,
     })
-
-    -- allow Deno for plugins
-    use('vim-denops/denops.vim')
 
     -- better git decorations
     use({
