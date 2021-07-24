@@ -100,6 +100,10 @@ require('packer').startup({
     use({
       'editorconfig/editorconfig-vim',
       event = 'VimEnter',
+      config = function()
+        -- Don't let editorconfig do this -- it's handled via an autocommand
+        vim.g.EditorConfig_max_line_indicator = 'none'
+      end,
     })
 
     -- git utilities
