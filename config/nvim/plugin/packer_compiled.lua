@@ -102,6 +102,7 @@ _G.packer_plugins = {
     path = "/Users/jason/.local/share/nvim/site/pack/packer/opt/diffview.nvim"
   },
   ["editorconfig-vim"] = {
+    config = { "\27LJ\2\nF\0\0\2\0\4\0\0056\0\0\0009\0\1\0'\1\3\0=\1\2\0K\0\1\0\tnone$EditorConfig_max_line_indicator\6g\bvim\0" },
     loaded = false,
     needs_bufread = false,
     path = "/Users/jason/.local/share/nvim/site/pack/packer/opt/editorconfig-vim"
@@ -187,7 +188,7 @@ _G.packer_plugins = {
     path = "/Users/jason/.local/share/nvim/site/pack/packer/opt/nvim-lsp-ts-utils"
   },
   ["nvim-lspconfig"] = {
-    after = { "lsp_signature.nvim", "lualine-lsp-progress", "null-ls.nvim", "trouble.nvim" },
+    after = { "trouble.nvim", "lualine-lsp-progress", "lsp_signature.nvim", "null-ls.nvim" },
     load_after = {
       ["nvim-lspinstall"] = true
     },
@@ -353,8 +354,11 @@ time([[Defining packer_plugins]], false)
 
 -- Command lazy-loads
 time([[Defining lazy-load commands]], true)
-if vim.fn.exists(":DiffviewOpen") ~= 2 then
-vim.cmd [[command! -nargs=* -range -bang -complete=file DiffviewOpen lua require("packer.load")({'diffview.nvim'}, { cmd = "DiffviewOpen", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+if vim.fn.exists(":EasyAlign") ~= 2 then
+vim.cmd [[command! -nargs=* -range -bang -complete=file EasyAlign lua require("packer.load")({'vim-easy-align'}, { cmd = "EasyAlign", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+end
+if vim.fn.exists(":Telescope") ~= 2 then
+vim.cmd [[command! -nargs=* -range -bang -complete=file Telescope lua require("packer.load")({'telescope-fzy-native.nvim', 'telescope-symbols.nvim', 'telescope.nvim'}, { cmd = "Telescope", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 end
 if vim.fn.exists(":UndotreeToggle") ~= 2 then
 vim.cmd [[command! -nargs=* -range -bang -complete=file UndotreeToggle lua require("packer.load")({'undotree'}, { cmd = "UndotreeToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
@@ -368,11 +372,8 @@ end
 if vim.fn.exists(":Neogit") ~= 2 then
 vim.cmd [[command! -nargs=* -range -bang -complete=file Neogit lua require("packer.load")({'neogit'}, { cmd = "Neogit", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 end
-if vim.fn.exists(":EasyAlign") ~= 2 then
-vim.cmd [[command! -nargs=* -range -bang -complete=file EasyAlign lua require("packer.load")({'vim-easy-align'}, { cmd = "EasyAlign", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
-end
-if vim.fn.exists(":Telescope") ~= 2 then
-vim.cmd [[command! -nargs=* -range -bang -complete=file Telescope lua require("packer.load")({'telescope-fzy-native.nvim', 'telescope-symbols.nvim', 'telescope.nvim'}, { cmd = "Telescope", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+if vim.fn.exists(":DiffviewOpen") ~= 2 then
+vim.cmd [[command! -nargs=* -range -bang -complete=file DiffviewOpen lua require("packer.load")({'diffview.nvim'}, { cmd = "DiffviewOpen", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 end
 time([[Defining lazy-load commands]], false)
 
@@ -380,32 +381,32 @@ vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Filetype lazy-loads
 time([[Defining lazy-load filetype autocommands]], true)
+vim.cmd [[au FileType textile ++once lua require("packer.load")({'Textile-for-VIM'}, { ft = "textile" }, _G.packer_plugins)]]
+vim.cmd [[au FileType latex ++once lua require("packer.load")({'vimtex'}, { ft = "latex" }, _G.packer_plugins)]]
 vim.cmd [[au FileType java ++once lua require("packer.load")({'vim-classpath'}, { ft = "java" }, _G.packer_plugins)]]
 vim.cmd [[au FileType markdown ++once lua require("packer.load")({'vim-markdown', 'vim-markdown-toc'}, { ft = "markdown" }, _G.packer_plugins)]]
 vim.cmd [[au FileType tex ++once lua require("packer.load")({'vimtex'}, { ft = "tex" }, _G.packer_plugins)]]
 vim.cmd [[au FileType applescript ++once lua require("packer.load")({'applescript.vim'}, { ft = "applescript" }, _G.packer_plugins)]]
-vim.cmd [[au FileType latex ++once lua require("packer.load")({'vimtex'}, { ft = "latex" }, _G.packer_plugins)]]
-vim.cmd [[au FileType textile ++once lua require("packer.load")({'Textile-for-VIM'}, { ft = "textile" }, _G.packer_plugins)]]
 time([[Defining lazy-load filetype autocommands]], false)
   -- Event lazy-loads
 time([[Defining lazy-load event autocommands]], true)
+vim.cmd [[au VimEnter * ++once lua require("packer.load")({'nvim-colorizer.lua', 'nvim-web-devicons', 'Navigator.nvim', 'vim-illuminate', 'FixCursorHold.nvim', 'jsonc.vim', 'lualine.nvim', 'vim-startify'}, { event = "VimEnter *" }, _G.packer_plugins)]]
+vim.cmd [[au BufRead * ++once lua require("packer.load")({'plenary.nvim', 'nvim-tree.lua', 'nvim-treesitter', 'vim-commentary', 'vim-surround', 'indent-blankline.nvim', 'vim-repeat', 'vim-fugitive'}, { event = "BufRead *" }, _G.packer_plugins)]]
 vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
-vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter', 'vim-commentary', 'vim-fugitive', 'vim-illuminate', 'indent-blankline.nvim', 'vim-repeat', 'vim-surround', 'nvim-colorizer.lua'}, { event = "BufRead *" }, _G.packer_plugins)]]
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'editorconfig-vim', 'nvim-lspinstall'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 vim.cmd [[au CursorMoved * ++once lua require("packer.load")({'vim-matchup'}, { event = "CursorMoved *" }, _G.packer_plugins)]]
-vim.cmd [[au VimEnter * ++once lua require("packer.load")({'nvim-web-devicons', 'FixCursorHold.nvim', 'editorconfig-vim', 'jsonc.vim', 'vim-startify', 'plenary.nvim', 'lualine.nvim', 'Navigator.nvim', 'nvim-tree.lua'}, { event = "VimEnter *" }, _G.packer_plugins)]]
-vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspinstall'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 time([[Defining lazy-load event autocommands]], false)
 vim.cmd("augroup END")
 vim.cmd [[augroup filetypedetect]]
+time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]], true)
+vim.cmd [[source /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]]
+time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]], false)
 time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown/ftdetect/markdown.vim]], true)
 vim.cmd [[source /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown/ftdetect/markdown.vim]]
 time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown/ftdetect/markdown.vim]], false)
 time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown-toc/ftdetect/markdown.vim]], true)
 vim.cmd [[source /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown-toc/ftdetect/markdown.vim]]
 time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vim-markdown-toc/ftdetect/markdown.vim]], false)
-time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]], true)
-vim.cmd [[source /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]]
-time([[Sourcing ftdetect script at: /Users/jason/.local/share/nvim/site/pack/packer/opt/vimtex/ftdetect/tex.vim]], false)
 vim.cmd("augroup END")
 if should_profile then save_profiles() end
 
