@@ -138,7 +138,10 @@ end
 function exports.show_view_width()
   local tw = vim.bo.textwidth
   if tw and tw > 0 then
-    vim.wo.colorcolumn = vim.fn.join(vim.fn.range(tw + 1, tw + 1 + 256), ',')
+    vim.wo.colorcolumn = vim.fn.join(
+      vim.fn.range(tw + 1, tw + 1 + vim.go.columns),
+      ','
+    )
   end
 end
 
