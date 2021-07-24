@@ -39,5 +39,7 @@ util.augroup('init_autocommands', {
   'TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=150, on_visual=true}',
 
   -- restore cursor position when opening a file
-  'BufReadPost * lua require("util").restore_cursor()',
+  -- run this in BufWinEnter instead of BufReadPost so that this won't override
+  -- a line number provided on the commandline
+  'BufWinEnter * lua require("util").restore_cursor()',
 })

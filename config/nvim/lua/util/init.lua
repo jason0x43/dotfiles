@@ -183,7 +183,7 @@ function exports.restore_cursor()
     and line('\'"') <= line('$')
     and vim.bo.filetype:find('commit') == nil
   then
-    vim.cmd('normal! g`"')
+    vim.cmd('normal! g`"zz')
   end
 end
 
