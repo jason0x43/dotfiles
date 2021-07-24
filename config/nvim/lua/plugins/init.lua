@@ -47,7 +47,7 @@ require('packer').startup({
     -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
-      event = 'VimEnter',
+      event = 'BufRead',
     })
 
     -- popup is a common dependency
@@ -68,7 +68,7 @@ require('packer').startup({
     -- highlight color strings
     use({
       'norcalli/nvim-colorizer.lua',
-      event = 'BufRead',
+      event = 'VimEnter',
       config = function()
         require('colorizer').setup({})
       end,
@@ -99,7 +99,7 @@ require('packer').startup({
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      event = 'VimEnter',
+      event = 'BufReadPre',
       config = function()
         -- Don't let editorconfig do this -- it's handled via an autocommand
         vim.g.EditorConfig_max_line_indicator = 'none'
@@ -109,25 +109,25 @@ require('packer').startup({
     -- git utilities
     use({
       'tpope/vim-fugitive',
-      event = 'BufRead'
+      event = 'BufRead',
     })
 
     -- support for repeating mapped commands
     use({
       'tpope/vim-repeat',
-      event = 'BufRead'
+      event = 'BufRead',
     })
 
     -- for manipulating parens and such
     use({
       'tpope/vim-surround',
-      event = 'BufRead'
+      event = 'BufRead',
     })
 
     -- easy vertical alignment of code elements
     use({
       'junegunn/vim-easy-align',
-      cmd = 'EasyAlign'
+      cmd = 'EasyAlign',
     })
 
     -- visualize the undo tree
@@ -145,7 +145,7 @@ require('packer').startup({
     -- support the jsonc filetype
     use({
       'neoclide/jsonc.vim',
-      event = 'VimEnter'
+      event = 'VimEnter',
     })
 
     -- use treesitter for filetype handling
@@ -180,7 +180,9 @@ require('packer').startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
-      event = 'VimEnter',
+      -- NvimTree must load at BufRead to be able to determine the location of
+      -- an initially edited file
+      event = 'BufRead',
       config = function()
         require('plugins.nvim-tree')
       end,
@@ -189,7 +191,7 @@ require('packer').startup({
     -- highlight current word
     use({
       'RRethy/vim-illuminate',
-      event = 'BufRead',
+      event = 'VimEnter',
       config = function()
         require('plugins.illuminate')
       end,
