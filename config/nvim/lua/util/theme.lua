@@ -104,7 +104,7 @@ function exports.get_colors()
     red = semantic.error,
   }
 
-  local colors = require('util').assign(semantic, named)
+  local colors = vim.tbl_extend('force', semantic, named)
 
   return function(name, shift_amt)
     assert(colors[name] ~= nil, 'Accessed nil color "' .. name .. '"')

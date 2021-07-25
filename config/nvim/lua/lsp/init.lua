@@ -74,7 +74,7 @@ function exports.setup_server(server)
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
   if client_config.config then
-    config = require('util').assign(config, client_config.config)
+    config = vim.tbl_extend('force', config, client_config.config)
   end
 
   require('lspconfig')[server].setup(config)

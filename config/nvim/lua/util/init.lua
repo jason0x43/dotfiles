@@ -152,11 +152,6 @@ function exports.adjust_window_height(minheight, maxheight)
   vim.cmd(val .. 'wincmd _')
 end
 
--- extend a table
-function exports.assign(src1, src2)
-  return vim.tbl_extend('force', src1, src2)
-end
-
 -- TS filetypes
 exports.ts_types = {
   'typescript',
