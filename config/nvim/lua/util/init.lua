@@ -152,14 +152,6 @@ function exports.adjust_window_height(minheight, maxheight)
   vim.cmd(val .. 'wincmd _')
 end
 
--- trim characters from a string
-function exports.trim(str, char)
-  if char == nil then
-    char = '%s'
-  end
-  return str:gsub('^' .. char .. '+', ''):gsub(char .. '+$', '')
-end
-
 -- extend a table
 function exports.assign(src1, src2)
   return vim.tbl_extend('force', src1, src2)

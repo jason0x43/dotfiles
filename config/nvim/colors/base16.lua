@@ -5,7 +5,7 @@ local function load_theme_name()
   if vim.fn.filereadable(theme_file) == 1 then
     local lines = vim.fn.readfile(theme_file, '', 1)
     local words = vim.split(lines[1], '%s')
-    return require('util').trim(words[#words], "'"):sub(8)
+    return vim.fn.trim(words[#words], "'"):sub(8)
   end
 end
 
