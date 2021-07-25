@@ -1,10 +1,5 @@
 local exports = {}
 
--- if we're in a repo, find the project root
-function exports.project_root()
-  return vim.fn.finddir('.git', os.getenv('PWD') .. ';')
-end
-
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
 function exports.yank(text)
@@ -123,13 +118,6 @@ function exports.text_mode()
   vim.wo.linebreak = true
   vim.wo.list = false
   vim.wo.signcolumn = 'no'
-end
-
--- settings for text files
-function exports.view_help()
-  vim.cmd('only')
-  vim.wo.signcolumn = 'no'
-  vim.bo.textwidth = 0
 end
 
 -- set colorcolumn to show the current textwidth
