@@ -101,13 +101,28 @@ end
 
 -- disable builtin plugins
 -- the value of the loaded var doesn't matter, just that it's defined
-g.loaded_gzip = 0
-g.loaded_tar = 0
-g.loaded_tarPlugin = 0
-g.loaded_zipPlugin = 0
-g.loaded_2html_plugin = 0
-g.loaded_netrw = 0
-g.loaded_netrwPlugin = 0
-g.loaded_matchit = 0
-g.loaded_matchparen = 0
-g.loaded_spec = 0
+local disabled_plugins = {
+  '2html_plugin',
+  'getscript',
+  'getscriptPlugin',
+  'gzip',
+  'logipat',
+  'matchit',
+  'matchparen',
+  'netrw',
+  'netrwFileHandlers',
+  'netrwPlugin',
+  'netrwSettings',
+  'rrhelper',
+  'spec',
+  'spellfile_plugin',
+  'tar',
+  'tarPlugin',
+  'vimball',
+  'vimballPlugin',
+  'zip',
+  'zipPlugin'
+}
+for _, plugin in pairs(disabled_plugins) do
+  g['loaded_' .. plugin] = 1
+end
