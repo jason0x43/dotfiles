@@ -30,15 +30,15 @@ local function on_attach(client, bufnr)
   local util = require('util')
 
   if client.resolved_capabilities.goto_definition then
-    util.keys.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    util.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
 
   if client.resolved_capabilities.hover then
-    util.keys.map('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    util.map('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
   end
 
   if client.resolved_capabilities.rename then
-    util.keys.lmap('r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    util.lmap('r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   end
 
   if client.resolved_capabilities.document_formatting then
@@ -46,10 +46,10 @@ local function on_attach(client, bufnr)
   end
 
   if not packer_plugins['trouble.nvim'] then
-    util.keys.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+    util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
 
-  util.keys.lmap(
+  util.lmap(
     'd',
     '<cmd>lua require("lsp").show_line_diagnostics()<cr>',
     opts

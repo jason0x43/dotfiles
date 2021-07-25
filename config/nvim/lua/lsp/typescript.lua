@@ -26,7 +26,7 @@ function exports.on_attach(client)
 
   ts_utils.setup_client(client)
 
-  util.keys.lmap('R', '<cmd>TSLspRenameFile<cr>')
+  util.lmap('R', '<cmd>TSLspRenameFile<cr>')
   util.cmd('OrganizeImports', '-buffer', 'TSLspOrganizeSync')
 end
 

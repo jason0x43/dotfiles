@@ -16,8 +16,6 @@ function exports.yank(text)
   end
 end
 
-exports.keys = {}
-
 -- map a key in a particular mode
 --   mode - one or more mode characters
 --   key  - the key to map
@@ -76,22 +74,22 @@ local map_in_mode = function(mode, key, cmd, opts)
 end
 
 -- map a key in all modes
-function exports.keys.map(key, cmd, opts)
+function exports.map(key, cmd, opts)
   map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in normal mode using the leader key
-function exports.keys.lmap(key, cmd, opts)
+function exports.lmap(key, cmd, opts)
   map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function exports.keys.imap(key, cmd, opts)
+function exports.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function exports.keys.nmap(key, cmd, opts)
+function exports.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
 end
 
