@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+# Load tmux through direnv to ensure it's not using a local environment
+# See https://github.com/direnv/direnv/wiki/Tmux
+if (( $+commands[direnv] )); then
+	direnv exec / /usr/local/bin/tmux $@
+else
+	/usr/local/bin/tmux $@
+fi
