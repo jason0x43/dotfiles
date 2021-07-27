@@ -4,11 +4,14 @@ function exports.on_attach()
   require('util').cmd('OrganizeImports', '-buffer', 'PyrightOrganizeImports')
 end
 
+local lsp = vim.lsp
+local orig_on_publish_diagnostics =
+  lsp.handlers['textDocument/publishDiagnostics']
+
 -- filter out 'is not accessed' hints
--- the '_*' parameters are unused by nvim's default handler (for now)
-local function on_publish_diagnostics(_a, _b, params, client_id, _c, config)
+local function on_publish_diags(err, method, result, client_id, bufnr, config)
   local diags = {}
-  for _, v in ipairs(params.diagnostics) do
+  for _, v in ipairs(result.diagnostics) do
     if
       v.tags == nil
       or not vim.tbl_contains(v.tags, 1)
@@ -18,19 +21,19 @@ local function on_publish_diagnostics(_a, _b, params, client_id, _c, config)
     end
   end
 
-  vim.lsp.diagnostic.on_publish_diagnostics(
-    _a,
-    _b,
-    vim.tbl_extend('force', params, { diagnostics = diags }),
+  orig_on_publish_diagnostics(
+    err,
+    method,
+    vim.tbl_extend('force', result, { diagnostics = diags }),
     client_id,
-    _c,
+    bufnr,
     config
   )
 end
 
 exports.config = {
   handlers = {
-    ['textDocument/publishDiagnostics'] = on_publish_diagnostics,
+    ['textDocument/publishDiagnostics'] = on_publish_diags,
   },
 }
 

@@ -95,7 +95,7 @@ vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
 local lsp = vim.lsp
 
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-  lsp.diagnostic.on_publish_diagnostics,
+  lsp.handlers['textDocument/publishDiagnostics'],
   { virtual_text = false }
 )
 
