@@ -41,7 +41,7 @@ put "\033]52;c;!\a"
 # copy via OSC 52
 buf=$(cat "$@")
 len=$(printf %s "$buf" | wc -c)
-max=74994
+max=8388608
 if (( len > max )); then 
   echo "$0: input is $(( len - max )) bytes too long" >&2
 fi
