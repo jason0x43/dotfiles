@@ -42,7 +42,7 @@ local function on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.cmd('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 10000)')
+    util.cmd('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 1000)')
   end
 
   if not packer_plugins['trouble.nvim'] then
