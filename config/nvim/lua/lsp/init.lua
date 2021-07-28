@@ -22,7 +22,7 @@ local function on_attach(client, bufnr)
   require('illuminate').on_attach(client)
   require('lsp_signature').on_attach({
     bind = true,
-    max_width = 80
+    max_width = 80,
   })
 
   -- perform general setup
@@ -49,11 +49,7 @@ local function on_attach(client, bufnr)
     util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
 
-  util.lmap(
-    'd',
-    '<cmd>lua require("lsp").show_line_diagnostics()<cr>',
-    opts
-  )
+  util.lmap('d', '<cmd>lua require("lsp").show_line_diagnostics()<cr>', opts)
 end
 
 local exports = {}
