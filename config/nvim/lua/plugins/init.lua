@@ -151,6 +151,7 @@ require('packer').startup({
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',
+      disable = true,
       event = 'BufRead',
       run = ':TSUpdate',
       config = function()
@@ -300,6 +301,15 @@ require('packer').startup({
       config = function()
         vim.g.indent_blankline_char = '│'
         vim.g.indent_blankline_enabled = false
+      end,
+    })
+
+    -- indent and syntax
+    use({
+      'sheerun/vim-polyglot',
+      event = 'BufReadPre',
+      config = function()
+        vim.g.polyglot_disabled = { 'autoindent' }
       end,
     })
   end,
