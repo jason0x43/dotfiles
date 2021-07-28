@@ -60,7 +60,7 @@ util.lmap('ts', '<cmd>Telescope symbols<cr>')
 util.lmap('lr', '<cmd>Telescope lsp_references<cr>')
 util.lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
 util.lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
-util.lmap('ld', '<cmd>Telescope lsp_workspace_diagnostics()<cr>')
+util.lmap('ld', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
 util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
 
 -- open startify
