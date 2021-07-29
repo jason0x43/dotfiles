@@ -12,19 +12,21 @@ function exports.on_attach(client)
   -- disable formatting for typescript; we'll use prettier instead
   client.resolved_capabilities.document_formatting = false
 
-  local ts_utils = require('nvim-lsp-ts-utils')
+  local status, ts_utils = pcall(require, 'nvim-lsp-ts-utils')
 
-  ts_utils.setup({
-    enable_formatting = true,
-    formatter = 'prettierd',
-    eslint_enable_diagnostics = true,
-    eslint_enable_disable_comments = true,
-    eslint_bin = 'eslint_d',
-    require_confirmation_on_move = true,
-    update_imports_on_move = true,
-  })
+  if status then
+    ts_utils.setup({
+      enable_formatting = true,
+      formatter = 'prettierd',
+      eslint_enable_diagnostics = true,
+      eslint_enable_disable_comments = true,
+      eslint_bin = 'eslint_d',
+      require_confirmation_on_move = true,
+      update_imports_on_move = true,
+    })
 
-  ts_utils.setup_client(client)
+    ts_utils.setup_client(client)
+  end
 
   util.lmap('R', '<cmd>TSLspRenameFile<cr>')
   util.cmd('OrganizeImports', '-buffer', 'TSLspOrganizeSync')
