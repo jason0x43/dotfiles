@@ -22,7 +22,7 @@
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	pager = less --chop-long-lines --QUIT-AT-EOF
+	pager = less --chop-long-lines --QUIT-AT-EOF -x1,5
 
 [alias]
 	a = add
