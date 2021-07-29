@@ -151,7 +151,6 @@ require('packer').startup({
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',
-      disable = true,
       event = 'BufRead',
       run = ':TSUpdate',
       config = function()

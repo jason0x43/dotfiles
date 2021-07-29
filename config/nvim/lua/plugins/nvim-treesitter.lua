@@ -9,7 +9,7 @@ require('nvim-treesitter.configs').setup({
     additional_vim_regex_highlighting = true
   },
   indent = {
-    enable = true,
+    enable = false,
     -- indenting is currently broken for several languages, particularly for doc
     -- comments
     disable = vim.list_extend({
