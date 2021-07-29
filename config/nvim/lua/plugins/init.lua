@@ -307,10 +307,7 @@ require('packer').startup({
     -- indent and syntax
     use({
       'sheerun/vim-polyglot',
-      event = 'BufReadPre',
-      config = function()
-        vim.g.polyglot_disabled = { 'autoindent' }
-      end,
+      event = 'BufReadPre'
     })
   end,
 

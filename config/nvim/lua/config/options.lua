@@ -126,3 +126,5 @@ local disabled_plugins = {
 for _, plugin in pairs(disabled_plugins) do
   g['loaded_' .. plugin] = 1
 end
+
+g.polyglot_disabled = { 'autoindent', 'ftdetect' }
