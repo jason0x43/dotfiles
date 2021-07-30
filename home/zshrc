@@ -666,9 +666,6 @@ if (( $+commands[asdf] )); then
     # export DIRENV_LOG_FORMAT=
 
     eval "$(direnv hook $SHELL)"
-
-    # Indicate which asdf version of node should be used with vim
-    # export VIM_NODE_VERSION=10.19.0
 fi
 
 # added by travis gem
