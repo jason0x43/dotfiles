@@ -341,12 +341,6 @@ function dotfiles-asdf {
         logSub "Installed asdf-java"
     fi
 
-    # Vim may need a dedicated version of Node
-    if [[ -n $VIM_NODE_VERSION ]] && [[ ! -d $ASDF_DATA/installs/nodejs/$VIM_NODE_VERSION ]]; then
-        asdf install nodejs $VIM_NODE_VERSION
-        logSub "Installed nodejs $VIM_NODE_VERSION"
-    fi
-
     for dir in $ASDF_DATA/plugins/*; do
         local plugin=${dir:t}
         head=$(git -C $dir rev-parse HEAD)
@@ -359,54 +353,6 @@ function dotfiles-asdf {
             fi
         fi
     done
-}
-
-# Update vim plugins
-function dotfiles-vim {
-    log "Updating vim plugins..."
-
-    local node_path=$HOMEBREW_BASE/bin
-    if [[ -n $VIM_NODE_VERSION ]]; then
-        node_path=$ASDF_DATA/installs/nodejs/$VIM_NODE_VERSION/bin
-        log "Updating vim's node packages..."
-        dotfiles-node $node_path
-    fi
-
-    local plug_vim=$HOME/.vim/autoload/plug.vim
-    if [[ -a $plug_vim ]]; then
-        existing=$(<$plug_vim)
-        current=$(curl -s https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim)
-        if [[ -z "$current" ]]; then
-            err "Problem updating plug.vim"
-        elif [[ "$existing" != "$current" ]]; then
-            mv $plug_vim $plug_vim.old
-            echo -E "$current" > $plug_vim
-            logSub "Updated vim-plug"
-        fi
-
-        for plugin in $CACHEDIR/vim/plugins/*; do
-            head=$(git -C $plugin rev-parse HEAD)
-            git -C $plugin pull -q --recurse-submodules
-            if (( $? != 0 )); then 
-                err "Problem updating $plugin"
-            else
-                # If the current head is different than the original head,
-                # check for a package.json
-                if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
-                    if [[ -e $plugin/package.json ]]; then
-                        if [[ -e $plugin/yarn.lock ]]; then
-                            $node_path/yarn --cwd $plugin install --registry=https://registry.npmjs.org --frozen-lockfile --silent
-                        elif [[ -e $plugin/package-lock.json ]]; then
-                            $node_path/npm --prefix $plugin ci --registry=https://registry.npmjs.org --silent
-                        else
-                            $node_path/npm --prefix $plugin install --registry=https://registry.npmjs.org --no-save --silent
-                        fi
-                    fi
-                    logSub "Updated ${plugin:t}"
-                fi
-            fi
-        done
-    fi
 }
 
 cd $HOME
@@ -448,7 +394,6 @@ else
     dotfiles-python
     dotfiles-node
     dotfiles-tmux
-    dotfiles-vim
     dotfiles-bat
 
     if [[ $OSTYPE == darwin* ]]; then
