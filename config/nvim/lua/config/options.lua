@@ -127,8 +127,3 @@ for _, plugin in pairs(disabled_plugins) do
   g['loaded_' .. plugin] = 1
 end
 
--- Disable some polyglot options
-g.polyglot_disabled = { 'autoindent', 'ftdetect' }
-
--- Don't let editorconfig set the max line -- it's handled via an autocommand
-g.EditorConfig_max_line_indicator = 'none'

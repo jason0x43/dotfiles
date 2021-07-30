@@ -100,6 +100,11 @@ require('packer').startup({
     use({
       'editorconfig/editorconfig-vim',
       event = 'BufReadPre',
+      setup = function()
+        -- Don't let editorconfig set the max line -- it's handled via an
+        -- autocommand
+        vim.g.EditorConfig_max_line_indicator = 'none'
+      end
     })
 
     -- git utilities
@@ -310,6 +315,10 @@ require('packer').startup({
     use({
       'sheerun/vim-polyglot',
       event = 'BufReadPre',
+      setup = function()
+        -- Disable some polyglot options
+        vim.g.polyglot_disabled = { 'autoindent', 'ftdetect' }
+      end
     })
   end,
 
