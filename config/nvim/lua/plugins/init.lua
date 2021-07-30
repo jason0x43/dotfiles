@@ -159,15 +159,15 @@ require('packer').startup({
     -- fuzzy finding
     use({
       'nvim-telescope/telescope.nvim',
-      cmd = 'Telescope',
+      event = 'VimEnter',
       requires = {
         {
           'nvim-telescope/telescope-fzy-native.nvim',
-          cmd = 'Telescope',
+          event = 'VimEnter',
         },
         {
           'nvim-telescope/telescope-symbols.nvim',
-          cmd = 'Telescope',
+          event = 'VimEnter',
         },
       },
       wants = { 'plenary.nvim' },
@@ -179,9 +179,10 @@ require('packer').startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
-      -- NvimTree must load at BufRead to be able to determine the location of
-      -- an initially edited file
-      event = 'BufRead',
+      -- NvimTree must load at BufReadPre to be able to determine the location of
+      -- an initially edited file. It can also be loaded at VimEnter if vim is
+      -- opened without a file.
+      event = {'BufReadPre', 'VimEnter'},
       config = function()
         require('plugins.nvim-tree')
       end,
