@@ -1,5 +1,4 @@
 local util = require('util')
-require('trouble').setup({})
 
 local trouble_lsp = require('trouble.providers.lsp')
 local orig_diags = trouble_lsp.diagnostics
@@ -24,6 +23,14 @@ trouble_lsp.diagnostics = function(_win, buf, cb, options)
     orig_diags(_win, buf, cb, options)
   end
 end
+
+require('trouble').setup({
+  action_keys = {
+    jump = { '<tab>' },
+    jump_close = { '<cr>' },
+  },
+  auto_close = true
+})
 
 util.lmap('e', ':TroubleToggle<cr>')
 
