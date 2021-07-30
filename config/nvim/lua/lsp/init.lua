@@ -21,7 +21,6 @@ local function on_attach(client, bufnr)
 
   require('illuminate').on_attach(client)
   require('lsp_signature').on_attach({
-    bind = true,
     max_width = 80,
   })
 
@@ -77,7 +76,7 @@ function exports.setup_server(server)
 end
 
 -- these are servers not managed by lspinstall
-local manual_servers = { 'null-ls', 'sourcekit' }
+local manual_servers = { 'sourcekit' }
 for _, server in ipairs(manual_servers) do
   exports.setup_server(server)
 end

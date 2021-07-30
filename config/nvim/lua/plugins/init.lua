@@ -47,7 +47,7 @@ require('packer').startup({
     -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
-      event = 'BufRead',
+      event = 'BufReadPre',
     })
 
     -- popup is a common dependency
@@ -187,7 +187,7 @@ require('packer').startup({
     -- highlight current word
     use({
       'RRethy/vim-illuminate',
-      event = 'VimEnter',
+      after = 'nvim-lspconfig',
       config = function()
         require('plugins.illuminate')
       end,
@@ -212,27 +212,33 @@ require('packer').startup({
 
     -- native LSP
     use({
-      'kabouzeid/nvim-lspinstall',
+      'neovim/nvim-lspconfig',
       -- load on BufReadPre so it will be installed before the buffer is
       -- actually loaded; otherwise, the LSP won't be available when the first
       -- buffer is read
       event = 'BufReadPre',
-    })
-    use({
-      'neovim/nvim-lspconfig',
-      after = 'nvim-lspinstall',
-    })
-    use({
-      'jose-elias-alvarez/null-ls.nvim',
-      after = 'nvim-lspconfig',
       config = function()
         require('lsp')
-        require('plugins.nvim-lspinstall')
       end,
     })
     use({
       'jose-elias-alvarez/nvim-lsp-ts-utils',
-      after = 'null-ls.nvim',
+      after = 'nvim-lspconfig',
+    })
+    use({
+      'jose-elias-alvarez/null-ls.nvim',
+      after = { 'nvim-lspconfig' },
+      wants = { 'plenary.nvim' },
+      config = function()
+        require('plugins.null-ls')
+      end,
+    })
+    use({
+      'kabouzeid/nvim-lspinstall',
+      after = 'nvim-lspconfig',
+      config = function()
+        require('plugins.nvim-lspinstall')
+      end,
     })
     use({
       'ray-x/lsp_signature.nvim',

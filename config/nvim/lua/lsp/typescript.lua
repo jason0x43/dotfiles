@@ -13,7 +13,6 @@ function exports.on_attach(client)
   client.resolved_capabilities.document_formatting = false
 
   local status, ts_utils = pcall(require, 'nvim-lsp-ts-utils')
-
   if status then
     ts_utils.setup({
       enable_formatting = true,

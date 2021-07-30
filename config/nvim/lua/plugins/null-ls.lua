@@ -1,28 +1,5 @@
 local null_ls = require('null-ls')
 
--- run null_ls.config to make null-ls available through lspconfig
-null_ls.config({
-  sources = {
-    null_ls.builtins.formatting.prettierd.with({
-        -- prettier for TS/JS is managed by nvim-lsp-ts-utils
-        filetypes = { 'markdown', 'html', 'json', 'yaml' },
-      }),
-
-    null_ls.builtins.formatting.stylua.with({
-        args = {
-          '--stdin-filepath',
-          '$FILENAME',
-          '--search-parent-directories',
-          '-',
-        },
-      }),
-
-    null_ls.builtins.formatting.black,
-
-    -- null_ls.builtins.diagnostics.vale,
-  },
-})
-
 local lsp = vim.lsp
 local orig_on_publish_diagnostics =
   lsp.handlers['textDocument/publishDiagnostics']
@@ -52,8 +29,27 @@ lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   {}
 )
 
-local exports = {}
+-- run null_ls.config to make null-ls available through lspconfig
+null_ls.config({
+  sources = {
+    null_ls.builtins.formatting.prettierd.with({
+        -- prettier for TS/JS is managed by nvim-lsp-ts-utils
+        filetypes = { 'markdown', 'html', 'json', 'yaml' },
+      }),
 
-exports.config = {}
+    null_ls.builtins.formatting.stylua.with({
+        args = {
+          '--stdin-filepath',
+          '$FILENAME',
+          '--search-parent-directories',
+          '-',
+        },
+      }),
 
-return exports
+    null_ls.builtins.formatting.black,
+
+    -- null_ls.builtins.diagnostics.vale,
+  },
+})
+
+require('lsp').setup_server('null-ls')

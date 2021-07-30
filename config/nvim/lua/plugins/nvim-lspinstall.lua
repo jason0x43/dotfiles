@@ -2,12 +2,12 @@ local lspinstall = require('lspinstall')
 
 -- setup all the currently installed servers
 local function setup_servers()
-  local lsp = require('lsp')
   lspinstall.setup()
 
   -- initialize the servers managed by lspinstall
+  local setup_server = require('lsp').setup_server
   for _, server in pairs(lspinstall.installed_servers()) do
-    lsp.setup_server(server)
+    setup_server(server)
   end
 end
 
