@@ -54,6 +54,10 @@ telescope.setup({
     file_browser = {
       previewer = false,
     },
+    lsp_workspace_diagnostics = {
+      -- don't show hints
+      severity_limit = vim.g.lsp_severity_limit
+    }
   },
   extensions = {
     frecency = {

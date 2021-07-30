@@ -127,3 +127,5 @@ for _, plugin in pairs(disabled_plugins) do
   g['loaded_' .. plugin] = 1
 end
 
+-- Don't show hints in diagnostic lists (telescope, trouble)
+g.lsp_severity_limit = 3
