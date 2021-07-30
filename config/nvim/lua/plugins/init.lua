@@ -135,9 +135,6 @@ require('packer').startup({
       end,
     })
 
-    -- render ANSI escape sequences
-    -- use('powerman/vim-plugin-AnsiEsc')
-
     -- support the jsonc filetype
     use({
       'neoclide/jsonc.vim',
@@ -168,6 +165,7 @@ require('packer').startup({
           cmd = 'Telescope',
         },
       },
+      wants = { 'plenary.nvim' },
       config = function()
         require('plugins.telescope')
       end,
@@ -277,7 +275,10 @@ require('packer').startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
-      after = 'plenary.nvim',
+      event = 'BufRead',
+      wants = {
+        'plenary.nvim',
+      },
       config = function()
         require('gitsigns').setup()
       end,
@@ -308,7 +309,7 @@ require('packer').startup({
     -- indent and syntax
     use({
       'sheerun/vim-polyglot',
-      event = 'BufReadPre'
+      event = 'BufReadPre',
     })
   end,
 
