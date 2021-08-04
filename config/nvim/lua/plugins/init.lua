@@ -37,7 +37,7 @@ require('packer').startup({
 
     -- flashy status bar
     use({
-      'hoob3rt/lualine.nvim',
+      'shadmansaleh/lualine.nvim',
       event = 'VimEnter',
       config = function()
         require('plugins.lualine')

@@ -13,12 +13,13 @@ require('lualine').setup({
   },
   sections = {
     lualine_a = { 'mode' },
-    lualine_b = { { 'branch', left_padding = 0, icon = '' } },
+    lualine_b = { { 'branch', left_padding = 0, icon = '' }, 'diff' },
     lualine_c = {
       {
-        'filetype_icon',
+        'filetype',
         separator = '',
         left_padding = 0,
+        disable_text = true,
         color = { fg = c('blue') },
       },
       { 'filename', path = 1, left_padding = 0 },
