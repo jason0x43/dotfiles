@@ -70,7 +70,7 @@ require('packer').startup({
       'norcalli/nvim-colorizer.lua',
       event = 'VimEnter',
       config = function()
-        require('colorizer').setup({})
+        require('colorizer').setup()
       end,
     })
 
@@ -104,7 +104,7 @@ require('packer').startup({
         -- Don't let editorconfig set the max line -- it's handled via an
         -- autocommand
         vim.g.EditorConfig_max_line_indicator = 'none'
-      end
+      end,
     })
 
     -- git utilities
@@ -162,8 +162,9 @@ require('packer').startup({
       event = 'VimEnter',
       requires = {
         {
-          'nvim-telescope/telescope-fzy-native.nvim',
+          'nvim-telescope/telescope-fzf-native.nvim',
           event = 'VimEnter',
+          run = 'make',
         },
         {
           'nvim-telescope/telescope-symbols.nvim',
@@ -182,8 +183,8 @@ require('packer').startup({
       -- NvimTree must load at BufReadPre to be able to determine the location of
       -- an initially edited file. It can also be loaded at VimEnter if vim is
       -- opened without a file.
-      event = {'BufReadPre', 'VimEnter'},
-      config = function()
+      event = { 'BufReadPre', 'VimEnter' },
+      setup = function()
         require('plugins.nvim-tree')
       end,
     })
@@ -319,7 +320,7 @@ require('packer').startup({
       setup = function()
         -- Disable some polyglot options
         vim.g.polyglot_disabled = { 'autoindent', 'ftdetect' }
-      end
+      end,
     })
   end,
 
