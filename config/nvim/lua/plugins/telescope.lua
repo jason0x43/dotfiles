@@ -33,6 +33,7 @@ telescope.setup({
     buffers = {
       previewer = false,
       results_title = false,
+      sort_lastused = true,
     },
     find_files = {
       previewer = false,
@@ -58,10 +59,7 @@ telescope.setup({
       -- don't show hints
       severity_limit = vim.g.lsp_severity_limit
     }
-  },
-  extensions = {
-    frecency = {
-      previewer = false,
-    },
-  },
+  }
 })
+
+require('telescope').load_extension('fzf')
