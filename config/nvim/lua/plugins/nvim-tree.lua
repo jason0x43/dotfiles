@@ -20,3 +20,7 @@ g.nvim_tree_side = 'right'
 
 -- wider tree
 g.nvim_tree_width = '30%'
+
+-- ignore things
+g.nvim_tree_ignore = { '.git', 'node_modules' }
+g.nvim_tree_gitignore = 1
