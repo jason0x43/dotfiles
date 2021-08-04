@@ -34,7 +34,7 @@ null_ls.config({
   sources = {
     null_ls.builtins.formatting.prettierd.with({
         -- prettier for TS/JS is managed by nvim-lsp-ts-utils
-        filetypes = { 'markdown', 'html', 'json', 'yaml' },
+        filetypes = { 'markdown', 'html', 'json', 'yaml', 'css' },
       }),
 
     null_ls.builtins.formatting.stylua.with({
