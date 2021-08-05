@@ -150,12 +150,15 @@ exports.ts_types = {
 
 -- restore the cursor position in a file
 function exports.restore_cursor()
+  local filetype = vim.bo.filetype
+  local buftype = vim.bo.buftype
+
+  if buftype == 'nofile' or filetype:find('commit') ~= nil then
+    return
+  end
+
   local line = vim.fn.line
-  if
-    line('\'"') >= 1
-    and line('\'"') <= line('$')
-    and vim.bo.filetype:find('commit') == nil
-  then
+  if line('\'"') >= 1 and line('\'"') <= line('$') then
     vim.cmd('normal! g`"zz')
   end
 end
