@@ -47,7 +47,7 @@ require('packer').startup({
     -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
-      event = 'BufReadPre',
+      event = { 'BufReadPre', 'VimEnter' },
     })
 
     -- popup is a common dependency
@@ -94,7 +94,7 @@ require('packer').startup({
     })
 
     -- gc for commenting code blocks
-    use({ 'tpope/vim-commentary', event = 'BufRead' })
+    use({ 'tpope/vim-commentary', event = 'VimEnter' })
 
     -- EditorConfig
     use({
@@ -110,19 +110,19 @@ require('packer').startup({
     -- git utilities
     use({
       'tpope/vim-fugitive',
-      event = 'BufRead',
+      event = 'VimEnter',
     })
 
     -- support for repeating mapped commands
     use({
       'tpope/vim-repeat',
-      event = 'BufRead',
+      event = 'VimEnter',
     })
 
     -- for manipulating parens and such
     use({
       'tpope/vim-surround',
-      event = 'BufRead',
+      event = 'VimEnter',
     })
 
     -- easy vertical alignment of code elements
@@ -143,13 +143,13 @@ require('packer').startup({
     -- support the jsonc filetype
     use({
       'neoclide/jsonc.vim',
-      event = 'VimEnter',
+      event = { 'BufReadPre', 'VimEnter' },
     })
 
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',
-      event = 'BufRead',
+      event = 'BufReadPre',
       run = ':TSUpdate',
       config = function()
         require('plugins.nvim-treesitter')
@@ -158,23 +158,21 @@ require('packer').startup({
 
     -- fuzzy finding
     use({
-      'nvim-telescope/telescope.nvim',
+      'nvim-telescope/telescope-fzf-native.nvim',
       event = 'VimEnter',
-      requires = {
-        {
-          'nvim-telescope/telescope-fzf-native.nvim',
-          event = 'VimEnter',
-          run = 'make',
-        },
-        {
-          'nvim-telescope/telescope-symbols.nvim',
-          event = 'VimEnter',
-        },
-      },
+      run = 'make',
+    })
+    use({
+      'nvim-telescope/telescope.nvim',
+      after = 'telescope-fzf-native.nvim',
       wants = { 'plenary.nvim' },
       config = function()
         require('plugins.telescope')
       end,
+    })
+    use({
+      'nvim-telescope/telescope-symbols.nvim',
+      after = 'telescope.nvim',
     })
 
     -- tree
@@ -208,12 +206,12 @@ require('packer').startup({
     })
 
     -- filetype plugins
-    use({ 'tpope/vim-markdown', opt = true, ft = { 'markdown' } })
-    use({ 'vim-scripts/applescript.vim', opt = true, ft = { 'applescript' } })
-    use({ 'vim-scripts/Textile-for-VIM', opt = true, ft = { 'textile' } })
-    use({ 'mzlogin/vim-markdown-toc', opt = true, ft = { 'markdown' } })
-    use({ 'tpope/vim-classpath', opt = true, ft = { 'java' } })
-    use({ 'lervag/vimtex', opt = true, ft = { 'tex', 'latex' } })
+    use({ 'tpope/vim-markdown', ft = { 'markdown' } })
+    use({ 'vim-scripts/applescript.vim', ft = { 'applescript' } })
+    use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
+    use({ 'mzlogin/vim-markdown-toc', ft = { 'markdown' } })
+    use({ 'tpope/vim-classpath', ft = { 'java' } })
+    use({ 'lervag/vimtex', ft = { 'tex', 'latex' } })
 
     -- native LSP
     use({
