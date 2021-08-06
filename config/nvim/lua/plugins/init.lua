@@ -1,27 +1,7 @@
 local fn = vim.fn
+local packer = require('packer')
 
--- bootstrap packer
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-local packer_exists = fn.isdirectory(install_path) ~= 0
-if not packer_exists then
-  fn.system({
-    'git',
-    'clone',
-    'git@github.com:wbthomason/packer.nvim',
-    install_path,
-  })
-  vim.cmd('packadd packer.nvim')
-  require('packer')
-  print('Cloned packer')
-end
-
--- recompile the packer config whenever this file is edited
-require('util').augroup(
-  'init_packer',
-  { 'BufWritePost */plugins/init.lua source <afile> | PackerCompile' }
-)
-
-require('packer').startup({
+packer.startup({
   function(use)
     -- manage the package manager
     use('wbthomason/packer.nvim')
@@ -245,6 +225,7 @@ require('packer').startup({
     })
     use({
       'ray-x/lsp_signature.nvim',
+      disable = true,
       after = 'nvim-lspconfig',
     })
     use({
@@ -332,6 +313,4 @@ require('packer').startup({
   },
 })
 
-if not packer_exists then
-  vim.cmd('PackerInstall')
-end
+return packer
