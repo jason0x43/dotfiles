@@ -10,21 +10,21 @@ if not packer_exists then
     'git@github.com:wbthomason/packer.nvim',
     install_path,
   })
-  vim.cmd('packadd packer.nvim')
-  require('packer')
+
   print('Cloned packer')
 
-  require('plugins')
-  vim.cmd('PackerInstall')
+  vim.cmd('packadd packer.nvim')
+  require('plugins').install()
 end
 
 local util = require('util')
 
--- recompile the packer config whenever this file is edited
+-- recompile the packer config whenever the plugin config file is edited
 util.augroup(
   'init_packer',
   { 'BufWritePost */lua/plugins/init.lua source <afile> | PackerCompile' }
 )
 
+-- setup a couple Packer commands that work before Packer is loaded
 util.cmd('PackerSync', 'lua require("plugins").sync()')
 util.cmd('PackerCompile', 'lua require("plugins").compile()')
