@@ -1,8 +1,5 @@
 tmux/plugins/*
-config/nvim/autoload/plug.vim
-config/nvim/autoload/plug.old
-config/nvim/autoload/plug.vim.old
-config/nvim/plugged/*
+config/nvim/plugin/packer_compiled.lua
 config/nvim/spell/*.spl
 config/nvim/sessions/*
 config/nvim/.netrwhist
