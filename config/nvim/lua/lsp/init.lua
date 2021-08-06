@@ -19,10 +19,15 @@ local function on_attach(client, bufnr)
     client_config.on_attach(client)
   end
 
-  require('illuminate').on_attach(client)
-  require('lsp_signature').on_attach({
-    max_width = 80,
-  })
+  pcall(function()
+    require('illuminate').on_attach(client)
+  end)
+
+  pcall(function()
+    require('lsp_signature').on_attach({
+      max_width = 80,
+    })
+  end)
 
   -- perform general setup
 
