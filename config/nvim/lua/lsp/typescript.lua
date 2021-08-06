@@ -48,4 +48,16 @@ util.augroup('init_typescript', {
   'FileType ' .. ts_types_str .. ' lua require("lsp.typescript").check_start()',
 })
 
+local orig_goto_definition = vim.lsp.handlers['textDocument/definition']
+vim.lsp.handlers['textDocument/definition'] = vim.lsp.with(
+  function(err, method, result)
+    -- If tsserver returns multiple results, ignore all but the first
+    if #result > 1 then
+      result = { result[1] }
+    end
+    orig_goto_definition(err, method, result)
+  end,
+  {}
+)
+
 return exports
