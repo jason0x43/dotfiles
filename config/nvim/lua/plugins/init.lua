@@ -262,7 +262,7 @@ require('packer').startup({
     -- completion
     use({
       'hrsh7th/nvim-compe',
-      event = 'InsertEnter',
+      event = { 'BufRead', 'VimEnter' },
       config = function()
         require('plugins.nvim-compe')
       end,
