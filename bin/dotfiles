@@ -4,6 +4,8 @@ autoload colors; colors
 
 source $HOME/.dotfiles/zsh/common.zsh
 
+setopt null_glob
+
 typeset -U path
 path=(
     $HOMEBREW_BASE/bin
@@ -64,6 +66,10 @@ function fixterm {
 
 # Rebuild bat cache
 function dotfiles-bat {
+    if (( ! $+commands[bat] )); then
+      log "Skipping bat cache update"
+      return
+    fi
     log "Rebuilding bat cache..."
     bat cache --build
 }
@@ -310,6 +316,11 @@ function dotfiles-tmux {
 
 # Update asdf plugins
 function dotfiles-asdf {
+    if (( ! $+commands[asdf] )); then
+        log "Skipping asdf update"
+        return
+    fi
+
     log "Updating asdf..."
 
     local asdf_plugins=(${(@f)$(asdf plugin-list)})
