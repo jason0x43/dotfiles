@@ -7,7 +7,13 @@ packer.startup({
     use('wbthomason/packer.nvim')
 
     -- allow Deno for plugins
-    use('vim-denops/denops.vim')
+    use({
+      'vim-denops/denops.vim',
+      disable = true,
+      cond = function()
+        return vim.fn.executable('deno') == 1
+      end
+    })
 
     -- devicons are needed by many things
     use({
