@@ -1,7 +1,18 @@
 local exports = {}
 
+local lsp_find_root = require('lspconfig.util').root_pattern('package.json', 'tsconfig.json', '.git')
+
+local function find_root(start_dir)
+  local dir = lsp_find_root(start_dir)
+  if dir ~= nil then
+    return dir
+  end
+  return vim.fn.getcwd()
+end
+
 exports.config = {
   autostart = false,
+  root_dir = find_root
 }
 
 function exports.check_start()
