@@ -1,6 +1,6 @@
 -- bootstrap packer
 local install_path = vim.fn.stdpath('data')
-  .. '/site/pack/packer/start/packer.nvim'
+  .. '/site/pack/packer/opt/packer.nvim'
 local packer_exists = vim.fn.isdirectory(install_path) ~= 0
 
 if not packer_exists then

@@ -1,18 +1,11 @@
-local fn = vim.fn
 local packer = require('packer')
 
 packer.startup({
   function(use)
     -- manage the package manager
-    use('wbthomason/packer.nvim')
-
-    -- allow Deno for plugins
     use({
-      'vim-denops/denops.vim',
-      disable = true,
-      cond = function()
-        return vim.fn.executable('deno') == 1
-      end
+      'wbthomason/packer.nvim',
+      opt = true
     })
 
     -- devicons are needed by many things
@@ -33,7 +26,7 @@ packer.startup({
     -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
-      event = { 'BufReadPre', 'VimEnter' },
+      event = { 'BufEnter', 'VimEnter' },
     })
 
     -- popup is a common dependency
@@ -85,7 +78,7 @@ packer.startup({
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      event = 'BufReadPre',
+      event = 'BufEnter',
       setup = function()
         -- Don't let editorconfig set the max line -- it's handled via an
         -- autocommand
@@ -129,13 +122,13 @@ packer.startup({
     -- support the jsonc filetype
     use({
       'neoclide/jsonc.vim',
-      event = { 'BufReadPre', 'VimEnter' },
+      event = 'BufEnter',
     })
 
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',
-      event = 'BufReadPre',
+      event = 'BufEnter',
       run = ':TSUpdate',
       config = function()
         require('plugins.nvim-treesitter')
@@ -164,21 +157,9 @@ packer.startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
-      -- NvimTree must load at BufReadPre to be able to determine the location of
-      -- an initially edited file. It can also be loaded at VimEnter if vim is
-      -- opened without a file.
-      event = { 'BufReadPre', 'VimEnter' },
+      event = 'BufEnter',
       setup = function()
         require('plugins.nvim-tree')
-      end,
-    })
-
-    -- highlight current word
-    use({
-      'RRethy/vim-illuminate',
-      after = 'nvim-lspconfig',
-      config = function()
-        require('plugins.illuminate')
       end,
     })
 
@@ -197,15 +178,11 @@ packer.startup({
     use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
     use({ 'mzlogin/vim-markdown-toc', ft = { 'markdown' } })
     use({ 'tpope/vim-classpath', ft = { 'java' } })
-    use({ 'lervag/vimtex', ft = { 'tex', 'latex' } })
 
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      -- load on BufReadPre so it will be installed before the buffer is
-      -- actually loaded; otherwise, the LSP won't be available when the first
-      -- buffer is read
-      event = 'BufReadPre',
+      event = 'BufEnter',
       config = function()
         require('lsp')
       end,
@@ -231,7 +208,6 @@ packer.startup({
     })
     use({
       'ray-x/lsp_signature.nvim',
-      disable = true,
       after = 'nvim-lspconfig',
     })
     use({
@@ -244,6 +220,15 @@ packer.startup({
     use({
       'arkav/lualine-lsp-progress',
       after = 'nvim-lspconfig',
+    })
+
+    -- highlight current word
+    use({
+      'RRethy/vim-illuminate',
+      after = 'nvim-lspconfig',
+      config = function()
+        require('plugins.illuminate')
+      end,
     })
 
     -- completion
@@ -299,14 +284,15 @@ packer.startup({
     })
 
     -- indent and syntax
-    use({
-      'sheerun/vim-polyglot',
-      event = 'BufReadPre',
-      setup = function()
-        -- Disable some polyglot options
-        vim.g.polyglot_disabled = { 'autoindent', 'ftdetect' }
-      end,
-    })
+    -- use({
+    --   'sheerun/vim-polyglot',
+    --   event = 'BufEnter',
+    --   disable = true,
+    --   setup = function()
+    --     -- Disable some polyglot options
+    --     vim.g.polyglot_disabled = { 'autoindent', 'ftdetect' }
+    --   end,
+    -- })
   end,
 
   config = {
