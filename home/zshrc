@@ -660,7 +660,7 @@ if (( $+commands[asdf] )); then
     # Don't load the asd shell integration; direnv will load it when necessary
     # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
     # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
-    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
+    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
 
     # Silence direnv. The prompt will indicate if it's active.
     # export DIRENV_LOG_FORMAT=
