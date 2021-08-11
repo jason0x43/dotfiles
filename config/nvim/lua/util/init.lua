@@ -4,11 +4,11 @@ local fn = vim.fn
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
 function exports.yank(text)
-  local escape = vim.fn.system('term_copy', text)
+  local escape = fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
     vim.cmd('echoerr ' .. escape)
   else
-    vim.fn.writefile({ escape }, '/dev/tty', 'b')
+    fn.writefile({ escape }, '/dev/tty', 'b')
   end
 end
 
@@ -125,17 +125,14 @@ end
 function exports.show_view_width()
   local tw = vim.bo.textwidth
   if tw and tw > 0 then
-    vim.wo.colorcolumn = vim.fn.join(
-      vim.fn.range(tw + 1, tw + 1 + vim.go.columns),
-      ','
-    )
+    vim.wo.colorcolumn = fn.join(fn.range(tw + 1, tw + 1 + vim.go.columns), ',')
   end
 end
 
 -- set window height within a min/max range
 function exports.adjust_window_height(minheight, maxheight)
-  local line = vim.fn.line('$')
-  local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
+  local line = fn.line('$')
+  local val = fn.max({ fn.min({ line, maxheight }), minheight })
   vim.cmd(val .. 'wincmd _')
 end
 
@@ -158,7 +155,7 @@ function exports.restore_cursor()
     return
   end
 
-  local line = vim.fn.line
+  local line = fn.line
   if line('\'"') >= 1 and line('\'"') <= line('$') then
     vim.cmd('normal! g`"zz')
   end
