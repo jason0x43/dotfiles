@@ -6,7 +6,7 @@ require('nvim-treesitter.configs').setup({
     -- see https://github.com/nvim-treesitter/nvim-treesitter/discussions/1271#discussioncomment-795299
     -- this should be set to a list of filetypes, but that doesn't work
     -- https://github.com/nvim-treesitter/nvim-treesitter#modules
-    additional_vim_regex_highlighting = true
+    -- additional_vim_regex_highlighting = true
   },
   indent = {
     enable = false,
@@ -17,4 +17,10 @@ require('nvim-treesitter.configs').setup({
       'python',
     }, require('util').ts_types),
   },
+  matchup = {
+    enable = true
+  },
+  autopairs = {
+    enable = true
+  }
 })
