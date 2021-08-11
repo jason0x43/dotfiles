@@ -137,17 +137,19 @@ packer.startup({
 
     -- fuzzy finding
     use({
-      'nvim-telescope/telescope-fzf-native.nvim',
-      event = 'VimEnter',
-      run = 'make',
-    })
-    use({
       'nvim-telescope/telescope.nvim',
-      after = 'telescope-fzf-native.nvim',
-      wants = { 'plenary.nvim' },
+      after = 'plenary.nvim',
       config = function()
         require('plugins.telescope')
       end,
+    })
+    use({
+      'nvim-telescope/telescope-fzf-native.nvim',
+      after = 'telescope.nvim',
+      run = 'make',
+      config = function()
+        require('telescope').load_extension('fzf')
+      end
     })
     use({
       'nvim-telescope/telescope-symbols.nvim',
@@ -193,8 +195,7 @@ packer.startup({
     })
     use({
       'jose-elias-alvarez/null-ls.nvim',
-      after = { 'nvim-lspconfig' },
-      wants = { 'plenary.nvim' },
+      after = { 'nvim-lspconfig', 'plenary.nvim' },
       config = function()
         require('plugins.null-ls')
       end,
@@ -252,10 +253,7 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
-      event = 'BufRead',
-      wants = {
-        'plenary.nvim',
-      },
+      after = 'plenary.nvim',
       config = function()
         require('gitsigns').setup()
       end,
