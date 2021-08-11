@@ -1,4 +1,5 @@
 local exports = {}
+local fn = vim.fn
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
@@ -160,6 +161,19 @@ function exports.restore_cursor()
   local line = vim.fn.line
   if line('\'"') >= 1 and line('\'"') <= line('$') then
     vim.cmd('normal! g`"zz')
+  end
+end
+
+function exports.print_syn_group()
+  local ls = fn.synID(fn.line('.'), fn.col('.'), 1)
+  if ls ~= 0 then
+    print(
+      fn.synIDattr(ls, 'name')
+        .. ' -> '
+        .. fn.synIDattr(fn.synIDtrans(ls), 'name')
+    )
+  else
+    print('No highlight')
   end
 end
 

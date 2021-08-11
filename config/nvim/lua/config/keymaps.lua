@@ -25,11 +25,8 @@ util.lmap('c', '<cmd>close<cr>')
 
 -- show the syntax highlight state of the character under the cursor
 util.lmap(
-  'h',
-  '<cmd>echo "hi<synIDattr(synID(line("."),col("."),1),"name") . '
-    .. '"> trans<" . synIDattr(synID(line("."),col("."),0),"name") . '
-    .. '"> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . '
-    .. '">"<cr>'
+  'hl',
+  '<cmd>lua require("util").print_syn_group()<cr>'
 )
 
 -- use tab for completions
