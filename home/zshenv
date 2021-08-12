@@ -39,6 +39,7 @@ typeset -gU mailpath path
 path=(
 	$HOME/Applications
 	$HOME/.local/bin
+	$HOME/.asdf/bin
 	$DOTFILES/bin
 	$HOMEBREW_BASE/bin
 	$HOMEBREW_BASE/sbin
