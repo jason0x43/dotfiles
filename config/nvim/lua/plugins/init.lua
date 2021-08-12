@@ -5,7 +5,7 @@ packer.startup({
     -- manage the package manager
     use({
       'wbthomason/packer.nvim',
-      opt = true,
+      event = 'VimEnter',
     })
 
     -- devicons are needed by many things
