@@ -7,7 +7,7 @@ if not packer_exists then
   vim.fn.system({
     'git',
     'clone',
-    'git@github.com:wbthomason/packer.nvim',
+    'https://github.com/wbthomason/packer.nvim',
     install_path,
   })
 
