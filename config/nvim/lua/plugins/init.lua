@@ -247,7 +247,6 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
-      event = 'BufRead',
       after = 'plenary.nvim',
       config = function()
         require('gitsigns').setup()
