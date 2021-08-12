@@ -32,7 +32,7 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 if [[ -z $SSH_CLIENT ]]; then
     BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
     source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
-end
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
