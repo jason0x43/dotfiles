@@ -1,5 +1,4 @@
-require('nvim-treesitter.configs').setup({
-  ensure_installed = 'maintained',
+local config = {
   highlight = {
     enable = true,
     -- this option prevents treesitter highlighting from breaking indenting
@@ -15,12 +14,22 @@ require('nvim-treesitter.configs').setup({
     disable = vim.list_extend({
       'cpp',
       'python',
-    }, require('util').ts_types),
+    }, require(
+      'util'
+    ).ts_types),
   },
   matchup = {
-    enable = true
+    enable = true,
   },
   autopairs = {
-    enable = true
-  }
-})
+    enable = true,
+  },
+}
+
+if vim.fn.getenv('SSH_CLIENT') ~= vim.NIL then
+  config.ensure_installed = { 'bash', 'lua' }
+else
+  config.ensure_installed = 'maintained'
+end
+
+require('nvim-treesitter.configs').setup(config)
