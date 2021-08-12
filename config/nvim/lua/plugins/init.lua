@@ -5,7 +5,7 @@ packer.startup({
     -- manage the package manager
     use({
       'wbthomason/packer.nvim',
-      opt = true
+      opt = true,
     })
 
     -- devicons are needed by many things
@@ -17,7 +17,7 @@ packer.startup({
     -- flashy status bar
     use({
       'shadmansaleh/lualine.nvim',
-      event = 'VimEnter',
+      after = 'nvim-web-devicons',
       config = function()
         require('plugins.lualine')
       end,
@@ -27,12 +27,6 @@ packer.startup({
     use({
       'nvim-lua/plenary.nvim',
       event = { 'BufEnter', 'VimEnter' },
-    })
-
-    -- popup is a common dependency
-    use({
-      'nvim-lua/popup.nvim',
-      after = 'plenary.nvim',
     })
 
     -- Useful startup text, menu
@@ -47,7 +41,7 @@ packer.startup({
     -- highlight color strings
     use({
       'norcalli/nvim-colorizer.lua',
-      event = 'VimEnter',
+      event = 'BufRead',
       config = function()
         require('colorizer').setup()
       end,
@@ -69,16 +63,16 @@ packer.startup({
     -- see https://github.com/neovim/neovim/issues/12587
     use({
       'antoinemadec/FixCursorHold.nvim',
-      event = 'VimEnter',
+      event = 'BufRead',
     })
 
     -- gc for commenting code blocks
-    use({ 'tpope/vim-commentary', event = 'VimEnter' })
+    use({ 'tpope/vim-commentary', event = 'BufRead' })
 
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      event = 'BufEnter',
+      event = 'BufRead',
       setup = function()
         -- Don't let editorconfig set the max line -- it's handled via an
         -- autocommand
@@ -89,19 +83,19 @@ packer.startup({
     -- git utilities
     use({
       'tpope/vim-fugitive',
-      event = 'VimEnter',
+      event = 'BufRead',
     })
 
     -- support for repeating mapped commands
     use({
       'tpope/vim-repeat',
-      event = 'VimEnter',
+      event = 'BufRead',
     })
 
     -- for manipulating parens and such
     use({
       'tpope/vim-surround',
-      event = 'VimEnter',
+      event = 'BufRead',
     })
 
     -- easy vertical alignment of code elements
@@ -122,13 +116,13 @@ packer.startup({
     -- support the jsonc filetype
     use({
       'neoclide/jsonc.vim',
-      event = 'BufEnter',
+      event = 'VimEnter',
     })
 
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',
-      event = 'BufEnter',
+      event = 'BufRead',
       run = ':TSUpdate',
       config = function()
         require('plugins.nvim-treesitter')
@@ -138,7 +132,7 @@ packer.startup({
     -- fuzzy finding
     use({
       'nvim-telescope/telescope.nvim',
-      after = 'plenary.nvim',
+      cmd = 'Telescope',
       config = function()
         require('plugins.telescope')
       end,
@@ -149,7 +143,7 @@ packer.startup({
       run = 'make',
       config = function()
         require('telescope').load_extension('fzf')
-      end
+      end,
     })
     use({
       'nvim-telescope/telescope-symbols.nvim',
@@ -159,7 +153,7 @@ packer.startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
-      event = 'BufEnter',
+      event = { 'BufEnter', 'VimEnter' },
       setup = function()
         require('plugins.nvim-tree')
       end,
@@ -184,7 +178,7 @@ packer.startup({
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      event = 'BufEnter',
+      event = 'BufRead',
       config = function()
         require('lsp')
       end,
@@ -235,7 +229,7 @@ packer.startup({
     -- completion
     use({
       'hrsh7th/nvim-compe',
-      event = { 'BufRead', 'VimEnter' },
+      event = 'InsertEnter',
       config = function()
         require('plugins.nvim-compe')
       end,
@@ -253,6 +247,7 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
+      event = 'BufRead',
       after = 'plenary.nvim',
       config = function()
         require('gitsigns').setup()
