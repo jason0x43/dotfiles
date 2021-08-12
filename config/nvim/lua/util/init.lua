@@ -22,7 +22,7 @@ end
 --     buffer  - a buffer number, or true for buffer 0
 --     mode    - a mode; overrides the mode arg
 local map_in_mode = function(mode, key, cmd, opts)
-  local options = { noremap = true, silent = true }
+  local options = { noremap = true }
   local buf
 
   -- <plug> mappings won't work with noremap

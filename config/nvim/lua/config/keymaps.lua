@@ -13,8 +13,8 @@ util.lmap('w', '<cmd>w<cr>')
 util.lmap('W', '<cmd>w!<cr>')
 
 -- kill a buffer without closing its window
-util.lmap('k', ':Bdelete<cr>')
-util.lmap('K', ':Bdelete!<cr>')
+util.lmap('k', '<cmd>Bdelete<cr>')
+util.lmap('K', '<cmd>Bdelete!<cr>')
 
 -- quit vim
 util.lmap('q', '<cmd>qall<cr>')
@@ -39,7 +39,7 @@ util.map('<space>', '<cmd>noh<cr>')
 -- yank to and paste from system clipboard
 util.lmap(
   'y',
-  'y:<C-U>lua require("util").yank(vim.fn.getreg("0"))<CR>',
+  'y<cmd>lua require("util").yank(vim.fn.getreg("0"))<CR>',
   { mode = 'nvo' }
 )
 util.lmap('p', '"*p')
