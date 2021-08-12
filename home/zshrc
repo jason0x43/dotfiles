@@ -29,8 +29,10 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 # Colors
 # ----------------------------------------------------------------------------
 # Only load base16 shell locally
-BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+if [[ -z $SSH_CLIENT ]]; then
+    BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
+    source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
+end
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
