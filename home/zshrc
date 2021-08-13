@@ -656,6 +656,13 @@ if [[ ! -d $CACHEDIR/tmux ]]; then
     mkdir $CACHEDIR/tmux
 fi
 
+# asdf
+# ------------------------------------------------------------------------
+if [[ ! -d $HOME/.asdf ]]; then
+    echo "Downloading asdf..."
+    git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.8.1
+fi
+
 # direnv
 # ------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
