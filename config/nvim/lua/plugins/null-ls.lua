@@ -75,7 +75,7 @@ htmlhint_source.generator = helpers.generator_factory({
 })
 
 -- run null_ls.config to make null-ls available through lspconfig
-null_ls.config({
+local config = {
   sources = {
     null_ls.builtins.formatting.prettierd.with({
       -- prettier for TS/JS is managed by nvim-lsp-ts-utils
@@ -92,9 +92,13 @@ null_ls.config({
     }),
 
     null_ls.builtins.formatting.black,
-
-    htmlhint_source,
   },
-})
+}
+
+if vim.fn.executable('htmlhint') ~= 0 then
+  config.sources:insert(htmlhint_source)
+end
+
+null_ls.config(config)
 
 require('lsp').setup_server('null-ls')
