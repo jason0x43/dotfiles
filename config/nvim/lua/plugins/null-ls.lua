@@ -96,7 +96,7 @@ local config = {
 }
 
 if vim.fn.executable('htmlhint') ~= 0 then
-  config.sources:insert(htmlhint_source)
+  table.insert(config.sources, htmlhint_source)
 end
 
 null_ls.config(config)
