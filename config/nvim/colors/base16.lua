@@ -2,15 +2,15 @@
 local theme_file = os.getenv('HOME') .. '/.vimrc_background'
 
 local function load_theme_name()
-  local base16_theme = vim.fn.getenv('BASE16_THEME')
-  if base16_theme ~= nil then
-    return base16_theme
-  end
-
   if vim.fn.filereadable(theme_file) == 1 then
     local lines = vim.fn.readfile(theme_file, '', 1)
     local words = vim.split(lines[1], '%s')
     return vim.fn.trim(words[#words], "'"):sub(8)
+  end
+
+  local base16_theme = vim.fn.getenv('BASE16_THEME')
+  if base16_theme ~= nil then
+    return base16_theme
   end
 end
 
