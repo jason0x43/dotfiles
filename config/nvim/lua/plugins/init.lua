@@ -269,7 +269,7 @@ packer.startup({
     use({
       'lukas-reineke/indent-blankline.nvim',
       event = 'BufRead',
-      config = function()
+      setup = function()
         vim.g.indent_blankline_char = '│'
         vim.g.indent_blankline_enabled = false
       end,
