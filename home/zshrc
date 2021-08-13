@@ -28,8 +28,8 @@ zfetch $CACHEDIR/tmux tmux-plugins/tpm
 
 # Colors
 # ----------------------------------------------------------------------------
-# Only load base16 shell locally
-if [[ -z $SSH_CLIENT ]]; then
+# Only load base16 shell locally or in blink sessions
+if [[ -z $SSH_CLIENT || $TERM == "xterm-256color" ]]; then
     BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
     source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 fi
