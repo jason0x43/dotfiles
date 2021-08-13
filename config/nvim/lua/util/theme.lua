@@ -37,13 +37,21 @@ end
 -- lighten an rgb color
 -- @param bg the base "dark" color
 function exports.darken(hex, amount, bg)
-  return blend(hex, bg or '#000000', 1 - math.abs(amount))
+  local status, val = pcall(blend, hex, bg or '#000000', 1 - math.abs(amount))
+  if status then
+    return val
+  end
+  return hex
 end
 
 -- lighten an rgb color
 -- @param fg the base "light" color
 function exports.lighten(hex, amount, fg)
-  return blend(hex, fg or '#ffffff', 1 - math.abs(amount))
+  local status, val = pcall(blend, hex, fg or '#ffffff', 1 - math.abs(amount))
+  if status then
+    return val
+  end
+  return hex
 end
 
 -- shift a color by a percentage

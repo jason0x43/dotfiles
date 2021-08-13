@@ -12,7 +12,10 @@ end
 
 -- Modified from https://github.com/chriskempson/base16-vim
 function exports.apply_theme(theme_name)
-  assert(theme_name ~= nil, 'Theme name must not be nil')
+  if type(theme_name) ~= 'string' then
+    print('Missing or invalid theme name: ' .. vim.inspect(theme_name))
+    return
+  end
 
   vim.g.colors_name = 'base16'
   if theme_name:find('light') ~= nil then
