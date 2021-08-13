@@ -77,7 +77,7 @@ htmlhint_source.generator = helpers.generator_factory({
 -- run null_ls.config to make null-ls available through lspconfig
 local config = {
   sources = {
-    null_ls.builtins.formatting.prettierd.with({
+    null_ls.builtins.formatting.prettier.with({
       -- prettier for TS/JS is managed by nvim-lsp-ts-utils
       filetypes = { 'markdown', 'html', 'json', 'yaml', 'css' },
     }),

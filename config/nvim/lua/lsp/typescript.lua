@@ -16,7 +16,7 @@ function exports.on_attach(client)
   if status then
     ts_utils.setup({
       enable_formatting = true,
-      formatter = 'prettierd',
+      formatter = 'prettier',
       eslint_enable_diagnostics = true,
       eslint_enable_disable_comments = true,
       eslint_bin = 'eslint_d',
