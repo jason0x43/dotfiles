@@ -172,7 +172,13 @@ packer.startup({
     use({ 'tpope/vim-markdown', ft = { 'markdown' } })
     use({ 'vim-scripts/applescript.vim', ft = { 'applescript' } })
     use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
-    use({ 'mzlogin/vim-markdown-toc', ft = { 'markdown' } })
+    use({
+      'mzlogin/vim-markdown-toc',
+      ft = { 'markdown' },
+      setup = function()
+        vim.g.vmt_auto_update_on_save = 0
+      end,
+    })
     use({ 'tpope/vim-classpath', ft = { 'java' } })
 
     -- native LSP
