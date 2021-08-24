@@ -16,6 +16,7 @@ function exports.on_attach(client)
   if status then
     ts_utils.setup({
       eslint_enable_diagnostics = true,
+      eslint_disable_if_no_config = true,
       eslint_enable_disable_comments = true,
       eslint_bin = 'eslint_d',
       require_confirmation_on_move = true,
