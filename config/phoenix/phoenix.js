@@ -157,6 +157,7 @@ for (const binding of keys) {
 function getWindowsInSpace(appName, space) {
   const app = App.get(appName);
   if (!app) {
+    Phoenix.log(`Could not find app ${appName}`);
     return [];
   }
 
@@ -179,7 +180,7 @@ function autoLayout() {
   const browserWins = [
     ...getWindowsInSpace('Safari', space),
     ...getWindowsInSpace('Wavebox', space),
-    ...getWindowsInSpace('Chrome', space),
+    ...getWindowsInSpace('Google Chrome', space),
     ...getWindowsInSpace('Firefox', space),
   ];
   const terminalWins = getWindowsInSpace('kitty', space);
