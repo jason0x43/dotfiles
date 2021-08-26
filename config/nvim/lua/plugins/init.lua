@@ -51,6 +51,9 @@ packer.startup({
     use({
       'andymass/vim-matchup',
       event = 'CursorMoved',
+      config = function()
+        vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+      end,
     })
 
     -- preserve layout when closing buffers; used for <leader>k
