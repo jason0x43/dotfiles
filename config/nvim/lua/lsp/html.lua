@@ -11,7 +11,8 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 exports.config = {
-	capabilities = capabilities
+  capabilities = capabilities,
+  filetypes = { 'html', 'svg', 'xml' },
 }
 
 return exports
