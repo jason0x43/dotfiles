@@ -2,8 +2,6 @@
 
 # convert a Quicktime movie to an animated gif
 
-echo $#
-
 if (( ! $+commands[ffmpeg] )); then
 	echo "ffmpeg must be installed"
 	exit 1
@@ -14,12 +12,20 @@ if (( ! $+commands[gifsicle] )); then
 	exit 1
 fi
 
-if (( $# != 2 )); then
-	echo "usage: gifify IN OUT"
+if (( $# < 2 )); then
+	echo "usage: gifify IN OUT [FPS]"
 	exit 1
 fi
 
 in=$1
 out=$2
+fps=$3
 
-ffmpeg -i "$in" -pix_fmt rgb24 -r 20 -f gif - | gifsicle --optimize=3 --delay=3 > "$out"
+if [[ -z $fps ]]; then
+	fps=15
+fi
+
+zmodload zsh/mathfunc
+(( delay = int(rint(100 * (1.0 / $fps))) ))
+
+ffmpeg -loglevel error -i "$in" -pix_fmt rgb8 -r $fps -f gif - | gifsicle --optimize=3 --delay=$delay > "$out"
