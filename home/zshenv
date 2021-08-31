@@ -89,6 +89,9 @@ if [[ -z $TERM_PROGRAM ]]; then
 	elif [[ -n $KITTY_LISTEN_ON ]]; then
 		export TERM_PROGRAM=kitty
 	fi
+
+	# https://github.com/kovidgoyal/kitty/issues/1645#issuecomment-496221126 
+	export KITTY_DISABLE_WAYLAND=1
 fi
 
 # Tmux
