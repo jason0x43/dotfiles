@@ -134,9 +134,9 @@ if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
 		$path
 	)
 fi
-if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.7.0 ]]; then
+if [[ -d $HOMEBREW_BASE/lib/ruby/gems/3.0.0 ]]; then
 	path=(
-		$HOMEBREW_BASE/lib/ruby/gems/2.7.0/bin
+		$HOMEBREW_BASE/lib/ruby/gems/3.0.0/bin
 		$path
 	)
 fi
