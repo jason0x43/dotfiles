@@ -667,6 +667,9 @@ fi
 # ------------------------------------------------------------------------
 if (( $+commands[direnv] )); then
     eval "$(direnv hook $SHELL)"
+elif (( $+commands[asdf] )); then
+    eval "$(asdf exec direnv hook $SHELL)"
+    alias direnv='asdf exec direnv'
 fi
 
 # added by travis gem
