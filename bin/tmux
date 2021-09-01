@@ -2,8 +2,8 @@
 
 local tmux_bin
 
-if [[ -x /usr/local/bin/tmux ]]; then
-	tmux_bin=/usr/local/bin/tmux
+if [[ -x $HOMEBREW_BASE/bin/tmux ]]; then
+	tmux_bin=$HOMEBREW_BASE/bin/tmux
 elif [[ -x /usr/bin/tmux ]]; then
 	tmux_bin=/usr/bin/tmux
 elif [[ -x /bin/tmux ]]; then
