@@ -7,6 +7,8 @@ if not packer_exists then
   vim.fn.system({
     'git',
     'clone',
+    '--depth',
+    '1',
     'https://github.com/wbthomason/packer.nvim',
     install_path,
   })
@@ -24,7 +26,3 @@ util.augroup(
   'init_packer',
   { 'BufWritePost */lua/plugins/init.lua source <afile> | PackerCompile' }
 )
-
--- setup a couple Packer commands that work before Packer is loaded
-util.cmd('PackerSync', 'lua require("plugins").sync()')
-util.cmd('PackerCompile', 'lua require("plugins").compile()')
