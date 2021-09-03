@@ -71,6 +71,12 @@ function exports.setup_server(server)
   -- default config for all servers
   local config = { on_attach = on_attach }
 
+  -- add cmp capabilities
+  local cmp = require('cmp_nvim_lsp')
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities = cmp.update_capabilities(capabilities)
+  config.capabilities = capabilities
+
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
   if client_config.config then

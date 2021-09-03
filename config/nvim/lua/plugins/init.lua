@@ -237,12 +237,19 @@ packer.startup({
 
     -- completion
     use({
-      'hrsh7th/nvim-compe',
-      event = 'InsertEnter',
+      'hrsh7th/nvim-cmp',
+      event = 'VimEnter',
+      requires = {
+        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+      },
       config = function()
-        require('plugins.nvim-compe')
+        require('plugins.nvim-cmp')
       end,
     })
+    use({ 'L3MON4D3/LuaSnip', event = 'VimEnter' })
 
     -- better git diff views
     use({
