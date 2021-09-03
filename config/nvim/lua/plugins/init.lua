@@ -211,6 +211,7 @@ packer.startup({
     })
     use({
       'ray-x/lsp_signature.nvim',
+      disable = true,
       after = 'nvim-lspconfig',
     })
     use({
