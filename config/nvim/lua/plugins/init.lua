@@ -183,10 +183,29 @@ packer.startup({
     })
     use({ 'tpope/vim-classpath', ft = { 'java' } })
 
+    -- completion
+    use({
+      'L3MON4D3/LuaSnip',
+      event = { 'BufRead', 'VimEnter' },
+    })
+    use({
+      'hrsh7th/nvim-cmp',
+      after = { 'LuaSnip', 'plenary.nvim' },
+      requires = {
+        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+      },
+      config = function()
+        require('plugins.nvim-cmp')
+      end,
+    })
+
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      event = 'BufRead',
+      after = 'cmp-nvim-lsp',
       config = function()
         require('lsp')
       end,
@@ -234,22 +253,6 @@ packer.startup({
         require('plugins.illuminate')
       end,
     })
-
-    -- completion
-    use({
-      'hrsh7th/nvim-cmp',
-      event = 'VimEnter',
-      requires = {
-        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
-      },
-      config = function()
-        require('plugins.nvim-cmp')
-      end,
-    })
-    use({ 'L3MON4D3/LuaSnip', event = 'VimEnter' })
 
     -- better git diff views
     use({
