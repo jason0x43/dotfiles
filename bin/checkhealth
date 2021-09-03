@@ -15,7 +15,6 @@ checkcmd asdf
 checkcmd tmux
 
 if [[ $os == "Darwin" ]]; then
-	checkcmd xclip
 elif [[ $os == "Linux" ]]; then
 	checkcmd xclip
 fi
