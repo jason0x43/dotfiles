@@ -663,8 +663,8 @@ if [[ ! -d $HOME/.asdf ]]; then
     git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.8.1 --depth 1
     $HOME/.asdf/bin/asdf install direnv latest
     path=(
-        $path
         $($HOME/.asdf/bin/asdf where direnv)/bin
+        $path
     )
 fi
 

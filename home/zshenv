@@ -38,9 +38,9 @@ typeset -gU mailpath path
 # --------------------------------------------------------------------------
 path=(
 	$HOME/Applications
+	$DOTFILES/bin
 	$HOME/.local/bin
 	$HOME/.asdf/bin
-	$DOTFILES/bin
 	$HOMEBREW_BASE/bin
 	$HOMEBREW_BASE/sbin
 	$path
@@ -228,8 +228,8 @@ export ASDF_DATA_DIR=$DATADIR/adsf
 while read line; do
 	parts=(${(@s: :)line})
 	path=(
-		$path
 		$ASDF_DATA_DIR/installs/${parts[1]}/${parts[2]}/bin
+		$path
 	)
 done < $HOME/.tool-versions
 
