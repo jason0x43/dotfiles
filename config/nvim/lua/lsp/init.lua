@@ -54,6 +54,10 @@ local function on_attach(client, bufnr)
   end
 
   util.lmap('d', '<cmd>lua require("lsp").show_line_diagnostics()<cr>', opts)
+
+  vim.cmd(
+    'autocmd CursorHold <buffer> lua require("lsp").show_line_diagnostics()'
+  )
 end
 
 local exports = {}
@@ -63,6 +67,8 @@ function exports.show_line_diagnostics()
   vim.lsp.diagnostic.show_line_diagnostics({
     border = 'rounded',
     max_width = 80,
+    show_header = false,
+    focusable = false,
   })
 end
 
