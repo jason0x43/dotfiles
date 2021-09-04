@@ -13,6 +13,9 @@ packer.startup({
       event = 'VimEnter',
     })
 
+    -- autodetect buffer formatting
+    use({ 'tpope/vim-sleuth', event = 'BufRead' })
+
     -- flashy status bar
     use({
       'shadmansaleh/lualine.nvim',
