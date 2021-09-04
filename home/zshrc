@@ -660,17 +660,17 @@ fi
 # ------------------------------------------------------------------------
 if [[ ! -d $HOME/.asdf ]]; then
     echo "Downloading asdf..."
-    git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.8.1
+    git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.8.1 --depth 1
+    $HOME/.asdf/bin/asdf install direnv latest
+    path=(
+        $path
+        $($HOME/.asdf/bin/asdf where direnv)/bin
+    )
 fi
 
 # direnv
 # ------------------------------------------------------------------------
-if (( $+commands[direnv] )); then
-    eval "$(direnv hook $SHELL)"
-elif (( $+commands[asdf] )); then
-    eval "$(asdf exec direnv hook $SHELL)"
-    alias direnv='asdf exec direnv'
-fi
+eval "$(direnv hook $SHELL)"
 
 # added by travis gem
 [ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh

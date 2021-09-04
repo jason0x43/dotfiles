@@ -147,23 +147,17 @@ function dotfiles-brew {
 
     logSub "Checking for missing brew packages..."
     brew_packages=(
-        'asdf'        # for managing devtools
         'bash'        # update from system stock version
         'bat'         # better cat
-        'deno'        # JS/TS scripting runner
-        'direnv'      # local environment management
         'fd'          # better find
         'fzf'         # fuzzy finder
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
-        'jq'          # used with asdf to manage java
         'neovim'      # better vim
-        'node'        # NodeJS
         'python@3.9'  # use Python3 (update to just 'python' when possible)
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
-        'yarn'        # Node package manager
         'zsh'         # newer zsh
     )
 
@@ -323,46 +317,24 @@ function dotfiles-asdf {
 
     log "Updating asdf..."
 
+    local asdf_desired=(direnv nodejs deno python)
     local asdf_plugins=(${(@f)$(asdf plugin-list)})
-    if (( ! $asdf_plugins[(Ie)direnv] )); then
-        asdf plugin-add direnv
-        logSub "Installed asdf-direnv"
-    fi
 
-    if [[ ! -d $ASDF_DATA/installs/direnv/system/bin ]]; then
-        makedir $ASDF_DATA/installs/direnv/system/bin
-        link $HOMEBREW_BASE/bin/direnv $ASDF_DATA/installs/direnv/system/bin/direnv
-        asdf reshim
-        logSub "Linked system direnv"
-    fi
-
-    if (( ! $asdf_plugins[(Ie)nodejs] )); then
-        asdf plugin-add nodejs
-        bash $ASDF_DATA/plugins/nodejs/bin/import-release-team-keyring
-        logSub "Installed asdf-nodejs"
-    fi
-
-    if (( ! $asdf_plugins[(Ie)python] )); then
-        asdf plugin-add python
-        logSub "Installed asdf-python"
-    fi
-
-    if (( ! $asdf_plugins[(Ie)java] )); then
-        asdf plugin-add java
-        logSub "Installed asdf-java"
-    fi
-
-    for dir in $ASDF_DATA/plugins/*; do
-        local plugin=${dir:t}
-        head=$(git -C $dir rev-parse HEAD)
-        git -C $dir pull -q
-        if (( $? != 0 )); then 
-            err "Problem updating $plugin"
+    for plugin in $asdf_desired; do
+        if (( ! $asdf_plugins[(Ie)$plugin] )); then
+            asdf plugin add $plugin
+            logSub "Installed $plugin plugin"
         else
-            if [[ $(git -C $dir rev-parse HEAD) != $head ]]; then 
-                logSub "Updated ${plugin:t}"
-            fi
+            asdf plugin update $plugin
+            logSub "Updated $plugin plugin"
         fi
+
+        asdf install $plugin latest
+    done
+
+    for plugin in $(asdf plugin list); do
+        local version=$(asdf list $plugin | awk '{ print $1 }')
+        asdf global $plugin $version
     done
 }
 
