@@ -161,7 +161,7 @@ function dotfiles-brew {
         'zsh'         # newer zsh
     )
 
-    local installed_packages=("${(@f)$(brew ls --versions $brew_packages | awk '{ print $1 }')}")
+    local installed_packages=($(brew ls --versions $brew_packages | awk '{ print $1 }'))
 
     for pkg in $brew_packages; do
         if ((! $installed_packages[(Ie)$pkg])); then
