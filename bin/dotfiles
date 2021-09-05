@@ -64,6 +64,31 @@ function fixterm {
     fi
 }
 
+# Check if a command exists
+function checkcmd {
+	local cmd=$1
+	local required=$2
+	if (( ! $+commands[$cmd] )); then
+		print -P "%F{red}$cmd is missing%f"
+        if [[ $required == "1" ]]; then
+            exit 1
+        fi
+	fi
+}
+
+# Basic health check
+function dotfiles-health {
+    local os=$(uname)
+
+    checkcmd asdf 1
+    checkcmd tmux
+
+    if [[ $os == "Linux" ]]; then
+        checkcmd unzip 1
+        checkcmd xclip
+    fi
+}
+
 # Rebuild bat cache
 function dotfiles-bat {
     if (( ! $+commands[bat] )); then
@@ -382,6 +407,7 @@ if [[ -n $1 ]]; then
         log "Done"
     fi
 else
+    dotfiles-health
     dotfiles-home
     dotfiles-brew
 
