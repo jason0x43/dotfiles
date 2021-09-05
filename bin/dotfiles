@@ -237,18 +237,9 @@ function dotfiles-zsh {
 
 # Update global python packages
 function dotfiles-python {
-    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
-        log "Skipping python update (no write permissions)"
-        return
-    fi
-
-    if [[ ! -h $HOMEBREW_BASE/bin/python ]]; then
-        logSub "Creating python link..."
-        link $HOMEBREW_BASE/bin/python3 $HOMEBREW_BASE/bin/python
-    fi
-
     log "Updating global python packages..."
-    $HOMEBREW_BASE/bin/pip3 install -U pip setuptools pynvim neovim-remote > /dev/null
+
+    direnv exec / pip install -U pip setuptools pynvim neovim-remote > /dev/null
 
     if [[ ! -d $HOME/.poetry ]]; then
         log "Installing poetry..."
