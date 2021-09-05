@@ -1,6 +1,5 @@
 local cmp = require('cmp')
 local luasnip = require('luasnip')
-local functional = require('plenary.functional')
 
 local function tab_fn(key, snippetfunc, fallback)
   if vim.fn.pumvisible() == 1 then
@@ -33,8 +32,12 @@ cmp.setup({
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     }),
-    ['<tab>'] = functional.partial(tab_fn, '<c-n>', 'expand-or-jump'),
-    ['<s-tab>'] = functional.partial(tab_fn, '<c-p>', 'jump-prev'),
+    ['<tab>'] = function(fallback)
+      tab_fn('<c-n>', 'expand-or-jump', fallback)
+    end,
+    ['<s-tab>'] = function(fallback)
+      tab_fn('<c-p>', 'jump-prev', fallback)
+    end
   },
   sources = {
     { name = 'nvim_lsp' },
