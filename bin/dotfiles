@@ -96,7 +96,11 @@ function dotfiles-bat {
       return
     fi
     log "Rebuilding bat cache..."
-    bat cache --build
+    local out=$(bat cache --build 2>&1)
+    if (( $? != 0 )); then
+        err "Error rebuilding bat cache"
+        err $out
+    fi
 }
 
 # Link dotfiles into $HOME, update terminfo
@@ -208,10 +212,23 @@ function dotfiles-zsh {
         return
     fi
 
+    local out=""
+    local head=""
+
     for plugin in $ZPLUGDIR/*/*; do
         head=$(git -C $plugin rev-parse HEAD)
-        git -C $plugin pull -q --recurse-submodules
-        git -C $plugin submodule update --remote
+        out=$(git -C $plugin pull -q --recurse-submodules 2>&1)
+        if (( $? != 0 )); then
+            err "Error updating ${plugin}"
+            err $out
+            continue
+        fi
+        out=$(git -C $plugin submodule update --remote 2>& 1)
+        if (( $? != 0 )); then
+            err "Error updating ${plugin}"
+            err $out
+            continue
+        fi
         if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
             logSub "Updated ${plugin:h:t}/${plugin:t}"
         fi
@@ -319,8 +336,16 @@ function dotfiles-tmux {
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
         for plugin in $TMUX_PLUGIN_MANAGER_PATH/*; do
             head=$(git -C $plugin rev-parse HEAD)
-            git -C $plugin pull -q --recurse-submodules
+            git -C $plugin pull -q --recurse-submodules > /dev/null
+            if (( $? != 0 )); then
+                err "Error updating $plugin"
+                continue
+            fi
             git -C $plugin submodule update --remote -q
+            if (( $? != 0 )); then
+                err "Error updating $plugin"
+                continue
+            fi
             if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
                 logSub "Updated ${plugin:t}"
             fi
