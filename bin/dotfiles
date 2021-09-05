@@ -353,6 +353,20 @@ function dotfiles-tmux {
     fi
 }
 
+function get-asdf-version {
+    local plugin=$1
+    version=$(asdf current $plugin 2> /dev/null)
+    if [[ -z $version ]]; then
+        local versions=($(asdf list $plugin 2> /dev/null))
+        if [[ -n $versions ]]; then
+            version=$(echo $versions[-1] | awk '{ print $1 }')
+        fi
+    else
+        version=$(echo $version | awk '{ print $2 }')
+    fi
+    echo $version
+}
+
 # Update asdf plugins
 function dotfiles-asdf {
     if (( ! $+commands[asdf] )); then
@@ -362,6 +376,7 @@ function dotfiles-asdf {
 
     log "Updating asdf..."
 
+    # The list of asdf-managed utility programs that should be installed
     local asdf_utilities=(
         bat
         direnv
@@ -369,8 +384,11 @@ function dotfiles-asdf {
         neovim
         ripgrep
     )
-    local asdf_plugins=(${(@f)$(asdf plugin-list)})
 
+    # The list of all installed plugins
+    local asdf_plugins=($(asdf plugin-list))
+
+    # Add any missing plugins
     for plugin in $asdf_utilities; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
             asdf plugin add $plugin > /dev/null
@@ -378,10 +396,12 @@ function dotfiles-asdf {
         fi
     done
 
+    # Update all plugins
     for plugin in $(asdf plugin list); do
         asdf plugin update $plugin > /dev/null
     done
 
+    # Update the versions of asdf-managed utility programs
     for plugin in $asdf_utilities; do
         local version=""
         local latest=""
@@ -390,16 +410,7 @@ function dotfiles-asdf {
             version='nightly'
             latest='nightly'
         else
-            version=$(asdf current $plugin 2> /dev/null)
-            if [[ -z $version ]]; then
-                local versions=($(asdf list $plugin 2> /dev/null))
-                if [[ -n $versions ]]; then
-                    version=$(echo $versions[-1] | awk '{ print $1 }')
-                fi
-            else
-                version=$(echo $version | awk '{ print $2 }')
-            fi
-
+            version=$(get-asdf-version $plugin)
             latest=$(asdf latest $plugin)
         fi
 
@@ -415,10 +426,13 @@ function dotfiles-asdf {
                 continue
             fi
             logSub "Installed $plugin $latest"
-
-            version=$latest
-            asdf global $plugin $version
         fi
+    done
+
+    # Update the tool-versions for all installed plugins
+    for plugin in $(asdf plugin list); do
+        version=$(get-asdf-version $plugin)
+        asdf global $plugin $version
     done
 }
 
