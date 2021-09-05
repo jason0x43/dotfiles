@@ -51,12 +51,6 @@ typeset -gU cdpath
 typeset -gU fpath
 typeset -gU manpath
 
-# Brew
-# ----------------------------------------------------------------------------
-if [[ -d /home/linuxbrew ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-fi
-
 # manpath
 # ----------------------------------------------------------------------------
 # Set the list of directories that man searches for manuals.
