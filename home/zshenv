@@ -225,7 +225,7 @@ export HOMEBREW_BOOTSNAP=1
 # ASDF
 # ----------------------------------------------------------------------------
 export ASDF_DIR=$HOME/.asdf
-export ASDF_DATA_DIR=$DATADIR/adsf
+export ASDF_DATA_DIR=$DATADIR/asdf
 while read line; do
 	parts=(${(@s: :)line})
 	path=(
