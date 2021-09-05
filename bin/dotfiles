@@ -362,7 +362,7 @@ function dotfiles-asdf {
 
     log "Updating asdf..."
 
-    local asdf_desired=(
+    local asdf_utilities=(
         bat
         direnv
         fd
@@ -371,7 +371,7 @@ function dotfiles-asdf {
     )
     local asdf_plugins=(${(@f)$(asdf plugin-list)})
 
-    for plugin in $asdf_desired; do
+    for plugin in $asdf_utilities; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
             asdf plugin add $plugin > /dev/null
             logSub "Installed $plugin plugin"
@@ -379,25 +379,46 @@ function dotfiles-asdf {
     done
 
     for plugin in $(asdf plugin list); do
-        local version=$(asdf current $plugin 2> /dev/null)
-        if [[ -z $version ]]; then
-            local versions=($(asdf list $plugin))
-            version=$(echo $versions[-1] | awk '{ print $1 }')
+        asdf plugin update $plugin > /dev/null
+    done
+
+    for plugin in $asdf_utilities; do
+        local version=""
+        local latest=""
+
+        if [[ $plugin == 'neovim' ]]; then
+            version='nightly'
+            latest='nightly'
         else
-            version=$(echo $version | awk '{ print $2 }')
-        fi
-
-        if [[ $version != 'nightly' ]]; then
-            local latest=$(asdf latest $plugin)
-            if [[ -n $latest && $version != $latest ]]; then
-                logSub "Updating $plugin..."
-                asdf plugin update $plugin > /dev/null
-                asdf install $plugin latest > /dev/null
-                asdf global $plugin $version
+            version=$(asdf current $plugin 2> /dev/null)
+            if [[ -z $version ]]; then
+                local versions=($(asdf list $plugin 2> /dev/null))
+                if [[ -n $versions ]]; then
+                    version=$(echo $versions[-1] | awk '{ print $1 }')
+                fi
+            else
+                version=$(echo $version | awk '{ print $2 }')
             fi
+
+            latest=$(asdf latest $plugin)
         fi
 
-        logSub "Using $plugin $version"
+        if [[ $version == 'nightly' ]] || [[ -n $latest && $version != $latest ]]; then
+            if [[ -n $version ]]; then
+                asdf uninstall $plugin $version > /dev/null 2>&1
+                logSub "Removed $plugin $version"
+            fi
+
+            asdf install $plugin $latest > /dev/null 2>&1
+            if (( $? != 0 )); then
+                err "Error installing $plugin"
+                continue
+            fi
+            logSub "Installed $plugin $latest"
+
+            version=$latest
+            asdf global $plugin $version
+        fi
     done
 }
 
