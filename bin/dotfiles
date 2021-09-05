@@ -6,12 +6,6 @@ source $HOME/.dotfiles/zsh/common.zsh
 
 setopt null_glob
 
-typeset -U path
-path=(
-    $HOMEBREW_BASE/bin
-    $path
-)
-
 # Log output
 function log {
     local msg=$1
@@ -239,14 +233,19 @@ function dotfiles-zsh {
 function dotfiles-python {
     log "Updating global python packages..."
 
-    direnv exec / pip install -U pip setuptools pynvim neovim-remote > /dev/null
+    local out=""
+    out=$(direnv exec / pip install -U pip setuptools pynvim neovim-remote > /dev/null 2>& 1)
+    if (( $? != 0 )); then
+        err "Error updating packages"
+        err $out
+    fi
 
     if [[ ! -d $HOME/.poetry ]]; then
         log "Installing poetry..."
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
     else
         log "Updating poetry..."
-        $HOME/.poetry/bin/poetry self update
+        $HOME/.poetry/bin/poetry self update > /dev/null
     fi
 
     log "Updating poetry completions..."
