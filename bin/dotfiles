@@ -148,14 +148,9 @@ function dotfiles-brew {
     logSub "Checking for missing brew packages..."
     brew_packages=(
         'bash'        # update from system stock version
-        'bat'         # better cat
-        'fd'          # better find
-        'fzf'         # fuzzy finder
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
-        'neovim'      # better vim
         'python@3.9'  # use Python3 (update to just 'python' when possible)
-        'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
         'zsh'         # newer zsh
@@ -317,7 +312,13 @@ function dotfiles-asdf {
 
     log "Updating asdf..."
 
-    local asdf_desired=(direnv nodejs deno python)
+    local asdf_desired=(
+        bat
+        direnv
+        fd
+        neovim
+        ripgrep
+    )
     local asdf_plugins=(${(@f)$(asdf plugin-list)})
 
     for plugin in $asdf_desired; do
@@ -328,12 +329,25 @@ function dotfiles-asdf {
     done
 
     for plugin in $(asdf plugin list); do
-        asdf plugin update $plugin > /dev/null
-        asdf install $plugin latest > /dev/null
+        local version=$(asdf current $plugin 2> /dev/null)
+        if [[ -z $version ]]; then
+            local versions=($(asdf list $plugin))
+            version=$(echo $versions[-1] | awk '{ print $1 }')
+        else
+            version=$(echo $version | awk '{ print $2 }')
+        fi
 
-        local version=$(asdf current $plugin | awk '{ print $2 }')
+        if [[ $version != 'nightly' ]]; then
+            local latest=$(asdf latest $plugin)
+            if [[ -n $latest && $version != $latest ]]; then
+                logSub "Updating $plugin..."
+                asdf plugin update $plugin > /dev/null
+                asdf install $plugin latest > /dev/null
+                asdf global $plugin $version
+            fi
+        fi
+
         logSub "Using $plugin $version"
-        asdf global $plugin $version
     done
 }
 
