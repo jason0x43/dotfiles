@@ -331,7 +331,7 @@ function dotfiles-asdf {
         asdf plugin update $plugin > /dev/null
         asdf install $plugin latest > /dev/null
 
-        local version=$(asdf list $plugin | awk '{ print $1 }')
+        local version=$(asdf current $plugin | awk '{ print $2 }')
         logSub "Using $plugin $version"
         asdf global $plugin $version
     done
