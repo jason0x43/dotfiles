@@ -322,18 +322,17 @@ function dotfiles-asdf {
 
     for plugin in $asdf_desired; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
-            asdf plugin add $plugin
+            asdf plugin add $plugin > /dev/null
             logSub "Installed $plugin plugin"
-        else
-            asdf plugin update $plugin
-            logSub "Updated $plugin plugin"
         fi
-
-        asdf install $plugin latest
     done
 
     for plugin in $(asdf plugin list); do
+        asdf plugin update $plugin > /dev/null
+        asdf install $plugin latest > /dev/null
+
         local version=$(asdf list $plugin | awk '{ print $1 }')
+        logSub "Using $plugin $version"
         asdf global $plugin $version
     done
 }
