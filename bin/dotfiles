@@ -97,6 +97,44 @@ function dotfiles-bat {
     fi
 }
 
+# Install build tools necessary for building other things like python
+function dotfiles-buildtools {
+    log "Installing build tools..."
+    local out=""
+    local code=""
+
+    if [[ $OSTYPE == linux* ]]; then
+        sudo apt-get update -qq
+        out=$(sudo apt-get install -y \
+            make \
+            build-essential \
+            libssl-dev \
+            zlib1g-dev \
+            libbz2-dev \
+            libreadline-dev \
+            libsqlite3-dev \
+            wget \
+            curl \
+            llvm \
+            libncursesw5-dev \
+            xz-utils \
+            tk-dev \
+            libxml2-dev \
+            libxmlsec1-dev \
+            libffi-dev \
+            liblzma-dev 2>&1)
+        code=$?
+    else
+        out=$(brew install openssl readline sqlite3 xz zlib 2>&1)
+        code=$?
+    fi
+
+    if (( $code != 0 )); then
+        err "Error installing build tools"
+        err $out
+    fi
+}
+
 # Link dotfiles into $HOME, update terminfo
 function dotfiles-home {
     log "Updating home directory files..."
@@ -242,7 +280,7 @@ function dotfiles-python {
 
     if [[ ! -d $HOME/.poetry ]]; then
         log "Installing poetry..."
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
     else
         log "Updating poetry..."
         $HOME/.poetry/bin/poetry self update > /dev/null
@@ -350,17 +388,36 @@ function dotfiles-asdf {
 
     log "Updating asdf..."
 
+    # The list of all installed plugins
+    local asdf_plugins=($(asdf plugin-list))
+
     # The list of asdf-managed utility programs that should be installed
     local asdf_utilities=(
         bat
         direnv
+        deno
         fd
+        fzf
+        jq
         neovim
         ripgrep
     )
 
-    # The list of all installed plugins
-    local asdf_plugins=($(asdf plugin-list))
+    # Add any missing plugins
+    for plugin in $asdf_utilities; do
+        if (( ! $asdf_plugins[(Ie)$plugin] )); then
+            asdf plugin add $plugin > /dev/null
+            logSub "Installed $plugin plugin"
+        fi
+    done
+
+    # The list of plugins that should be installed
+    local asdf_desired_plugins=(
+        python
+        java
+        ruby
+        nodejs
+    )
 
     # Add any missing plugins
     for plugin in $asdf_utilities; do
@@ -444,9 +501,10 @@ else
     dotfiles-health
     dotfiles-home
     dotfiles-brew
+    dotfiles-buildtools
+    dotfiles-asdf
 
     dotfiles-zsh
-    dotfiles-asdf
     dotfiles-python
     dotfiles-node
     dotfiles-tmux
