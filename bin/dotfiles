@@ -91,7 +91,7 @@ function dotfiles-bat {
     fi
     log "Rebuilding bat cache..."
     local out=$(bat cache --build 2>&1)
-    if (( $? != 0 )); then
+    if (( $? )); then
         err "Error rebuilding bat cache"
         err $out
     fi
@@ -129,7 +129,7 @@ function dotfiles-buildtools {
         code=$?
     fi
 
-    if (( $code != 0 )); then
+    if (( $code )); then
         err "Error installing build tools"
         err $out
     fi
@@ -250,13 +250,13 @@ function dotfiles-zsh {
     for plugin in $ZPLUGDIR/*/*; do
         head=$(git -C $plugin rev-parse HEAD)
         out=$(git -C $plugin pull -q --recurse-submodules 2>&1)
-        if (( $? != 0 )); then
+        if (( $? )); then
             err "Error updating ${plugin}"
             err $out
             continue
         fi
         out=$(git -C $plugin submodule update --remote 2>& 1)
-        if (( $? != 0 )); then
+        if (( $? )); then
             err "Error updating ${plugin}"
             err $out
             continue
@@ -273,7 +273,7 @@ function dotfiles-python {
 
     local out=""
     out=$(direnv exec / pip install -U pip setuptools pynvim neovim-remote > /dev/null 2>& 1)
-    if (( $? != 0 )); then
+    if (( $? )); then
         err "Error updating packages"
         err $out
     fi
@@ -349,12 +349,12 @@ function dotfiles-tmux {
         for plugin in $TMUX_PLUGIN_MANAGER_PATH/*; do
             head=$(git -C $plugin rev-parse HEAD)
             git -C $plugin pull -q --recurse-submodules > /dev/null
-            if (( $? != 0 )); then
+            if (( $? )); then
                 err "Error updating $plugin"
                 continue
             fi
             git -C $plugin submodule update --remote -q
-            if (( $? != 0 )); then
+            if (( $? )); then
                 err "Error updating $plugin"
                 continue
             fi
@@ -452,7 +452,7 @@ function dotfiles-asdf {
             fi
 
             asdf install $plugin $latest > /dev/null 2>&1
-            if (( $? != 0 )); then
+            if (( $? )); then
                 err "Error installing $plugin"
                 continue
             fi
