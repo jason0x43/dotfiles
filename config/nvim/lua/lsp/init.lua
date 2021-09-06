@@ -46,7 +46,7 @@ local function on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.cmd('Format', '-buffer', 'lua vim.lsp.buf.formatting_sync(nil, 5000)')
+    util.cmd('Format', '-buffer', 'lua require("lsp").format_sync(nil, 5000)')
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -61,6 +61,42 @@ local function on_attach(client, bufnr)
 end
 
 local exports = {}
+
+-- format the current buffer, handling the case where multiple formatters are
+-- present
+function exports.format_sync(options, timeout)
+  local clients = vim.tbl_values(vim.lsp.buf_get_clients())
+  local formatters = vim.tbl_filter(function(client)
+    return client.supports_method('textDocument/formatting')
+  end, clients)
+
+  local formatter
+  if #formatters == 0 then
+    return
+  end
+
+  if #formatters == 1 then
+    formatter = formatters[1]
+  else
+    local non_null_ls = vim.tbl_filter(function(client)
+      return client.name ~= 'null-ls'
+    end, formatters)
+    formatter = non_null_ls[1]
+  end
+
+  local params = vim.lsp.util.make_formatting_params(options)
+  local result, err = formatter.request_sync(
+    'textDocument/formatting',
+    params,
+    timeout,
+    vim.api.nvim_get_current_buf()
+  )
+  if result and result.result then
+    vim.lsp.util.apply_text_edits(result.result)
+  elseif err then
+    vim.notify('vim.lsp.buf.formatting_sync: ' .. err, vim.log.levels.WARN)
+  end
+end
 
 -- style the line diagnostics popup
 function exports.show_line_diagnostics()
