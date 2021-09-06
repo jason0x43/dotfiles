@@ -114,10 +114,10 @@ export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
+    $fpath
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZCOMPDIR
     $HOMEBREW_BASE/share/zsh-completions
-    $fpath
 )
 
 # Load and initialize the completion system, ignoring insecure directories.
