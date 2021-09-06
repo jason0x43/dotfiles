@@ -14,7 +14,14 @@ packer.startup({
     })
 
     -- autodetect buffer formatting
-    use({ 'tpope/vim-sleuth', event = 'BufRead' })
+    use({
+      'tpope/vim-sleuth',
+      config = function()
+        -- Disable sleuth for markdown files as it slows the load time
+        -- significantly
+        vim.cmd('autocmd FileType markdown :let b:sleuth_automatic = 0')
+      end
+    })
 
     -- flashy status bar
     use({
