@@ -1,0 +1,56 @@
+#compdef ghc
+
+# Completions for GitHub Classroom app
+
+_ghc_students() {
+    local expl
+    declare -a students
+    students=(${(f)"$(ghc roster id)"})
+    _wanted students expl student compadd $* - $students
+}
+
+_ghc_commands() {
+  local -a commands
+  commands=(
+    'open:Open a student repo'
+    'roster:Show the student roster'
+    'status:Show assignment status'
+  )
+  _describe 'commands' commands
+}
+
+_ghc_roster() {
+  local -a options
+  options=(
+    'name:Show names'
+    'id:Show GitHub usernames'
+  )
+  _describe 'options' options
+}
+
+_ghc() {
+  case "$words[2]" in
+      open)
+           _arguments '*:student:_ghc_students' && return 0
+           ;;
+      roster)
+           _arguments '*:option:_ghc_roster' && return 0
+           ;;
+      status)
+           _arguments '-s[sort]' && return 0
+           ;;
+   esac
+
+  local -a args
+  args=(
+    # If -h or --help are provided, don't complete any more options, files, or
+    # the first normal argument
+    '(- * 1)'{-h,--help}'[Prints help information]'
+    # Available normal arguments
+    ': :_ghc_commands'
+  )
+
+  _arguments -A "*" $args[@] && return 0
+}
+
+_ghc "$@"
