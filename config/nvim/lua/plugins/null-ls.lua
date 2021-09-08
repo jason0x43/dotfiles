@@ -4,46 +4,42 @@ local helpers = require('null-ls.helpers')
 local htmlhint_source = {
   method = null_ls.methods.DIAGNOSTICS,
   filetypes = { 'html' },
+  generator = helpers.generator_factory({
+    command = 'htmlhint',
+    args = { '--format', 'json', '--nocolor', 'stdin' },
+    format = 'json',
+    to_stdin = true,
+    check_exit_code = { 0, 1 },
+    on_output = function(params)
+      if params.output == nil then
+        return nil
+      end
+
+      local results = {}
+
+      for _, err in ipairs(params.output) do
+        for _, msg in ipairs(err.messages) do
+          local severity
+          if msg.type == 'error' then
+            severity = 1
+          else
+            severity = 3
+          end
+
+          table.insert(results, {
+            row = msg.line,
+            col = msg.col,
+            end_col = msg.col + #msg.evidence,
+            message = msg.message .. ' (' .. msg.rule.id .. ')',
+            severity = severity,
+          })
+        end
+      end
+
+      return results
+    end,
+  }),
 }
-
-htmlhint_source.generator = helpers.generator_factory({
-  command = 'htmlhint',
-  args = { '$FILENAME', '--format', 'compact', '--nocolor' },
-  to_stdin = false,
-  to_temp_file = true,
-  to_stderr = true,
-  format = 'line',
-  ignore_errors = true,
-  on_output = function(line)
-    if line == '' then
-      return nil
-    end
-
-    local file, row, col, level, message, str, reason = string.match(
-      line,
-      '^(.-): line (%d+), col (%d+), (%a+) - (.-) %[ (.-) ].-(.-)$'
-    )
-
-    if file == nil then
-      return nil
-    end
-
-    local severity
-    if level == 'error' then
-      severity = 1
-    else
-      severity = 3
-    end
-
-    return {
-      row = tonumber(row),
-      col = tonumber(col),
-      end_col = tonumber(col) + #str,
-      message = message .. ' ' .. reason,
-      severity = severity,
-    }
-  end,
-})
 
 -- run null_ls.config to make null-ls available through lspconfig
 local config = {
