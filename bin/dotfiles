@@ -459,6 +459,14 @@ function dotfiles-asdf {
         local latest=""
 
         if [[ $plugin == 'neovim' ]]; then
+            # check if nightly exists
+            curl --silent --head --fail 'https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz' -o /dev/null
+            if (( $? != 0 )); then
+                # if the neovim nightly doesn't exist, don't try to update neovim
+                logSub "Neovim nightly is down, skipping update"
+                continue
+            fi
+
             version='nightly'
             latest='nightly'
         else
@@ -477,6 +485,7 @@ function dotfiles-asdf {
                 err "Error installing $plugin"
                 continue
             fi
+            asdf global $plugin $version
             logSub "Installed $plugin $latest"
         fi
     done
