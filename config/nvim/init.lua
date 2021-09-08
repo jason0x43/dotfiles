@@ -2,6 +2,8 @@
 -- https://www.reddit.com/r/neovim/comments/opipij/guide_tips_and_tricks_to_reduce_startup_and/
 vim.opt.shadafile = 'NONE'
 
+pcall(require, 'impatient')
+
 require('config.packer')
 require('config.options')
 require('config.keymaps')

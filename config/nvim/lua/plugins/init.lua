@@ -2,6 +2,8 @@ local packer = require('packer')
 
 packer.startup({
   function(use)
+    use 'lewis6991/impatient.nvim'
+
     -- manage the package manager
     use({
       'wbthomason/packer.nvim',
