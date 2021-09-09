@@ -60,20 +60,21 @@ function fixterm {
 
 # Check if a command exists
 function checkcmd {
-	local cmd=$1
-	local required=$2
-	if (( ! $+commands[$cmd] )); then
-		print -P "%F{red}$cmd is missing%f"
+    local cmd=$1
+    local required=$2
+    if (( ! $+commands[$cmd] )); then
+        err "%F{red}$cmd is missing%f"
         if [[ $required == "1" ]]; then
             exit 1
         fi
-	fi
+    fi
 }
 
 # Basic health check
 function dotfiles-health {
     local os=$(uname)
 
+    checkcmd brew
     checkcmd asdf 1
     checkcmd tmux
 
@@ -104,34 +105,43 @@ function dotfiles-buildtools {
     local code=""
 
     if [[ $OSTYPE == linux* ]]; then
-        sudo apt-get update -qq
-        out=$(sudo apt-get install -y \
-            make \
-            build-essential \
-            libssl-dev \
-            zlib1g-dev \
-            libbz2-dev \
-            libreadline-dev \
-            libsqlite3-dev \
-            wget \
-            curl \
-            llvm \
-            libncursesw5-dev \
-            xz-utils \
-            tk-dev \
-            libxml2-dev \
-            libxmlsec1-dev \
-            libffi-dev \
-            liblzma-dev 2>&1)
-        code=$?
+        local installed_packages=($(dpkg-query --show --showformat '${Package}\n'))
+        local desired_packages=(
+            make
+            build-essential
+            libssl-dev
+            zlib1g-dev
+            libbz2-dev
+            libreadline-dev
+            libsqlite3-dev
+            wget
+            curl
+            llvm
+            libncursesw5-dev
+            xz-utils
+            tk-dev
+            libxml2-dev
+            libxmlsec1-dev
+            libffi-dev
+            liblzma-dev
+        )
+        for pkg in $desired_packages; do
+            if ((! $installed_packages[(Ie)$pkg])); then
+                out=$(sudo apt install -y $pkg 2>&1)
+                if (( $? )); then
+                    err "Error installing $pkg"
+                    err $out
+                else
+                    logSub "Installed $pkg"
+                fi
+            fi
+        done
     else
         out=$(brew install openssl readline sqlite3 xz zlib 2>&1)
-        code=$?
-    fi
-
-    if (( $code )); then
-        err "Error installing build tools"
-        err $out
+        if (( $? )); then
+            err "Error installing build tools"
+            err $out
+        fi
     fi
 }
 
@@ -181,12 +191,21 @@ function dotfiles-launchd {
 
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
-    if [[ ! -w $HOMEBREW_BASE/bin ]]; then
-        log "Skipping homebrew update (no write permissions)"
-        return
+    if [[ $OSTYPE == linux* ]]; then
+        groups | grep brew > /dev/null
+        if (( $? )); then
+            err 'User is not in brew group'
+            return
+        fi
+
+        local base_group=$(stat -c '%G' $HOMEBREW_BASE)
+        if [[ $base_group != 'brew' ]]; then
+            err "$HOMEBREW_BASE is not owned by brew group"
+            return
+        fi
     fi
 
-    log "Updating brew packages..."
+    log "Updating brew..."
 
     if [[ $OSTYPE == linux* ]]; then
         if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( ! $+commands[curl] )); then
@@ -197,11 +216,19 @@ function dotfiles-brew {
     fi
 
     if ! hash brew; then
-        logSub "Installing homebrew..."
+        log "Installing homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
         # If homebrew was just installed, ensure it's in the path
         export PATH=$HOMEBREW_BASE/bin:$PATH
+
+        if [[ $OSTYPE == linux* ]]; then
+            # Add a brew group so that the current user can manage brew
+            sudo groupadd brew
+            sudo usermod -a -G brew $USER
+            sudo chgrp -R brew $HOMEBREW_BASE
+            sudo chmod g+w -R $HOMEBREW_BASE
+        fi
 
         rehash
     fi
@@ -209,9 +236,17 @@ function dotfiles-brew {
     logSub "Checking for missing brew packages..."
     brew_packages=(
         'bash'        # update from system stock version
+        'bat'         # better cat
+        'deno'        # TS runtime
+        'direnv'      # environment manager
+        'fd'          # file finder
+        'fzf'         # fuzzy finder
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
+        'jq'          # command line JSON processor
+        'node'        # Node.js
         'python@3.9'  # use Python3 (update to just 'python' when possible)
+        'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
         'zsh'         # newer zsh
@@ -412,20 +447,9 @@ function dotfiles-asdf {
     # All installed plugins
     local asdf_plugins=($(asdf plugin list))
 
-    # asdf-managed utility programs that should be installed
-    local asdf_utilities=(
-        bat
-        direnv
-        deno
-        fd
-        fzf
-        jq
-        neovim
-        ripgrep
-    )
-
     # Other plugins that should be installed
-    local asdf_interpreters=(
+    local asdf_desired_plugins=(
+        direnv
         python
         java
         ruby
@@ -435,18 +459,7 @@ function dotfiles-asdf {
     local -a installed_plugins
 
     # Add any missing plugins
-    logSub "Installing utility plugins..."
-    for plugin in $asdf_utilities; do
-        if (( ! $asdf_plugins[(Ie)$plugin] )); then
-            asdf plugin add $plugin > /dev/null 2>&1
-            installed_plugins+=($plugin)
-            logSub "Installed $plugin plugin"
-        fi
-    done
-
-    # Add any missing plugins
-    logSub "Installing interpreter plugins..."
-    for plugin in $asdf_interpreters; do
+    for plugin in $asdf_desired_plugins; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
             asdf plugin add $plugin > /dev/null
             installed_plugins+=($plugin)
@@ -462,42 +475,12 @@ function dotfiles-asdf {
         fi
     done
 
-    # Update the versions of asdf-managed utility programs
-    for plugin in $asdf_utilities; do
-        local version=""
-        local latest=""
-
-        if [[ $plugin == 'neovim' ]]; then
-            # check if nightly exists
-            curl --silent --head --fail 'https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz' -o /dev/null
-            if (( $? != 0 )); then
-                # if the neovim nightly doesn't exist, don't try to update neovim
-                logSub "Neovim nightly is down, skipping update"
-                continue
-            fi
-
-            version='nightly'
-            latest='nightly'
-        else
-            version=$(get-asdf-version $plugin)
-            latest=$(asdf latest $plugin)
-        fi
-
-        if [[ $version == 'nightly' ]] || [[ -n $latest && $version != $latest ]]; then
-            if [[ -n $version ]]; then
-                asdf uninstall $plugin $version > /dev/null 2>&1
-                logSub "Removed $plugin $version"
-            fi
-
-            asdf install $plugin $latest > /dev/null 2>&1
-            if (( $? )); then
-                err "Error installing $plugin"
-                continue
-            fi
-            asdf global $plugin $latest
-            logSub "Installed $plugin $latest"
-        fi
-    done
+    # Ensure direnv is setup properly
+    if [[ ! -d $ASDF_DATA_DIR/installs/direnv/system/env ]]; then
+        mkdir -p ~/.local/share/asdf/installs/direnv/system/env
+        asdf global direnv system
+        logSub "Created direnv install directory"
+    fi
 
     # Update the tool-versions for all installed plugins
     for plugin in $(asdf plugin list); do

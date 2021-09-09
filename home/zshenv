@@ -226,13 +226,6 @@ export HOMEBREW_BOOTSNAP=1
 # ----------------------------------------------------------------------------
 export ASDF_DIR=$HOME/.asdf
 export ASDF_DATA_DIR=$DATADIR/asdf
-while read line; do
-	parts=(${(@s: :)line})
-	path=(
-		$ASDF_DATA_DIR/installs/${parts[1]}/${parts[2]}/bin
-		$path
-	)
-done < $HOME/.tool-versions
 
 # Local config
 # --------------------------------------------------------------------------
