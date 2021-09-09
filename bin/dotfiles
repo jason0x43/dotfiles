@@ -63,7 +63,7 @@ function checkcmd {
     local cmd=$1
     local required=$2
     if (( ! $+commands[$cmd] )); then
-        err "%F{red}$cmd is missing%f"
+        err "$cmd is missing"
         if [[ $required == "1" ]]; then
             exit 1
         fi
@@ -75,7 +75,6 @@ function dotfiles-health {
     local os=$(uname)
 
     checkcmd brew
-    checkcmd asdf 1
     checkcmd tmux
 
     if [[ $os == "Linux" ]]; then
@@ -254,13 +253,20 @@ function dotfiles-brew {
     )
 
     local installed_packages=($(brew ls --versions $brew_packages | awk '{ print $1 }'))
+    local need_rehash=0
 
     for pkg in $brew_packages; do
         if ((! $installed_packages[(Ie)$pkg])); then
             logSub "Installing $pkg..."
             brew install $pkg
+            need_rehash=1
         fi
     done
+
+    if (( $need_rehash )); then
+        # Let the shell know about any newly installed packages
+        rehash
+    fi
 
     logSub "Updating installed brew packages..."
     brew upgrade
