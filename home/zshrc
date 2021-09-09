@@ -650,21 +650,6 @@ if [[ ! -d $CACHEDIR/tmux ]]; then
     mkdir $CACHEDIR/tmux
 fi
 
-# asdf
-# ------------------------------------------------------------------------
-if [[ ! -d $HOME/.asdf ]]; then
-    echo "Downloading asdf..."
-    git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.8.1 --depth 1 > /dev/null 2>&1
-    echo "Installing direnv..."
-    $HOME/.asdf/bin/asdf plugin add direnv > /dev/null 2>&1
-    $HOME/.asdf/bin/asdf install direnv latest > /dev/null 2>&1
-    echo "direnv $(asdf latest direnv)" >! $HOME/.tool-versions
-    path=(
-        $($HOME/.asdf/bin/asdf where direnv)/bin
-        $path
-    )
-fi
-
 # direnv
 # ------------------------------------------------------------------------
 eval "$(direnv hook $SHELL)"
