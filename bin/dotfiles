@@ -235,6 +235,7 @@ function dotfiles-brew {
 
     logSub "Checking for missing brew packages..."
     brew_packages=(
+        'asdf'        # version manager
         'bash'        # update from system stock version
         'bat'         # better cat
         'deno'        # TS runtime
