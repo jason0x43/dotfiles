@@ -40,7 +40,6 @@ path=(
 	$HOME/Applications
 	$DOTFILES/bin
 	$HOME/.local/bin
-	$HOME/.asdf/bin
 	$HOMEBREW_BASE/bin
 	$HOMEBREW_BASE/sbin
 	$path

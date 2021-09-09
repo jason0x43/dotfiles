@@ -475,11 +475,27 @@ function dotfiles-asdf {
         fi
     done
 
-    # Ensure direnv is setup properly
-    if [[ ! -d $ASDF_DATA_DIR/installs/direnv/system/env ]]; then
-        mkdir -p ~/.local/share/asdf/installs/direnv/system/env
+    # Setup the "system" install for asdf-direnv
+    if [[ -d $HOME/.asdf ]]; then
+        # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
+        # be able to create that, *some* installed version of direnv needs a
+        # binary. If we only want to use the system install, we have to create
+        # a link to the system direnv binary in installs/direnv/system/bin.
+        if [[ ! -L $HOME/asdf/installs/direnv/system/bin/direnv ]]; then
+            mkdir -p $HOME/.asdf/installs/direnv/system/bin
+            ln -s $HOMEBREW_BASE/bin/direnv $HOME/.asdf/installs/direnv/system/bin
+            asdf reshim
+            logSub "Created direnv link"
+        fi
+
+        # asdf needs a directory to create environments for each installed
+        # version. 
+        if [[ ! -d $HOME/asdf/installs/direnv/system/env ]]; then
+            mkdir -p $HOME/.asdf/installs/direnv/system/env
+            logSub "Created direnv environment directory"
+        fi
+
         asdf global direnv system
-        logSub "Created direnv install directory"
     fi
 
     # Update the tool-versions for all installed plugins
