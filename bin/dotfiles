@@ -497,14 +497,6 @@ function dotfiles-asdf {
 
         asdf global direnv system
     fi
-
-    # Update the tool-versions for all installed plugins
-    for plugin in $(asdf plugin list); do
-        version=$(get-asdf-version $plugin)
-        if [[ -n $version ]]; then
-            asdf global $plugin $version
-        fi
-    done
 }
 
 cd $HOME
