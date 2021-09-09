@@ -24,3 +24,4 @@ fi
 # function in asdf-direnv's command.bash is unable to determine the proper
 # value for ASDF_DIR automatically.
 export ASDF_DIR=$HOMEBREW_BASE/opt/asdf/libexec
+export ASDF_DATA_DIR=$DATADIR/asdf
