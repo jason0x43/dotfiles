@@ -2,28 +2,21 @@ local packer = require('packer')
 
 packer.startup({
   function(use)
-    use 'lewis6991/impatient.nvim'
+    use('lewis6991/impatient.nvim')
 
     -- manage the package manager
+    use('wbthomason/packer.nvim')
+
+    -- plenary is a common dependency
     use({
-      'wbthomason/packer.nvim',
+      'nvim-lua/plenary.nvim',
+      event = { 'BufEnter', 'VimEnter' },
     })
 
-    -- devicons are needed by many things
+    -- devicons are needed by the status bar
     use({
       'kyazdani42/nvim-web-devicons',
       event = 'VimEnter',
-    })
-
-    -- autodetect buffer formatting
-    use({
-      'tpope/vim-sleuth',
-      event = 'BufRead',
-      config = function()
-        -- Disable sleuth for markdown files as it slows the load time
-        -- significantly
-        vim.cmd('autocmd FileType markdown :let b:sleuth_automatic = 0')
-      end
     })
 
     -- flashy status bar
@@ -35,10 +28,15 @@ packer.startup({
       end,
     })
 
-    -- plenary is a common dependency
+    -- autodetect buffer formatting
     use({
-      'nvim-lua/plenary.nvim',
-      event = { 'BufEnter', 'VimEnter' },
+      'tpope/vim-sleuth',
+      event = 'BufRead',
+      config = function()
+        -- Disable sleuth for markdown files as it slows the load time
+        -- significantly
+        vim.cmd('autocmd FileType markdown :let b:sleuth_automatic = 0')
+      end,
     })
 
     -- Useful startup text, menu
@@ -55,7 +53,9 @@ packer.startup({
       'norcalli/nvim-colorizer.lua',
       event = 'BufRead',
       config = function()
-        require('colorizer').setup()
+        require('colorizer').setup({ '*' }, {
+          names = false,
+        })
       end,
     })
 
@@ -98,19 +98,19 @@ packer.startup({
     -- git utilities
     use({
       'tpope/vim-fugitive',
-      event = 'BufRead',
+      cmd = 'Git'
     })
 
     -- support for repeating mapped commands
     use({
       'tpope/vim-repeat',
-      event = 'BufRead',
+      event = 'CursorMoved',
     })
 
     -- for manipulating parens and such
     use({
       'tpope/vim-surround',
-      event = 'BufRead',
+      event = 'CursorMoved',
     })
 
     -- easy vertical alignment of code elements
@@ -168,6 +168,8 @@ packer.startup({
     -- tree
     use({
       'kyazdani42/nvim-tree.lua',
+      -- nvim-tree needs to load at the same time or before a file is loaded for
+      -- it to properly locate the file when initially showing the tree
       event = { 'BufEnter', 'VimEnter' },
       setup = function()
         require('plugins.nvim-tree')
@@ -199,7 +201,7 @@ packer.startup({
     -- completion
     use({
       'L3MON4D3/LuaSnip',
-      event = { 'BufRead', 'VimEnter' },
+      event = 'BufRead',
     })
     use({
       'hrsh7th/nvim-cmp',
@@ -279,6 +281,7 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
+      event = 'BufEnter',
       after = 'plenary.nvim',
       config = function()
         require('gitsigns').setup()
