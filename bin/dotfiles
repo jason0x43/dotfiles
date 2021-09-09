@@ -374,10 +374,10 @@ function dotfiles-node {
     )
 
     for pkg in $desired_packages; do
-        npm ls -g --depth=0 $pkg > /dev/null 2>&1
+        direnv exec / npm ls -g --depth=0 $pkg > /dev/null 2>&1
         if (( $? )); then
             local out=""
-            out=$(npm install -g $pkg > /dev/null 2>&1 )
+            out=$(direnv exec / npm install -g $pkg > /dev/null 2>&1 )
             if (( $? )); then
                 err "Error installing $pkg"
                 err $out
