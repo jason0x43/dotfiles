@@ -279,15 +279,15 @@ function dotfiles-python {
     fi
 
     if (( ! $+commands[poetry] )); then
-        log "Installing poetry..."
+        logSub "Installing poetry..."
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
     else
-        log "Updating poetry..."
+        logSub "Updating poetry..."
         poetry self update -q
     fi
 
-    log "Updating poetry completions..."
     poetry completions zsh > $ZCOMPDIR/_poetry
+    logSub "Installed poetry completions"
 }
 
 # Update global npm packages
@@ -425,32 +425,41 @@ function dotfiles-asdf {
     )
 
     # Other plugins that should be installed
-    local asdf_desired_plugins=(
+    local asdf_interpreters=(
         python
         java
         ruby
         nodejs
     )
 
+    local -a installed_plugins
+
     # Add any missing plugins
+    logSub "Installing utility plugins..."
     for plugin in $asdf_utilities; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
             asdf plugin add $plugin > /dev/null 2>&1
+            installed_plugins+=($plugin)
             logSub "Installed $plugin plugin"
         fi
     done
 
     # Add any missing plugins
-    for plugin in $asdf_desired_plugins; do
+    logSub "Installing interpreter plugins..."
+    for plugin in $asdf_interpreters; do
         if (( ! $asdf_plugins[(Ie)$plugin] )); then
             asdf plugin add $plugin > /dev/null
+            installed_plugins+=($plugin)
             logSub "Installed $plugin plugin"
         fi
     done
 
     # Update all plugins
+    logSub "Updating plugins..."
     for plugin in $(asdf plugin list); do
-        asdf plugin update $plugin > /dev/null
+        if ((! $installed_plugins[(Ie)$plugin])); then
+            asdf plugin update $plugin > /dev/null
+        fi
     done
 
     # Update the versions of asdf-managed utility programs
@@ -485,7 +494,7 @@ function dotfiles-asdf {
                 err "Error installing $plugin"
                 continue
             fi
-            asdf global $plugin $version
+            asdf global $plugin $latest
             logSub "Installed $plugin $latest"
         fi
     done
