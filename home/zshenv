@@ -222,11 +222,6 @@ fi
 # Use Bootsnap to speed up repeated brew calls
 export HOMEBREW_BOOTSNAP=1
 
-# ASDF
-# ----------------------------------------------------------------------------
-export ASDF_DIR=$HOME/.asdf
-export ASDF_DATA_DIR=$DATADIR/asdf
-
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $HOME/.config/zsh/zshenv ]] && source $HOME/.config/zsh/zshenv
