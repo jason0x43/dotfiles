@@ -398,6 +398,7 @@ function dotfiles-node {
 # Update tmux plugins
 function dotfiles-tmux {
     log "Updating tmux plugins..."
+    local out=""
 
     if [[ -z $TMUX_PLUGIN_MANAGER_PATH ]]; then
         err "TMUX_PLUGIN_MANAGER_PATH not defined"
@@ -405,7 +406,11 @@ function dotfiles-tmux {
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
-        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins > /dev/null 2>&1
+        out=$($TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins 2>&1)
+        if (( $? )); then
+            err "Error installing plugins"
+            err $out
+        fi
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
