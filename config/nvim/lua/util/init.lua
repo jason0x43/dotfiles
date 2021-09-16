@@ -141,9 +141,11 @@ exports.ts_types = {
   'typescript',
   'typescript.jsx',
   'typescriptreact',
+  'tsx',
   'javascript',
   'javascript.jsx',
   'javascriptreact',
+  'jsx',
 }
 
 -- restore the cursor position in a file
