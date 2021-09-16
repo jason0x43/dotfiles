@@ -8,33 +8,32 @@ theme.hi('StatusLineNC', { bg = '' })
 require('lualine').setup({
   options = {
     theme = 'base16',
-    section_separators = { ' ', ' ' },
-    component_separators = { '│', '│' },
+    section_separators = { left = ' ', right = ' ' },
+    component_separators = { left = '│', right = '│' },
   },
   sections = {
     lualine_a = { 'mode' },
-    lualine_b = { { 'branch', left_padding = 0, icon = '' }, 'diff' },
+    lualine_b = { { 'branch', padding = { left = 0 }, icon = '' }, 'diff' },
     lualine_c = {
       {
         'filetype',
         separator = '',
-        left_padding = 0,
-        disable_text = true,
+        padding = { left = 0 },
+        icon_only = true,
         color = { fg = c('blue') },
       },
-      { 'filename', path = 1, left_padding = 0 },
+      { 'filename', path = 1, padding = { left = 0 } },
     },
     lualine_x = {
       { 'diagnostics', sources = { 'nvim_lsp' } },
-      { 'language_servers', separator = '', right_padding = 0 },
+      { 'language_servers', separator = '', padding = { right = 0 } },
       {
         'lsp_progress',
         display_components = { 'spinner' },
         colors = { spinner = c('blue') },
         spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
         timer = { spinner = 250 },
-        left_padding = 1,
-        right_padding = 0,
+        padding = { left = 1, right = 0 },
       },
     },
     lualine_z = { 'location' },
