@@ -30,16 +30,24 @@ function exports.on_attach(client)
   util.cmd('OrganizeImports', '-buffer', 'TSLspOrganizeSync')
 end
 
+local lsp_util = require('lspconfig.util')
+
 exports.config = {
   autostart = false,
   handlers = {
-    ['textDocument/definition'] = function(err, method, result)
-      -- If tsserver returns multiple results, ignore all but the first
-      if #result > 1 then
-        result = { result[1] }
+    ['textDocument/definition'] = lsp_util.compat_handler(
+      function(err, result, ctx)
+        -- If tsserver returns multiple results, ignore all but the first
+        if #result > 1 then
+          result = { result[1] }
+        end
+        if ctx.is_legacy_call then
+          vim.lsp.handlers['textDocument/definition'](err, ctx.method, result)
+        else
+          vim.lsp.handlers['textDocument/definition'](err, result, ctx)
+        end
       end
-      vim.lsp.handlers['textDocument/definition'](err, method, result)
-    end,
+    ),
   },
 }
 
