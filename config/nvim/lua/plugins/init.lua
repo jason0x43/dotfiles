@@ -197,6 +197,7 @@ packer.startup({
       end,
     })
     use({ 'tpope/vim-classpath', ft = { 'java' } })
+    use({ 'MaxMEllon/vim-jsx-pretty', ft = require('util').ts_types })
 
     -- completion
     use({
