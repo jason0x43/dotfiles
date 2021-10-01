@@ -401,6 +401,10 @@ function exports.apply_theme(theme_name)
 
   -- Indent-blankline
   hi('IndentBlanklineChar', shift(colors.gui01, -0.15), nil, 'none', nil)
+
+  -- Diagnostics
+  hi('DiagnosticHint', colors.hint_fg, nil, 'none', nil)
+  hi('DiagnosticSignHint', colors.hint_fg, colors.sign_bg, 'none', nil)
 end
 
 return exports
