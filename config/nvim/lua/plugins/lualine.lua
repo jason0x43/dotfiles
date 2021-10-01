@@ -18,7 +18,7 @@ require('lualine').setup({
       {
         'filetype',
         separator = '',
-        padding = { left = 0 },
+        padding = { left = 0, right = 1 },
         icon_only = true,
         color = { fg = c('blue') },
       },
