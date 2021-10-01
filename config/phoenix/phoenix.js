@@ -202,7 +202,30 @@ function autoLayout() {
 
   const waveboxWins = getWindowsInSpace('Wavebox', space);
   if (waveboxWins.length === 1) {
-    fill(CENTER, { window: waveboxWins[0] });
+    const messagesWins = getWindowsInSpace('Messages', space);
+
+    if (messagesWins.length > 0) {
+      fill(LEFT, { window: messagesWins[0], portion: 0.32 });
+      fill(RIGHT, { window: waveboxWins[0], portion: 0.68 });
+    } else {
+      fill(CENTER, { window: waveboxWins[0] });
+    }
+
+    return;
+  }
+
+  // space with Slack window
+  const slackWins = getWindowsInSpace('Slack', space);
+  if (slackWins.length === 1) {
+    const messagesWins = getWindowsInSpace('Messages', space);
+
+    if (messagesWins.length > 0) {
+      fill(LEFT, { window: messagesWins[0], portion: 0.32 });
+      fill(RIGHT, { window: slackWins[0], portion: 0.68 });
+    } else {
+      fill(CENTER, { window: slackWins[0] });
+    }
+
     return;
   }
 }
@@ -291,12 +314,12 @@ function fill(area, options = {}) {
     case SW:
     case SE:
       bounds.height = screenFrame.height / 2 - 0.5 * PADDING;
-      bounds.width = width - 0.5 * PADDING;
+      bounds.width = width - PADDING;
       break;
     case LEFT:
     case RIGHT:
       bounds.height = screenFrame.height;
-      bounds.width = width - 0.5 * PADDING;
+      bounds.width = width - PADDING;
       break;
     case CENTER:
       bounds.height = screenFrame.height;
@@ -325,7 +348,7 @@ function fill(area, options = {}) {
       frame.x = screenFrame.x;
       break;
     case LEFT:
-      frame.x = screenFrame.x + (bounds.width - frame.width - PADDING) / 2;
+      frame.x = screenFrame.x + (bounds.width - frame.width) / 2;
       break;
     case CENTER:
       frame.x = screenFrame.x + (screenFrame.width - frame.width) / 2;
@@ -345,6 +368,7 @@ function fill(area, options = {}) {
     case NW:
     case NE:
       frame.y = screenFrame.y;
+      break;
     case RIGHT:
     case LEFT:
     case CENTER:
