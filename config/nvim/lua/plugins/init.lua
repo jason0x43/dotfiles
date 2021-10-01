@@ -98,7 +98,7 @@ packer.startup({
     -- git utilities
     use({
       'tpope/vim-fugitive',
-      cmd = 'Git'
+      cmd = 'Git',
     })
 
     -- support for repeating mapped commands
