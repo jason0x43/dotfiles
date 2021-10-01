@@ -228,9 +228,7 @@ packer.startup({
       end,
     })
     use({
-      -- 'jose-elias-alvarez/nvim-lsp-ts-utils',
-      'jason0x43/nvim-lsp-ts-utils',
-      branch = 'support-lspinstaller',
+      'jose-elias-alvarez/nvim-lsp-ts-utils',
       after = 'nvim-lspconfig',
     })
     use({
