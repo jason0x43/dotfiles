@@ -119,6 +119,9 @@ function exports.text_mode()
   vim.wo.linebreak = true
   vim.wo.list = false
   vim.wo.signcolumn = 'no'
+
+  exports.map('k', 'gk', { buffer = true })
+  exports.map('j', 'gj', { buffer = true })
 end
 
 -- set colorcolumn to show the current textwidth
