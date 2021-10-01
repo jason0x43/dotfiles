@@ -34,6 +34,7 @@ util.augroup('init_autocommands', {
   'BufNewFile,BufRead */zsh/functions/* setfiletype zsh',
   'BufNewFile,BufRead intern.json setfiletype jsonc',
   'BufNewFile,BufRead intern{-.}*.json setfiletype jsonc',
+  'BufNewFile,BufRead *.textile setfiletype textile',
 
   -- highlight yanked text
   'TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=150, on_visual=true}',
