@@ -89,6 +89,9 @@ o.wildignore = o.wildignore + '*.pyc' + '*.obj' + '*.bin' + 'a.out'
 -- better diffing
 o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
 
+-- don't add a trailing newline to files that are missing one
+o.fixeol = false
+
 -- set python version for pyx commands
 if vim.fn.has('pythonx') == 1 then
   o.pyxversion = 3
