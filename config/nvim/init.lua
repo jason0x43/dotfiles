@@ -13,5 +13,6 @@ require('config.keymaps')
 require('config.autocommands')
 require('plugins')
 require('theme')
+require('packer_compiled')
 
 vim.opt.shadafile = ''

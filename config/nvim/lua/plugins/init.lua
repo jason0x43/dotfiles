@@ -332,6 +332,8 @@ packer.startup({
         return require('packer.util').float({ border = 'rounded' })
       end,
     },
+    -- Store the compiled file in the lua dir so impatient.nvim can cache it
+    compile_path = vim.fn.stdpath('config') .. '/lua/packer_compiled.lua',
   },
 })
 
