@@ -28,6 +28,17 @@ packer.startup({
       end,
     })
 
+    -- tree
+    use({
+      'kyazdani42/nvim-tree.lua',
+      -- nvim-tree needs to load at the same time or before a file is loaded for
+      -- it to properly locate the file when initially showing the tree
+      after = 'nvim-web-devicons',
+      config = function()
+        require('plugins.nvim-tree')
+      end,
+    })
+
     -- autodetect buffer formatting
     use({
       'tpope/vim-sleuth',
@@ -163,17 +174,6 @@ packer.startup({
     use({
       'nvim-telescope/telescope-symbols.nvim',
       after = 'telescope.nvim',
-    })
-
-    -- tree
-    use({
-      'kyazdani42/nvim-tree.lua',
-      -- nvim-tree needs to load at the same time or before a file is loaded for
-      -- it to properly locate the file when initially showing the tree
-      event = { 'BufEnter', 'VimEnter' },
-      setup = function()
-        require('plugins.nvim-tree')
-      end,
     })
 
     -- easier movement between vim and tmux panes, and between vim panes
