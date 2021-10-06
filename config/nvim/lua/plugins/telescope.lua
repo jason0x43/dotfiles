@@ -1,63 +1,81 @@
-local actions = require('telescope.actions')
-local telescope = require('telescope')
+local exports = {}
 
-telescope.setup({
-  defaults = {
-    mappings = {
-      i = {
-        ['<esc>'] = actions.close,
+function exports.setup()
+  local util = require('util')
+  util.lmap('f', '<cmd>Telescope find_files<cr>')
+  util.lmap('g', '<cmd>Telescope git_files<cr>')
+  util.lmap('b', '<cmd>Telescope buffers<cr>')
+  util.lmap('tg', '<cmd>Telescope live_grep<cr>')
+  util.lmap('th', '<cmd>Telescope help_tags<cr>')
+  util.lmap('ts', '<cmd>Telescope symbols<cr>')
+  util.lmap('lr', '<cmd>Telescope lsp_references<cr>')
+  util.lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
+  util.lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
+  util.lmap('ld', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
+  util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
+end
+
+function exports.config()
+  require('telescope').setup({
+    defaults = {
+      mappings = {
+        i = {
+          ['<esc>'] = require('telescope.actions').close,
+        },
+      },
+      layout_config = {
+        prompt_position = 'top',
+        preview_cutoff = 1,
+
+        width = function(_, max_columns, _)
+          return math.min(max_columns - 3, 80)
+        end,
+
+        height = function(_, _, max_lines)
+          return max_lines - 4
+        end,
+      },
+      layout_strategy = 'center',
+      sorting_strategy = 'ascending',
+      borderchars = {
+        { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+        prompt = { '─', '│', ' ', '│', '╭', '╮', '│', '│' },
+        results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
+        preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
       },
     },
-    layout_config = {
-      prompt_position = 'top',
-      preview_cutoff = 1,
+    pickers = {
+      buffers = {
+        previewer = false,
+        results_title = false,
+        sort_lastused = true,
+      },
+      find_files = {
+        previewer = false,
+        results_title = false,
+      },
+      git_files = {
+        previewer = false,
+        results_title = false,
+      },
+      help_tags = {
+        results_title = false,
+      },
+      live_grep = {
+        results_title = false,
+      },
+      oldfiles = {
+        previewer = false,
+      },
+      file_browser = {
+        previewer = false,
+      },
+      lsp_workspace_diagnostics = {
+        -- don't show hints
+        severity_limit = vim.g.lsp_severity_limit,
+      },
+    },
+  })
+end
 
-      width = function(_, max_columns, _)
-        return math.min(max_columns - 3, 80)
-      end,
-
-      height = function(_, _, max_lines)
-        return math.min(max_lines - 4, math.floor(max_lines * 0.3))
-      end,
-    },
-    layout_strategy = 'center',
-    sorting_strategy = 'ascending',
-    borderchars = {
-      { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-      prompt = { '─', '│', ' ', '│', '╭', '╮', '│', '│' },
-      results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
-      preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-    },
-  },
-  pickers = {
-    buffers = {
-      previewer = false,
-      results_title = false,
-      sort_lastused = true,
-    },
-    find_files = {
-      previewer = false,
-      results_title = false,
-    },
-    git_files = {
-      previewer = false,
-      results_title = false,
-    },
-    help_tags = {
-      results_title = false,
-    },
-    live_grep = {
-      results_title = false,
-    },
-    oldfiles = {
-      previewer = false,
-    },
-    file_browser = {
-      previewer = false,
-    },
-    lsp_workspace_diagnostics = {
-      -- don't show hints
-      severity_limit = vim.g.lsp_severity_limit
-    }
-  }
-})
+return exports

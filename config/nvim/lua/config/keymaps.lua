@@ -44,22 +44,6 @@ util.lmap(
 )
 util.lmap('p', '"*p')
 
--- telescope
-util.lmap('f', '<cmd>Telescope find_files<cr>')
-util.lmap('g', '<cmd>Telescope git_files<cr>')
-util.lmap('b', '<cmd>Telescope buffers<cr>')
-util.lmap('tg', '<cmd>Telescope live_grep<cr>')
-util.lmap('th', '<cmd>Telescope help_tags<cr>')
-util.lmap('tl', '<cmd>Telescope highlights<cr>')
-util.lmap('to', '<cmd>Telescope oldfiles<cr>')
-util.lmap('tr', '<cmd>Telescope frecency<cr>')
-util.lmap('ts', '<cmd>Telescope symbols<cr>')
-util.lmap('lr', '<cmd>Telescope lsp_references<cr>')
-util.lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
-util.lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
-util.lmap('ld', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
-util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
-
 -- open startify
 util.lmap('s', '<cmd>Startify<cr>')
 
