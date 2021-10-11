@@ -32,7 +32,7 @@ function exports.config()
         end,
 
         height = function(_, _, max_lines)
-          return max_lines - 4
+          return math.min(max_lines - 2, 20)
         end,
       },
       layout_strategy = 'center',
@@ -43,12 +43,13 @@ function exports.config()
         results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
         preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
       },
+      path_display = {'shorten'},
     },
     pickers = {
       buffers = {
         previewer = false,
         results_title = false,
-        sort_lastused = true,
+        sort_mru = true,
       },
       find_files = {
         previewer = false,
