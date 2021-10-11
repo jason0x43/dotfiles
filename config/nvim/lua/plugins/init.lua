@@ -223,9 +223,7 @@ packer.startup({
 
     -- native LSP
     use({
-      -- 'neovim/nvim-lspconfig',
-      'jason0x43/nvim-lspconfig',
-      branch = 'deno-nightly-compat',
+      'neovim/nvim-lspconfig',
       after = 'cmp-nvim-lsp',
       config = function()
         require('lsp')
