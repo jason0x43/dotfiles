@@ -154,6 +154,10 @@ packer.startup({
         require('plugins.nvim-treesitter')
       end,
     })
+    use({
+      'nvim-treesitter/playground',
+      after = 'nvim-treesitter'
+    })
 
     -- fuzzy finding
     use({
