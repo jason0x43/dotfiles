@@ -1,14 +1,6 @@
 local exports = {}
-
-local function hi(group, fg, bg, attr, sp)
-  require('util.theme').hi(group, {
-    guifg = fg,
-    guibg = bg,
-    gui = attr,
-    cterm = attr,
-    guisp = sp,
-  })
-end
+local module = ...
+local hi = require('util.theme').hi
 
 -- Modified from https://github.com/chriskempson/base16-vim
 function exports.apply_theme(theme_name)
@@ -25,7 +17,7 @@ function exports.apply_theme(theme_name)
   end
 
   local shift = require('util.theme').shift
-  local theme = require('base16.themes')[theme_name]
+  local theme = require(module .. '.themes')[theme_name]
   local colors = {}
 
   colors.gui00 = theme.base00
