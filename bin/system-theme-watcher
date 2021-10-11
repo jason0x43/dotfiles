@@ -19,7 +19,8 @@ func updateTheme() {
     let isDark = UserDefaults.standard.string(
 	forKey: "AppleInterfaceStyle"
     ) == "Dark"
-    shell("base16_theme", isDark ? "ashes" : "solarized-light");
+    # shell("base16_theme", isDark ? "ashes" : "solarized-light");
+    shell("update_theme", isDark ? "dark" : "light");
 }
 
 updateTheme()

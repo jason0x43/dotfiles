@@ -1,2 +1,2 @@
 -- set default colorscheme
-vim.cmd('colorscheme base16')
+vim.cmd('colorscheme selenized')

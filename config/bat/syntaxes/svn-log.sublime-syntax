@@ -13,7 +13,7 @@ contexts:
       captures:
         1: entity.name.class
         2: invalid.deprecated
-        3: markup.inserted
+        3: invalid.deprecated
         4: invalid.deprecated
         5: invalid.deprecated
         6: keyword

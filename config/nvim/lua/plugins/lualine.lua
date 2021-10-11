@@ -1,5 +1,4 @@
 local theme = require('util.theme')
-local c = theme.get_colors()
 
 -- make statusline transparent so we don't get a flash before lualine renders
 theme.hi('StatusLine', { bg = '' })
@@ -7,20 +6,19 @@ theme.hi('StatusLineNC', { bg = '' })
 
 require('lualine').setup({
   options = {
-    theme = 'base16',
+    theme = 'selenized',
     section_separators = { left = ' ', right = ' ' },
     component_separators = { left = '│', right = '│' },
   },
   sections = {
     lualine_a = { 'mode' },
-    lualine_b = { { 'branch', padding = { left = 0 }, icon = '' }, 'diff' },
+    lualine_b = { { 'branch', padding = { left = 0, right = 1 }, icon = '' }, 'diff' },
     lualine_c = {
       {
         'filetype',
         separator = '',
         padding = { left = 0, right = 1 },
         icon_only = true,
-        color = { fg = c('blue') },
       },
       { 'filename', path = 1, padding = { left = 0 } },
     },
@@ -30,7 +28,6 @@ require('lualine').setup({
       {
         'lsp_progress',
         display_components = { 'spinner' },
-        colors = { spinner = c('blue') },
         spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
         timer = { spinner = 250 },
         padding = { left = 1, right = 0 },

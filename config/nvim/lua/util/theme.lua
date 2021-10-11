@@ -130,16 +130,32 @@ function exports.update_theme()
 end
 
 -- define a syntax highlight group
-function exports.hi(group, props)
+-- propsOrFg can either be a table containing guifg, guibg, etc., or a fg value.
+-- If propsOrFg is a table, the remaining arguments will be ignored.
+function exports.hi(group, propsOrFg, bg, attr, sp)
   if type(group) == 'table' then
     for k, v in pairs(group) do
       exports.hi(k, v)
     end
   else
     local props_list = {}
+    local props = {}
+
+    if type(propsOrFg) == 'table' then
+      props = propsOrFg
+    else
+      props = {
+        guifg = propsOrFg,
+        guibg = bg,
+        gui = attr,
+        cterm = attr,
+        guisp = sp,
+      }
+    end
+
     for k, v in pairs(props) do
       -- replace an empty value with NONE
-      local val = v == '' and 'NONE' or v
+      local val = (v == '' or v == nil) and 'NONE' or v
 
       if k == 'sp' then
         k = 'guisp'
@@ -168,6 +184,11 @@ function exports.hi(group, props)
 
     vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
   end
+end
+
+-- link one syntax group to another
+function exports.hi_link(group1, group2)
+  vim.cmd('hi! link ' .. group1 .. ' ' .. group2)
 end
 
 return exports

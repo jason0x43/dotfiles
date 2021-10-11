@@ -17,7 +17,6 @@ fi
 # Plugin init
 # ----------------------------------------------------------------------------
 zfetch $ZPLUGDIR zsh-users/zsh-completions
-zfetch $ZPLUGDIR chriskempson/base16-shell
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
 zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
@@ -25,14 +24,6 @@ zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
 zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
 zfetch $CACHEDIR/tmux tmux-plugins/tpm
-
-# Colors
-# ----------------------------------------------------------------------------
-# Only load base16 shell locally or in blink sessions
-if [[ -z $SSH_CLIENT || $TERM == "xterm-256color" ]]; then
-    BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-    source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
-fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
@@ -100,8 +91,6 @@ Blu="${TC}34m";
 Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
-
-export BAT_THEME=base16
 
 # Completions
 # ------------------------------------------------------------------------
@@ -416,10 +405,6 @@ alias swiftc="xcrun -sdk macosx swiftc"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
-# Color themes
-alias light='base16_theme solarized-light'
-alias dark='base16_theme ashes'
-
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
 alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log | bat --paging=never -l halog'
 alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
@@ -439,7 +424,7 @@ if (( $+commands[bat] )); then
 
     # BAT_THEME is also used by delta, so set it here rather than in the bat
     # config file
-    export BAT_THEME=base16_plus
+    export BAT_THEME=selenized
 fi
 
 # Better top
