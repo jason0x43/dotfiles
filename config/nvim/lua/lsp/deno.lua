@@ -1,6 +1,10 @@
 local exports = {}
 
-local lsp_find_root = require('lspconfig.util').root_pattern('package.json', 'tsconfig.json', '.git')
+local lsp_find_root = require('lspconfig.util').root_pattern(
+  'package.json',
+  'tsconfig.json',
+  '.git'
+)
 
 local function find_root(start_dir)
   local dir = lsp_find_root(start_dir)
@@ -12,12 +16,15 @@ end
 
 exports.config = {
   autostart = false,
-  root_dir = find_root
+  root_dir = find_root,
 }
 
 function exports.check_start()
   -- start the deno server if there's no tsconfig
-  if vim.fn.findfile('tsconfig.json', '.;') == '' then
+  if
+    vim.fn.findfile('tsconfig.json', '.;') == ''
+    and vim.fn.findfile('jsconfig.json', '.;') == ''
+  then
     require('lspconfig').deno.autostart()
   end
 end

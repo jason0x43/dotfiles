@@ -53,7 +53,10 @@ exports.config = {
 
 function exports.check_start()
   -- start the TS server if there's a tsconfig
-  if vim.fn.findfile('tsconfig.json', '.;') ~= '' then
+  if
+    vim.fn.findfile('tsconfig.json', '.;') ~= ''
+    or vim.fn.findfile('jsconfig.json', '.;') ~= ''
+  then
     require('lspconfig').typescript.autostart()
   end
 end
