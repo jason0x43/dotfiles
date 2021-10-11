@@ -1,24 +1,6 @@
 local cmp = require('cmp')
 local luasnip = require('luasnip')
 
-local function tab_fn(key, snippetfunc, fallback)
-  if vim.fn.pumvisible() == 1 then
-    vim.fn.feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), 'n')
-  elseif luasnip.expand_or_jumpable() then
-    vim.fn.feedkeys(
-      vim.api.nvim_replace_termcodes(
-        '<Plug>luasnip-' .. snippetfunc,
-        true,
-        true,
-        true
-      ),
-      ''
-    )
-  else
-    fallback()
-  end
-end
-
 vim.o.completeopt = 'menuone,noselect'
 
 cmp.setup({
@@ -32,12 +14,8 @@ cmp.setup({
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     }),
-    ['<tab>'] = function(fallback)
-      tab_fn('<c-n>', 'expand-or-jump', fallback)
-    end,
-    ['<s-tab>'] = function(fallback)
-      tab_fn('<c-p>', 'jump-prev', fallback)
-    end
+    ['<tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
+    ['<s-tab>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 's' }),
   },
   sources = {
     { name = 'nvim_lsp' },
