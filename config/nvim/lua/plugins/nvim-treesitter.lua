@@ -28,10 +28,26 @@ local config = {
   },
 }
 
-if vim.fn.getenv('SSH_CLIENT') ~= vim.NIL then
-  config.ensure_installed = { 'bash', 'lua' }
-else
-  config.ensure_installed = 'maintained'
-end
+config.ensure_installed = {
+  'bash',
+  'c',
+  'cpp',
+  'dockerfile',
+  'go',
+  'html',
+  'java',
+  'javascript',
+  'json',
+  'json5',
+  'jsonc',
+  'lua',
+  'python',
+  'rust',
+  'scss',
+  'swift',
+  'tsx',
+  'typescript',
+  'yaml',
+}
 
 require('nvim-treesitter.configs').setup(config)
