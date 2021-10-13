@@ -304,7 +304,13 @@ packer.startup({
       'lewis6991/gitsigns.nvim',
       after = 'plenary.nvim',
       config = function()
-        require('gitsigns').setup()
+        require('gitsigns').setup({
+          signs = {
+            add = { text = '▋' },
+            change = { text = '▋' },
+            delete = { text = '▃' },
+          }
+        })
       end,
     })
 
