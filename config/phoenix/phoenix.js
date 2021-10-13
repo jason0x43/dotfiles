@@ -206,7 +206,7 @@ function autoLayout() {
 
     if (messagesWins.length > 0) {
       fill(LEFT, { window: messagesWins[0], portion: 0.32 });
-      fill(RIGHT, { window: waveboxWins[0], portion: 0.68 });
+      fill(RIGHT, { window: waveboxWins[0], widthMinus: 90 });
     } else {
       fill(CENTER, { window: waveboxWins[0] });
     }
