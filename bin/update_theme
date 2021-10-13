@@ -113,6 +113,9 @@ def get_kitty_theme(variant):
         'foreground': colors['fg_0'],
         'background': colors['bg_0'],
 
+        'cursor': colors['red'],
+        'cursor_text_color': colors['bg_0'],
+
         'color0': colors['bg_1'],
         'color8': colors['bg_2'],
 
