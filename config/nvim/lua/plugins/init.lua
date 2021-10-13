@@ -193,7 +193,20 @@ packer.startup({
     })
 
     -- filetype plugins
-    use({ 'tpope/vim-markdown', ft = { 'markdown' } })
+    use({
+      'tpope/vim-markdown',
+      ft = { 'markdown' },
+      setup = function()
+        vim.g.markdown_fenced_languages = {
+          'css',
+          'html',
+          'javascript',
+          'typescript',
+          'js=javascript',
+          'ts=typescript',
+        }
+      end
+    })
     use({ 'vim-scripts/applescript.vim', ft = { 'applescript' } })
     use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
     use({
