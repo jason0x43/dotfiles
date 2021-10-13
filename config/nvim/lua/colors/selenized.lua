@@ -1,6 +1,7 @@
 local exports = {}
 local hi = require('util.theme').hi
 local hi_link = require('util.theme').hi_link
+local augroup = require('util').augroup
 
 local palettes = {
   dark = {
@@ -168,6 +169,7 @@ function exports.apply_theme(theme_name)
 
   -- basic groups
   hi('Normal', palette.fg_0, palette.bg_0, '', '')
+  hi('NormalNC', palette.fg_0, palette.bg_1, '', '')
   hi('Comment', palette.dim_0, '', 'italic', '')
   hi('Constant', palette.cyan, '', '', '')
   hi('Delimiter', palette.fg_0)
@@ -253,6 +255,21 @@ function exports.apply_theme(theme_name)
 
   -- Startify
   hi('StartifyHeader', palette.yellow, nil, nil, nil)
+
+  -- update the theme background when focus is gained or lost, as tmux does
+  augroup('selenized-theme', {
+    'FocusLost * lua require("colors.selenized").update_background(false)',
+    'FocusGained * lua require("colors.selenized").update_background(true)'
+  })
+end
+
+function exports.update_background(focused)
+  local ap = active_palette
+  if focused then
+    hi('Normal', ap.fg_0, ap.bg_0, '', '')
+  else
+    hi('Normal', ap.fg_0, ap.bg_1, '', '')
+  end
 end
 
 function exports.active_palette()
