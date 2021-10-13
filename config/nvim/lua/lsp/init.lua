@@ -110,10 +110,12 @@ function exports.setup_server(server)
   local config = { on_attach = on_attach }
 
   -- add cmp capabilities
-  local cmp = require('cmp_nvim_lsp')
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = cmp.update_capabilities(capabilities)
-  config.capabilities = capabilities
+  local status, cmp = pcall(require, 'cmp_nvim_lsp')
+  if status then
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities = cmp.update_capabilities(capabilities)
+    config.capabilities = capabilities
+  end
 
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
@@ -131,10 +133,22 @@ for _, server in ipairs(manual_servers) do
 end
 
 -- UI
-vim.fn.sign_define('LspDiagnosticsSignError', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignWarning', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignInformation', { text = '' })
-vim.fn.sign_define('LspDiagnosticsSignHint', { text = '' })
+vim.fn.sign_define(
+  'DiagnosticSignError',
+  { text = '', texthl = 'DiagnosticSignError' }
+)
+vim.fn.sign_define(
+  'DiagnosticSignWarn',
+  { text = '', texthl = 'DiagnosticSignWarn' }
+)
+vim.fn.sign_define(
+  'DiagnosticSignInfo',
+  { text = '', texthl = 'DiagnosticSignInfo' }
+)
+vim.fn.sign_define(
+  'DiagnosticSignHint',
+  { text = '', texthl = 'DiagnosticSignHint' }
+)
 
 local lsp = vim.lsp
 
