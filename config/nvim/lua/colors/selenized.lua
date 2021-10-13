@@ -146,7 +146,6 @@ function exports.apply_theme(theme_name)
   hi_link('Define', 'PreProc')
   hi_link('Exception', 'Statement')
   hi_link('Float', 'Constant')
-  hi_link('Function', 'Identifier')
   hi_link('Include', 'PreProc')
   hi_link('Keyword', 'Statement')
   hi_link('Label', 'Statement')
@@ -171,13 +170,14 @@ function exports.apply_theme(theme_name)
   hi('Normal', palette.fg_0, palette.bg_0, '', '')
   hi('NormalNC', palette.fg_0, palette.bg_1, '', '')
   hi('Comment', palette.dim_0, '', 'italic', '')
-  hi('Constant', palette.cyan, '', '', '')
+  hi('Constant', palette.cyan)
   hi('Delimiter', palette.fg_0)
-  hi('Identifier', palette.br_blue, '', '', '')
-  hi('Statement', palette.br_yellow, '', '', '')
+  hi('Function', palette.br_blue)
+  hi('Identifier', palette.violet)
+  hi('Statement', palette.yellow, '', '', '')
   hi('PreProc', palette.orange, '', '', '')
   hi('Type', palette.green, '', '', '')
-  hi('Special', palette.red, '', '', '')
+  hi('Special', palette.orange, '', 'bold')
   hi('Underlined', palette.violet, '', 'underline', '')
   hi('Ignore', palette.bg_2, '', '', '')
   hi('Error', palette.red, '', 'bold', '')
@@ -196,7 +196,7 @@ function exports.apply_theme(theme_name)
   hi('LineNr', palette.dim_0, palette.bg_1, '', '')
   hi('SignColumn', '', palette.bg_1, '', '')
   hi('CursorLineNr', palette.fg_1, '', '', '')
-  hi('VertSplit', palette.dim_0, palette.dim_0, '', '')
+  hi('VertSplit', palette.dim_0, palette.bg_1, '')
   hi('StatusLine', '', '', 'reverse', '')
   hi('StatusLineNC', '', palette.bg_2, '', '')
   hi('TabLineSel', palette.fg_1, palette.bg_1, 'bold,reverse', '')
@@ -245,16 +245,49 @@ function exports.apply_theme(theme_name)
 
   -- TypeScript
   hi_link('typescriptBraces', 'Delimiter')
+  hi_link('typescriptParens', 'Delimiter')
+
+  -- JavaScript
+  hi_link('javascriptBraces', 'Delimiter')
+  hi_link('javascriptParens', 'Delimiter')
+
+  -- Markdown
+  hi_link('markdownCodeDelimiter', 'PreProc')
 
   -- diff
   hi('diffAdded', palette.green, '', '', '')
+  hi('diffRemoved', palette.red, '', '', '')
   hi('diffOldFile', palette.br_red, '', '', '')
   hi('diffNewFile', palette.br_green, '', '', '')
   hi('diffFile', palette.blue, '', '', '')
   hi('gitCommitDiff', palette.dim_0, '', '', '')
 
   -- Startify
-  hi('StartifyHeader', palette.yellow, nil, nil, nil)
+  hi('StartifyHeader', palette.green)
+  hi('StartifyFile', palette.blue)
+
+  -- devicons
+  hi('DevIconBash', palette.green)
+  hi('DevIconBat', palette.green)
+  hi('DevIconJson', palette.yellow)
+
+  -- gitsigns
+  hi('GitSignsAdd', palette.green, palette.bg_1)
+  hi('GitSignsChange', palette.yellow, palette.bg_1)
+
+  -- diagnostics
+  hi('DiagnosticHint', palette.dim_0)
+  hi('DiagnosticSignHint', palette.dim_0, palette.bg_1)
+  hi('DiagnosticWarn', palette.orange)
+  hi('DiagnosticSignWarn', palette.orange, palette.bg_1)
+  hi('DiagnosticError', palette.red)
+  hi('DiagnosticSignError', palette.red, palette.bg_1)
+  hi('DiagnosticInfo', palette.br_blue)
+  hi('DiagnosticSignInfo', palette.br_blue, palette.bg_1)
+  hi('DiagnosticUnderlineError', { gui = 'undercurl' })
+  hi('DiagnosticUnderlineHint', { gui = 'undercurl' })
+  hi('DiagnosticUnderlineWarn', { gui = 'undercurl' })
+  hi('DiagnosticUnderlineInfo', { gui = 'undercurl' })
 
   -- update the theme background when focus is gained or lost, as tmux does
   augroup('selenized-theme', {
