@@ -43,7 +43,7 @@ function exports.config()
         results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
         preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
       },
-      path_display = {'shorten'},
+      path_display = {'truncate'},
     },
     pickers = {
       buffers = {
