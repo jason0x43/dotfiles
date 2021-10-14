@@ -220,28 +220,29 @@ packer.startup({
     use({ 'MaxMEllon/vim-jsx-pretty', ft = require('util').ts_types })
 
     -- completion
-    use({
-      'L3MON4D3/LuaSnip',
-      event = 'BufRead',
-    })
-    use({
-      'hrsh7th/nvim-cmp',
-      after = { 'LuaSnip', 'plenary.nvim' },
-      requires = {
-        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
-      },
-      config = function()
-        require('plugins.nvim-cmp')
-      end,
-    })
+    -- use({
+    --   'L3MON4D3/LuaSnip',
+    --   event = 'BufRead',
+    -- })
+    -- use({
+    --   'hrsh7th/nvim-cmp',
+    --   after = { 'LuaSnip', 'plenary.nvim' },
+    --   requires = {
+    --     { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+    --     { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' },
+    --     { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
+    --     { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+    --   },
+    --   config = function()
+    --     require('plugins.nvim-cmp')
+    --   end,
+    -- })
 
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      after = 'cmp-nvim-lsp',
+      -- after = 'cmp-nvim-lsp',
+      event = 'BufRead',
       config = function()
         require('lsp')
       end,

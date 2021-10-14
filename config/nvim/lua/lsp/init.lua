@@ -1,4 +1,5 @@
 local modbase = ...
+local util = require('util')
 
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
@@ -12,6 +13,14 @@ end
 -- configure a client when it's attached to a buffer
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
+
+  -- enable lsp completions
+  vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+  -- apply any additional fixups after a completion is accepted
+  util.augroup('local-lsp', {
+    'CompleteDone <buffer> lua require("lsp").on_complete_done()',
+  })
 
   -- run any client-specific attach functions
   local client_config = load_client_config(client.name)
@@ -57,6 +66,38 @@ local function on_attach(client, bufnr)
 end
 
 local exports = {}
+
+-- apply additionalTextEdits, such as auto imports, when a completion is
+-- accepted
+function exports.on_complete_done()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local completed_item = vim.v.completed_item
+
+  if
+    completed_item
+    and completed_item.user_data
+    and completed_item.user_data.nvim
+    and completed_item.user_data.nvim.lsp
+    and completed_item.user_data.nvim.lsp.completion_item
+  then
+    vim.lsp.buf_request(
+      bufnr,
+      'completionItem/resolve',
+      completed_item.user_data.nvim.lsp.completion_item,
+      function(err, result, ctx)
+        if err or not result then
+          return
+        end
+        if result.additionalTextEdits then
+          vim.lsp.util.apply_text_edits(
+            result.additionalTextEdits,
+            bufnr
+          )
+        end
+      end
+    )
+  end
+end
 
 -- format the current buffer, handling the case where multiple formatters are
 -- present
