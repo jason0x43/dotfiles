@@ -161,7 +161,11 @@ function exports.restore_cursor()
   local filetype = vim.bo.filetype
   local buftype = vim.bo.buftype
 
-  if buftype == 'nofile' or filetype:find('commit') ~= nil then
+  if
+    buftype == 'nofile'
+    or filetype:find('commit') ~= nil
+    or filetype == 'svn'
+  then
     return
   end
 
