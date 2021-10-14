@@ -84,6 +84,11 @@ function exports.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
+-- map a key in s mode using the leader key
+function exports.smap(key, cmd, opts)
+  map_in_mode('s', key, cmd, opts)
+end
+
 -- map a key in insert mode using the leader key
 function exports.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
