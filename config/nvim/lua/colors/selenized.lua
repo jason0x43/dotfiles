@@ -234,8 +234,12 @@ function exports.apply_theme(theme_name)
   hi('WarningMsg', '', '', '', '')
   hi('WildMenu', '', '', '', '')
 
+  -- completion
+  hi('Pmenu', palette.fg_0, palette.bg_1)
+
   -- neovim
   hi('NormalFloat', nil, palette.bg_1, nil, nil)
+  hi('ModalFloat', nil, palette.bg_0, nil, nil)
 
   -- override some of the default treesitter links
   hi_link('TSConstBuiltin', 'Constant')
@@ -274,6 +278,7 @@ function exports.apply_theme(theme_name)
   -- gitsigns
   hi('GitSignsAdd', palette.green, palette.bg_1)
   hi('GitSignsChange', palette.yellow, palette.bg_1)
+  hi('GitSignsDelete', palette.red, palette.bg_1)
 
   -- diagnostics
   hi('DiagnosticHint', palette.dim_0)
