@@ -18,9 +18,11 @@ local function on_attach(client, bufnr)
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 
   -- apply any additional fixups after a completion is accepted
-  util.augroup('local-lsp', {
-    'CompleteDone <buffer> lua require("lsp").on_complete_done()',
-  })
+  vim.cmd('augroup lsp-completion')
+  vim.cmd(
+    'autocmd! CompleteDone <buffer> lua require("lsp").on_complete_done()'
+  )
+  vim.cmd('augroup END')
 
   -- run any client-specific attach functions
   local client_config = load_client_config(client.name)
