@@ -28,4 +28,4 @@ fi
 zmodload zsh/mathfunc
 (( delay = int(rint(100 * (1.0 / $fps))) ))
 
-ffmpeg -loglevel error -i "$in" -pix_fmt rgb8 -r $fps -f gif - | gifsicle --optimize=3 --delay=$delay > "$out"
+ffmpeg -loglevel error -i "$in" -pix_fmt rgb8 -r $fps -f gif - | gifsicle --optimize=3 --no-conserve-memory --delay=$delay > "$out"
