@@ -14,11 +14,11 @@ function exports.complete(direction)
     return key('<c-p>')
   end
 
-  local min_chars = 2
+  local min_chars = 1
   local col = vim.fn.col('.')
   local line = vim.fn.getline('.')
   local last_chars = line:sub(col - min_chars, col)
-  if not last_chars:match('%w%w') then
+  if not last_chars:match('%w') then
     return key('<tab>')
   end
 
