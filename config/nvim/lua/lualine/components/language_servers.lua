@@ -1,7 +1,6 @@
 local LanguageServers = require('lualine.component'):extend()
 
 function LanguageServers:update_status()
-  print('updating language server status')
   local clients = vim.lsp.buf_get_clients()
   local client_names = {}
 

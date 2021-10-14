@@ -277,7 +277,9 @@ packer.startup({
       end,
     })
     use({
-      'arkav/lualine-lsp-progress',
+      -- 'arkav/lualine-lsp-progress',
+      'clason/lualine-lsp-progress',
+      branch = 'adapt-shadman',
       after = 'nvim-lspconfig',
     })
 

@@ -12,7 +12,10 @@ require('lualine').setup({
   },
   sections = {
     lualine_a = { 'mode' },
-    lualine_b = { { 'branch', padding = { left = 0, right = 1 }, icon = '' }, 'diff' },
+    lualine_b = {
+      { 'branch', padding = { left = 0, right = 1 }, icon = '' },
+      'diff',
+    },
     lualine_c = {
       {
         'filetype',
@@ -24,7 +27,7 @@ require('lualine').setup({
     },
     lualine_x = {
       { 'diagnostics', sources = { 'nvim_lsp' } },
-      { 'language_servers', separator = '', padding = { right = 0 } },
+      { 'language_servers', separator = '', padding = { right = 0, left = 1 } },
       {
         'lsp_progress',
         display_components = { 'spinner' },
