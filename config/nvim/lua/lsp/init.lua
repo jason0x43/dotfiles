@@ -91,10 +91,7 @@ function exports.on_complete_done()
           return
         end
         if result.additionalTextEdits then
-          vim.lsp.util.apply_text_edits(
-            result.additionalTextEdits,
-            bufnr
-          )
+          vim.lsp.util.apply_text_edits(result.additionalTextEdits, bufnr)
         end
       end
     )
