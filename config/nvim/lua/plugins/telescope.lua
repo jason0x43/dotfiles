@@ -12,7 +12,9 @@ function exports.setup()
   util.lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
   util.lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
   util.lmap('ld', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
-  util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
+
+  -- conflicts with completion cancel
+  -- util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
 end
 
 function exports.config()
