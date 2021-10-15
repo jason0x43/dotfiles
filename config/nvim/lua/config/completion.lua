@@ -3,7 +3,7 @@ local lsp_util = require('vim.lsp.util')
 
 vim.opt.completeopt = { 'menu', 'noinsert', 'noselect', 'menuone' }
 
-local function key(key_code)
+local function raw_key(key_code)
   return vim.api.nvim_replace_termcodes(key_code, true, false, true)
 end
 
@@ -34,12 +34,31 @@ local function adjust_start_col(lnum, line, items, encoding)
   end
 end
 
-function exports.complete(direction)
+local TAB = 1
+local S_TAB = 2
+local CR = 3
+local ESC = 4
+
+function exports.complete(key)
   if vim.fn.pumvisible() == 1 then
-    if direction == 1 then
-      return key('<c-n>')
+    if key == TAB then
+      return raw_key('<c-n>')
     end
-    return key('<c-p>')
+    if key == S_TAB then
+      return raw_key('<c-p>')
+    end
+    if key == CR then
+      return raw_key('<c-y>')
+    end
+    return raw_key('<c-e>')
+  end
+
+  if key == CR then
+    return raw_key('<cr>')
+  end
+
+  if key == ESC then
+    return raw_key('<esc>')
   end
 
   local min_chars = 1
@@ -47,23 +66,24 @@ function exports.complete(direction)
   local line = vim.api.nvim_get_current_line():sub(1, pos[2])
   local last_chars = line:match('%S+$')
   if not last_chars or #last_chars < min_chars then
-    return key('<tab>')
+    return raw_key('<tab>')
   end
 
-  if last_chars:match('%W(/%w+)*/%w*') then
+  if vim.fn.match(last_chars, '^\\(.*\\W\\)\\?\\(/\\w\\+\\)*/\\w*') ~= -1 then
     -- open the file completion popup
-    vim.api.nvim_feedkeys(key('<c-x><c-f>'), 'm', true)
+    vim.api.nvim_feedkeys(raw_key('<c-x><c-f>'), 'm', true)
   else
     -- open the keyword completion popup
-    vim.api.nvim_feedkeys(key('<c-n>'), 'm', true)
+    vim.api.nvim_feedkeys(raw_key('<c-n>'), 'm', true)
 
+    -- if omnifunc isn't the lsp omnifunc, stop here
     if vim.bo.omnifunc ~= 'v:lua.vim.lsp.omnifunc' then
       return ''
     end
 
-    -- get a list of the keyword matches
+    -- get the list of keyword matches in the completion menu
     local keyword_items = {}
-    vim.schedule(function ()
+    vim.schedule(function()
       local info = vim.fn.complete_info({ 'mode', 'items' })
       vim.list_extend(keyword_items, info.items)
     end)
@@ -100,7 +120,7 @@ function exports.complete(direction)
 
         -- append any lsp items to the match list and update the completion menu
         local lsp_items = matches
-        local lsp_words = vim.tbl_map(function (item)
+        local lsp_words = vim.tbl_map(function(item)
           return item.word
         end, matches)
         for _, item in pairs(keyword_items) do
@@ -118,8 +138,14 @@ end
 
 -- manual completion and cycling
 local util = require('util')
-util.imap('<tab>', 'v:lua.completion.complete(1)', { expr = true })
-util.imap('<s-tab>', 'v:lua.completion.complete(-1)', { expr = true })
+util.imap('<tab>', 'v:lua.completion.complete(' .. TAB .. ')', { expr = true })
+util.imap(
+  '<s-tab>',
+  'v:lua.completion.complete(' .. S_TAB .. ')',
+  { expr = true }
+)
+util.imap('<cr>', 'v:lua.completion.complete(' .. CR .. ')', { expr = true })
+util.imap('<esc>', 'v:lua.completion.complete(' .. ESC .. ')', { expr = true })
 
 -- automatic completion
 util.augroup('custom-completion', {
