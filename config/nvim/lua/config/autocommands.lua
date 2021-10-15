@@ -11,7 +11,7 @@ util.augroup('init_autocommands', {
   'VimResized * wincmd =',
 
   -- wrap lines in quickfix windows
-  'FileType qf setlocal wrap linebreak nolist breakindent' .. ' breakindentopt=shift:2 colorcolumn=""',
+  'FileType qf setlocal wrap linebreak nolist breakindent breakindentopt=shift:2 colorcolumn=""',
 
   -- close help files and qf panes with 'q' or Esc
   'FileType help,qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
