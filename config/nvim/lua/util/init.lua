@@ -127,6 +127,8 @@ function exports.text_mode()
 
   exports.map('k', 'gk', { buffer = true })
   exports.map('j', 'gj', { buffer = true })
+  exports.map('$', 'g$', { buffer = true })
+  exports.map('^', 'g^', { buffer = true })
 end
 
 -- set colorcolumn to show the current textwidth
