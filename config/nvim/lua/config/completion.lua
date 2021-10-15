@@ -40,7 +40,7 @@ util.imap('<s-tab>', 'v:lua.completion.complete(-1)', { expr = true })
 
 -- automatic completion
 util.augroup('custom-completion', {
-  'TextChangedI *.md lua completion.complete(0)',
+  'TextChangedI *.md,*.textile lua completion.complete(0)',
 })
 
 _G.completion = exports
