@@ -294,10 +294,14 @@ function exports.apply_theme(theme_name)
   hi('DiagnosticUnderlineWarn', { gui = 'undercurl' })
   hi('DiagnosticUnderlineInfo', { gui = 'undercurl' })
 
+  hi('LspReferenceText', nil, palette.bg_1)
+  hi('LspReferenceRead', nil, palette.bg_1)
+  hi('LspReferenceWrite', nil, palette.bg_1)
+
   -- update the theme background when focus is gained or lost, as tmux does
   augroup('selenized-theme', {
     'FocusLost * lua require("colors.selenized").update_background(false)',
-    'FocusGained * lua require("colors.selenized").update_background(true)'
+    'FocusGained * lua require("colors.selenized").update_background(true)',
   })
 end
 

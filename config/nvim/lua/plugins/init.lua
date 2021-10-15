@@ -284,14 +284,16 @@ packer.startup({
       after = 'nvim-lspconfig',
     })
 
+    -- This is disabled right now because it conflicts with matchup's
+    -- highlighting for function/end and if/end pairs.
     -- highlight current word
-    use({
-      'RRethy/vim-illuminate',
-      after = 'nvim-lspconfig',
-      config = function()
-        require('plugins.illuminate')
-      end,
-    })
+    -- use({
+    --   'RRethy/vim-illuminate',
+    --   after = 'nvim-lspconfig',
+    --   setup = function()
+    --     vim.g.Illuminate_highlightPriority = -10
+    --   end,
+    -- })
 
     -- better git diff views
     use({
