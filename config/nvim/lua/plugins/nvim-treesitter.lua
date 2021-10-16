@@ -23,9 +23,9 @@ local config = {
   matchup = {
     enable = true,
   },
-  autopairs = {
-    enable = true,
-  },
+  context_commentstring = {
+    enable = true
+  }
 }
 
 config.ensure_installed = {

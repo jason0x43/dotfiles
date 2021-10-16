@@ -158,6 +158,10 @@ packer.startup({
       'nvim-treesitter/playground',
       after = 'nvim-treesitter'
     })
+    use({
+      'JoosepAlviste/nvim-ts-context-commentstring',
+      after = 'nvim-treesitter'
+    })
 
     -- fuzzy finding
     use({
