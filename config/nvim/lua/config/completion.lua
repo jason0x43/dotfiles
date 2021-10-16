@@ -37,7 +37,6 @@ end
 local TAB = 1
 local S_TAB = 2
 local CR = 3
-local ESC = 4
 
 function exports.complete(key)
   if vim.fn.pumvisible() == 1 then
@@ -55,10 +54,6 @@ function exports.complete(key)
 
   if key == CR then
     return raw_key('<cr>')
-  end
-
-  if key == ESC then
-    return raw_key('<esc>')
   end
 
   local min_chars = 1
@@ -148,7 +143,6 @@ util.imap(
   { expr = true }
 )
 util.imap('<cr>', 'v:lua.completion.complete(' .. CR .. ')', { expr = true })
-util.imap('<esc>', 'v:lua.completion.complete(' .. ESC .. ')', { expr = true })
 
 -- automatic completion
 util.augroup('custom-completion', {
