@@ -71,68 +71,71 @@ function exports.complete(key)
 
   if vim.fn.match(last_chars, '^\\(.*\\W\\)\\?\\(/\\w\\+\\)*/\\w*') ~= -1 then
     -- open the file completion popup
-    vim.api.nvim_feedkeys(raw_key('<c-x><c-f>'), 'm', true)
-  else
-    -- open the keyword completion popup
-    vim.api.nvim_feedkeys(raw_key('<c-n>'), 'm', true)
-
-    -- if omnifunc isn't the lsp omnifunc, stop here
-    if vim.bo.omnifunc ~= 'v:lua.vim.lsp.omnifunc' then
-      return ''
-    end
-
-    -- get the list of keyword matches in the completion menu
-    local keyword_items = {}
-    vim.schedule(function()
-      local info = vim.fn.complete_info({ 'mode', 'items' })
-      vim.list_extend(keyword_items, info.items)
-    end)
-
-    -- If omnifunc is setup for lsp, call the lsp completer. If there are any
-    -- LSP matches, they'll override the keyword matches
-    local bufnr = vim.api.nvim_get_current_buf()
-    local keyword = vim.fn.match(line, '\\k*$')
-    local params = lsp_util.make_position_params()
-
-    -- This is the request from the runtime lua.lsp. It's repeated here so that
-    -- we can only override the completion list if the lsp completer returns
-    -- results. Otherwise, any keyword results being displayed will be left
-    -- alone.
-    vim.lsp.buf_request(
-      bufnr,
-      'textDocument/completion',
-      params,
-      function(err, result, ctx)
-        if err or not result or vim.fn.mode() ~= 'i' then
-          return
-        end
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        local encoding = client and client.offset_encoding or 'utf-16'
-        local candidates = vim.lsp.util.extract_completion_items(result)
-        local startbyte = adjust_start_col(pos[1], line, candidates, encoding)
-          or keyword
-        local prefix = line:sub(startbyte + 1, pos[2])
-        local matches =
-          vim.lsp.util.text_document_completion_list_to_complete_items(
-            result,
-            prefix
-          )
-
-        -- append any lsp items to the match list and update the completion menu
-        local lsp_items = matches
-        local lsp_words = vim.tbl_map(function(item)
-          return item.word
-        end, matches)
-        for _, item in pairs(keyword_items) do
-          if not vim.tbl_contains(lsp_words, item.word) then
-            table.insert(lsp_items, item)
-          end
-        end
-        vim.fn.complete(startbyte + 1, lsp_items)
-      end
-    )
+    return raw_key('<c-x><c-f>')
   end
 
+  -- open the keyword completion popup
+  vim.api.nvim_feedkeys(raw_key('<c-n>'), 'm', true)
+
+  -- if omnifunc isn't the lsp omnifunc, stop here
+  if vim.bo.omnifunc ~= 'v:lua.vim.lsp.omnifunc' then
+    return ''
+  end
+
+  -- get the list of keyword matches in the completion menu
+  local keyword_items = {}
+  vim.schedule(function()
+    -- This is run in a schedule callback because complete_info won't return
+    -- anything until the popup menu has been displayed. It will complete before
+    -- the lsp results request below does.
+    local info = vim.fn.complete_info({ 'mode', 'items' })
+    vim.list_extend(keyword_items, info.items)
+  end)
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  local keyword = vim.fn.match(line, '\\k*$')
+  local params = lsp_util.make_position_params()
+
+  -- Call the lsp completer using the request code from the runtime lua.lsp.
+  -- It's repeated here so that we can mix the LSP results into the keyword
+  -- results rather than overriding them.
+  vim.lsp.buf_request(
+    bufnr,
+    'textDocument/completion',
+    params,
+    function(err, result, ctx)
+      if err or not result or vim.fn.mode() ~= 'i' then
+        return
+      end
+      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      local encoding = client and client.offset_encoding or 'utf-16'
+      local candidates = vim.lsp.util.extract_completion_items(result)
+      local startbyte = adjust_start_col(pos[1], line, candidates, encoding)
+        or keyword
+      local prefix = line:sub(startbyte + 1, pos[2])
+      local matches =
+        vim.lsp.util.text_document_completion_list_to_complete_items(
+          result,
+          prefix
+        )
+
+      -- Append any keyword items to the match list that aren't already in the
+      -- LSP matches
+      local lsp_items = matches
+      local lsp_words = vim.tbl_map(function(item)
+        return item.word
+      end, matches)
+      for _, item in pairs(keyword_items) do
+        if not vim.tbl_contains(lsp_words, item.word) then
+          table.insert(lsp_items, item)
+        end
+      end
+
+      vim.fn.complete(startbyte + 1, lsp_items)
+    end
+  )
+
+  -- consume the key that was pressed
   return ''
 end
 
