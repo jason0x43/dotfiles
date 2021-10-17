@@ -268,6 +268,24 @@ packer.startup({
       branch = 'adapt-shadman',
       after = 'nvim-lspconfig',
     })
+    use({
+      'simrat39/symbols-outline.nvim',
+      after = 'nvim-lspconfig',
+      setup = function()
+        vim.g.symbols_outline = {
+          auto_preview = false,
+          width = 40
+        }
+      end,
+      config = function()
+        local util = require('util')
+        util.augroup('init_symbols_outline', {
+          'FileType Outline setlocal signcolumn=no'
+        })
+
+        util.lmap('o', '<cmd>SymbolsOutline<cr>')
+      end
+    })
 
     -- This is disabled right now because it conflicts with matchup's
     -- highlighting for function/end and if/end pairs.

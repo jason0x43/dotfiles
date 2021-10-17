@@ -42,5 +42,5 @@ require('lualine').setup({
     lualine_c = { 'filename' },
     lualine_x = { 'location' },
   },
-  extensions = { 'nvim-tree', 'quickfix' },
+  extensions = { 'nvim-tree', 'quickfix', 'symbols_outline' },
 })
