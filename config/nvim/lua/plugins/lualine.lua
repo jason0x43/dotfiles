@@ -1,5 +1,17 @@
 local theme = require('util.theme')
 
+local status, gps = pcall(require, 'nvim-gps')
+if not status then
+  gps = {
+    get_location = function()
+      return {}
+    end,
+    is_available = function()
+      return false
+    end,
+  }
+end
+
 -- make statusline transparent so we don't get a flash before lualine renders
 theme.hi('StatusLine', { bg = '' })
 theme.hi('StatusLineNC', { bg = '' })
@@ -23,7 +35,8 @@ require('lualine').setup({
         padding = { left = 0, right = 1 },
         icon_only = true,
       },
-      { 'filename', path = 1, padding = { left = 0 } },
+      { 'filename', path = 1, padding = { left = 0, right = 1 } },
+      { gps.get_location, condition = gps.is_available }
     },
     lualine_x = {
       { 'diagnostics', sources = { 'nvim_lsp' } },

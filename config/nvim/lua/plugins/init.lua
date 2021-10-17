@@ -180,6 +180,13 @@ packer.startup({
     use({
       'JoosepAlviste/nvim-ts-context-commentstring',
       after = 'nvim-treesitter'
+
+    use({
+      'SmiteshP/nvim-gps',
+      after = 'nvim-treesitter',
+      config = function ()
+        require('nvim-gps').setup()
+      end
     })
 
     -- fuzzy finding
