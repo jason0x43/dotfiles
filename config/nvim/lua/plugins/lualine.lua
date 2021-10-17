@@ -40,7 +40,11 @@ require('lualine').setup({
     },
     lualine_x = {
       { 'diagnostics', sources = { 'nvim_lsp' } },
-      { 'language_servers', separator = '', padding = { right = 0, left = 1 } },
+      {
+        'language_servers',
+        separator = '',
+        padding = { right = 0, left = 1 },
+      },
       {
         'lsp_progress',
         display_components = { 'spinner' },

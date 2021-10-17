@@ -175,11 +175,12 @@ packer.startup({
     })
     use({
       'nvim-treesitter/playground',
-      after = 'nvim-treesitter'
+      after = 'nvim-treesitter',
     })
     use({
       'JoosepAlviste/nvim-ts-context-commentstring',
-      after = 'nvim-treesitter'
+      after = 'nvim-treesitter',
+    })
 
     use({
       'SmiteshP/nvim-gps',
@@ -193,7 +194,7 @@ packer.startup({
     use({
       'nvim-telescope/telescope.nvim',
       cmd = 'Telescope',
-      setup = function ()
+      setup = function()
         require('plugins.telescope').setup()
       end,
       config = function()
@@ -235,7 +236,7 @@ packer.startup({
           'js=javascript',
           'ts=typescript',
         }
-      end
+      end,
     })
     use({ 'vim-scripts/applescript.vim', ft = { 'applescript' } })
     use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
@@ -343,7 +344,7 @@ packer.startup({
             add = { text = '▋' },
             change = { text = '▋' },
             delete = { text = '▃' },
-          }
+          },
         })
       end,
     })
