@@ -34,8 +34,27 @@ packer.startup({
       -- nvim-tree needs to load at the same time or before a file is loaded for
       -- it to properly locate the file when initially showing the tree
       after = 'nvim-web-devicons',
+      setup = function()
+        -- append a slash to folder names
+        vim.g.nvim_tree_add_trailing = 1
+
+        -- close the tree after opening a file
+        vim.g.nvim_tree_quit_on_open = 1
+
+        -- ignore things
+        vim.g.nvim_tree_ignore = { '.git', '.cache' }
+        vim.g.nvim_tree_gitignore = 1
+      end,
       config = function()
-        require('plugins.nvim-tree')
+        require('nvim-tree').setup({
+          update_focused_file = {
+            enable = true,
+          },
+          view = {
+            side = 'right',
+            width = 40
+          }
+        })
       end,
     })
 
