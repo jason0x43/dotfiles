@@ -40,10 +40,9 @@ function exports.config()
       layout_strategy = 'center',
       sorting_strategy = 'ascending',
       borderchars = {
-        { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-        prompt = { '─', '│', ' ', '│', '╭', '╮', '│', '│' },
-        results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
-        preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+        prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+        results = { '─', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+        preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
       },
       path_display = {'truncate'},
     },
