@@ -65,4 +65,5 @@ end
 
 null_ls.config(config)
 
-require('lsp').setup_server('null-ls')
+local config = require('lsp').get_lsp_config('null-ls')
+require('lspconfig')['null-ls'].setup(config)

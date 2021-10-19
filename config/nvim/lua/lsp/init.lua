@@ -145,7 +145,7 @@ function exports.show_line_diagnostics()
 end
 
 -- setup a server
-function exports.setup_server(server)
+function exports.get_lsp_config(server)
   -- default config for all servers
   local config = { on_attach = on_attach }
 
@@ -163,13 +163,14 @@ function exports.setup_server(server)
     config = vim.tbl_extend('force', config, client_config.config)
   end
 
-  require('lspconfig')[server].setup(config)
+  return config
 end
 
 -- these are servers not managed by lspinstall
 local manual_servers = { 'sourcekit' }
 for _, server in ipairs(manual_servers) do
-  exports.setup_server(server)
+  local config = exports.get_lsp_config(server)
+  require('lspconfig')[server].setup(config)
 end
 
 -- UI

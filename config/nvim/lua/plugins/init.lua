@@ -271,10 +271,16 @@ packer.startup({
       end,
     })
     use({
-      'kabouzeid/nvim-lspinstall',
+      'williamboman/nvim-lsp-installer',
       after = 'nvim-lspconfig',
       config = function()
-        require('plugins.nvim-lspinstall')
+        require('nvim-lsp-installer').on_server_ready(function(server)
+          local config = require('lsp').get_lsp_config(server.name)
+          server:setup(config)
+          vim.cmd('do User LspAttachBuffers')
+        end)
+
+        require('util').cmd('LspStatus', 'LspInstallInfo')
       end,
     })
     use({

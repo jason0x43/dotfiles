@@ -25,7 +25,7 @@ function exports.check_start()
     vim.fn.findfile('tsconfig.json', '.;') == ''
     and vim.fn.findfile('jsconfig.json', '.;') == ''
   then
-    require('lspconfig').deno.autostart()
+    require('lspconfig').denols.autostart()
   end
 end
 
@@ -33,7 +33,7 @@ local util = require('util')
 local ts_types_str = table.concat(util.ts_types, ',')
 
 util.augroup('init_deno', {
-  'FileType ' .. ts_types_str .. ' lua require("lsp.deno").check_start()',
+  'FileType ' .. ts_types_str .. ' lua require("lsp.denols").check_start()',
 })
 
 return exports
