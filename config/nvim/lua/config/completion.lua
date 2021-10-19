@@ -1,7 +1,7 @@
 local exports = {}
 local lsp_util = require('vim.lsp.util')
 
-vim.opt.completeopt = { 'menu', 'noinsert', 'noselect', 'menuone' }
+vim.opt.completeopt = { 'menu', 'menuone' }
 
 local function raw_key(key_code)
   return vim.api.nvim_replace_termcodes(key_code, true, false, true)
