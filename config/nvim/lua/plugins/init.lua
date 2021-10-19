@@ -52,8 +52,8 @@ packer.startup({
           },
           view = {
             side = 'right',
-            width = 40
-          }
+            width = 40,
+          },
         })
       end,
     })
@@ -185,9 +185,9 @@ packer.startup({
     use({
       'SmiteshP/nvim-gps',
       after = 'nvim-treesitter',
-      config = function ()
+      config = function()
         require('nvim-gps').setup()
-      end
+      end,
     })
 
     -- fuzzy finding
@@ -303,17 +303,17 @@ packer.startup({
       setup = function()
         vim.g.symbols_outline = {
           auto_preview = false,
-          width = 40
+          width = 40,
         }
       end,
       config = function()
         local util = require('util')
         util.augroup('init_symbols_outline', {
-          'FileType Outline setlocal signcolumn=no'
+          'FileType Outline setlocal signcolumn=no',
         })
 
         util.lmap('o', '<cmd>SymbolsOutline<cr>')
-      end
+      end,
     })
 
     -- This is disabled right now because it conflicts with matchup's
