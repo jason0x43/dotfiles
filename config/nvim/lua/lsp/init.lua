@@ -64,7 +64,7 @@ local function on_attach(client, bufnr)
     util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
 
-  util.lmap('d', '<cmd>lua require("lsp").show_line_diagnostics()<cr>', opts)
+  util.lmap('d', '<cmd>lua require("lsp").show_position_diagnostics()<cr>', opts)
 end
 
 local exports = {}
@@ -135,9 +135,9 @@ function exports.format_sync(options, timeout)
 end
 
 -- style the line diagnostics popup
-function exports.show_line_diagnostics()
-  vim.lsp.diagnostic.show_line_diagnostics({
-    border = 'rounded',
+function exports.show_position_diagnostics()
+  vim.diagnostic.show_position_diagnostics({
+    border = 'solid',
     max_width = 80,
     show_header = false,
     focusable = false,
