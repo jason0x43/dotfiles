@@ -137,7 +137,7 @@ end
 -- style the line diagnostics popup
 function exports.show_position_diagnostics()
   vim.diagnostic.show_position_diagnostics({
-    border = 'solid',
+    border = 'rounded',
     max_width = 80,
     show_header = false,
     focusable = false,
