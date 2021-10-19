@@ -25,19 +25,20 @@ function exports.config()
           ['<esc>'] = require('telescope.actions').close,
         },
       },
+      layout_strategy = 'vertical',
       layout_config = {
         prompt_position = 'top',
-        preview_cutoff = 1,
+        preview_cutoff = 35,
+        preview_height = 10,
 
         width = function(_, max_columns, _)
           return math.min(max_columns - 3, 80)
         end,
 
         height = function(_, _, max_lines)
-          return math.min(max_lines - 2, 20)
+          return math.min(max_lines - 2, 30)
         end,
       },
-      layout_strategy = 'center',
       sorting_strategy = 'ascending',
       borderchars = {
         prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
