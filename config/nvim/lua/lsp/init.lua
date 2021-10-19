@@ -212,10 +212,10 @@ local orig_buf_attach_client = lsp.buf_attach_client
 
 function lsp.buf_attach_client(bufnr, client_id)
   local client = lsp.get_client_by_id(client_id)
-  if client.name == 'deno' then
+  if client.name == 'denols' then
     local clients = lsp.buf_get_clients(bufnr)
     for _, c in ipairs(clients) do
-      if c.name == 'typescript' or c.name == 'tsserver' then
+      if c.name == 'tsserver' then
         -- Don't attach deno to a buffer that already has tsserver attached
         return
       end
