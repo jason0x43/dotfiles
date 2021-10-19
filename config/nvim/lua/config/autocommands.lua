@@ -13,6 +13,9 @@ util.augroup('init_autocommands', {
   -- wrap lines in quickfix windows
   'FileType qf setlocal wrap linebreak nolist breakindent breakindentopt=shift:2 colorcolumn=""',
 
+  -- don't show sign column in help panes
+  'FileType help setlocal signcolumn=no',
+
   -- close help files and qf panes with 'q' or Esc
   'FileType help,qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
   'BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>',
