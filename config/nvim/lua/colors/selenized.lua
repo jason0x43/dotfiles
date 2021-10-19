@@ -238,8 +238,8 @@ function exports.apply_theme(theme_name)
   hi('Pmenu', palette.fg_0, palette.bg_1)
 
   -- neovim
-  hi('NormalFloat', nil, palette.bg_1, nil, nil)
-  hi('ModalFloat', nil, palette.bg_0, nil, nil)
+  hi('NormalFloat', nil, palette.bg_2, nil, nil)
+  hi_link('FloatBorder', 'NormalFloat')
 
   -- override some of the default treesitter links
   hi_link('TSConstBuiltin', 'Constant')
