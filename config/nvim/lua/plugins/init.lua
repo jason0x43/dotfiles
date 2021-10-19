@@ -260,10 +260,6 @@ packer.startup({
       end,
     })
     use({
-      'jose-elias-alvarez/nvim-lsp-ts-utils',
-      after = 'nvim-lspconfig',
-    })
-    use({
       'jose-elias-alvarez/null-ls.nvim',
       after = { 'nvim-lspconfig', 'plenary.nvim' },
       config = function()
