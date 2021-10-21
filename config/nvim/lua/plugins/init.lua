@@ -351,15 +351,6 @@ packer.startup({
       end,
     })
 
-    -- git UI
-    use({
-      'TimUntersberger/neogit',
-      cmd = 'Neogit',
-      config = function()
-        require('plugins.neogit')
-      end,
-    })
-
     -- startup time profiling
     use({ 'dstein64/vim-startuptime', cmd = 'StartupTime' })
 
