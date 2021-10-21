@@ -145,9 +145,9 @@ util.imap(
 util.imap('<cr>', 'v:lua.completion.complete(' .. CR .. ')', { expr = true })
 
 -- automatic completion
-util.augroup('custom-completion', {
-  'TextChangedI *.md,*.textile lua completion.complete(0)',
-})
+-- util.augroup('custom-completion', {
+--   'TextChangedI *.md,*.textile lua completion.complete(0)',
+-- })
 
 _G.completion = exports
 
