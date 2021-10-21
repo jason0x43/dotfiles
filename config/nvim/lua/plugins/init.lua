@@ -345,7 +345,6 @@ packer.startup({
           signs = {
             add = { text = '▋' },
             change = { text = '▋' },
-            delete = { text = '▃' },
           },
         })
       end,
@@ -363,17 +362,6 @@ packer.startup({
         vim.g.indent_blankline_enabled = false
       end,
     })
-
-    -- indent and syntax
-    -- use({
-    --   'sheerun/vim-polyglot',
-    --   event = 'BufEnter',
-    --   disable = true,
-    --   setup = function()
-    --     -- Disable some polyglot options
-    --     vim.g.polyglot_disabled = { 'autoindent', 'ftdetect' }
-    --   end,
-    -- })
   end,
 
   config = {
