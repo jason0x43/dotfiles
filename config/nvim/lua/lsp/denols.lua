@@ -6,12 +6,12 @@ local lsp_find_root = require('lspconfig.util').root_pattern(
   '.git'
 )
 
-local function find_root(start_dir)
-  local dir = lsp_find_root(start_dir)
+local function find_root(filename)
+  local dir = lsp_find_root(filename)
   if dir ~= nil then
     return dir
   end
-  return vim.fn.getcwd()
+  return vim.fn.fnamemodify(filename, ':h')
 end
 
 exports.config = {
