@@ -14,16 +14,6 @@ end
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
-  -- enable lsp completions
-  vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-  -- apply any additional fixups after a completion is accepted
-  vim.cmd('augroup lsp-completion')
-  vim.cmd(
-    'autocmd! CompleteDone <buffer> lua require("lsp").on_complete_done()'
-  )
-  vim.cmd('augroup END')
-
   -- run any client-specific attach functions
   local client_config = load_client_config(client.name)
   if client_config.on_attach then
@@ -42,8 +32,6 @@ local function on_attach(client, bufnr)
 
   -- perform general setup
 
-  local util = require('util')
-
   if client.resolved_capabilities.goto_definition then
     util.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
@@ -58,6 +46,18 @@ local function on_attach(client, bufnr)
 
   if client.resolved_capabilities.document_formatting then
     util.cmd('Format', '-buffer', 'lua require("lsp").format_sync(nil, 5000)')
+  end
+
+  if client.resolved_capabilities.completion then
+    -- enable lsp completions
+    vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+    -- apply any additional fixups after a completion is accepted
+    vim.cmd('augroup lsp-completion')
+    vim.cmd(
+      'autocmd! CompleteDone <buffer> lua require("lsp").on_complete_done()'
+    )
+    vim.cmd('augroup END')
   end
 
   if not packer_plugins['trouble.nvim'] then
