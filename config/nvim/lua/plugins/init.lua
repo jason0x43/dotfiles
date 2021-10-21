@@ -242,7 +242,7 @@ packer.startup({
     use({ 'vim-scripts/Textile-for-VIM', ft = { 'textile' } })
     use({
       'mzlogin/vim-markdown-toc',
-      ft = { 'markdown' },
+      cmd = { 'GenTocGFM', 'UpdateToc' },
       setup = function()
         vim.g.vmt_auto_update_on_save = 0
       end,
