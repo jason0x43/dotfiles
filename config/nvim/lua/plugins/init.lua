@@ -301,7 +301,7 @@ packer.startup({
       setup = function()
         vim.g.symbols_outline = {
           auto_preview = false,
-          width = 40,
+          width = 30,
         }
       end,
       config = function()
