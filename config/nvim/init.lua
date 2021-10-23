@@ -9,6 +9,5 @@ require('config.autocommands')
 require('config.completion')
 require('plugins')
 require('theme')
-require('packer_compiled')
 
 vim.opt.shadafile = ''
