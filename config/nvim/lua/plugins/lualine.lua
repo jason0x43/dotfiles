@@ -36,7 +36,7 @@ require('lualine').setup({
         icon_only = true,
       },
       { 'filename', path = 1, padding = { left = 0, right = 1 } },
-      { gps.get_location, condition = gps.is_available }
+      { gps.get_location, cond = gps.is_available }
     },
     lualine_x = {
       { 'diagnostics', sources = { 'nvim_lsp' } },
