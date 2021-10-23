@@ -35,6 +35,7 @@ util.augroup('init_autocommands', {
   'BufNewFile,BufRead *.dashtoc setfiletype json',
   'BufNewFile,BufRead Podfile setfiletype ruby',
   'BufNewFile,BufRead */zsh/functions/* setfiletype zsh',
+  'BufNewFile,BufRead {ts,js}config.json setfiletype jsonc',
   'BufNewFile,BufRead intern.json setfiletype jsonc',
   'BufNewFile,BufRead intern{-.}*.json setfiletype jsonc',
   'BufNewFile,BufRead *.textile setfiletype textile',
