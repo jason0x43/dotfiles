@@ -8,7 +8,7 @@ packer.startup({
     -- plenary is a common dependency
     use({
       'nvim-lua/plenary.nvim',
-      event = { 'BufEnter', 'VimEnter' },
+      event = 'VimEnter',
     })
 
     -- devicons are needed by the status bar
@@ -19,8 +19,8 @@ packer.startup({
 
     -- flashy status bar
     use({
-      'shadmansaleh/lualine.nvim',
-      after = 'nvim-web-devicons',
+      'nvim-lualine/lualine.nvim',
+      event = 'VimEnter',
       config = function()
         require('plugins.lualine')
       end,
@@ -31,7 +31,7 @@ packer.startup({
       'kyazdani42/nvim-tree.lua',
       -- nvim-tree needs to load at the same time or before a file is loaded for
       -- it to properly locate the file when initially showing the tree
-      after = 'nvim-web-devicons',
+      event = 'VimEnter',
       setup = function()
         -- append a slash to folder names
         vim.g.nvim_tree_add_trailing = 1
@@ -110,7 +110,7 @@ packer.startup({
     })
 
     -- gc for commenting code blocks
-    use({ 'tpope/vim-commentary', event = 'BufRead' })
+    use({ 'tpope/vim-commentary', event = 'CursorMoved' })
 
     -- EditorConfig
     use({
@@ -156,7 +156,7 @@ packer.startup({
       end,
     })
 
-    -- use treesitter for filetype handling
+    -- for filetype features like syntax highlighting and indenting
     use({
       'nvim-treesitter/nvim-treesitter',
       event = 'BufRead',
@@ -165,15 +165,20 @@ packer.startup({
         require('plugins.nvim-treesitter')
       end,
     })
+
+    -- provide TSHighlightCapturesUnderCursor command
     use({
       'nvim-treesitter/playground',
       after = 'nvim-treesitter',
     })
+
+    -- set proper commentstring for embedded languages
     use({
       'JoosepAlviste/nvim-ts-context-commentstring',
       after = 'nvim-treesitter',
     })
 
+    -- show semantic file location (e.g., what function you're in)
     use({
       'SmiteshP/nvim-gps',
       after = 'nvim-treesitter',
@@ -245,7 +250,6 @@ packer.startup({
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      -- after = 'cmp-nvim-lsp',
       event = 'BufRead',
       config = function()
         require('lsp')
@@ -272,13 +276,8 @@ packer.startup({
       end,
     })
     use({
-      'ray-x/lsp_signature.nvim',
-      disable = true,
-      after = 'nvim-lspconfig',
-    })
-    use({
       'folke/trouble.nvim',
-      after = 'nvim-lspconfig',
+      cmd = 'Trouble',
       config = function()
         require('plugins.trouble')
       end,
@@ -344,16 +343,6 @@ packer.startup({
 
     -- startup time profiling
     use({ 'dstein64/vim-startuptime', cmd = 'StartupTime' })
-
-    -- show indents
-    use({
-      'lukas-reineke/indent-blankline.nvim',
-      event = 'BufRead',
-      setup = function()
-        vim.g.indent_blankline_char = '│'
-        vim.g.indent_blankline_enabled = false
-      end,
-    })
   end,
 
   config = {
