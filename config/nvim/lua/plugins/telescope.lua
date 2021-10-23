@@ -1,6 +1,6 @@
-local exports = {}
+local M = {}
 
-function exports.setup()
+function M.setup()
   local util = require('util')
   util.lmap('f', '<cmd>Telescope find_files<cr>')
   util.lmap('g', '<cmd>Telescope git_files<cr>')
@@ -19,7 +19,7 @@ function exports.setup()
   -- util.imap('<C-e>', '<cmd>Telescope symbols<cr>')
 end
 
-function exports.config()
+function M.config()
   require('telescope').setup({
     defaults = {
       mappings = {
@@ -87,4 +87,4 @@ function exports.config()
   })
 end
 
-return exports
+return M

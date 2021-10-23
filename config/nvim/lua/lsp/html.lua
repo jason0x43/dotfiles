@@ -1,6 +1,6 @@
-local exports = {}
+local M = {}
 
-function exports.on_attach(client)
+function M.on_attach(client)
   -- disable formatting for html; we'll use prettier instead
   client.resolved_capabilities.document_formatting = false
 end
@@ -10,9 +10,9 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-exports.config = {
+M.config = {
   capabilities = capabilities,
   filetypes = { 'html', 'svg', 'xml' },
 }
 
-return exports
+return M

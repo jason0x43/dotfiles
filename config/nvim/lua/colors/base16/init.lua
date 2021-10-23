@@ -1,9 +1,9 @@
-local exports = {}
+local M = {}
 local module = ...
 local hi = require('util.theme').hi
 
 -- Modified from https://github.com/chriskempson/base16-vim
-function exports.apply_theme(theme_name)
+function M.apply_theme(theme_name)
   if type(theme_name) ~= 'string' then
     print('Missing or invalid theme name: ' .. vim.inspect(theme_name))
     return
@@ -399,4 +399,4 @@ function exports.apply_theme(theme_name)
   hi('DiagnosticSignHint', colors.hint_fg, colors.sign_bg, 'none', nil)
 end
 
-return exports
+return M

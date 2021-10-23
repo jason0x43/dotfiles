@@ -1,4 +1,4 @@
-local exports = {}
+local M = {}
 local hi = require('util.theme').hi
 local hi_link = require('util.theme').hi_link
 local augroup = require('util').augroup
@@ -107,7 +107,7 @@ local palettes = {
 
 local active_palette
 
-function exports.apply_theme(theme_name)
+function M.apply_theme(theme_name)
   local g = vim.g
 
   g.colors_name = 'selenized'
@@ -305,7 +305,7 @@ function exports.apply_theme(theme_name)
   })
 end
 
-function exports.update_background(focused)
+function M.update_background(focused)
   local ap = active_palette
   if focused then
     hi('Normal', ap.fg_0, ap.bg_0, '', '')
@@ -314,8 +314,8 @@ function exports.update_background(focused)
   end
 end
 
-function exports.active_palette()
+function M.active_palette()
   return active_palette
 end
 
-return exports
+return M

@@ -1,4 +1,4 @@
-local exports = {}
+local M = {}
 
 local lsp_find_root = require('lspconfig.util').root_pattern(
   'package.json',
@@ -14,12 +14,12 @@ local function find_root(filename)
   return vim.fn.fnamemodify(filename, ':h')
 end
 
-exports.config = {
+M.config = {
   autostart = false,
   root_dir = find_root,
 }
 
-function exports.check_start()
+function M.check_start()
   -- start the deno server if there's no tsconfig
   if
     vim.fn.findfile('tsconfig.json', '.;') == ''
@@ -36,4 +36,4 @@ util.augroup('init_deno', {
   'FileType ' .. ts_types_str .. ' lua require("lsp.denols").check_start()',
 })
 
-return exports
+return M

@@ -1,7 +1,7 @@
 local hex_pat = '[abcdef0-9][abcdef0-9]'
 local pat = '^#(' .. hex_pat .. ')(' .. hex_pat .. ')(' .. hex_pat .. ')$'
 
-local exports = {}
+local M = {}
 
 -- convert a hex color to split RGB values
 local function hex_to_rgb(hex_str)
@@ -36,7 +36,7 @@ end
 
 -- lighten an rgb color
 -- @param bg the base "dark" color
-function exports.darken(hex, amount, bg)
+function M.darken(hex, amount, bg)
   local status, val = pcall(blend, hex, bg or '#000000', 1 - math.abs(amount))
   if status then
     return val
@@ -46,7 +46,7 @@ end
 
 -- lighten an rgb color
 -- @param fg the base "light" color
-function exports.lighten(hex, amount, fg)
+function M.lighten(hex, amount, fg)
   local status, val = pcall(blend, hex, fg or '#ffffff', 1 - math.abs(amount))
   if status then
     return val
@@ -57,19 +57,19 @@ end
 -- shift a color by a percentage
 -- the shift direction depends on whether the shift amount is positive or
 -- negative and whether the current background is light or dark
-function exports.shift(hex, amount)
+function M.shift(hex, amount)
   local shifter
   if vim.go.background == 'dark' then
     if amount > 0 then
-      shifter = exports.darken
+      shifter = M.darken
     else
-      shifter = exports.lighten
+      shifter = M.lighten
     end
   else
     if amount > 0 then
-      shifter = exports.lighten
+      shifter = M.lighten
     else
-      shifter = exports.darken
+      shifter = M.darken
     end
   end
   return shifter(hex, amount)
@@ -88,14 +88,14 @@ local function get_color(hlgroup, attr)
 end
 
 -- return a function for retrieving named colors
-function exports.get_colors()
+function M.get_colors()
   local semantic = {
     error = get_color('LspDiagnosticsDefaultError', 'fg'),
     warning = get_color('LspDiagnosticsDefaultWarning', 'fg'),
     hint = get_color('LspDiagnosticsDefaultHint', 'fg'),
     info = get_color('LspDiagnosticsDefaultInformation', 'fg'),
     bg = get_color('Search', 'fg'),
-    bg_status = exports.darken(get_color('LineNr', 'bg'), 0.025),
+    bg_status = M.darken(get_color('LineNr', 'bg'), 0.025),
     fg = get_color('Normal', 'fg'),
     fg_status = get_color('Normal', 'bg'),
     bg_sign = get_color('SignColumn', 'bg'),
@@ -118,24 +118,24 @@ function exports.get_colors()
     assert(colors[name] ~= nil, 'Accessed nil color "' .. name .. '"')
     local color = colors[name]
     if shift_amt ~= nil then
-      return exports.shift(color, shift_amt)
+      return M.shift(color, shift_amt)
     end
     return color
   end
 end
 
 -- apply any theme customizations
-function exports.update_theme()
+function M.update_theme()
   vim.cmd('colorscheme base16')
 end
 
 -- define a syntax highlight group
 -- propsOrFg can either be a table containing guifg, guibg, etc., or a fg value.
 -- If propsOrFg is a table, the remaining arguments will be ignored.
-function exports.hi(group, propsOrFg, bg, attr, sp)
+function M.hi(group, propsOrFg, bg, attr, sp)
   if type(group) == 'table' then
     for k, v in pairs(group) do
-      exports.hi(k, v)
+      M.hi(k, v)
     end
   else
     local props_list = {}
@@ -187,8 +187,8 @@ function exports.hi(group, propsOrFg, bg, attr, sp)
 end
 
 -- link one syntax group to another
-function exports.hi_link(group1, group2)
+function M.hi_link(group1, group2)
   vim.cmd('hi! link ' .. group1 .. ' ' .. group2)
 end
 
-return exports
+return M

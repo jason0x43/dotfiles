@@ -1,4 +1,4 @@
-local exports = {}
+local M = {}
 local lsp_util = require('vim.lsp.util')
 
 vim.opt.completeopt = { 'menu', 'menuone' }
@@ -38,7 +38,7 @@ local TAB = 1
 local S_TAB = 2
 local CR = 3
 
-function exports.complete(key)
+function M.complete(key)
   if vim.fn.pumvisible() == 1 then
     if key == TAB then
       return raw_key('<c-n>')
@@ -149,6 +149,6 @@ util.imap('<cr>', 'v:lua.completion.complete(' .. CR .. ')', { expr = true })
 --   'TextChangedI *.md,*.textile lua completion.complete(0)',
 -- })
 
-_G.completion = exports
+_G.completion = M
 
-return exports
+return M

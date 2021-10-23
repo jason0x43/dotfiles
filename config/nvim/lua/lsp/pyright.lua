@@ -1,7 +1,7 @@
-local exports = {}
+local M = {}
 
-function exports.on_attach()
+function M.on_attach()
   require('util').cmd('OrganizeImports', '-buffer', 'PyrightOrganizeImports')
 end
 
-return exports
+return M

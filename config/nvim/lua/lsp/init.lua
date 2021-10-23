@@ -67,11 +67,11 @@ local function on_attach(client, bufnr)
   util.lmap('d', '<cmd>lua require("lsp").show_position_diagnostics()<cr>', opts)
 end
 
-local exports = {}
+local M = {}
 
 -- apply additionalTextEdits, such as auto imports, when a completion is
 -- accepted
-function exports.on_complete_done()
+function M.on_complete_done()
   local bufnr = vim.api.nvim_get_current_buf()
   local completed_item = vim.v.completed_item
 
@@ -100,7 +100,7 @@ end
 
 -- format the current buffer, handling the case where multiple formatters are
 -- present
-function exports.format_sync(options, timeout)
+function M.format_sync(options, timeout)
   local clients = vim.tbl_values(vim.lsp.buf_get_clients())
   local formatters = vim.tbl_filter(function(client)
     return client.supports_method('textDocument/formatting')
@@ -135,7 +135,7 @@ function exports.format_sync(options, timeout)
 end
 
 -- style the line diagnostics popup
-function exports.show_position_diagnostics()
+function M.show_position_diagnostics()
   vim.diagnostic.show_position_diagnostics({
     border = 'rounded',
     max_width = 80,
@@ -145,7 +145,7 @@ function exports.show_position_diagnostics()
 end
 
 -- setup a server
-function exports.get_lsp_config(server)
+function M.get_lsp_config(server)
   -- default config for all servers
   local config = { on_attach = on_attach }
 
@@ -169,7 +169,7 @@ end
 -- these are servers not managed by lspinstall
 local manual_servers = { 'sourcekit' }
 for _, server in ipairs(manual_servers) do
-  local config = exports.get_lsp_config(server)
+  local config = M.get_lsp_config(server)
   require('lspconfig')[server].setup(config)
 end
 
@@ -224,4 +224,4 @@ function lsp.buf_attach_client(bufnr, client_id)
   return orig_buf_attach_client(bufnr, client_id)
 end
 
-return exports
+return M

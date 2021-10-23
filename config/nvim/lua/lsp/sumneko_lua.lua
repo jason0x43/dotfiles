@@ -1,9 +1,9 @@
-local exports = {}
+local M = {}
 
-exports.config = {
+M.config = {
   settings = {
     Lua = { diagnostics = { globals = { 'hs', 'vim', 'packer_plugins' } } },
   },
 }
 
-return exports
+return M

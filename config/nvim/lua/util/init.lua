@@ -1,9 +1,9 @@
-local exports = {}
+local M = {}
 local fn = vim.fn
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
-function exports.yank(text)
+function M.yank(text)
   local escape = fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
     vim.cmd('echoerr ' .. escape)
@@ -70,34 +70,34 @@ local map_in_mode = function(mode, key, cmd, opts)
 end
 
 -- map a key in all modes
-function exports.map(key, cmd, opts)
+function M.map(key, cmd, opts)
   map_in_mode('', key, cmd, opts)
 end
 
 -- map a key in normal mode using the leader key
-function exports.lmap(key, cmd, opts)
+function M.lmap(key, cmd, opts)
   map_in_mode('n', '<leader>' .. key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function exports.imap(key, cmd, opts)
+function M.imap(key, cmd, opts)
   map_in_mode('i', key, cmd, opts)
 end
 
 -- map a key in s mode using the leader key
-function exports.smap(key, cmd, opts)
+function M.smap(key, cmd, opts)
   map_in_mode('s', key, cmd, opts)
 end
 
 -- map a key in insert mode using the leader key
-function exports.nmap(key, cmd, opts)
+function M.nmap(key, cmd, opts)
   map_in_mode('n', key, cmd, opts)
 end
 
 -- create an augroup from a name and list of commands
 -- commands are of the form
 --   { group, definition }
-function exports.augroup(name, commands)
+function M.augroup(name, commands)
   vim.cmd('augroup ' .. name)
   vim.cmd('autocmd!')
   for _, def in ipairs(commands) do
@@ -107,7 +107,7 @@ function exports.augroup(name, commands)
 end
 
 -- create a vim command
-function exports.cmd(name, argsOrCmd, cmd)
+function M.cmd(name, argsOrCmd, cmd)
   local args = cmd and argsOrCmd or nil
   cmd = cmd and cmd or argsOrCmd
 
@@ -119,20 +119,20 @@ function exports.cmd(name, argsOrCmd, cmd)
 end
 
 -- settings for text files
-function exports.text_mode()
+function M.text_mode()
   vim.wo.wrap = true
   vim.wo.linebreak = true
   vim.wo.list = false
   vim.wo.signcolumn = 'no'
 
-  exports.map('k', 'gk', { buffer = true })
-  exports.map('j', 'gj', { buffer = true })
-  exports.map('$', 'g$', { buffer = true })
-  exports.map('^', 'g^', { buffer = true })
+  M.map('k', 'gk', { buffer = true })
+  M.map('j', 'gj', { buffer = true })
+  M.map('$', 'g$', { buffer = true })
+  M.map('^', 'g^', { buffer = true })
 end
 
 -- set colorcolumn to show the current textwidth
-function exports.show_view_width()
+function M.show_view_width()
   local filetype = vim.bo.filetype
   local tw = vim.bo.textwidth
 
@@ -144,14 +144,14 @@ function exports.show_view_width()
 end
 
 -- set window height within a min/max range
-function exports.adjust_window_height(minheight, maxheight)
+function M.adjust_window_height(minheight, maxheight)
   local line = fn.line('$')
   local val = fn.max({ fn.min({ line, maxheight }), minheight })
   vim.cmd(val .. 'wincmd _')
 end
 
 -- TS filetypes
-exports.ts_types = {
+M.ts_types = {
   'typescript',
   'typescript.jsx',
   'typescriptreact',
@@ -163,7 +163,7 @@ exports.ts_types = {
 }
 
 -- restore the cursor position in a file
-function exports.restore_cursor()
+function M.restore_cursor()
   local filetype = vim.bo.filetype
   local buftype = vim.bo.buftype
 
@@ -181,7 +181,7 @@ function exports.restore_cursor()
   end
 end
 
-function exports.print_syn_group()
+function M.print_syn_group()
   local ls = fn.synID(fn.line('.'), fn.col('.'), 1)
   if ls ~= 0 then
     print(
@@ -194,4 +194,4 @@ function exports.print_syn_group()
   end
 end
 
-return exports
+return M

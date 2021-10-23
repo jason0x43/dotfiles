@@ -1,7 +1,7 @@
 local util = require('util')
-local exports = {}
+local M = {}
 
-function exports.organize_imports()
+function M.organize_imports()
   local bufnr = vim.api.nvim_get_current_buf()
   vim.lsp.buf.execute_command({
     command = '_typescript.organizeImports',
@@ -9,7 +9,7 @@ function exports.organize_imports()
   })
 end
 
-function exports.on_attach(client)
+function M.on_attach(client)
   -- disable formatting for typescript; we'll use prettier instead
   client.resolved_capabilities.document_formatting = false
   util.cmd(
@@ -21,7 +21,7 @@ end
 
 local lsp_util = require('lspconfig.util')
 
-exports.config = {
+M.config = {
   autostart = false,
   handlers = {
     ['textDocument/definition'] = lsp_util.compat_handler(
@@ -40,7 +40,7 @@ exports.config = {
   },
 }
 
-function exports.check_start()
+function M.check_start()
   -- start the TS server if there's a tsconfig
   if
     vim.fn.findfile('tsconfig.json', '.;') ~= ''
@@ -55,4 +55,4 @@ util.augroup('init_typescript', {
   'FileType ' .. ts_types_str .. ' lua require("lsp.tsserver").check_start()',
 })
 
-return exports
+return M
