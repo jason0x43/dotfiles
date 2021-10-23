@@ -156,12 +156,6 @@ packer.startup({
       end,
     })
 
-    -- support the jsonc filetype
-    use({
-      'neoclide/jsonc.vim',
-      event = 'VimEnter',
-    })
-
     -- use treesitter for filetype handling
     use({
       'nvim-treesitter/nvim-treesitter',

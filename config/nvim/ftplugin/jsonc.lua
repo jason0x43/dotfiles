@@ -1,0 +1,3 @@
+-- Override the builtin jsonc plugin -- it has a bug as of 2021-10-22 that causes
+-- an error on startup (https://github.com/neovim/neovim/pull/15858). The
+-- relevant commands are in after/ftplugin/jsonc.vim.
