@@ -194,4 +194,13 @@ function M.print_syn_group()
   end
 end
 
+-- try to require a module, return nil if not found
+function M.srequire(module)
+  local status, mod = pcall(require, module)
+  if status then
+    return mod
+  end
+  return nil
+end
+
 return M
