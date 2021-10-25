@@ -29,10 +29,6 @@ util.lmap(
   '<cmd>lua require("util").print_syn_group()<cr>'
 )
 
--- use tab for completions
-util.imap('<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { expr = true })
-util.imap('<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', { expr = true })
-
 -- space to clear search highlights
 util.map('<space>', '<cmd>noh<cr>')
 

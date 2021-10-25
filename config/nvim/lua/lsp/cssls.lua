@@ -1,12 +1,6 @@
 local M = {}
 
--- the VSCode CSS language server only provides completions when snippet support
--- is enabled
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 M.config = {
-  capabilities = capabilities,
   settings = {
     css = {
       validate = true,
@@ -19,5 +13,14 @@ M.config = {
     },
   },
 }
+
+local cmp = require('util').srequire('cmp')
+if cmp then
+  -- the VSCode CSS language server only provides completions when snippet
+  -- support is enabled
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  M.config.capabilities = capabilities
+end
 
 return M

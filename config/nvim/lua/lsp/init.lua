@@ -64,7 +64,11 @@ local function on_attach(client, bufnr)
     util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
 
-  util.lmap('d', '<cmd>lua require("lsp").show_position_diagnostics()<cr>', opts)
+  util.lmap(
+    'd',
+    '<cmd>lua require("lsp").show_position_diagnostics()<cr>',
+    opts
+  )
 end
 
 local M = {}
@@ -150,17 +154,17 @@ function M.get_lsp_config(server)
   local config = { on_attach = on_attach }
 
   -- add cmp capabilities
-  local status, cmp = pcall(require, 'cmp_nvim_lsp')
-  if status then
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = cmp.update_capabilities(capabilities)
-    config.capabilities = capabilities
+  local cmp = util.srequire('cmp_nvim_lsp')
+  if cmp then
+    config.capabilities = cmp.update_capabilities(
+      vim.lsp.protocol.make_client_capabilities()
+    )
   end
 
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
   if client_config.config then
-    config = vim.tbl_extend('force', config, client_config.config)
+    config = vim.tbl_deep_extend('force', config, client_config.config)
   end
 
   return config
