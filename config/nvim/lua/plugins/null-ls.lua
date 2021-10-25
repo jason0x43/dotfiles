@@ -44,7 +44,12 @@ local htmlhint_source = {
 -- run null_ls.config to make null-ls available through lspconfig
 local config = {
   sources = {
-    null_ls.builtins.formatting.prettier,
+    null_ls.builtins.formatting.prettier.with({
+      filetypes = vim.list_extend(
+        { 'xml' },
+        null_ls.builtins.formatting.prettier.filetypes
+      ),
+    }),
 
     null_ls.builtins.formatting.stylua.with({
       args = {
