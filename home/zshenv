@@ -36,6 +36,13 @@ typeset -gU mailpath path
 
 # Path
 # --------------------------------------------------------------------------
+if [[ -d /usr/local/bin ]]; then
+	path=(
+		/usr/local/bin
+		$path
+	)
+fi
+
 path=(
 	$HOME/Applications
 	$DOTFILES/bin
