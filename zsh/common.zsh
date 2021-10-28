@@ -6,16 +6,19 @@ export CACHEDIR=$HOME/.cache
 export CONFIGDIR=$HOME/.config
 export DATADIR=$HOME/.local/share
 
-export ZCACHEDIR=$CACHEDIR/zsh
 export ZDATADIR=$DATADIR/zsh
-export ZPLUGDIR=$ZCACHEDIR/plugins
-export ZCOMPDIR=$ZCACHEDIR/completions
+export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
+
+export ZCACHEDIR=$CACHEDIR/zsh
+export ZCOMPDIR=$ZCACHEDIR/completions
 
 if [[ -d /home/linuxbrew ]]; then
     export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
 elif [[ -d $HOME/.linuxbrew ]]; then
     export HOMEBREW_BASE=$HOME/.linuxbrew
+elif [[ -d /opt/homebrew ]]; then
+    export HOMEBREW_BASE=/opt/homebrew
 else
     export HOMEBREW_BASE=/usr/local
 fi

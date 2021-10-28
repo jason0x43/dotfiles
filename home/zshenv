@@ -95,7 +95,7 @@ fi
 
 # Tmux
 # --------------------------------------------------------------------------
-export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+export TMUX_PLUGIN_MANAGER_PATH="$DATADIR/tmux/tmux-plugins"
 
 # pkg-config
 typeset -U pkg_config_path=$PKG_CONFIG_PATH
