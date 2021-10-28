@@ -140,11 +140,14 @@ end
 
 -- style the line diagnostics popup
 function M.show_position_diagnostics()
-  vim.diagnostic.show_position_diagnostics({
-    border = 'rounded',
-    max_width = 80,
-    show_header = false,
-    focusable = false,
+  vim.diagnostic.open_float(0, {
+    scope = 'cursor',
+    float = {
+      border = 'rounded',
+      max_width = 80,
+      show_header = false,
+      focusable = false,
+    },
   })
 end
 
