@@ -245,6 +245,7 @@ function dotfiles-brew {
         'git-delta'   # prettier git diffs
         'jq'          # command line JSON processor
         'node'        # Node.js
+        'poetry'      # python project package manager
         'python@3.9'  # use Python3 (update to just 'python' when possible)
         'ripgrep'     # better grep
         'tig'         # terminal git ui
@@ -252,11 +253,35 @@ function dotfiles-brew {
         'zsh'         # newer zsh
     )
 
-    local installed_packages=($(brew ls --versions $brew_packages | awk '{ print $1 }'))
+    brew_casks=""
+
+    if [[ $OSTYPE == darwin* ]]; then
+        brew_casks=(
+            'font-jetbrains-mono-nerd-font'
+            'kitty'
+            'phoenix'
+        )
+
+        taps=($(brew tap))
+        if ((! $taps[(Ie)homebrew/cask-fonts])); then
+            brew tap homebrew/cask-fonts
+        fi
+    fi
+
     local need_rehash=0
 
+    local installed_packages=($(brew ls --versions $brew_packages | awk '{ print $1 }'))
     for pkg in $brew_packages; do
         if ((! $installed_packages[(Ie)$pkg])); then
+            logSub "Installing $pkg..."
+            brew install $pkg
+            need_rehash=1
+        fi
+    done
+
+    local installed_casks=($(brew ls --versions --cask $brew_casks | awk '{ print $1 }'))
+    for pkg in $brew_casks; do
+        if ((! $installed_casks[(Ie)$pkg])); then
             logSub "Installing $pkg..."
             brew install $pkg
             need_rehash=1
@@ -318,14 +343,6 @@ function dotfiles-python {
     if (( $? )); then
         err "Error updating packages"
         err $out
-    fi
-
-    if (( ! $+commands[poetry] )); then
-        logSub "Installing poetry..."
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
-    else
-        logSub "Updating poetry..."
-        poetry self update -q
     fi
 
     poetry completions zsh > $ZCOMPDIR/_poetry
