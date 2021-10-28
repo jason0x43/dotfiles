@@ -393,7 +393,6 @@ function dotfiles-node {
     local desired_packages=(
         eslint_d
         prettier
-        yarn
         neovim
     )
 
