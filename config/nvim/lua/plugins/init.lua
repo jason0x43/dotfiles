@@ -344,16 +344,18 @@ packer.startup({
     use({
       'ms-jpq/coq_nvim',
       branch = 'coq',
+      run = 'COQ',
       setup = function()
         vim.g.coq_settings = {
           auto_start = 'shut-up',
-          ['display.pum.source_context'] = { '', '' }
+          ['display.icons.mode'] = 'none',
+          ['display.pum.source_context'] = { '', '' },
         }
-      end
-    })
-    use({
-      'ms-jpq/coq.thirdparty',
-      branch = '3p'
+      end,
+      requires = {
+        { 'ms-jpq/coq.thirdparty', after = 'coq_nvim', branch = '3p' },
+        { 'ms-jpq/coq.artifacts', after = 'coq_nvim', branch = 'artifacts' },
+      },
     })
 
     -- startup time profiling
