@@ -246,7 +246,7 @@ function dotfiles-brew {
         'jq'          # command line JSON processor
         'node'        # Node.js
         'poetry'      # python project package manager
-        'python@3.9'  # use Python3 (update to just 'python' when possible)
+        'python@3.10' # use Python3 (update to just 'python' when possible)
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
