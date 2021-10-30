@@ -55,6 +55,7 @@ config.ensure_installed = {
   'swift',
   'tsx',
   'typescript',
+  'vim',
   'yaml',
 }
 
