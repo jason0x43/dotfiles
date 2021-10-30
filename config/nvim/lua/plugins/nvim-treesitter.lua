@@ -8,6 +8,7 @@ local config = {
     -- additional_vim_regex_highlighting = true
     additional_vim_regex_highlighting = vim.list_extend({
       'html',
+      'lua',
     }, require(
       'util'
     ).ts_types),
@@ -24,6 +25,7 @@ local config = {
     -- ).ts_types),
     disable = vim.list_extend({
       'html',
+      'lua',
     }, require('util').ts_types),
   },
   matchup = {
