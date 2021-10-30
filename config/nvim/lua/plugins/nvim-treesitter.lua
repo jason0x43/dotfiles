@@ -6,7 +6,11 @@ local config = {
     -- this should be set to a list of filetypes, but that doesn't work
     -- https://github.com/nvim-treesitter/nvim-treesitter#modules
     -- additional_vim_regex_highlighting = true
-    additional_vim_regex_highlighting = require('util').ts_types,
+    additional_vim_regex_highlighting = vim.list_extend({
+      'html',
+    }, require(
+      'util'
+    ).ts_types),
   },
   indent = {
     enable = true,
@@ -18,14 +22,16 @@ local config = {
     -- }, require(
     --   'util'
     -- ).ts_types),
-    disable = require('util').ts_types,
+    disable = vim.list_extend({
+      'html',
+    }, require('util').ts_types),
   },
   matchup = {
     enable = true,
   },
   context_commentstring = {
-    enable = true
-  }
+    enable = true,
+  },
 }
 
 config.ensure_installed = {

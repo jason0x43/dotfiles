@@ -246,6 +246,7 @@ packer.startup({
     })
     use({ 'tpope/vim-classpath', ft = { 'java' } })
     use({ 'MaxMEllon/vim-jsx-pretty', ft = require('util').ts_types })
+    use('pangloss/vim-javascript')
 
     -- native LSP
     use({
