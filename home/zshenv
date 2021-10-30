@@ -105,7 +105,7 @@ fi
 export TMUX_PLUGIN_MANAGER_PATH="$DATADIR/tmux/tmux-plugins"
 
 # pkg-config
-typeset -U pkg_config_path=$PKG_CONFIG_PATH
+typeset -U pkg_config_path
 
 if [[ -d $HOMEBREW_BASE/opt/openssl ]]; then
 	pkg_config_path=(
