@@ -222,7 +222,6 @@ packer.startup({
     -- filetype plugins
     use({
       'tpope/vim-markdown',
-      ft = 'markdown',
       setup = function()
         vim.g.markdown_fenced_languages = {
           'css',
@@ -242,11 +241,13 @@ packer.startup({
       end,
     })
     use({ 'tpope/vim-classpath', ft = 'java' })
+    use({
+      'MaxMEllon/vim-jsx-pretty',
+      ft = { 'jsx', 'javascriptreact', 'tsx', 'typescriptreact' },
+    })
 
     use('vim-scripts/applescript.vim')
     use('vim-scripts/Textile-for-VIM')
-    use('MaxMEllon/vim-jsx-pretty')
-    use('pangloss/vim-javascript')
 
     -- native LSP
     use({
@@ -356,7 +357,7 @@ packer.startup({
         'hrsh7th/cmp-nvim-lua',
         'hrsh7th/cmp-nvim-lsp',
         'saadparwaiz1/cmp_luasnip',
-      }
+      },
     })
 
     use({
@@ -369,8 +370,8 @@ packer.startup({
           display = {
             icons = { mode = 'none' },
             ghost_text = { enabled = false },
-            pum = { source_context = { '', '' } }
-          }
+            pum = { source_context = { '', '' } },
+          },
         }
       end,
       requires = {
