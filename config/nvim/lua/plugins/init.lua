@@ -223,6 +223,7 @@ packer.startup({
     -- filetype plugins
     use({
       'tpope/vim-markdown',
+      ft = 'markdown',
       setup = function()
         vim.g.markdown_fenced_languages = {
           'css',
@@ -234,8 +235,6 @@ packer.startup({
         }
       end,
     })
-    use('vim-scripts/applescript.vim')
-    use('vim-scripts/Textile-for-VIM')
     use({
       'mzlogin/vim-markdown-toc',
       cmd = { 'GenTocGFM', 'UpdateToc' },
@@ -243,7 +242,10 @@ packer.startup({
         vim.g.vmt_auto_update_on_save = 0
       end,
     })
-    use({ 'tpope/vim-classpath', ft = { 'java' } })
+    use({ 'tpope/vim-classpath', ft = 'java' })
+
+    use('vim-scripts/applescript.vim')
+    use('vim-scripts/Textile-for-VIM')
     use('MaxMEllon/vim-jsx-pretty')
     use('pangloss/vim-javascript')
 
