@@ -40,7 +40,6 @@ packer.startup({
         vim.g.nvim_tree_quit_on_open = 1
 
         -- ignore things
-        vim.g.nvim_tree_ignore = { '.git', '.cache' }
         vim.g.nvim_tree_gitignore = 1
       end,
       config = function()
