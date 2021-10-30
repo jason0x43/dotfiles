@@ -341,15 +341,35 @@ packer.startup({
       end,
     })
 
+    -- completion
+    use({
+      'hrsh7th/nvim-cmp',
+      disable = true,
+      config = function()
+        require('plugins.nvim-cmp')
+      end,
+      requires = {
+        'L3MON4D3/LuaSnip',
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-nvim-lua',
+        'hrsh7th/cmp-nvim-lsp',
+        'saadparwaiz1/cmp_luasnip',
+      }
+    })
+
     use({
       'ms-jpq/coq_nvim',
       branch = 'coq',
-      run = 'COQ',
+      run = 'COQdeps',
       setup = function()
         vim.g.coq_settings = {
           auto_start = 'shut-up',
-          ['display.icons.mode'] = 'none',
-          ['display.pum.source_context'] = { '', '' },
+          display = {
+            icons = { mode = 'none' },
+            ghost_text = { enabled = false },
+            pum = { source_context = { '', '' } }
+          }
         }
       end,
       requires = {
