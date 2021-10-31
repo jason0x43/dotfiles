@@ -35,6 +35,9 @@ if !exists('*GetJavascriptIndent')
 endif
 let b:did_indent = 1
 
+" indent correctly if inside <script>
+call extend(g:,{'html_indent_style1': 'inc'},'keep')
+
 setlocal indentexpr=HtmlIndent()
 setlocal indentkeys=o,O,<Return>,<>>,{,},!^F,:
 
@@ -602,7 +605,12 @@ endfunc "}}}
 " Return the indent inside a <style> block.
 func s:Alien4()
   "{{{
-  if prevnonblank(v:lnum-1) == b:hi_indent.blocklnr
+  let lnum = prevnonblank(v:lnum - 1)
+  if lnum < b:hi_indent.blocklnr
+    " indent for <style> itself
+    return b:hi_indent.blocktagind
+  endif
+  if lnum == b:hi_indent.blocklnr
     " indent for first content line
     return eval(b:hi_css1indent)
   endif
