@@ -5,6 +5,9 @@ packer.startup({
     -- manage the package manager
     use('wbthomason/packer.nvim')
 
+    -- speed up the lua loader
+    use('lewis6991/impatient.nvim')
+
     -- plenary is a common dependency
     use('nvim-lua/plenary.nvim')
 
