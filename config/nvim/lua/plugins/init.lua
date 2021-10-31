@@ -20,6 +20,13 @@ packer.startup({
       config = function()
         require('plugins.lualine_cfg')
       end,
+      requires = {
+        {
+          -- 'arkav/lualine-lsp-progress',
+          'clason/lualine-lsp-progress',
+          branch = 'adapt-shadman',
+        },
+      },
     })
 
     -- tree
@@ -231,6 +238,7 @@ packer.startup({
       },
     })
 
+    -- error panel
     use({
       'folke/trouble.nvim',
       config = function()
@@ -238,12 +246,7 @@ packer.startup({
       end,
     })
 
-    use({
-      -- 'arkav/lualine-lsp-progress',
-      'clason/lualine-lsp-progress',
-      branch = 'adapt-shadman',
-    })
-
+    -- show buffer symbols, functions, etc in side panel
     use({
       'simrat39/symbols-outline.nvim',
       setup = function()
@@ -265,13 +268,13 @@ packer.startup({
     -- This is disabled right now because it conflicts with matchup's
     -- highlighting for function/end and if/end pairs.
     -- highlight current word
-    -- use({
-    --   'RRethy/vim-illuminate',
-    --   after = 'nvim-lspconfig',
-    --   setup = function()
-    --     vim.g.Illuminate_highlightPriority = -10
-    --   end,
-    -- })
+    use({
+      'RRethy/vim-illuminate',
+      disable = true,
+      setup = function()
+        vim.g.Illuminate_highlightPriority = -10
+      end,
+    })
 
     -- better git diff views
     use({
@@ -311,6 +314,7 @@ packer.startup({
       },
     })
 
+    -- completion
     use({
       'ms-jpq/coq_nvim',
       branch = 'coq',
@@ -334,8 +338,8 @@ packer.startup({
         }
       end,
       requires = {
-        { 'ms-jpq/coq.thirdparty', after = 'coq_nvim', branch = '3p' },
-        { 'ms-jpq/coq.artifacts', after = 'coq_nvim', branch = 'artifacts' },
+        { 'ms-jpq/coq.thirdparty', branch = '3p' },
+        { 'ms-jpq/coq.artifacts', branch = 'artifacts' },
       },
     })
 
