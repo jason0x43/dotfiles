@@ -1,4 +1,5 @@
 local util = require('util')
+
 local M = {}
 
 function M.organize_imports()
@@ -41,7 +42,7 @@ M.config = {
 }
 
 function M.check_start()
-  -- start the TS server if there's a tsconfig
+  -- start the TS server if there's a config
   if
     vim.fn.findfile('tsconfig.json', '.;') ~= ''
     or vim.fn.findfile('jsconfig.json', '.;') ~= ''
@@ -50,9 +51,10 @@ function M.check_start()
   end
 end
 
-local ts_types_str = table.concat(util.ts_types, ',')
-util.augroup('init_typescript', {
-  'FileType ' .. ts_types_str .. ' lua require("lsp.tsserver").check_start()',
+util.augroup('init_tsserver', {
+  'FileType '
+    .. util.ts_types_str()
+    .. ' lua require("lsp.tsserver").check_start()',
 })
 
 return M

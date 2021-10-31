@@ -162,6 +162,15 @@ M.ts_types = {
   'jsx',
 }
 
+local ts_types_str
+
+M.ts_types_str = function()
+  if not ts_types_str then
+    ts_types_str = table.concat(M.ts_types, ',')
+  end
+  return ts_types_str
+end
+
 -- restore the cursor position in a file
 function M.restore_cursor()
   local filetype = vim.bo.filetype

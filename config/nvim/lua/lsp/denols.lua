@@ -2,7 +2,8 @@ local M = {}
 
 local lsp_find_root = require('lspconfig.util').root_pattern(
   'package.json',
-  'tsconfig.json',
+  'deps.ts',
+  'mod.ts',
   '.git'
 )
 
@@ -11,6 +12,8 @@ local function find_root(filename)
   if dir ~= nil then
     return dir
   end
+
+  -- return the files path as the default root
   return vim.fn.fnamemodify(filename, ':h')
 end
 
@@ -30,10 +33,11 @@ function M.check_start()
 end
 
 local util = require('util')
-local ts_types_str = table.concat(util.ts_types, ',')
 
 util.augroup('init_deno', {
-  'FileType ' .. ts_types_str .. ' lua require("lsp.denols").check_start()',
+  'FileType '
+    .. util.ts_types_str()
+    .. ' lua require("lsp.denols").check_start()',
 })
 
 return M
