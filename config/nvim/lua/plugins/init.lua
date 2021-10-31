@@ -29,7 +29,7 @@ packer.startup({
       },
     })
 
-    -- tree
+    -- file explorer in sidebar
     use({
       'kyazdani42/nvim-tree.lua',
       -- nvim-tree needs to load at the same time or before a file is loaded for
@@ -71,7 +71,24 @@ packer.startup({
     use({
       'mhinz/vim-startify',
       config = function()
-        require('plugins.startify_cfg')
+        local g = vim.g
+        g.startify_session_persistence = 0
+        g.startify_relative_path = 1
+        g.startify_use_env = 1
+        g.startify_files_number = 5
+        g.startify_change_to_dir = 0
+        g.startify_ascii_header = {
+          ' ____ ____ ____ ____ ____ ____ ',
+          '||n |||e |||o |||v |||i |||m ||',
+          '||__|||__|||__|||__|||__|||__||',
+          '|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|',
+          '',
+        }
+        g.startify_custom_header = 'startify#pad(g:startify_ascii_header)'
+        g.startify_lists = {
+          { header = { '   MRU ' .. vim.fn.getcwd() }, type = 'dir' },
+          { header = { '   MRU' }, type = 'files' },
+        }
       end,
     })
 
@@ -181,7 +198,13 @@ packer.startup({
     use({
       'numToStr/Navigator.nvim',
       config = function()
-        require('plugins.Navigator_cfg')
+        require('Navigator').setup()
+
+        local util = require('util')
+        util.nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
+        util.nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
+        util.nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
+        util.nmap('<C-l>', '<cmd>lua require("Navigator").right()<cr>')
       end,
     })
 
@@ -246,7 +269,7 @@ packer.startup({
       end,
     })
 
-    -- show buffer symbols, functions, etc in side panel
+    -- show buffer symbols, functions, etc in sidebar
     use({
       'simrat39/symbols-outline.nvim',
       setup = function()
@@ -265,11 +288,11 @@ packer.startup({
       end,
     })
 
-    -- This is disabled right now because it conflicts with matchup's
-    -- highlighting for function/end and if/end pairs.
     -- highlight current word
     use({
       'RRethy/vim-illuminate',
+      -- disabled because it conflicts with matchup's highlighting for
+      -- function/end and if/end pairs
       disable = true,
       setup = function()
         vim.g.Illuminate_highlightPriority = -10
@@ -300,6 +323,7 @@ packer.startup({
     -- completion
     use({
       'hrsh7th/nvim-cmp',
+      -- disabled in favor of coq
       disable = true,
       config = function()
         require('plugins.nvim-cmp_cfg')
