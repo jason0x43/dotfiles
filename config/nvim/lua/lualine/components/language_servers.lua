@@ -9,7 +9,7 @@ function LanguageServers:update_status()
   end
 
   if not vim.tbl_isempty(client_names) then
-    self.options.icon = ''
+    self.options.icon = ' '
     local name_list = table.concat(client_names, ',')
     local winwidth = vim.fn.winwidth(0)
     if #name_list > math.floor(winwidth * 0.15) then
