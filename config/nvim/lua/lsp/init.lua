@@ -164,6 +164,12 @@ function M.get_lsp_config(server)
     )
   end
 
+  -- add coq capabilities
+  local coq = util.srequire('coq')
+  if coq then
+    config = coq.lsp_ensure_capabilities(config)
+  end
+
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
   if client_config.config then
