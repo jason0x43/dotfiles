@@ -371,6 +371,14 @@ packer.startup({
             icons = { mode = 'none' },
             ghost_text = { enabled = false },
             pum = { source_context = { '', '' } },
+            preview = {
+              positions = {
+                north = 0,
+                south = 0,
+                west = 0,
+                east = 0
+              }
+            }
           },
         }
       end,
