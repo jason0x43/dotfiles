@@ -54,6 +54,8 @@ packer.startup({
             width = 40,
           },
         })
+
+        require('util').lmap('n', '<cmd>NvimTreeToggle<cr>')
       end,
     })
 
@@ -89,6 +91,8 @@ packer.startup({
           { header = { '   MRU ' .. vim.fn.getcwd() }, type = 'dir' },
           { header = { '   MRU' }, type = 'files' },
         }
+
+        require('util').lmap('s', '<cmd>Startify<cr>')
       end,
     })
 
@@ -111,7 +115,14 @@ packer.startup({
     })
 
     -- preserve layout when closing buffers; used for <leader>k
-    use('moll/vim-bbye')
+    use({
+      'moll/vim-bbye',
+      config = function()
+        local util = require('util')
+        util.lmap('k', '<cmd>Bdelete<cr>')
+        util.lmap('K', '<cmd>Bdelete!<cr>')
+      end
+    })
 
     -- more efficient cursorhold behavior
     -- see https://github.com/neovim/neovim/issues/12587
@@ -148,6 +159,8 @@ packer.startup({
       config = function()
         vim.g.undotree_DiffAutoOpen = 0
         vim.g.undotree_SetFocusWhenToggle = 1
+
+        require('util').lmap('u', '<cmd>UndotreeToggle<cr>')
       end,
     })
 
@@ -259,14 +272,6 @@ packer.startup({
           end,
         },
       },
-    })
-
-    -- error panel
-    use({
-      'folke/trouble.nvim',
-      config = function()
-        require('plugins.trouble_cfg')
-      end,
     })
 
     -- show buffer symbols, functions, etc in sidebar

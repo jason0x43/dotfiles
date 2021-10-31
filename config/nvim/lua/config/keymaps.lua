@@ -12,10 +12,6 @@ util.map('#', '<cmd>set cursorcolumn! cursorline!<cr>')
 util.lmap('w', '<cmd>w<cr>')
 util.lmap('W', '<cmd>w!<cr>')
 
--- kill a buffer without closing its window
-util.lmap('k', '<cmd>Bdelete<cr>')
-util.lmap('K', '<cmd>Bdelete!<cr>')
-
 -- quit vim
 util.lmap('q', '<cmd>qall<cr>')
 util.lmap('Q', '<cmd>qall!<cr>')
@@ -39,12 +35,3 @@ util.lmap(
   { mode = 'nvo' }
 )
 util.lmap('p', '"*p')
-
--- open startify
-util.lmap('s', '<cmd>Startify<cr>')
-
--- open NvimTree
-util.lmap('n', '<cmd>NvimTreeToggle<cr>')
-
--- open UndoTree
-util.lmap('u', '<cmd>UndotreeToggle<cr>')
