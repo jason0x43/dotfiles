@@ -3,6 +3,7 @@
 vim.opt.shadafile = 'NONE'
 
 require('config.packer')
+require('config.packer_cfg')
 require('config.options')
 require('config.keymaps')
 require('config.autocommands')

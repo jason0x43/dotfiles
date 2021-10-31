@@ -15,7 +15,7 @@ packer.startup({
     use({
       'nvim-lualine/lualine.nvim',
       config = function()
-        require('plugins.lualine')
+        require('plugins.lualine_cfg')
       end,
     })
 
@@ -61,7 +61,7 @@ packer.startup({
     use({
       'mhinz/vim-startify',
       config = function()
-        require('plugins.startify')
+        require('plugins.startify_cfg')
       end,
     })
 
@@ -119,7 +119,8 @@ packer.startup({
     use({
       'mbbill/undotree',
       config = function()
-        require('plugins.undotree')
+        vim.g.undotree_DiffAutoOpen = 0
+        vim.g.undotree_SetFocusWhenToggle = 1
       end,
     })
 
@@ -128,7 +129,7 @@ packer.startup({
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
       config = function()
-        require('plugins.nvim-treesitter')
+        require('plugins.nvim-treesitter_cfg')
       end,
       requires = {
         -- provide TSHighlightCapturesUnderCursor command
@@ -149,10 +150,10 @@ packer.startup({
     use({
       'nvim-telescope/telescope.nvim',
       setup = function()
-        require('plugins.telescope').setup()
+        require('plugins.telescope_cfg').setup()
       end,
       config = function()
-        require('plugins.telescope').config()
+        require('plugins.telescope_cfg').config()
       end,
       requires = {
         {
@@ -170,7 +171,7 @@ packer.startup({
     use({
       'numToStr/Navigator.nvim',
       config = function()
-        require('plugins.Navigator')
+        require('plugins.Navigator_cfg')
       end,
     })
 
@@ -209,7 +210,7 @@ packer.startup({
         {
           'jose-elias-alvarez/null-ls.nvim',
           config = function()
-            require('plugins.null-ls')
+            require('plugins.null-ls_cfg')
           end,
         },
         {
@@ -230,7 +231,7 @@ packer.startup({
     use({
       'folke/trouble.nvim',
       config = function()
-        require('plugins.trouble')
+        require('plugins.trouble_cfg')
       end,
     })
 
@@ -295,7 +296,7 @@ packer.startup({
       'hrsh7th/nvim-cmp',
       disable = true,
       config = function()
-        require('plugins.nvim-cmp')
+        require('plugins.nvim-cmp_cfg')
       end,
       requires = {
         'L3MON4D3/LuaSnip',
