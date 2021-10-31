@@ -6,21 +6,14 @@ packer.startup({
     use('wbthomason/packer.nvim')
 
     -- plenary is a common dependency
-    use({
-      'nvim-lua/plenary.nvim',
-      event = 'VimEnter',
-    })
+    use('nvim-lua/plenary.nvim')
 
     -- devicons are needed by the status bar
-    use({
-      'kyazdani42/nvim-web-devicons',
-      event = 'VimEnter',
-    })
+    use('kyazdani42/nvim-web-devicons')
 
     -- flashy status bar
     use({
       'nvim-lualine/lualine.nvim',
-      event = 'VimEnter',
       config = function()
         require('plugins.lualine')
       end,
@@ -31,7 +24,6 @@ packer.startup({
       'kyazdani42/nvim-tree.lua',
       -- nvim-tree needs to load at the same time or before a file is loaded for
       -- it to properly locate the file when initially showing the tree
-      event = 'VimEnter',
       setup = function()
         -- append a slash to folder names
         vim.g.nvim_tree_add_trailing = 1
@@ -58,7 +50,6 @@ packer.startup({
     -- autodetect buffer formatting
     use({
       'tpope/vim-sleuth',
-      event = 'BufRead',
       config = function()
         -- Disable sleuth for markdown files as it slows the load time
         -- significantly
@@ -69,7 +60,6 @@ packer.startup({
     -- Useful startup text, menu
     use({
       'mhinz/vim-startify',
-      event = 'VimEnter',
       config = function()
         require('plugins.startify')
       end,
@@ -78,7 +68,6 @@ packer.startup({
     -- highlight color strings
     use({
       'norcalli/nvim-colorizer.lua',
-      event = 'BufRead',
       config = function()
         require('colorizer').setup({ '*' }, {
           names = false,
@@ -89,32 +78,24 @@ packer.startup({
     -- better start/end matching
     use({
       'andymass/vim-matchup',
-      event = 'CursorMoved',
       config = function()
         vim.g.matchup_matchparen_offscreen = { method = 'popup' }
       end,
     })
 
     -- preserve layout when closing buffers; used for <leader>k
-    use({
-      'moll/vim-bbye',
-      cmd = 'Bdelete',
-    })
+    use('moll/vim-bbye')
 
     -- more efficient cursorhold behavior
     -- see https://github.com/neovim/neovim/issues/12587
-    use({
-      'antoinemadec/FixCursorHold.nvim',
-      event = 'BufRead',
-    })
+    use('antoinemadec/FixCursorHold.nvim')
 
     -- gc for commenting code blocks
-    use({ 'tpope/vim-commentary', event = 'CursorMoved' })
+    use('tpope/vim-commentary')
 
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      event = 'BufRead',
       setup = function()
         -- Don't let editorconfig set the max line -- it's handled via an
         -- autocommand
@@ -123,33 +104,20 @@ packer.startup({
     })
 
     -- git utilities
-    use({
-      'tpope/vim-fugitive',
-      cmd = 'Git',
-    })
+    use('tpope/vim-fugitive')
 
     -- support for repeating mapped commands
-    use({
-      'tpope/vim-repeat',
-      event = 'CursorMoved',
-    })
+    use('tpope/vim-repeat')
 
     -- for manipulating parens and such
-    use({
-      'tpope/vim-surround',
-      event = 'CursorMoved',
-    })
+    use('tpope/vim-surround')
 
     -- easy vertical alignment of code elements
-    use({
-      'junegunn/vim-easy-align',
-      cmd = 'EasyAlign',
-    })
+    use('junegunn/vim-easy-align')
 
     -- visualize the undo tree
     use({
       'mbbill/undotree',
-      cmd = 'UndotreeToggle',
       config = function()
         require('plugins.undotree')
       end,
@@ -158,62 +126,49 @@ packer.startup({
     -- for filetype features like syntax highlighting and indenting
     use({
       'nvim-treesitter/nvim-treesitter',
-      event = 'BufRead',
       run = ':TSUpdate',
       config = function()
         require('plugins.nvim-treesitter')
       end,
-    })
-
-    -- provide TSHighlightCapturesUnderCursor command
-    use({
-      'nvim-treesitter/playground',
-      after = 'nvim-treesitter',
-    })
-
-    -- set proper commentstring for embedded languages
-    use({
-      'JoosepAlviste/nvim-ts-context-commentstring',
-      after = 'nvim-treesitter',
-    })
-
-    -- show semantic file location (e.g., what function you're in)
-    use({
-      'SmiteshP/nvim-gps',
-      after = 'nvim-treesitter',
-      config = function()
-        require('nvim-gps').setup()
-      end,
+      requires = {
+        -- provide TSHighlightCapturesUnderCursor command
+        'nvim-treesitter/playground',
+        -- set proper commentstring for embedded languages
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        -- show semantic file location (e.g., what function you're in)
+        {
+          'SmiteshP/nvim-gps',
+          config = function()
+            require('nvim-gps').setup()
+          end,
+        },
+      },
     })
 
     -- fuzzy finding
     use({
       'nvim-telescope/telescope.nvim',
-      cmd = 'Telescope',
       setup = function()
         require('plugins.telescope').setup()
       end,
       config = function()
         require('plugins.telescope').config()
       end,
-    })
-    use({
-      'nvim-telescope/telescope-fzf-native.nvim',
-      after = 'telescope.nvim',
-      run = 'make',
-      config = function()
-        require('telescope').load_extension('fzf')
-      end,
-    })
-    use({
-      'nvim-telescope/telescope-symbols.nvim',
-      after = 'telescope.nvim',
+      requires = {
+        {
+          'nvim-telescope/telescope-fzf-native.nvim',
+          run = 'make',
+          config = function()
+            require('telescope').load_extension('fzf')
+          end,
+        },
+        'nvim-telescope/telescope-symbols.nvim',
+      },
     })
 
     -- easier movement between vim and tmux panes, and between vim panes
     use({
       'numToStr/Navigator.nvim',
-      event = 'VimEnter',
       config = function()
         require('plugins.Navigator')
       end,
@@ -235,64 +190,58 @@ packer.startup({
     })
     use({
       'mzlogin/vim-markdown-toc',
-      cmd = { 'GenTocGFM', 'UpdateToc' },
       setup = function()
         vim.g.vmt_auto_update_on_save = 0
       end,
     })
-    use({ 'tpope/vim-classpath', ft = 'java' })
-    use({
-      'MaxMEllon/vim-jsx-pretty',
-      ft = { 'jsx', 'javascriptreact', 'tsx', 'typescriptreact' },
-    })
-
+    use('tpope/vim-classpath')
+    use('MaxMEllon/vim-jsx-pretty')
     use('vim-scripts/applescript.vim')
     use('vim-scripts/Textile-for-VIM')
 
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      event = 'BufRead',
       config = function()
         require('lsp')
       end,
-    })
-    use({
-      'jose-elias-alvarez/null-ls.nvim',
-      after = { 'nvim-lspconfig', 'plenary.nvim' },
-      config = function()
-        require('plugins.null-ls')
-      end,
-    })
-    use({
-      'williamboman/nvim-lsp-installer',
-      after = 'nvim-lspconfig',
-      config = function()
-        require('nvim-lsp-installer').on_server_ready(function(server)
-          local config = require('lsp').get_lsp_config(server.name)
-          server:setup(config)
-          vim.cmd('do User LspAttachBuffers')
-        end)
+      requires = {
+        {
+          'jose-elias-alvarez/null-ls.nvim',
+          config = function()
+            require('plugins.null-ls')
+          end,
+        },
+        {
+          'williamboman/nvim-lsp-installer',
+          config = function()
+            require('nvim-lsp-installer').on_server_ready(function(server)
+              local config = require('lsp').get_lsp_config(server.name)
+              server:setup(config)
+              vim.cmd('do User LspAttachBuffers')
+            end)
 
-        require('util').cmd('LspStatus', 'LspInstallInfo')
-      end,
+            require('util').cmd('LspStatus', 'LspInstallInfo')
+          end,
+        },
+      },
     })
+
     use({
       'folke/trouble.nvim',
-      cmd = 'Trouble',
       config = function()
         require('plugins.trouble')
       end,
     })
+
     use({
       -- 'arkav/lualine-lsp-progress',
       'clason/lualine-lsp-progress',
       branch = 'adapt-shadman',
-      after = 'nvim-lspconfig',
     })
+
     use({
       'simrat39/symbols-outline.nvim',
-      after = 'nvim-lspconfig',
       setup = function()
         vim.g.symbols_outline = {
           auto_preview = false,
@@ -323,7 +272,6 @@ packer.startup({
     -- better git diff views
     use({
       'sindrets/diffview.nvim',
-      cmd = 'DiffviewOpen',
       config = function()
         require('diffview').setup()
       end,
@@ -332,7 +280,6 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
-      after = 'plenary.nvim',
       config = function()
         require('gitsigns').setup({
           signs = {
@@ -376,9 +323,9 @@ packer.startup({
                 north = 0,
                 south = 0,
                 west = 0,
-                east = 0
-              }
-            }
+                east = 0,
+              },
+            },
           },
         }
       end,
@@ -389,7 +336,7 @@ packer.startup({
     })
 
     -- startup time profiling
-    use({ 'dstein64/vim-startuptime', cmd = 'StartupTime' })
+    use('dstein64/vim-startuptime')
   end,
 
   config = {
