@@ -413,18 +413,19 @@ function GetJavascriptIndent()
   endif
 
   let [b:js_cache[0], num] = [v:lnum, b:js_cache[1]]
+  let jsindent = eval(get(b:, 'hi_js1indent', 0))
 
-  let [num_ind, is_op, b_l, l:switch_offset, s:in_jsx] = [s:Nat(indent(num))-s:l1,0,0,0,0]
+  let [num_ind, is_op, b_l, l:switch_offset, s:in_jsx] = [s:Nat(indent(num)),0,0,0,0]
   if !num || s:LookingAt() == '{' && s:IsBlock()
     let ilnum = line('.')
     if num && !s:in_jsx && s:LookingAt() == ')' && s:GetPair('(',')','bW',s:skip_expr)
       if ilnum == num
-        let [num, num_ind] = [line('.'), indent('.') - s:l1]
+        let [num, num_ind] = [line('.'), indent('.')]
       endif
       if idx == -1 && s:PreviousToken() ==# 'switch' && s:IsSwitch()
         let l:switch_offset = &cino !~ ':' ? s:sw() : s:ParseCino(':')
         if pline[-1:] != '.' && l:line =~# '^\%(default\|case\)\>'
-          return s:Nat(num_ind + l:switch_offset)
+          return s:Nat(num_ind + l:switch_offset) - jsindent
         elseif &cino =~ '='
           let l:case_offset = s:ParseCino('=')
         endif
@@ -471,9 +472,9 @@ function GetJavascriptIndent()
         return virtcol('.') - 1
       endif
     endif
-    return num_ind
+    return num_ind - jsindent
   elseif num
-    return s:Nat(num_ind + get(l:,'case_offset',s:sw()) + l:switch_offset + b_l + is_op)
+    return s:Nat(num_ind + get(l:,'case_offset',s:sw()) + l:switch_offset + b_l + is_op) - jsindent
   endif
   return b_l + is_op
 endfunction
