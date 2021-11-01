@@ -1,7 +1,9 @@
 local M = {}
 
-function M.on_attach()
-  require('util').cmd('OrganizeImports', '-buffer', 'PyrightOrganizeImports')
-end
+M.config = {
+  on_attach = {
+    require('util').bufcmd('OrganizeImports', 'PyrightOrganizeImports')
+  }
+}
 
 return M

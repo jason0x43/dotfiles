@@ -14,12 +14,6 @@ end
 local function on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
-  -- run any client-specific attach functions
-  local client_config = load_client_config(client.name)
-  if client_config.on_attach then
-    client_config.on_attach(client)
-  end
-
   pcall(function()
     require('illuminate').on_attach(client)
   end)
@@ -45,7 +39,7 @@ local function on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.cmd('Format', '-buffer', 'lua require("lsp").format_sync(nil, 5000)')
+    util.bufcmd('Format', 'lua require("lsp").format_sync(nil, 5000)')
   end
 
   if client.resolved_capabilities.completion then
@@ -53,11 +47,9 @@ local function on_attach(client, bufnr)
     vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 
     -- apply any additional fixups after a completion is accepted
-    vim.cmd('augroup lsp-completion')
-    vim.cmd(
-      'autocmd! CompleteDone <buffer> lua require("lsp").on_complete_done()'
-    )
-    vim.cmd('augroup END')
+    util.augroup('lsp-completion', {
+      'CompleteDone <buffer> lua require("lsp").on_complete_done()',
+    })
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -154,7 +146,7 @@ end
 -- setup a server
 function M.get_lsp_config(server)
   -- default config for all servers
-  local config = { on_attach = on_attach }
+  local config = {}
 
   -- add cmp capabilities
   local cmp = util.srequire('cmp_nvim_lsp')
@@ -174,6 +166,16 @@ function M.get_lsp_config(server)
   local client_config = load_client_config(server)
   if client_config.config then
     config = vim.tbl_deep_extend('force', config, client_config.config)
+  end
+
+  if config.on_attach then
+    local config_on_attach = config.on_attach
+    config.on_attach = function(client, bufnr)
+      config_on_attach(client, bufnr)
+      on_attach(client, bufnr)
+    end
+  else
+    config.on_attach = on_attach
   end
 
   return config
@@ -221,20 +223,14 @@ lsp.handlers['textDocument/signatureHelp'] = lsp.with(
   { border = 'rounded' }
 )
 
+-- wrap lsp.buf_attach_client to allow clients to determine whether they should
+-- actually be attached
 local orig_buf_attach_client = lsp.buf_attach_client
-
 function lsp.buf_attach_client(bufnr, client_id)
   local client = lsp.get_client_by_id(client_id)
-  if client.name == 'denols' then
-    local clients = lsp.buf_get_clients(bufnr)
-    for _, c in ipairs(clients) do
-      if c.name == 'tsserver' then
-        -- Don't attach deno to a buffer that already has tsserver attached
-        return
-      end
-    end
+  if not client.config.should_attach or client.config.should_attach(bufnr) then
+    return orig_buf_attach_client(bufnr, client_id)
   end
-  return orig_buf_attach_client(bufnr, client_id)
 end
 
 return M

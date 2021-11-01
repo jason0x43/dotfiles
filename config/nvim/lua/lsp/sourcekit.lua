@@ -1,6 +1,9 @@
 -- sourcekit isn't handled by lspinstall
-require('lspconfig').sourcekit.setup({
+local M = {}
+
+M.config = {
   -- use the cpp lsp for C/CPP
   filetypes = { 'swift' },
-  on_attach = require('lsp').on_attach,
-})
+}
+
+return M
