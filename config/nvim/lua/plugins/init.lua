@@ -223,19 +223,6 @@ packer.startup({
 
     -- filetype plugins
     use({
-      'tpope/vim-markdown',
-      setup = function()
-        vim.g.markdown_fenced_languages = {
-          'css',
-          'html',
-          'javascript',
-          'typescript',
-          'js=javascript',
-          'ts=typescript',
-        }
-      end,
-    })
-    use({
       'mzlogin/vim-markdown-toc',
       setup = function()
         vim.g.vmt_auto_update_on_save = 0

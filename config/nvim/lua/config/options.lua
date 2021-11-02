@@ -102,6 +102,16 @@ if vim.fn.executable('rg') then
   o.grepprg = 'rg --no-heading --color=never'
 end
 
+-- enable syntax highlighting language blocks in markdown
+g.markdown_fenced_languages = {
+  'css',
+  'html',
+  'javascript',
+  'typescript',
+  'js=javascript',
+  'ts=typescript',
+}
+
 -- disable builtin plugins
 -- the value of the loaded var doesn't matter, just that it's defined
 local disabled_plugins = {
