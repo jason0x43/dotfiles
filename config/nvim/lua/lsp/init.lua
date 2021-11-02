@@ -134,12 +134,10 @@ end
 function M.show_position_diagnostics()
   vim.diagnostic.open_float(0, {
     scope = 'cursor',
-    float = {
-      border = 'rounded',
-      max_width = 80,
-      show_header = false,
-      focusable = false,
-    },
+    border = 'rounded',
+    max_width = 80,
+    show_header = false,
+    focusable = false,
   })
 end
 
