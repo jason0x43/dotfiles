@@ -222,6 +222,7 @@ packer.startup({
     })
 
     -- filetype plugins
+    use('tpope/vim-markdown')
     use({
       'mzlogin/vim-markdown-toc',
       setup = function()
