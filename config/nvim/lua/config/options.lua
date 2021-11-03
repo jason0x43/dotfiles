@@ -76,9 +76,6 @@ o.mouse = 'a'
 -- enable truecolor mode
 o.termguicolors = true
 
--- inmprove completion
-o.completeopt = o.completeopt + { 'menuone', 'noinsert', 'noselect' }
-
 -- show markers for long lines
 o.listchars.precedes = '^'
 o.listchars.extends = '$'

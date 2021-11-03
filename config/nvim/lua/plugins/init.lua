@@ -338,6 +338,11 @@ packer.startup({
       setup = function()
         vim.g.coq_settings = {
           auto_start = 'shut-up',
+          keymap = {
+            pre_select = true,
+            jump_to_mark = '<c-i>'
+
+          },
           display = {
             icons = { mode = 'none' },
             ghost_text = { enabled = false },
