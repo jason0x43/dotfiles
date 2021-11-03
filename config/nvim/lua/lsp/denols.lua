@@ -8,6 +8,10 @@ local lsp_find_root = require('lspconfig.util').root_pattern(
 )
 
 M.config = {
+  filetypes = {
+    'typescript',
+    'javascript'
+  },
   root_dir = function(filename)
     local dir = lsp_find_root(filename)
     if dir ~= nil then
