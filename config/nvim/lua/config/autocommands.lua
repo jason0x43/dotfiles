@@ -21,9 +21,6 @@ util.augroup('init_autocommands', {
   'FileType help,qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
   'BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>',
 
-  -- auto-close preview windows after autocomplete
-  'CompleteDone * pclose',
-
   -- auto-set quickfix height
   'FileType qf lua require("util").adjust_window_height(1, 10)',
 

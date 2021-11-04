@@ -317,7 +317,7 @@ packer.startup({
     use({
       'hrsh7th/nvim-cmp',
       -- disabled in favor of coq
-      disable = true,
+      -- disable = true,
       config = function()
         require('plugins.nvim-cmp_cfg')
       end,
@@ -336,13 +336,12 @@ packer.startup({
       'ms-jpq/coq_nvim',
       branch = 'coq',
       run = ':COQdeps',
+      disable = true,
       setup = function()
         vim.g.coq_settings = {
           auto_start = 'shut-up',
           keymap = {
-            pre_select = true,
             jump_to_mark = '<c-i>'
-
           },
           display = {
             icons = { mode = 'none' },

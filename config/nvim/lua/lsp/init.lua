@@ -45,11 +45,6 @@ local function on_attach(client, bufnr)
   if client.resolved_capabilities.completion then
     -- enable lsp completions
     vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-    -- apply any additional fixups after a completion is accepted
-    util.augroup('lsp-completion', {
-      'CompleteDone <buffer> lua require("lsp").on_complete_done()',
-    })
   end
 
   if not packer_plugins['trouble.nvim'] then
