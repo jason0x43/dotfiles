@@ -1,3 +1,12 @@
+local legacy_filetypes = vim.list_extend({
+  'html',
+  'css',
+  'scss',
+  'lua',
+}, require(
+  'util'
+).ts_types)
+
 local config = {
   highlight = {
     enable = true,
@@ -6,12 +15,7 @@ local config = {
     -- this should be set to a list of filetypes, but that doesn't work
     -- https://github.com/nvim-treesitter/nvim-treesitter#modules
     -- additional_vim_regex_highlighting = true
-    additional_vim_regex_highlighting = vim.list_extend({
-      'html',
-      'lua',
-    }, require(
-      'util'
-    ).ts_types),
+    additional_vim_regex_highlighting = legacy_filetypes,
   },
   indent = {
     enable = true,
@@ -23,10 +27,7 @@ local config = {
     -- }, require(
     --   'util'
     -- ).ts_types),
-    disable = vim.list_extend({
-      'html',
-      'lua',
-    }, require('util').ts_types),
+    disable = legacy_filetypes,
   },
   matchup = {
     enable = true,
