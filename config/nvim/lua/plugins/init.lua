@@ -20,13 +20,7 @@ packer.startup({
       config = function()
         require('plugins.lualine_cfg')
       end,
-      requires = {
-        {
-          -- 'arkav/lualine-lsp-progress',
-          'clason/lualine-lsp-progress',
-          branch = 'adapt-shadman',
-        },
-      },
+      requires = 'arkav/lualine-lsp-progress',
     })
 
     -- file explorer in sidebar
@@ -100,9 +94,12 @@ packer.startup({
     use({
       'norcalli/nvim-colorizer.lua',
       config = function()
-        require('colorizer').setup({ '*' }, {
-          names = false,
-        })
+        local colorizer = require('util').srequire('colorizer')
+        if colorizer then
+          colorizer.setup({ '*' }, {
+            names = false,
+          })
+        end
       end,
     })
 
@@ -180,7 +177,10 @@ packer.startup({
         {
           'SmiteshP/nvim-gps',
           config = function()
-            require('nvim-gps').setup()
+            local gps = require('util').srequire('nvim-gps')
+            if gps then
+              gps.setup()
+            end
           end,
         },
       },
@@ -211,9 +211,14 @@ packer.startup({
     use({
       'numToStr/Navigator.nvim',
       config = function()
-        require('Navigator').setup()
-
         local util = require('util')
+        local Navigator = util.srequire('Navigator')
+        if not Navigator then
+          return
+        end
+
+        Navigator.setup()
+
         util.nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
         util.nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
         util.nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
@@ -250,13 +255,18 @@ packer.startup({
         {
           'williamboman/nvim-lsp-installer',
           config = function()
-            require('nvim-lsp-installer').on_server_ready(function(server)
+            local util = require('util')
+            local installer = util.srequire('nvim-lsp-installer')
+            if not installer then
+              return
+            end
+            installer.on_server_ready(function(server)
               local config = require('lsp').get_lsp_config(server.name)
               server:setup(config)
               vim.cmd('doautoall FileType')
             end)
 
-            require('util').cmd('LspStatus', 'LspInstallInfo')
+            util.cmd('LspStatus', 'LspInstallInfo')
           end,
         },
       },
@@ -296,7 +306,10 @@ packer.startup({
     use({
       'sindrets/diffview.nvim',
       config = function()
-        require('diffview').setup()
+        local diffview = require('util').srequire('diffview')
+        if diffview then
+          diffview.setup()
+        end
       end,
     })
 
@@ -304,12 +317,15 @@ packer.startup({
     use({
       'lewis6991/gitsigns.nvim',
       config = function()
-        require('gitsigns').setup({
-          signs = {
-            add = { text = '▋' },
-            change = { text = '▋' },
-          },
-        })
+        local gitsigns = require('util').srequire('gitsigns')
+        if gitsigns then
+          gitsigns.setup({
+            signs = {
+              add = { text = '▋' },
+              change = { text = '▋' },
+            },
+          })
+        end
       end,
     })
 

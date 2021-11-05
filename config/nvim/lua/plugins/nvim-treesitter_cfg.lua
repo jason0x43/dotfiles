@@ -1,11 +1,16 @@
+local util = require('util')
+local configs = util.srequire('nvim-treesitter.configs')
+
+if not configs then
+  return
+end
+
 local legacy_filetypes = vim.list_extend({
   'html',
   'css',
   'scss',
   'lua',
-}, require(
-  'util'
-).ts_types)
+}, util.ts_types)
 
 local config = {
   highlight = {
@@ -62,4 +67,4 @@ config.ensure_installed = {
   'yaml',
 }
 
-require('nvim-treesitter.configs').setup(config)
+configs.setup(config)

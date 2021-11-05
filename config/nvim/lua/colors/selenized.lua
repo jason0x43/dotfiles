@@ -166,7 +166,7 @@ function M.apply_theme(theme_name)
   hi_link('Tag', 'Special')
   hi_link('Typedef', 'Type')
   hi_link('lCursor', 'Cursor')
-
+  hi_link('ErrorMsg', 'Error')
 
   -- basic groups
   hi('Normal', palette.fg_0, palette.bg_0, '', '')
@@ -210,7 +210,6 @@ function M.apply_theme(theme_name)
   hi('DiffText', palette.bg_1, palette.yellow, '', '')
   hi('Directory', '', '', '', '')
   hi('EndOfBuffer', '', '', '', '')
-  hi('ErrorMsg', '', '', '', '')
   hi('FoldColumn', '', '', '', '')
   hi('Folded', '', palette.bg_1, '', '')
   hi('IncSearch', palette.magenta, '', 'reverse', '')

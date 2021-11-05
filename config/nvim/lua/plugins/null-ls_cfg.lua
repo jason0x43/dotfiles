@@ -1,4 +1,9 @@
-local null_ls = require('null-ls')
+local srequire = require('util').srequire
+local null_ls = srequire('null-ls')
+if not null_ls then
+  return
+end
+
 local helpers = require('null-ls.helpers')
 
 local htmlhint_source = {
