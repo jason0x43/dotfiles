@@ -264,8 +264,6 @@ packer.startup({
               local config = require('lsp').get_lsp_config(server.name)
               server:setup(config)
             end)
-
-            util.cmd('LspStatus', 'LspInstallInfo')
           end,
         },
       },
