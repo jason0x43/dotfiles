@@ -263,7 +263,6 @@ packer.startup({
             installer.on_server_ready(function(server)
               local config = require('lsp').get_lsp_config(server.name)
               server:setup(config)
-              vim.cmd('doautoall FileType')
             end)
 
             util.cmd('LspStatus', 'LspInstallInfo')
