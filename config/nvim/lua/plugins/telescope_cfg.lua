@@ -20,7 +20,12 @@ function M.setup()
 end
 
 function M.config()
-  require('telescope').setup({
+  local telescope = require('util').srequire('telescope')
+  if not telescope then
+    return
+  end
+
+  telescope.setup({
     defaults = {
       mappings = {
         i = {
