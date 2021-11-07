@@ -265,6 +265,7 @@ packer.startup({
             end)
           end,
         },
+        'b0o/schemastore.nvim',
       },
     })
 
