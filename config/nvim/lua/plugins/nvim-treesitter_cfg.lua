@@ -1,6 +1,4 @@
-local util = require('util')
-local configs = util.srequire('nvim-treesitter.configs')
-
+local configs = require('req')('nvim-treesitter.configs')
 if not configs then
   return
 end
@@ -10,7 +8,7 @@ local legacy_filetypes = vim.list_extend({
   'css',
   'scss',
   'lua',
-}, util.ts_types)
+}, require('util').ts_types)
 
 local config = {
   highlight = {
@@ -26,12 +24,6 @@ local config = {
     enable = true,
     -- indenting is currently broken for several languages, particularly for doc
     -- comments
-    -- disable = vim.list_extend({
-    --   'cpp',
-    --   'python',
-    -- }, require(
-    --   'util'
-    -- ).ts_types),
     disable = legacy_filetypes,
   },
   matchup = {

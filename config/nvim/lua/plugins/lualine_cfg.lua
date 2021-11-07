@@ -1,5 +1,5 @@
 local theme = require('util.theme')
-local srequire = require('util').srequire
+local req = require('req')
 
 -- make statusline transparent so we don't get a flash before lualine renders
 theme.hi('StatusLine', { bg = '' })
@@ -50,7 +50,7 @@ local config = {
   extensions = { 'nvim-tree', 'quickfix', 'symbols_outline' },
 }
 
-local gps = srequire('nvim-gps')
+local gps = req('nvim-gps')
 if gps then
   table.insert(
     config.sections.lualine_c,
@@ -58,7 +58,7 @@ if gps then
   )
 end
 
-local outline = srequire('symbols-outline')
+local outline = req('symbols-outline')
 if outline then
   table.insert(config.extensions, 'symbols_outline')
 end

@@ -1,5 +1,4 @@
-local srequire = require('util').srequire
-local null_ls = srequire('null-ls')
+local null_ls = require('req')('null-ls')
 if not null_ls then
   return
 end

@@ -20,7 +20,7 @@ function M.setup()
 end
 
 function M.config()
-  local telescope = require('util').srequire('telescope')
+  local telescope = require('req')('telescope')
   if not telescope then
     return
   end

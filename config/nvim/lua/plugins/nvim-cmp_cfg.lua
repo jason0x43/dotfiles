@@ -1,8 +1,8 @@
-local srequire = require('util').srequire
-local cmp = srequire('cmp')
-local luasnip = srequire('luasnip')
+local req = require('req')
+local cmp = req('cmp')
+local luasnip = req('luasnip')
 
-if cmp == nil then
+if cmp == nil or luasnip == nil then
   return
 end
 
@@ -16,7 +16,6 @@ cmp.setup({
   },
   snippet = {
     expand = function(args)
-      print('expanding')
       luasnip.lsp_expand(args.body)
     end,
   },

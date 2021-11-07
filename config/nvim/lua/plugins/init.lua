@@ -94,7 +94,7 @@ packer.startup({
     use({
       'norcalli/nvim-colorizer.lua',
       config = function()
-        local colorizer = require('util').srequire('colorizer')
+        local colorizer = require('req')('colorizer')
         if colorizer then
           colorizer.setup({ '*' }, {
             names = false,
@@ -177,7 +177,7 @@ packer.startup({
         {
           'SmiteshP/nvim-gps',
           config = function()
-            local gps = require('util').srequire('nvim-gps')
+            local gps = require('req')('nvim-gps')
             if gps then
               gps.setup()
             end
@@ -212,7 +212,7 @@ packer.startup({
       'numToStr/Navigator.nvim',
       config = function()
         local util = require('util')
-        local Navigator = util.srequire('Navigator')
+        local Navigator = require('req')('Navigator')
         if not Navigator then
           return
         end
@@ -255,8 +255,7 @@ packer.startup({
         {
           'williamboman/nvim-lsp-installer',
           config = function()
-            local util = require('util')
-            local installer = util.srequire('nvim-lsp-installer')
+            local installer = require('req')('nvim-lsp-installer')
             if not installer then
               return
             end
@@ -303,7 +302,7 @@ packer.startup({
     use({
       'sindrets/diffview.nvim',
       config = function()
-        local diffview = require('util').srequire('diffview')
+        local diffview = require('req')('diffview')
         if diffview then
           diffview.setup()
         end
@@ -314,7 +313,7 @@ packer.startup({
     use({
       'lewis6991/gitsigns.nvim',
       config = function()
-        local gitsigns = require('util').srequire('gitsigns')
+        local gitsigns = require('req')('gitsigns')
         if gitsigns then
           gitsigns.setup({
             signs = {

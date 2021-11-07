@@ -1,7 +1,8 @@
 local modbase = ...
 local util = require('util')
+local req = require('req')
 
-local lspconfig = util.srequire('lspconfig')
+local lspconfig = req('lspconfig')
 if not lspconfig then
   return
 end
@@ -147,7 +148,7 @@ function M.get_lsp_config(server)
   local config = {}
 
   -- add cmp capabilities
-  local cmp = util.srequire('cmp_nvim_lsp')
+  local cmp = req('cmp_nvim_lsp')
   if cmp then
     config.capabilities = cmp.update_capabilities(
       vim.lsp.protocol.make_client_capabilities()
@@ -155,7 +156,7 @@ function M.get_lsp_config(server)
   end
 
   -- add coq capabilities
-  local coq = util.srequire('coq')
+  local coq = req('coq')
   if coq then
     config = coq.lsp_ensure_capabilities(config)
   end
