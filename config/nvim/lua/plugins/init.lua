@@ -34,20 +34,22 @@ packer.startup({
         vim.g.nvim_tree_gitignore = 1
       end,
       config = function()
-        require('nvim-tree').setup({
-          update_focused_file = {
-            enable = true,
-          },
-          diagnostics = {
-            enable = true,
-          },
-          view = {
-            side = 'right',
-            width = 40,
-          },
-        })
+        require('req')('nvim-tree', function(nvim_tree)
+          nvim_tree.setup({
+            update_focused_file = {
+              enable = true,
+            },
+            diagnostics = {
+              enable = true,
+            },
+            view = {
+              side = 'right',
+              width = 40,
+            },
+          })
 
-        require('util').lmap('n', '<cmd>NvimTreeToggle<cr>')
+          require('util').lmap('n', '<cmd>NvimTreeToggle<cr>')
+        end)
       end,
     })
 
@@ -92,12 +94,7 @@ packer.startup({
     use({
       'norcalli/nvim-colorizer.lua',
       config = function()
-        local colorizer = require('req')('colorizer')
-        if colorizer then
-          colorizer.setup({ '*' }, {
-            names = false,
-          })
-        end
+        require('req')('colorizer', 'setup', { '*' }, { names = false })
       end,
     })
 
@@ -154,7 +151,6 @@ packer.startup({
       config = function()
         vim.g.undotree_DiffAutoOpen = 0
         vim.g.undotree_SetFocusWhenToggle = 1
-
         require('util').lmap('u', '<cmd>UndotreeToggle<cr>')
       end,
     })
@@ -175,10 +171,7 @@ packer.startup({
         {
           'SmiteshP/nvim-gps',
           config = function()
-            local gps = require('req')('nvim-gps')
-            if gps then
-              gps.setup()
-            end
+            require('req')('nvim-gps', 'setup')
           end,
         },
       },
@@ -187,18 +180,15 @@ packer.startup({
     -- fuzzy finding
     use({
       'nvim-telescope/telescope.nvim',
-      setup = function()
-        require('plugins.telescope_cfg').setup()
-      end,
       config = function()
-        require('plugins.telescope_cfg').config()
+        require('plugins.telescope_cfg')
       end,
       requires = {
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
           config = function()
-            require('telescope').load_extension('fzf')
+            require('req')('telescope', 'load_extension', 'fzf')
           end,
         },
         'nvim-telescope/telescope-symbols.nvim',
@@ -209,18 +199,15 @@ packer.startup({
     use({
       'numToStr/Navigator.nvim',
       config = function()
-        local util = require('util')
-        local Navigator = require('req')('Navigator')
-        if not Navigator then
-          return
-        end
+        require('req')('Navigator', function(Navigator)
+          Navigator.setup()
 
-        Navigator.setup()
-
-        util.nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
-        util.nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
-        util.nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
-        util.nmap('<C-l>', '<cmd>lua require("Navigator").right()<cr>')
+          local nmap = require('util').nmap
+          nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
+          nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
+          nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
+          nmap('<C-l>', '<cmd>lua require("Navigator").right()<cr>')
+        end)
       end,
     })
 
@@ -253,13 +240,12 @@ packer.startup({
         {
           'williamboman/nvim-lsp-installer',
           config = function()
-            local installer = require('req')('nvim-lsp-installer')
-            if not installer then
-              return
-            end
-            installer.on_server_ready(function(server)
-              local config = require('lsp').get_lsp_config(server.name)
-              server:setup(config)
+            require('req')('nvim-lsp-installer', function(installer)
+              local lsp = require('lsp')
+              installer.on_server_ready(function(server)
+                local config = lsp.get_lsp_config(server.name)
+                server:setup(config)
+              end)
             end)
           end,
         },
@@ -281,7 +267,6 @@ packer.startup({
         util.augroup('init_symbols_outline', {
           'FileType Outline setlocal signcolumn=no',
         })
-
         util.lmap('o', '<cmd>SymbolsOutline<cr>')
       end,
     })
@@ -301,10 +286,7 @@ packer.startup({
     use({
       'sindrets/diffview.nvim',
       config = function()
-        local diffview = require('req')('diffview')
-        if diffview then
-          diffview.setup()
-        end
+        require('req')('diffview', 'setup')
       end,
     })
 
@@ -312,15 +294,12 @@ packer.startup({
     use({
       'lewis6991/gitsigns.nvim',
       config = function()
-        local gitsigns = require('req')('gitsigns')
-        if gitsigns then
-          gitsigns.setup({
-            signs = {
-              add = { text = '▋' },
-              change = { text = '▋' },
-            },
-          })
-        end
+        require('req')('gitsigns', 'setup', {
+          signs = {
+            add = { text = '▋' },
+            change = { text = '▋' },
+          },
+        })
       end,
     })
 
