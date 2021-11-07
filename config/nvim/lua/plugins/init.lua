@@ -26,12 +26,7 @@ packer.startup({
     -- file explorer in sidebar
     use({
       'kyazdani42/nvim-tree.lua',
-      -- nvim-tree needs to load at the same time or before a file is loaded for
-      -- it to properly locate the file when initially showing the tree
       setup = function()
-        -- append a slash to folder names
-        vim.g.nvim_tree_add_trailing = 1
-
         -- close the tree after opening a file
         vim.g.nvim_tree_quit_on_open = 1
 
@@ -41,6 +36,9 @@ packer.startup({
       config = function()
         require('nvim-tree').setup({
           update_focused_file = {
+            enable = true,
+          },
+          diagnostics = {
             enable = true,
           },
           view = {
@@ -118,7 +116,7 @@ packer.startup({
         local util = require('util')
         util.lmap('k', '<cmd>Bdelete<cr>')
         util.lmap('K', '<cmd>Bdelete!<cr>')
-      end
+      end,
     })
 
     -- more efficient cursorhold behavior
@@ -354,7 +352,7 @@ packer.startup({
         vim.g.coq_settings = {
           auto_start = 'shut-up',
           keymap = {
-            jump_to_mark = '<c-i>'
+            jump_to_mark = '<c-i>',
           },
           display = {
             icons = { mode = 'none' },
