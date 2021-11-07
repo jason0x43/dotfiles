@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+local glow_bin
+
+if [[ -x $HOMEBREW_BASE/bin/glow ]]; then
+	glow_bin=$HOMEBREW_BASE/bin/glow
+else
+	echo "Can't find tmux binary"
+	exit 1
+fi
+
+theme=$(cat ~/.theme)
+$glow_bin -s $theme $@
