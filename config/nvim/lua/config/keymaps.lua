@@ -35,3 +35,6 @@ util.lmap(
   { mode = 'nvo' }
 )
 util.lmap('p', '"*p')
+
+-- disable "Entering Ex mode"
+util.map('Q', '<nop>')
