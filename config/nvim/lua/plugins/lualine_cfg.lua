@@ -14,16 +14,14 @@ local config = {
   sections = {
     lualine_a = { 'mode' },
     lualine_b = {
-      { 'branch', padding = { left = 0, right = 1 }, icon = '' },
-      'diff',
-    },
-    lualine_c = {
       {
         'filetype',
         separator = '',
         padding = { left = 0, right = 1 },
         icon_only = true,
       },
+    },
+    lualine_c = {
       { 'filename', path = 1, padding = { left = 0, right = 1 } },
     },
     lualine_x = {
