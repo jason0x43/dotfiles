@@ -8,10 +8,6 @@ local lsp_find_root = require('lspconfig.util').root_pattern(
 )
 
 M.config = {
-  filetypes = {
-    'typescript',
-    'javascript'
-  },
   root_dir = function(filename)
     local dir = lsp_find_root(filename)
     if dir ~= nil then
@@ -23,8 +19,11 @@ M.config = {
   end,
 
   should_attach = function()
+    local filetype = vim.bo.filetype
     return vim.fn.findfile('tsconfig.json', '.;') == ''
       and vim.fn.findfile('jsconfig.json', '.;') == ''
+      and not filetype:find('react')
+      and not filetype:find('sx')
   end,
 }
 
