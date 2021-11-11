@@ -86,7 +86,7 @@ packer.startup({
           { header = { '   MRU' }, type = 'files' },
         }
 
-        require('util').lmap('s', '<cmd>Startify<cr>')
+        -- require('util').lmap('s', '<cmd>Startify<cr>')
       end,
     })
 

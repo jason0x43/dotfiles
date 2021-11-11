@@ -71,6 +71,7 @@ telescope.setup({
 
 local lmap = require('util').lmap
 lmap('f', '<cmd>Telescope find_files<cr>')
+lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 lmap('g', '<cmd>Telescope git_files<cr>')
 lmap('b', '<cmd>Telescope buffers<cr>')
 lmap('tg', '<cmd>Telescope live_grep<cr>')
@@ -81,4 +82,5 @@ lmap('lr', '<cmd>Telescope lsp_references<cr>')
 lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
 lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
 lmap('ld', '<cmd>Telescope lsp_document_diagnostics<cr>')
+lmap('lw', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
 lmap('lw', '<cmd>Telescope lsp_workspace_diagnostics<cr>')
