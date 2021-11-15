@@ -34,29 +34,33 @@ local config = {
   },
 }
 
-config.ensure_installed = {
-  'bash',
-  'c',
-  'comment',
-  'cpp',
-  'dockerfile',
-  'go',
-  'html',
-  'java',
-  'javascript',
-  'jsdoc',
-  'json',
-  'json5',
-  'jsonc',
-  'lua',
-  'python',
-  'rust',
-  'scss',
-  'swift',
-  'tsx',
-  'typescript',
-  'vim',
-  'yaml',
-}
+if vim.fn.has('mac') then
+  config.ensure_installed = 'maintained'
+else
+  config.ensure_installed = {
+    'bash',
+    'c',
+    'comment',
+    'cpp',
+    'dockerfile',
+    'go',
+    'html',
+    'java',
+    'javascript',
+    'jsdoc',
+    'json',
+    'json5',
+    'jsonc',
+    'lua',
+    'python',
+    'rust',
+    'scss',
+    'swift',
+    'tsx',
+    'typescript',
+    'vim',
+    'yaml',
+  }
+end
 
 configs.setup(config)
