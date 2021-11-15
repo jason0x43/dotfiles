@@ -651,8 +651,8 @@ function moveToSpace(direction, window) {
     return;
   }
 
-  space.removeWindows([window]);
   targetSpace.addWindows([window]);
+  space.removeWindows([window]);
   window.focus();
 }
 
