@@ -114,9 +114,9 @@ use_xcode_cpath() {
 
 # Add Android SDK to path
 use_android() {
-  local javas=($(asdf list java | grep 'jdk-8' | awk '{ print $1 }'))
+  local javas=($(asdf list java | grep 'jdk-8\|-8u' | awk '{ print $1 }'))
   if [[ ${#javas[@]} -lt 1 ]]; then
-    log_error 'a version of adoptopenjdk-8 must be installed'
+    log_error 'a version of JDK 8 must be installed'
     return
   fi
 
