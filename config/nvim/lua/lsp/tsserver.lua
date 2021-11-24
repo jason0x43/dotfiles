@@ -1,3 +1,5 @@
+local denols = require('lsp.denols')
+
 local M = {}
 
 M.config = {
@@ -19,8 +21,7 @@ M.config = {
   end,
 
   should_attach = function()
-    return vim.fn.findfile('tsconfig.json', '.;') ~= ''
-      or vim.fn.findfile('jsconfig.json', '.;') ~= ''
+    return not denols.config.should_attach()
   end,
 
   commands = {
