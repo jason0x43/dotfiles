@@ -1,0 +1,41 @@
+#!/usr/bin/env deno run --allow-run --allow-write --allow-read
+
+import { join } from "https://deno.land/std@0.115.1/path/mod.ts";
+
+const proc = Deno.run({
+  cmd: ["deno", "info"],
+  stdout: "piped",
+  env: { NO_COLOR: "1" }, // No color in output
+});
+
+const status = await proc.status();
+if (!status.success) {
+  Deno.exit(status.code);
+}
+
+const t = new TextDecoder();
+const output = t.decode(await proc.output());
+proc.close();
+
+const match = output.match(/Emitted modules cache: "([^"]+)"/);
+if (!match) {
+  console.log("Emitted modules cache not found");
+  Deno.exit(1);
+}
+
+const folder = match[1];
+const toClean = join(folder, "file", Deno.cwd());
+let shouldClean = false;
+
+try {
+  if (Deno.statSync(toClean).isDirectory) {
+    shouldClean = confirm(`Are you sure you want to delete "${toClean}"?`);
+  }
+} catch {
+  console.log(`Module dir ${toClean} doesn't exist`);
+}
+
+if (shouldClean) {
+  console.log("deleting...");
+  Deno.remove(toClean, { recursive: true });
+}
