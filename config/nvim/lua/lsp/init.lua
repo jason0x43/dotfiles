@@ -118,14 +118,15 @@ function M.format_sync(options, timeout)
   end
 
   local params = vim.lsp.util.make_formatting_params(options)
+  local bufnr = vim.api.nvim_get_current_buf()
   local result, err = formatter.request_sync(
     'textDocument/formatting',
     params,
     timeout,
-    vim.api.nvim_get_current_buf()
+    bufnr
   )
   if result and result.result then
-    vim.lsp.util.apply_text_edits(result.result)
+    vim.lsp.util.apply_text_edits(result.result, bufnr)
   elseif err then
     vim.notify('vim.lsp.buf.formatting_sync: ' .. err, vim.log.levels.WARN)
   end
