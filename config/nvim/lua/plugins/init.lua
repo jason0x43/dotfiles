@@ -29,9 +29,6 @@ packer.startup({
       setup = function()
         -- close the tree after opening a file
         vim.g.nvim_tree_quit_on_open = 1
-
-        -- ignore things
-        vim.g.nvim_tree_gitignore = 1
       end,
       config = function()
         require('req')('nvim-tree', function(nvim_tree)
@@ -45,6 +42,9 @@ packer.startup({
             view = {
               side = 'right',
               width = 40,
+            },
+            git = {
+              ignore = true,
             },
           })
 
@@ -260,6 +260,7 @@ packer.startup({
         vim.g.symbols_outline = {
           auto_preview = false,
           width = 30,
+          relative_width = false,
         }
       end,
       config = function()
