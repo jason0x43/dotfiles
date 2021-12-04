@@ -1,5 +1,7 @@
 local M = {}
 
+local denols = require('lspconfig.server_configurations.denols')
+
 M.config = {
   single_file_support = true,
 
@@ -23,7 +25,12 @@ M.config = {
       if #result > 1 then
         result = { result[1] }
       end
-      vim.lsp.handlers['textDocument/definition'](err, result, ctx, config)
+      denols.default_config.handlers['textDocument/definition'](
+        err,
+        result,
+        ctx,
+        config
+      )
     end,
   },
 }
