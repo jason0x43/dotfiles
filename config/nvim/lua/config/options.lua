@@ -103,6 +103,7 @@ end
 g.markdown_fenced_languages = {
   'css',
   'html',
+  'json',
   'javascript',
   'typescript',
   'js=javascript',
