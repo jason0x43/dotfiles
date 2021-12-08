@@ -108,6 +108,10 @@ g.markdown_fenced_languages = {
   'typescript',
   'js=javascript',
   'ts=typescript',
+  'javascriptreact',
+  'typescriptreact',
+  'jsx=javascriptreact',
+  'tsx=typescriptreact',
 }
 
 -- disable builtin plugins
