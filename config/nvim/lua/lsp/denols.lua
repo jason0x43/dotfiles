@@ -22,7 +22,7 @@ M.config = {
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
       -- If denols returns multiple results, goto the first local one
-      if #result > 1 then
+      if result and #result > 1 then
         result = { result[1] }
       end
       denols.default_config.handlers['textDocument/definition'](
