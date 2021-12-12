@@ -25,7 +25,7 @@ local config = {
       { 'filename', path = 1, padding = { left = 0, right = 1 } },
     },
     lualine_x = {
-      { 'diagnostics', sources = { 'nvim_lsp' } },
+      { 'diagnostics', sources = { 'nvim_diagnostic' } },
       {
         'language_servers',
         separator = '',
