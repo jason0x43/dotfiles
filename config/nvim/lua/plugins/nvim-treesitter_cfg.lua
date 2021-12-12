@@ -34,7 +34,7 @@ local config = {
   },
 }
 
-if vim.fn.has('mac') then
+if vim.fn.has('mac') == 1 then
   config.ensure_installed = 'maintained'
 else
   config.ensure_installed = {
