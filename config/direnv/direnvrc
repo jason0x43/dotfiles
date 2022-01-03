@@ -88,6 +88,16 @@ use_local_npm() {
   export npm_config_strict_ssl=false
 }
 
+# Export PDM's env updates
+use_pdm() {
+  eval "$(pdm --pep582)"
+
+  if [[ -d '__pypackages__' ]]; then
+    local bindir="$(ls -d __pypackages__/*/bin)"
+    export PATH="$PWD/$bindir:$PATH"
+  fi
+}
+
 layout_poetry() {
   if [[ ! -f pyproject.toml ]]; then
     log_error 'No pyproject.toml found.  Use `poetry new` or `poetry init` to create one first.'
