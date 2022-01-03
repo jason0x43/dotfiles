@@ -23,7 +23,6 @@ zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
 zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
-zfetch $ZPLUGDIR Aloxaf/fzf-tab
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
@@ -651,9 +650,6 @@ eval "$(direnv hook $SHELL)"
 
 # Line editor
 # ------------------------------------------------------------------------
-
-# fzf-tab should e loaded before plugins that wrap widgets
-source $ZPLUGDIR/Aloxaf/fzf-tab/fzf-tab.plugin.zsh
 
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
