@@ -3,6 +3,8 @@ if not null_ls then
   return
 end
 
+local lsp_on_attach = require('lsp.init').on_attach
+
 local helpers = require('null-ls.helpers')
 
 local htmlhint_source = {
@@ -68,13 +70,12 @@ local config = {
 
     null_ls.builtins.formatting.swiftformat,
   },
+
+  on_attach = lsp_on_attach
 }
 
 if vim.fn.executable('htmlhint') ~= 0 then
   table.insert(config.sources, htmlhint_source)
 end
 
-null_ls.config(config)
-
-local config = require('lsp').get_lsp_config('null-ls')
-require('lspconfig')['null-ls'].setup(config)
+null_ls.setup(config)

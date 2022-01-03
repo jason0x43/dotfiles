@@ -16,8 +16,9 @@ local function load_client_config(server_name)
   return client_config
 end
 
+local M = {}
 -- configure a client when it's attached to a buffer
-local function on_attach(client, bufnr)
+function M.on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   pcall(function()
@@ -25,9 +26,7 @@ local function on_attach(client, bufnr)
   end)
 
   pcall(function()
-    require('lsp_signature').on_attach({
-      max_width = 80,
-    })
+    require('lsp_signature').on_attach({ max_width = 80 })
   end)
 
   -- perform general setup
@@ -172,10 +171,10 @@ function M.get_lsp_config(server)
     local config_on_attach = config.on_attach
     config.on_attach = function(client, bufnr)
       config_on_attach(client, bufnr)
-      on_attach(client, bufnr)
+      M.on_attach(client, bufnr)
     end
   else
-    config.on_attach = on_attach
+    config.on_attach = M.on_attach
   end
 
   return config
