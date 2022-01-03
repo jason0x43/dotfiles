@@ -19,6 +19,10 @@ M.config = {
       )
   end,
 
+  on_attach = function()
+    vim.cmd('autocmd BufWritePre <buffer> lua require("lsp").format_sync(nil, 5000)')
+  end,
+
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
       -- If denols returns multiple results, goto the first local one
