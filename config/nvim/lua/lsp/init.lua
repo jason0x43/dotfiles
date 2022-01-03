@@ -17,6 +17,7 @@ local function load_client_config(server_name)
 end
 
 local M = {}
+
 -- configure a client when it's attached to a buffer
 function M.on_attach(client, bufnr)
   local opts = { buffer = bufnr }
@@ -61,37 +62,6 @@ function M.on_attach(client, bufnr)
     '<cmd>lua require("lsp").show_position_diagnostics()<cr>',
     opts
   )
-end
-
-local M = {}
-
--- apply additionalTextEdits, such as auto imports, when a completion is
--- accepted
-function M.on_complete_done()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local completed_item = vim.v.completed_item
-
-  if
-    completed_item
-    and completed_item.user_data
-    and completed_item.user_data.nvim
-    and completed_item.user_data.nvim.lsp
-    and completed_item.user_data.nvim.lsp.completion_item
-  then
-    vim.lsp.buf_request(
-      bufnr,
-      'completionItem/resolve',
-      completed_item.user_data.nvim.lsp.completion_item,
-      function(err, result, ctx)
-        if err or not result then
-          return
-        end
-        if result.additionalTextEdits then
-          vim.lsp.util.apply_text_edits(result.additionalTextEdits, bufnr)
-        end
-      end
-    )
-  end
 end
 
 -- format the current buffer, handling the case where multiple formatters are
