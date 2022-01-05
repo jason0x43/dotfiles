@@ -47,6 +47,7 @@
   # last prompt line gets hidden if it would overlap with left prompt.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
+    arch                    # processor architecture
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
@@ -872,11 +873,6 @@
   # Custom prefix.
   # typeset -g POWERLEVEL9K_CONTEXT_PREFIX='%fwith '
 
-  ##########[ npm ]#############################################################################
-  typeset -g POWERLEVEL9K_NPM_PROMPT_ALWAYS_SHOW=false
-  # typeset -g POWERLEVEL9K_NPM_SHOW_ON_COMMAND='npm'
-  typeset -g POWERLEVEL9K_NPM_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
-  
   ###[ virtualenv: python virtual environment (https://docs.python.org/3/library/venv.html) ]###
   # Python virtual environment color.
   typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=6
@@ -1588,6 +1584,14 @@
   # User-defined prompt segments can be customized the same way as built-in segments.
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
+
+  # Segment that shows an icon if the processor architecture is non-standard
+  function prompt_arch() {
+    local arch_text=$(uname -m)
+    if [[ $arch_text != "arm64" ]] then
+      p10k segment -i  -f 19 -t $arch_text
+    fi
+  }
 
   # Segment that shows the effective npm registry if it's not the default
   function prompt_npm() {

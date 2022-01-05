@@ -255,6 +255,7 @@ unalias -m '*'
 # reload the environment
 alias refresh='source ~/.zshenv && source ~/.zshrc'
 alias reload='exec env -u DIRENV_WATCHES $SHELL'
+alias reloadx86='ARCHPREFERENCE=x86_64 exec arch -x86_64 env -u DIRENV_WATCHES $SHELL'
 
 # Default command options
 alias cp='cp -i'
