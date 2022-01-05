@@ -150,14 +150,10 @@ def get_kitty_theme(variant):
         'selection_foreground': 'none',
         'selection_background': colors['bg_2'],
         'active_tab_foreground': colors['fg_1'],
-
-        'selection_foreground': 'none',
-        'selection_background': colors['bg_2'],
-        'active_tab_foreground': colors['fg_1'],
-        'active_tab_background': colors['bg_2'],
+        'active_tab_background': colors['bg_0'],
         'inactive_tab_foreground': colors['dim_0'],
-        'inactive_tab_background': colors['bg_0'],
-        'tab_bar_background': colors['bg_0'],
+        'inactive_tab_background': colors['bg_1'],
+        'tab_bar_background': colors['bg_2'],
     }
 
     return theme
