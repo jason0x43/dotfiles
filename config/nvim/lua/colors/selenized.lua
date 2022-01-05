@@ -138,6 +138,8 @@ function M.apply_theme(theme_name)
   g.terminal_color_14 = palette.br_cyan
   g.terminal_color_15 = palette.fg_1
 
+  local sign_col_bg = palette.bg_0
+
   -- link groups
   hi_link('Boolean', 'Constant')
   hi_link('Character', 'Constant')
@@ -214,7 +216,7 @@ function M.apply_theme(theme_name)
   hi('FoldColumn', '', '', '', '')
   hi('Folded', '', palette.bg_1, '', '')
   hi('IncSearch', palette.orange, '', 'reverse', '')
-  hi('LineNr', palette.dim_0, palette.bg_1, '', '')
+  hi('LineNr', palette.bg_2, sign_col_bg, '', '')
   hi('LspReferenceRead', nil, palette.bg_1)
   hi('LspReferenceText', nil, palette.bg_1)
   hi('LspReferenceWrite', nil, palette.bg_1)
@@ -229,7 +231,7 @@ function M.apply_theme(theme_name)
   hi('Question', '', '', '', '')
   hi('RubyDefine', palette.fg_1, '', 'bold', '')
   hi('Search', palette.yellow, '', 'reverse', '')
-  hi('SignColumn', '', palette.bg_1, '', '')
+  hi('SignColumn', '', sign_col_bg, '', '')
   hi('SpecialKey', '', '', '', '')
   hi('SpellBad', '', '', 'undercurl', palette.red)
   hi('SpellCap', '', '', 'undercurl', palette.red)
@@ -284,9 +286,9 @@ function M.apply_theme(theme_name)
   hi('DevIconJson', palette.yellow)
 
   -- gitsigns
-  hi('GitSignsAdd', palette.green, palette.bg_1)
-  hi('GitSignsChange', palette.yellow, palette.bg_1)
-  hi('GitSignsDelete', palette.red, palette.bg_1)
+  hi('GitSignsAdd', palette.green, sign_col_bg)
+  hi('GitSignsChange', palette.yellow, sign_col_bg)
+  hi('GitSignsDelete', palette.red, sign_col_bg)
 
   -- telescope
   hi_link('LspDiagnosticsDefaultHint', 'DiagnosticHint')
@@ -299,10 +301,12 @@ function M.apply_theme(theme_name)
   hi_link('LspDiagnosticsSignError', 'DiagnosticSignError')
 
   -- update the theme background when focus is gained or lost, as tmux does
-  augroup('selenized-theme', {
-    'FocusLost * lua require("colors.selenized").update_background(false)',
-    'FocusGained * lua require("colors.selenized").update_background(true)',
-  })
+  if vim.fn.getenv('TERM') ~= 'xterm-kitty' then
+    augroup('selenized-theme', {
+      'FocusLost * lua require("colors.selenized").update_background(false)',
+      'FocusGained * lua require("colors.selenized").update_background(true)',
+    })
+  end
 end
 
 function M.update_background(focused)
