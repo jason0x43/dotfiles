@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+rosetta_procs=($(fuser /usr/libexec/rosetta/runtime 2> /dev/null))
+
+for p in $rosetta_procs; do
+	ps -o pid="",command="" -p $p
+done
