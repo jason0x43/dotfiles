@@ -644,6 +644,8 @@ fi
 
 # direnv
 # ------------------------------------------------------------------------
+# silence direnv's output; run `direnv status` to check
+export DIRENV_LOG_FORMAT=
 eval "$(direnv hook $SHELL)"
 
 # added by travis gem
