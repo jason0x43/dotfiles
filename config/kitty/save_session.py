@@ -12,9 +12,12 @@ import json
 home = cast(str, getenv("HOME"))
 data_dir = Path(home).joinpath(".local/share/kitty")
 data_dir.mkdir(parents=True, exist_ok=True)
+buf_dir = data_dir.joinpath("buffers")
+buf_dir.mkdir(exist_ok=True)
 
 
 def to_split_list(layout: Dict[str, Any]) -> List[str]:
+    """Return an ordered list of splits from a layout dict"""
     splits = []
     pairs = layout["pairs"]
     while pairs:
@@ -32,10 +35,12 @@ def to_split_list(layout: Dict[str, Any]) -> List[str]:
 
 
 def is_single_window(tab: TabDict) -> bool:
+    """Return true if the tab contains only one window"""
     return not tab["layout_state"]["pairs"]["two"]
 
 
 def get_win_size(os_win: OSWindowDict) -> Dict[str, int]:
+    """Get the overall window size in character cells"""
     for tab in os_win["tabs"]:
         if is_single_window(tab):
             return {
@@ -58,10 +63,12 @@ def get_win_size(os_win: OSWindowDict) -> Dict[str, int]:
 
 
 def env_to_str(env: Dict[str, str]) -> str:
+    """Return a set of --env arguments for an env dict"""
     return " ".join([f"--env {key}={env[key]}" for key in env]).strip()
 
 
 def cmdline_to_str(cmdline: str) -> str:
+    """Return a single command string for command array"""
     cmd = " ".join([f"{e}" for e in cmdline]).strip()
     if cmd == "-zsh":
         return cast(str, getenv("SHELL"))
@@ -73,7 +80,7 @@ def fg_proc_to_str(procs: Sequence[ProcessDesc]) -> str:
     # The last command is typically the interactive one
     proc = procs[-1]
     s = f"{cmdline_to_str(proc['cmdline'])}"
-    if s.startswith("ssh "):
+    if s.startswith("ssh ") or s.startswith("/usr/bin/ssh "):
         return s
     # For now, just return the shell command in most cases
     return cast(str, getenv("SHELL"))
@@ -117,6 +124,8 @@ def handle_result(
                         launch_cmd.append(env_to_str(w["env"]))
                     if split:
                         launch_cmd.append(f"--location {split}")
+                    buf_file = buf_dir.joinpath(f"{w['id']}.txt")
+                    launch_cmd.append(f"kitty_restore_window {buf_file}")
                     launch_cmd.append(fg_proc_to_str(w["foreground_processes"]))
 
                     print(" ".join(launch_cmd), file=session_file)
@@ -131,6 +140,10 @@ def handle_result(
 
             print("", file=session_file)
 
+    # save the scrollback buffers for all windows
+    for win in boss.all_windows:
+        with buf_dir.joinpath(f"{win.id}.txt").open(mode="w") as buf_file:
+            buf_file.write(win.as_text(as_ansi=True, add_history=True))
 
 def main(args):
     pass

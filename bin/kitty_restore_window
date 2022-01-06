@@ -1,0 +1,5 @@
+#!/bin/zsh
+buf=$1
+shift
+cat $buf
+exec $@
