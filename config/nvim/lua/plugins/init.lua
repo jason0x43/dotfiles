@@ -198,6 +198,9 @@ packer.startup({
     -- easier movement between vim and tmux panes, and between vim panes
     use({
       'numToStr/Navigator.nvim',
+      cond = function()
+        return vim.fn.getenv('TMUX') ~= vim.NIL
+      end,
       config = function()
         require('req')('Navigator', function(Navigator)
           Navigator.setup()
