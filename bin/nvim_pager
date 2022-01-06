@@ -3,7 +3,7 @@
 nvim \
 	-u NONE \
 	-c "colorscheme selenized" \
-	-c "set number nolist signcolumn=no showtabline=0 noshowmode noruler laststatus=0 cmdheight=1 noshowcmd foldcolumn=0 termguicolors" \
+	-c "set ruler nonumber nolist signcolumn=no showtabline=0 noshowmode laststatus=0 cmdheight=1 noshowcmd foldcolumn=0 termguicolors" \
 	-c "autocmd TermOpen * normal G" \
 	-c "map q :qa!<CR>" \
 	-c "set clipboard+=unnamedplus" \
