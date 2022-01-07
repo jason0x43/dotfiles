@@ -1,8 +1,13 @@
+local lspconfig = require('lspconfig')
 local denols = require('lsp.denols')
 
 local M = {}
 
 M.config = {
+  single_file_support = true,
+
+  root_dir = lspconfig.util.root_pattern('package.json'),
+
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
       -- If tsserver returns multiple results, ignore all but the first
