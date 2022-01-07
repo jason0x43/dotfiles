@@ -4,6 +4,7 @@ from kitty.typing import BossType
 from kitty.child import ProcessDesc
 from kitty.boss import OSWindowDict
 from kitty.tabs import TabDict
+from kitty.window import Window
 from os import getenv
 from pathlib import Path
 import json
@@ -53,7 +54,9 @@ def get_win_size(os_win: OSWindowDict) -> Dict[str, int]:
     height = tab["windows"][0]["lines"]
     width = tab["windows"][0]["columns"]
     for index, win in enumerate(tab["windows"][1:]):
-        split = splits[index]
+        # since splits happen in-between windows, there will be fewer splits
+        # than windows
+        split = splits[min(index, len(splits) - 1)]
         if split == "hsplit":
             height += win["lines"]
         else:
@@ -86,6 +89,11 @@ def fg_proc_to_str(procs: Sequence[ProcessDesc]) -> str:
     return cast(str, getenv("SHELL"))
 
 
+def has_fg_process(win: Window) -> bool:
+    """Return true if this window is running a child foreground process"""
+    return len(win.child.foreground_processes) > 1
+
+
 @result_handler(no_ui=True)
 def handle_result(
     args: Sequence[str], data: Any, target_window_id: int, boss: BossType
@@ -101,10 +109,15 @@ def handle_result(
 
         for os_win in boss.list_os_windows():
             if first:
+                # don't call new_os_window for the first window since it
+                # implicitly gets a new window
                 first = False
             else:
                 print("new_os_window", file=session_file)
 
+            # set the window size; this command does nothing for the implicit
+            # first window, but it's used by the kitty_restore script to set
+            # the size of the initial window
             size = get_win_size(os_win)
             print(
                 f"os_window_size {size['width']}c {size['height']}c", file=session_file
@@ -119,6 +132,7 @@ def handle_result(
 
                 for w in tab["windows"]:
                     print(f"title {w['title']}", file=session_file)
+
                     launch_cmd = [f"launch --cwd {w['cwd']}"]
                     if w["env"]:
                         launch_cmd.append(env_to_str(w["env"]))
@@ -143,7 +157,18 @@ def handle_result(
     # save the scrollback buffers for all windows
     for win in boss.all_windows:
         with buf_dir.joinpath(f"{win.id}.txt").open(mode="w") as buf_file:
-            buf_file.write(win.as_text(as_ansi=True, add_history=True))
+            if has_fg_process(win):
+                # If the window is running a foreground process (other than its
+                # base shell), take the alternate text since we don't want the
+                # contents of a full-screen app
+                buf_file.write(
+                    win.as_text(as_ansi=True, add_history=True, alternate_screen=True)
+                )
+            else:
+                buf_file.write(win.as_text(as_ansi=True, add_history=True))
+
+    return "Session saved"
+
 
 def main(args):
     pass
