@@ -1,13 +1,22 @@
 local M = {}
 
 local denols = require('lspconfig.server_configurations.denols')
+local lspconfig = require('lspconfig')
+
+local denoconfig = vim.fn.findfile('deno.json', '.;')
+if denoconfig ~= '' then
+  denoconfig = vim.fn.fnamemodify(denoconfig, ':p')
+end
 
 M.config = {
   single_file_support = true,
 
+  root_dir = lspconfig.util.root_pattern('deno.json'),
+
   init_options = {
     lint = true,
     unstable = true,
+    config = denoconfig
   },
 
   should_attach = function()
@@ -19,7 +28,7 @@ M.config = {
       )
   end,
 
-  on_attach = function()
+  on_attach = function(client)
     vim.cmd('autocmd BufWritePre <buffer> lua require("lsp").format_sync(nil, 5000)')
   end,
 
