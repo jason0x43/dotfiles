@@ -8,6 +8,7 @@ local legacy_filetypes = vim.list_extend({
   'css',
   'scss',
   'lua',
+  'python'
 }, require('util').ts_types)
 
 local config = {
