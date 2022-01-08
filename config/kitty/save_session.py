@@ -154,18 +154,20 @@ def handle_result(
 
             print("", file=session_file)
 
+    # clear any existing saved buffers
+    for buf in buf_dir.glob("*.txt"):
+        buf.unlink()
+
     # save the scrollback buffers for all windows
     for win in boss.all_windows:
         with buf_dir.joinpath(f"{win.id}.txt").open(mode="w") as buf_file:
-            if has_fg_process(win):
-                # If the window is running a foreground process (other than its
-                # base shell), take the alternate text since we don't want the
-                # contents of a full-screen app
-                buf_file.write(
-                    win.as_text(as_ansi=True, add_history=True, alternate_screen=True)
-                )
-            else:
-                buf_file.write(win.as_text(as_ansi=True, add_history=True))
+            # If the window is running a foreground process (other than its
+            # base shell), take the alternate text since we don't want the
+            # contents of a full-screen app
+            text = win.as_text(
+                as_ansi=True, add_history=True, alternate_screen=has_fg_process(win)
+            )
+            buf_file.write(text.strip())
 
     return "Session saved"
 
