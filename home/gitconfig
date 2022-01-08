@@ -144,7 +144,7 @@
 	enabled = true
 
 [includeIf "gitdir:~/Work/projects/"]
-	path = ~/.gitconfig-work
+	path = ~/.config/git/work
 
 [help]
 	autoCorrect = 20
