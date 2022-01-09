@@ -118,18 +118,10 @@ function M.get_lsp_config(server)
   local config = {}
 
   -- add cmp capabilities
-  local cmp = req('cmp_nvim_lsp')
-  if cmp then
-    config.capabilities = cmp.update_capabilities(
-      vim.lsp.protocol.make_client_capabilities()
-    )
-  end
-
-  -- add coq capabilities
-  local coq = req('coq')
-  if coq then
-    config = coq.lsp_ensure_capabilities(config)
-  end
+  local cmp = require('cmp_nvim_lsp')
+  config.capabilities = cmp.update_capabilities(
+    vim.lsp.protocol.make_client_capabilities()
+  )
 
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
