@@ -7,6 +7,7 @@ from kitty.tabs import TabDict
 from kitty.window import Window
 from os import getenv
 from pathlib import Path
+from datetime import datetime
 import json
 
 
@@ -169,7 +170,7 @@ def handle_result(
             )
             buf_file.write(text.strip())
 
-    return "Session saved"
+    return f"Session saved at {datetime.now()}"
 
 
 def main(args):
