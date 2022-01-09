@@ -48,11 +48,6 @@ function M.on_attach(client, bufnr)
     util.bufcmd('Format', 'lua require("lsp").format_sync(nil, 5000)')
   end
 
-  if client.resolved_capabilities.completion then
-    -- enable lsp completions
-    vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-  end
-
   if not packer_plugins['trouble.nvim'] then
     util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   end
