@@ -1,3 +1,8 @@
+/// <reference no-default-lib="true" />
+/// <reference lib="es2015" />
+/// <reference types="./phoenix.d.ts" />
+// @ts-check
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // General setup
@@ -8,9 +13,9 @@ Phoenix.set({
   openAtLogin: true,
 });
 
-Event.on('willTerminate', () => {
-  Storage.remove('lastPositions');
-  Storage.remove('maxHeight');
+Event.on("willTerminate", () => {
+  Storage.remove("lastPositions");
+  Storage.remove("maxHeight");
 });
 
 // Event.on('mouseDidMove', focusWindowUnderMouse);
@@ -21,126 +26,128 @@ Event.on('willTerminate', () => {
 //
 
 // Globals
-const HIDDEN_DOCK_PADDING = 3;
 const INCREMENT = 0.05;
-const CONTROL_SHIFT = ['ctrl', 'shift'];
-const CONTROL_ALT_SHIFT = ['ctrl', 'alt', 'shift'];
+const CONTROL_SHIFT = ["ctrl", "shift"];
+const CONTROL_ALT_SHIFT = ["ctrl", "alt", "shift"];
 const PADDING = 10;
 
 // Relative Directions
-const LEFT = 'left';
-const RIGHT = 'right';
-const CENTER = 'center';
+const LEFT = "left";
+const RIGHT = "right";
+const CENTER = "center";
 
 // Cardinal Directions
-const NW = 'nw';
-const NE = 'ne';
-const SE = 'se';
-const SW = 'sw';
-const EAST = 'east';
-const WEST = 'west';
-const NORTH = 'north';
-const SOUTH = 'south';
+const NW = "nw";
+const NE = "ne";
+const SE = "se";
+const SW = "sw";
+const EAST = "east";
+const WEST = "west";
+const NORTH = "north";
+const SOUTH = "south";
 
 const MODAL_TIMEOUT = 750;
 const THIN_WIDTH = (1020 / 3840) * 1.6;
 
-let helpTimer;
-let helpCloser;
+/** @type {number | null} */
+let helpTimer = null;
+/** @type {(() => void) | null} */
+let helpCloser = null;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // bindings
 //
 
+/** @type {[string, string, string[], () => unknown][]} */
 const keys = [
-  ['Show help', '\\', CONTROL_SHIFT, () => showHelp()],
+  ["Show help", "\\", CONTROL_SHIFT, () => showHelp()],
 
-  ['Move to NW corner', 'q', CONTROL_SHIFT, () => moveTo(NW)],
-  ['Move to NE corner', 'w', CONTROL_SHIFT, () => moveTo(NE)],
-  ['Move to SE corner', 's', CONTROL_SHIFT, () => moveTo(SE)],
-  ['Move to SW corner', 'a', CONTROL_SHIFT, () => moveTo(SW)],
-  ['Move to center', 'z', CONTROL_SHIFT, () => moveTo(CENTER)],
-  ['Development layout', 'space', CONTROL_SHIFT, () => autoLayout()],
+  ["Move to NW corner", "q", CONTROL_SHIFT, () => moveTo(NW)],
+  ["Move to NE corner", "w", CONTROL_SHIFT, () => moveTo(NE)],
+  ["Move to SE corner", "s", CONTROL_SHIFT, () => moveTo(SE)],
+  ["Move to SW corner", "a", CONTROL_SHIFT, () => moveTo(SW)],
+  ["Move to center", "z", CONTROL_SHIFT, () => moveTo(CENTER)],
+  ["Development layout", "space", CONTROL_SHIFT, () => autoLayout()],
 
   [
-    'Fill NW quadrant',
-    'q',
+    "Fill NW quadrant",
+    "q",
     CONTROL_ALT_SHIFT,
     () => fill(NW, { portion: 1 - THIN_WIDTH }),
   ],
   [
-    'Fill SW quadrant',
-    'a',
+    "Fill SW quadrant",
+    "a",
     CONTROL_ALT_SHIFT,
     () => fill(SW, { portion: 1 - THIN_WIDTH }),
   ],
   [
-    'Fill SE quadrant',
-    's',
+    "Fill SE quadrant",
+    "s",
     CONTROL_ALT_SHIFT,
     () => fill(SE, { portion: THIN_WIDTH }),
   ],
   [
-    'Fill NE quadrant',
-    'w',
+    "Fill NE quadrant",
+    "w",
     CONTROL_ALT_SHIFT,
     () => fill(NE, { portion: THIN_WIDTH }),
   ],
   [
-    'Fill left half',
-    'h',
+    "Fill left half",
+    "h",
     CONTROL_ALT_SHIFT,
     () => fill(LEFT, { portion: 1 - THIN_WIDTH }),
   ],
   [
-    'Fill right half',
-    'l',
+    "Fill right half",
+    "l",
     CONTROL_ALT_SHIFT,
     () => fill(RIGHT, { portion: THIN_WIDTH }),
   ],
-  ['Fill screen', 'f', CONTROL_ALT_SHIFT, () => toggleFillScreen()],
-  ['Fill center', 'z', CONTROL_ALT_SHIFT, () => center()],
+  ["Fill screen", "f", CONTROL_ALT_SHIFT, () => toggleFillScreen()],
+  ["Fill center", "z", CONTROL_ALT_SHIFT, () => center()],
 
   [
-    'Increase height',
+    "Increase height",
     "'",
     CONTROL_SHIFT,
     () => resize({ height: heightPercent(INCREMENT) }),
   ],
   [
-    'Decrease height',
-    ';',
+    "Decrease height",
+    ";",
     CONTROL_SHIFT,
     () => resize({ height: -heightPercent(INCREMENT) }),
   ],
   [
-    'Increase width',
-    ']',
+    "Increase width",
+    "]",
     CONTROL_SHIFT,
     () => resize({ width: widthPercent(INCREMENT) }),
   ],
   [
-    'Decrease width',
-    '[',
+    "Decrease width",
+    "[",
     CONTROL_SHIFT,
     () => resize({ width: -widthPercent(INCREMENT) }),
   ],
 
-  ['Focus western neighbor', 'h', CONTROL_SHIFT, () => focusNeighbor(WEST)],
-  ['Focus southern neighbor', 'j', CONTROL_SHIFT, () => focusNeighbor(SOUTH)],
-  ['Focus northern neighbor', 'k', CONTROL_SHIFT, () => focusNeighbor(NORTH)],
-  ['Focus eastern neighbor', 'l', CONTROL_SHIFT, () => focusNeighbor(EAST)],
+  ["Focus western neighbor", "h", CONTROL_SHIFT, () => focusNeighbor(WEST)],
+  ["Focus southern neighbor", "j", CONTROL_SHIFT, () => focusNeighbor(SOUTH)],
+  ["Focus northern neighbor", "k", CONTROL_SHIFT, () => focusNeighbor(NORTH)],
+  ["Focus eastern neighbor", "l", CONTROL_SHIFT, () => focusNeighbor(EAST)],
 
-  ['Move to right display', 'right', CONTROL_SHIFT, () => moveToScreen(RIGHT)],
-  ['Move to left display', 'left', CONTROL_SHIFT, () => moveToScreen(LEFT)],
+  ["Move to right display", "right", CONTROL_SHIFT, () => moveToScreen(RIGHT)],
+  ["Move to left display", "left", CONTROL_SHIFT, () => moveToScreen(LEFT)],
 
-  ['Move to right space', 'right', CONTROL_ALT_SHIFT, () => moveToSpace(RIGHT)],
-  ['Move to left space', 'left', CONTROL_ALT_SHIFT, () => moveToSpace(LEFT)],
+  ["Move to right space", "right", CONTROL_ALT_SHIFT, () => moveToSpace(RIGHT)],
+  ["Move to left space", "left", CONTROL_ALT_SHIFT, () => moveToSpace(LEFT)],
 ];
 
 for (const binding of keys) {
-  Key.on(...binding.slice(1));
+  Key.on(binding[1], binding[2], binding[3]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +160,9 @@ for (const binding of keys) {
  *
  * This is much, much more efficient than using Space.windows and finding the
  * ones belonging to particular apps.
+ *
+ * @param {string} appName
+ * @param {Space} space
  */
 function getWindowsInSpace(appName, space) {
   const app = App.get(appName);
@@ -178,12 +188,12 @@ function autoLayout() {
   // space with one browser window and one terminal window
 
   const browserWins = [
-    ...getWindowsInSpace('Safari', space),
-    ...getWindowsInSpace('Wavebox', space),
-    ...getWindowsInSpace('Google Chrome', space),
-    ...getWindowsInSpace('Firefox', space),
+    ...getWindowsInSpace("Safari", space),
+    ...getWindowsInSpace("Wavebox", space),
+    ...getWindowsInSpace("Google Chrome", space),
+    ...getWindowsInSpace("Firefox", space),
   ];
-  const terminalWins = getWindowsInSpace('kitty', space);
+  const terminalWins = getWindowsInSpace("kitty", space);
   if (browserWins.length === 1 && terminalWins.length === 1) {
     fill(LEFT, { window: browserWins[0], portion: 1 - THIN_WIDTH });
     fill(RIGHT, { window: terminalWins[0], portion: THIN_WIDTH });
@@ -192,7 +202,7 @@ function autoLayout() {
 
   // space with a reeder window
 
-  const reederWins = getWindowsInSpace('Reeder', space);
+  const reederWins = getWindowsInSpace("Reeder", space);
   if (reederWins.length === 1) {
     moveTo(CENTER, reederWins[0]);
     return;
@@ -200,9 +210,9 @@ function autoLayout() {
 
   // space with a wavebox window
 
-  const waveboxWins = getWindowsInSpace('Wavebox', space);
+  const waveboxWins = getWindowsInSpace("Wavebox", space);
   if (waveboxWins.length === 1) {
-    const messagesWins = getWindowsInSpace('Messages', space);
+    const messagesWins = getWindowsInSpace("Messages", space);
 
     if (messagesWins.length > 0) {
       fill(LEFT, { window: messagesWins[0], portion: 0.32 });
@@ -215,9 +225,9 @@ function autoLayout() {
   }
 
   // space with Slack window
-  const slackWins = getWindowsInSpace('Slack', space);
+  const slackWins = getWindowsInSpace("Slack", space);
   if (slackWins.length === 1) {
-    const messagesWins = getWindowsInSpace('Messages', space);
+    const messagesWins = getWindowsInSpace("Messages", space);
 
     if (messagesWins.length > 0) {
       fill(LEFT, { window: messagesWins[0], portion: 0.32 });
@@ -232,6 +242,8 @@ function autoLayout() {
 
 /**
  * Add icon space to a screen frame
+ *
+ * @param {Rectangle} frame
  */
 function addIconSpace(frame) {
   return {
@@ -242,13 +254,10 @@ function addIconSpace(frame) {
 
 /**
  * Center a window on the screen and make it take up a large portion of the screen
+ *
+ * @param {Window} [window]
  */
-function center(window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function center(window = Window.focused()) {
   const screenFrame = getScreenFrame(window);
   const isLargeScreen = screenFrame.width > 2000;
   const widthScale = isLargeScreen ? 0.6 : 0.8;
@@ -265,6 +274,9 @@ function center(window) {
 /**
  * Return the bottom left coordinate in frame2 that will center frame1 within
  * it
+ *
+ * @param {Rectangle} frame1
+ * @param {Rectangle} [frame2]
  */
 function centerFrame(frame1, frame2) {
   frame2 = frame2 || getScreenFrame();
@@ -275,6 +287,14 @@ function centerFrame(frame1, frame2) {
 
 /**
  * Fill an area of the screen
+ *
+ * @param {string} area
+ * @param {{
+ *   window?: Window,
+ *   portion?: number,
+ *   width?: number,
+ *   widthMinus?: number
+ * }} options
  */
 function fill(area, options = {}) {
   let { window, portion, width, widthMinus } = options;
@@ -356,8 +376,7 @@ function fill(area, options = {}) {
     case NE:
     case SE:
     case RIGHT:
-      frame.x =
-        screenFrame.x +
+      frame.x = screenFrame.x +
         (screenFrame.width - bounds.width) +
         (bounds.width - frame.width - PADDING) / 2;
       break;
@@ -386,13 +405,11 @@ function fill(area, options = {}) {
 
 /**
  * Move focus to the closest neighbor in a given direction
+ *
+ * @param {string} direction
+ * @param {Window} [window]
  */
-function focusNeighbor(direction, window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function focusNeighbor(direction, window = Window.focused()) {
   const neighbors = window.neighbors(direction);
   for (const n of neighbors) {
     if (n.isVisible()) {
@@ -402,19 +419,22 @@ function focusNeighbor(direction, window) {
   }
 }
 
+/** @type {number} */
 let focusTimer;
 
 /**
  * Focus the window currently under the mouse cursor
+ *
+ * @param {Point} position
  */
-function focusWindowUnderMouse(position) {
+function _focusWindowUnderMouse(position) {
   clearTimeout(focusTimer);
   const args = Array.prototype.slice.call(arguments);
   focusTimer = setTimeout(() => {
-    Phoenix.log('Focus event: ' + JSON.stringify(args));
+    Phoenix.log("Focus event: " + JSON.stringify(args));
     const window = getWindowAt(position);
     if (window) {
-      Phoenix.log('Focusing window', JSON.stringify(window.app().name()));
+      Phoenix.log("Focusing window", JSON.stringify(window.app().name()));
       // window.focus();
     }
   }, 100);
@@ -422,6 +442,9 @@ function focusWindowUnderMouse(position) {
 
 /**
  * Indicate whether two frames are equal
+ *
+ * @param {Rectangle} frame1
+ * @param {Rectangle} frame2
  */
 function framesEqual(frame1, frame2) {
   if (!frame1 && !frame2) {
@@ -440,13 +463,10 @@ function framesEqual(frame1, frame2) {
 
 /**
  * Get a delta frame between a window and its screen
+ *
+ * @param {Window} [window]
  */
-function getDeltaFrame(window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function getDeltaFrame(window = Window.focused()) {
   const frame = window.frame();
   const screen = getScreenFrame(window);
 
@@ -460,43 +480,40 @@ function getDeltaFrame(window) {
 
 /**
  * Parent frame
+ *
+ * @param {Window} [window]
  */
-function getScreenFrame(window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function getScreenFrame(window = Window.focused()) {
   const screenFrame = window.screen().flippedVisibleFrame();
-
   Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
-
   return padScreenFrame(screenFrame);
 }
 
 /**
  * Return the window at a given position
+ *
+ * @param {Point} position
  */
 function getWindowAt(position) {
   // If Window.at works, take it
   let win = Window.at(position);
   if (win) {
-    Phoenix.log('Returning Window.at');
+    Phoenix.log("Returning Window.at");
     return win;
   }
 
   // If the mouse is still within the bounds of the currently focused window,
   // keep focus there
-  let focused = Window.focused();
+  const focused = Window.focused();
   if (focused && isWithin(position, focused.frame())) {
-    Phoenix.log('Returning focused window');
+    Phoenix.log("Returning focused window");
     return focused;
   }
 
   // Return the first window that the mouse is within
   for (const w of Window.all({ visible: true })) {
     if (isWithin(position, w.frame())) {
-      Phoenix.log('May be ' + w.app().name());
+      Phoenix.log("May be " + w.app().name());
       if (!win) {
         win = w;
       }
@@ -508,19 +525,20 @@ function getWindowAt(position) {
 
 /**
  * Get a percent of the screen height
+ *
+ * @param {number} percent
+ * @param {Window} [window]
  */
-function heightPercent(percent, window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function heightPercent(percent, window = Window.focused()) {
   const screen = getScreenFrame(window);
   return Math.round(screen.height * percent);
 }
 
 /**
  * Return true if a point is within a frame
+ *
+ * @param {Point} point
+ * @param {Rectangle} frame
  */
 function isWithin(point, frame) {
   return (
@@ -533,14 +551,11 @@ function isWithin(point, frame) {
 
 /**
  * Move to cardinal directions NW, NE, SE, SW or relative direction CENTER
+ *
+ * @param {string} direction
+ * @param {Window} [window]
  */
-function moveTo(direction, window) {
-  window = window || Window.focused();
-  if (!window) {
-    Phoenix.log(`No window`);
-    return;
-  }
-
+function moveTo(direction, window = Window.focused()) {
   const delta = getDeltaFrame(window);
   const frame = window.frame();
   const screenFrame = getScreenFrame(window);
@@ -581,13 +596,11 @@ function moveTo(direction, window) {
 
 /**
  * Move a window to the screen to the left or right
+ *
+ * @param {string} direction
+ * @param {Window} [window]
  */
-function moveToScreen(direction, window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function moveToScreen(direction, window = Window.focused()) {
   const screen = window.screen();
   const newScreen = direction === RIGHT ? screen.next() : screen.previous();
   if (screen === newScreen) {
@@ -609,10 +622,10 @@ function moveToScreen(direction, window) {
   const width = Math.round(windowFrame.width * widthRatio);
   const height = Math.round(windowFrame.height * heightRatio);
   const x = Math.round(
-    newScreenFrame.x + (windowFrame.x - screenFrame.x) * widthRatio
+    newScreenFrame.x + (windowFrame.x - screenFrame.x) * widthRatio,
   );
   const y = Math.round(
-    newScreenFrame.y + (windowFrame.y - screenFrame.y) * heightRatio
+    newScreenFrame.y + (windowFrame.y - screenFrame.y) * heightRatio,
   );
   const newWindowFrame = { x, y, width, height };
 
@@ -634,6 +647,9 @@ function moveToScreen(direction, window) {
 
 /**
  * Move a window to the space to the left or right
+ *
+ * @param {string} direction
+ * @param {Window} [window]
  */
 function moveToSpace(direction, window) {
   window = window || Window.focused();
@@ -658,6 +674,8 @@ function moveToSpace(direction, window) {
 
 /**
  * Apply padding to a screen frame
+ *
+ * @param {Rectangle} frame
  */
 function padScreenFrame(frame) {
   return {
@@ -670,13 +688,11 @@ function padScreenFrame(frame) {
 
 /**
  * Resize SE-corner by value
+ *
+ * @param {{ width?: number, height?: number }} increment
+ * @param {Window} [window]
  */
-function resize(increment, window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function resize(increment, window = Window.focused()) {
   const screenFrame = getScreenFrame(window);
   const windowFrame = window.frame();
 
@@ -689,7 +705,7 @@ function resize(increment, window) {
     const maxHeight = screenFrame.height - (windowFrame.y - screenFrame.y);
     windowFrame.height = Math.min(
       windowFrame.height + increment.height,
-      maxHeight
+      maxHeight,
     );
   }
 
@@ -706,12 +722,13 @@ function showHelp() {
     return;
   }
 
+  /** @param {[string, string, string[], () => unknown][]} modalKeys */
   function makeModal(modalKeys) {
     const lines = [];
     for (const key of modalKeys) {
-      lines.push(`${key[2].join('+')}+${key[1]} - ${key[0]}`);
+      lines.push(`${key[2].join("+")}+${key[1]} - ${key[0]}`);
     }
-    const text = lines.join('\n');
+    const text = lines.join("\n");
     return Modal.build({ weight: 20, text });
   }
 
@@ -746,23 +763,20 @@ function showHelp() {
 
 /**
  * Toggle a window between filling the screen and its original size
+ *
+ * @param {Window} [window]
  */
-function toggleFillScreen(window) {
-  window = window || Window.focused();
-  if (!window) {
-    Phoenix.log('No window');
-    return;
-  }
-
+function toggleFillScreen(window = Window.focused()) {
   const windowId = window.hash();
-  const lastPositions = Storage.get('lastPositions') || {};
+  /** @type {{ [key: number]: Rectangle }} */
+  const lastPositions = Storage.get("lastPositions") || {};
   const windowFrame = window.frame();
   const screenFrame = getScreenFrame();
 
   if (!framesEqual(windowFrame, screenFrame)) {
-    Phoenix.log('Filling center');
+    Phoenix.log("Filling center");
     lastPositions[windowId] = { ...windowFrame };
-    Storage.set('lastPositions', lastPositions);
+    Storage.set("lastPositions", lastPositions);
     fill(CENTER, { window });
   } else if (lastPositions[windowId]) {
     window.setFrame(lastPositions[windowId]);
@@ -771,13 +785,11 @@ function toggleFillScreen(window) {
 
 /**
  * Get a percent of the screen width
+ *
+ * @param {number} percent
+ * @param {Window} [window]
  */
-function widthPercent(percent, window) {
-  window = window || Window.focused();
-  if (!window) {
-    return;
-  }
-
+function widthPercent(percent, window = Window.focused()) {
   const screenFrame = getScreenFrame(window);
   return Math.round(screenFrame.width * percent);
 }
