@@ -245,7 +245,7 @@ function dotfiles-brew {
         'git-delta'   # prettier git diffs
         'jq'          # command line JSON processor
         'node'        # Node.js
-        'poetry'      # python project package manager
+        'pdm'         # python package manager
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
@@ -344,8 +344,8 @@ function dotfiles-python {
         err $out
     fi
 
-    poetry completions zsh > $ZCOMPDIR/_poetry
-    logSub "Installed poetry completions"
+    pdm completion > $ZCOMPDIR/_pdm
+    logSub "Installed pdm completions"
 }
 
 # Update global npm packages
