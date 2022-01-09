@@ -3,7 +3,6 @@ local util = require('util')
 util.augroup('init_autocommands', {
   -- make text files easier to work with
   'FileType text,textile,markdown,html lua require("util").text_mode()',
-  'FileType markdown setlocal nowrap',
 
   -- show the current textwidth
   'BufEnter *.* lua require("util").show_view_width()',

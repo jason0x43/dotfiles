@@ -274,7 +274,7 @@ function M.apply_theme(theme_name)
 
   -- Markdown
   hi_link('markdownCodeDelimiter', 'PreProc')
-  hi_link('markdownCode', 'Visual')
+  hi('markdownCode', palette.orange, palette.bg_1)
 
   -- Startify
   hi('StartifyHeader', palette.green)
