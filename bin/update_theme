@@ -143,6 +143,8 @@ def get_kitty_theme(variant):
         "inactive_tab_background": colors["bg_1"],
         "tab_bar_background": colors["bg_2"],
         "tab_bar_margin_color": colors["bg_2"],
+        "active_border_color": colors["dim_0"],
+        "inactive_border_color": colors["bg_2"],
     }
 
     return theme
