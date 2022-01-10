@@ -80,6 +80,35 @@ packer.startup({
           startify.opts.layout[5] = startify.section.mru_cwd
           startify.opts.layout[6] = startify.section.mru
 
+          table.insert(startify.opts.layout, 7, {
+            type = 'padding',
+            val = 1,
+          })
+
+          startify.section.bookmarks = {
+            type = 'group',
+            val = {
+              {
+                type = 'text',
+                val = 'Bookmarks',
+                opts = { hl = 'SpecialComment' },
+              },
+              { type = 'padding', val = 1 },
+              {
+                type = 'group',
+                val = {
+                  startify.file_button(
+                    '~/.config/nvim/lua/user/plugins/init.lua',
+                    'c'
+                  ),
+                  startify.file_button('~/.zshrc', 'z'),
+                },
+              },
+            },
+          }
+
+          table.insert(startify.opts.layout, 8, startify.section.bookmarks)
+
           -- update the title of the mru section and only show 5 items
           startify.section.mru.val[2].val = 'Recent'
           startify.section.mru.val[4].val = function()
