@@ -18,7 +18,7 @@ end
 
 vim.g.base16_theme = load_theme_name() or 'ashes'
 
-local status, base16 = pcall(require, 'colors.base16')
+local status, base16 = pcall(require, 'user.colors.base16')
 if status == false then
   print('Unable to load base16 theme')
 else

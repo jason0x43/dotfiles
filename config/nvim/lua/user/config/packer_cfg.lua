@@ -16,10 +16,10 @@ if not packer_exists then
   print('Cloned packer')
 
   vim.cmd('packadd packer.nvim')
-  require('plugins').install()
+  require('user.plugins').install()
 end
 
-local util = require('util')
+local util = require('user.util')
 
 -- recompile the packer config whenever the plugin config file is edited
 util.augroup(

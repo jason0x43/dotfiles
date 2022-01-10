@@ -1,4 +1,4 @@
-local c = require('colors.selenized').active_palette()
+local c = require('user.colors.selenized').active_palette()
 
 return {
   normal = {

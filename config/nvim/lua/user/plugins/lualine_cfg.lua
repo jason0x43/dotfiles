@@ -1,5 +1,5 @@
-local theme = require('util.theme')
-local req = require('req')
+local theme = require('user.util.theme')
+local req = require('user.req')
 
 -- make statusline transparent so we don't get a flash before lualine renders
 theme.hi('StatusLine', { bg = '' })

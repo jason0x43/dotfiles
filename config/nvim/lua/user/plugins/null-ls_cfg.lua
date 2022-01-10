@@ -1,9 +1,9 @@
-local null_ls = require('req')('null-ls')
+local null_ls = require('user.req')('null-ls')
 if not null_ls then
   return
 end
 
-local lsp_on_attach = require('lsp.init').on_attach
+local lsp_on_attach = require('user.lsp.init').on_attach
 
 local helpers = require('null-ls.helpers')
 

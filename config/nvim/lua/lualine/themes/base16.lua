@@ -1,4 +1,4 @@
-local c = require('util.theme').get_colors()
+local c = require('user.util.theme').get_colors()
 
 return {
   normal = {

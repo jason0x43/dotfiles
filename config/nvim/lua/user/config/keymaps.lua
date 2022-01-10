@@ -1,4 +1,4 @@
-local util = require('util')
+local util = require('user.util')
 
 vim.g.mapleader = ';'
 
@@ -22,7 +22,7 @@ util.lmap('c', '<cmd>close<cr>')
 -- show the syntax highlight state of the character under the cursor
 util.lmap(
   'hl',
-  '<cmd>lua require("util").print_syn_group()<cr>'
+  '<cmd>lua require("user.util").print_syn_group()<cr>'
 )
 
 -- space to clear search highlights
@@ -31,7 +31,7 @@ util.map('<space>', '<cmd>noh<cr>')
 -- yank to and paste from system clipboard
 util.lmap(
   'y',
-  'y<cmd>lua require("util").yank(vim.fn.getreg("0"))<CR>',
+  'y<cmd>lua require("user.util").yank(vim.fn.getreg("0"))<CR>',
   { mode = 'nvo' }
 )
 util.lmap('p', '"*p')

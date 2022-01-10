@@ -1,4 +1,4 @@
-local req = require('req')
+local req = require('user.req')
 local cmp = req('cmp')
 local luasnip = req('luasnip')
 

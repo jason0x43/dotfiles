@@ -1,6 +1,6 @@
 local M = {}
 local module = ...
-local hi = require('util.theme').hi
+local hi = require('user.util.theme').hi
 
 -- Modified from https://github.com/chriskempson/base16-vim
 function M.apply_theme(theme_name)
@@ -16,7 +16,7 @@ function M.apply_theme(theme_name)
     vim.go.background = 'dark'
   end
 
-  local shift = require('util.theme').shift
+  local shift = require('user.util.theme').shift
   local theme = require(module .. '.themes')[theme_name]
   local colors = {}
 

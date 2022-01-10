@@ -1,4 +1,4 @@
-local util = require('util')
+local util = require('user.util')
 
 local trouble_lsp = require('trouble.providers.lsp')
 local orig_diags = trouble_lsp.diagnostics

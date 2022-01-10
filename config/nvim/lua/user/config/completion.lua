@@ -135,7 +135,7 @@ function M.complete(key)
 end
 
 -- manual completion and cycling
-local util = require('util')
+local util = require('user.util')
 util.imap('<tab>', 'v:lua.completion.complete(' .. TAB .. ')', { expr = true })
 util.imap(
   '<s-tab>',

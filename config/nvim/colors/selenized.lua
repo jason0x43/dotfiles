@@ -1,5 +1,6 @@
-local status, selenized = pcall(require, 'colors.selenized')
-if status == false then
+local req = require('user.req')
+local selenized = req('user.colors.selenized')
+if not selenized then
   print('Unable to load selenized theme')
 else
   local theme_file = os.getenv('HOME') .. '/.theme'

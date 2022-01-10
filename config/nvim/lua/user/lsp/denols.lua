@@ -29,7 +29,7 @@ M.config = {
   end,
 
   on_attach = function()
-    vim.cmd('autocmd BufWritePre <buffer> lua require("lsp").format_sync(nil, 5000)')
+    vim.cmd('autocmd BufWritePre <buffer> lua require("user.lsp").format_sync(nil, 5000)')
   end,
 
   handlers = {

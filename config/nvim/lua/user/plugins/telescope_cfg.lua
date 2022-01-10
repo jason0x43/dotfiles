@@ -1,4 +1,4 @@
-local telescope = require('req')('telescope')
+local telescope = require('user.req')('telescope')
 if not telescope then
   return
 end
@@ -69,7 +69,7 @@ telescope.setup({
   },
 })
 
-local lmap = require('util').lmap
+local lmap = require('user.util').lmap
 lmap('f', '<cmd>Telescope find_files<cr>')
 lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 lmap('g', '<cmd>Telescope git_files<cr>')

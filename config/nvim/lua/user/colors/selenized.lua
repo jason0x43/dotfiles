@@ -1,7 +1,7 @@
 local M = {}
-local hi = require('util.theme').hi
-local hi_link = require('util.theme').hi_link
-local augroup = require('util').augroup
+local hi = require('user.util.theme').hi
+local hi_link = require('user.util.theme').hi_link
+local augroup = require('user.util').augroup
 
 local palettes = {
   dark = {
@@ -303,8 +303,8 @@ function M.apply_theme(theme_name)
   -- update the theme background when focus is gained or lost, as tmux does
   if vim.fn.getenv('TERM') ~= 'xterm-kitty' then
     augroup('selenized-theme', {
-      'FocusLost * lua require("colors.selenized").update_background(false)',
-      'FocusGained * lua require("colors.selenized").update_background(true)',
+      'FocusLost * lua require("user.colors.selenized").update_background(false)',
+      'FocusGained * lua require("user.colors.selenized").update_background(true)',
     })
   end
 end

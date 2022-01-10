@@ -1,6 +1,6 @@
 local modbase = ...
-local util = require('util')
-local req = require('req')
+local util = require('user.util')
+local req = require('user.req')
 
 local lspconfig = req('lspconfig')
 if not lspconfig then
@@ -45,7 +45,7 @@ function M.on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.bufcmd('Format', 'lua require("lsp").format_sync(nil, 5000)')
+    util.bufcmd('Format', 'lua require("user.lsp").format_sync(nil, 5000)')
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -54,7 +54,7 @@ function M.on_attach(client, bufnr)
 
   util.lmap(
     'd',
-    '<cmd>lua require("lsp").show_position_diagnostics()<cr>',
+    '<cmd>lua require("user.lsp").show_position_diagnostics()<cr>',
     opts
   )
 end

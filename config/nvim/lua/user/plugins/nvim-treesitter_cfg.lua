@@ -1,4 +1,4 @@
-local configs = require('req')('nvim-treesitter.configs')
+local configs = require('user.req')('nvim-treesitter.configs')
 if not configs then
   return
 end
@@ -10,7 +10,7 @@ local legacy_filetypes = vim.list_extend({
   'lua',
   'json',
   'python'
-}, require('util').ts_types)
+}, require('user.util').ts_types)
 
 local config = {
   highlight = {

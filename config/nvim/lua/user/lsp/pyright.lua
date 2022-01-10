@@ -2,7 +2,7 @@ local M = {}
 
 M.config = {
   on_attach = function()
-    require('util').bufcmd('OrganizeImports', 'PyrightOrganizeImports')
+    require('user.util').bufcmd('OrganizeImports', 'PyrightOrganizeImports')
   end,
 
   handlers = {

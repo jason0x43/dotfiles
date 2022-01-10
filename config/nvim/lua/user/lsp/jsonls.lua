@@ -9,7 +9,7 @@ M.config = {
   end
 }
 
-local schemastore = require('req')('schemastore')
+local schemastore = require('user.req')('schemastore')
 if schemastore then
   M.config.settings = {
     json = {

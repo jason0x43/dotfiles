@@ -1,5 +1,5 @@
 local lspconfig = require('lspconfig')
-local denols = require('lsp.denols')
+local denols = require('user.lsp.denols')
 
 local M = {}
 
@@ -43,7 +43,7 @@ M.config = {
     -- disable formatting for typescript; we'll use prettier instead
     client.resolved_capabilities.document_formatting = false
 
-    require('util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
+    require('user.util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
   end,
 
   should_attach = function()

@@ -18,7 +18,7 @@ packer.startup({
     use({
       'nvim-lualine/lualine.nvim',
       config = function()
-        require('plugins.lualine_cfg')
+        require('user.plugins.lualine_cfg')
       end,
       requires = 'arkav/lualine-lsp-progress',
     })
@@ -31,7 +31,7 @@ packer.startup({
         vim.g.nvim_tree_quit_on_open = 1
       end,
       config = function()
-        require('req')('nvim-tree', function(nvim_tree)
+        require('user.req')('nvim-tree', function(nvim_tree)
           nvim_tree.setup({
             update_focused_file = {
               enable = true,
@@ -48,7 +48,7 @@ packer.startup({
             },
           })
 
-          require('util').lmap('n', '<cmd>NvimTreeToggle<cr>')
+          require('user.util').lmap('n', '<cmd>NvimTreeToggle<cr>')
         end)
       end,
     })
@@ -86,7 +86,7 @@ packer.startup({
           { header = { '   MRU' }, type = 'files' },
         }
 
-        -- require('util').lmap('s', '<cmd>Startify<cr>')
+        -- require('user.util').lmap('s', '<cmd>Startify<cr>')
       end,
     })
 
@@ -94,7 +94,7 @@ packer.startup({
     use({
       'norcalli/nvim-colorizer.lua',
       config = function()
-        require('req')('colorizer', 'setup', { '*' }, { names = false })
+        require('user.req')('colorizer', 'setup', { '*' }, { names = false })
       end,
     })
 
@@ -110,7 +110,7 @@ packer.startup({
     use({
       'moll/vim-bbye',
       config = function()
-        local util = require('util')
+        local util = require('user.util')
         util.lmap('k', '<cmd>Bdelete<cr>')
         util.lmap('K', '<cmd>Bdelete!<cr>')
       end,
@@ -151,7 +151,7 @@ packer.startup({
       config = function()
         vim.g.undotree_DiffAutoOpen = 0
         vim.g.undotree_SetFocusWhenToggle = 1
-        require('util').lmap('u', '<cmd>UndotreeToggle<cr>')
+        require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
       end,
     })
 
@@ -160,7 +160,7 @@ packer.startup({
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
       config = function()
-        require('plugins.nvim-treesitter_cfg')
+        require('user.plugins.nvim-treesitter_cfg')
       end,
       requires = {
         -- provide TSHighlightCapturesUnderCursor command
@@ -171,7 +171,7 @@ packer.startup({
         {
           'SmiteshP/nvim-gps',
           config = function()
-            require('req')('nvim-gps', 'setup')
+            require('user.req')('nvim-gps', 'setup')
           end,
         },
       },
@@ -181,14 +181,14 @@ packer.startup({
     use({
       'nvim-telescope/telescope.nvim',
       config = function()
-        require('plugins.telescope_cfg')
+        require('user.plugins.telescope_cfg')
       end,
       requires = {
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
           config = function()
-            require('req')('telescope', 'load_extension', 'fzf')
+            require('user.req')('telescope', 'load_extension', 'fzf')
           end,
         },
         'nvim-telescope/telescope-symbols.nvim',
@@ -202,10 +202,10 @@ packer.startup({
         return vim.fn.getenv('TMUX') ~= vim.NIL
       end,
       config = function()
-        require('req')('Navigator', function(Navigator)
+        require('user.req')('Navigator', function(Navigator)
           Navigator.setup()
 
-          local nmap = require('util').nmap
+          local nmap = require('user.util').nmap
           nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
           nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
           nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
@@ -231,20 +231,20 @@ packer.startup({
     use({
       'neovim/nvim-lspconfig',
       config = function()
-        require('lsp')
+        require('user.lsp')
       end,
       requires = {
         {
           'jose-elias-alvarez/null-ls.nvim',
           config = function()
-            require('plugins.null-ls_cfg')
+            require('user.plugins.null-ls_cfg')
           end,
         },
         {
           'williamboman/nvim-lsp-installer',
           config = function()
-            require('req')('nvim-lsp-installer', function(installer)
-              local lsp = require('lsp')
+            require('user.req')('nvim-lsp-installer', function(installer)
+              local lsp = require('user.lsp')
               installer.on_server_ready(function(server)
                 local config = lsp.get_lsp_config(server.name)
                 server:setup(config)
@@ -267,7 +267,7 @@ packer.startup({
         }
       end,
       config = function()
-        local util = require('util')
+        local util = require('user.util')
         util.augroup('init_symbols_outline', {
           'FileType Outline setlocal signcolumn=no',
         })
@@ -290,7 +290,7 @@ packer.startup({
     use({
       'sindrets/diffview.nvim',
       config = function()
-        require('req')('diffview', 'setup')
+        require('user.req')('diffview', 'setup')
       end,
     })
 
@@ -298,7 +298,7 @@ packer.startup({
     use({
       'lewis6991/gitsigns.nvim',
       config = function()
-        require('req')('gitsigns', 'setup', {
+        require('user.req')('gitsigns', 'setup', {
           signs = {
             add = { text = '▋' },
             change = { text = '▋' },
@@ -313,7 +313,7 @@ packer.startup({
       -- disabled in favor of coq
       -- disable = true,
       config = function()
-        require('plugins.nvim-cmp_cfg')
+        require('user.plugins.nvim-cmp_cfg')
       end,
       requires = {
         'L3MON4D3/LuaSnip',

@@ -1,4 +1,4 @@
-local denols = require('lsp.denols')
+local denols = require('user.lsp.denols')
 
 local M = {}
 
