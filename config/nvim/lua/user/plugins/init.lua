@@ -65,28 +65,35 @@ packer.startup({
 
     -- Useful startup text, menu
     use({
-      'mhinz/vim-startify',
+      'goolord/alpha-nvim',
+      requires = { 'kyazdani42/nvim-web-devicons' },
       config = function()
-        local g = vim.g
-        g.startify_session_persistence = 0
-        g.startify_relative_path = 1
-        g.startify_use_env = 1
-        g.startify_files_number = 5
-        g.startify_change_to_dir = 0
-        g.startify_ascii_header = {
+        local startify = require('alpha.themes.startify')
+
+        startify.section.header.val = {
           ' ____ ____ ____ ____ ____ ____ ',
           '||n |||e |||o |||v |||i |||m ||',
           '||__|||__|||__|||__|||__|||__||',
           '|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|',
-          '',
-        }
-        g.startify_custom_header = 'startify#pad(g:startify_ascii_header)'
-        g.startify_lists = {
-          { header = { '   MRU ' .. vim.fn.getcwd() }, type = 'dir' },
-          { header = { '   MRU' }, type = 'files' },
         }
 
-        -- require('user.util').lmap('s', '<cmd>Startify<cr>')
+        -- switch the mru and mru_cwd section order
+        startify.opts.layout[5] = startify.section.mru_cwd
+        startify.opts.layout[6] = startify.section.mru
+
+        -- update the title of the mru section and only show 5 items
+        startify.section.mru.val[2].val = 'Recent'
+        startify.section.mru.val[4].val = function()
+          return { startify.mru(5, nil, 5) }
+        end
+
+        -- update the title of the mru_cwd section and only show 5 items
+        startify.section.mru_cwd.val[2].val = 'Recent (cwd)'
+        startify.section.mru_cwd.val[4].val = function()
+          return { startify.mru(0, vim.fn.getcwd(), 5) }
+        end
+
+        require('alpha').setup(startify.opts)
       end,
     })
 
@@ -373,3 +380,4 @@ packer.startup({
 })
 
 return packer
+
