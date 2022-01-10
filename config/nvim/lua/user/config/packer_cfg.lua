@@ -24,5 +24,5 @@ local util = require('user.util')
 -- recompile the packer config whenever the plugin config file is edited
 util.augroup(
   'init_packer',
-  { 'BufWritePost */lua/plugins/init.lua source <afile> | PackerCompile' }
+  { 'BufWritePost */lua/user/plugins/init.lua source <afile> | PackerCompile' }
 )
