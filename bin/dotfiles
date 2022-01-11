@@ -244,8 +244,10 @@ function dotfiles-brew {
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
         'jq'          # command line JSON processor
+        'neovim'      # editor
         'node'        # Node.js
         'pdm'         # python package manager
+        'python'      # default python
         'ripgrep'     # better grep
         'tig'         # terminal git ui
         'tmux'        # terminal manager
@@ -344,6 +346,7 @@ function dotfiles-python {
         err $out
     fi
 
+    mkdir -p $ZCOMPDIR
     pdm completion > $ZCOMPDIR/_pdm
     logSub "Installed pdm completions"
 }
