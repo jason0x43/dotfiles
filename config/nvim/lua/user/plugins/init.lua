@@ -1,4 +1,6 @@
-require('packer').startup({
+local packer = require('packer')
+
+packer.startup({
   function(use)
     -- manage the package manager
     use({
@@ -330,3 +332,4 @@ require('packer').startup({
   },
 })
 
+return packer
