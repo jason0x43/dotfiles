@@ -1,26 +1,25 @@
-local packer = require('packer')
-
-packer.startup({
+require('packer').startup({
   function(use)
     -- manage the package manager
-    use('wbthomason/packer.nvim')
+    use({
+      'wbthomason/packer.nvim',
+      requires = 'nvim-lua/plenary.nvim',
+    })
 
     -- speed up the lua loader
-    use('lewis6991/impatient.nvim')
-
-    -- plenary is a common dependency
-    use('nvim-lua/plenary.nvim')
-
-    -- devicons are needed by the status bar
-    use('kyazdani42/nvim-web-devicons')
+    use({
+      'lewis6991/impatient.nvim',
+      requires = 'nvim-lua/plenary.nvim',
+    })
 
     -- flashy status bar
     use({
       'nvim-lualine/lualine.nvim',
-      config = function()
-        require('user.plugins.lualine_cfg')
-      end,
-      requires = 'arkav/lualine-lsp-progress',
+      requires = {
+        'arkav/lualine-lsp-progress',
+        'kyazdani42/nvim-web-devicons',
+      },
+      config = "require('user.plugins.lualine')",
     })
 
     -- file explorer in sidebar
@@ -67,9 +66,7 @@ packer.startup({
     use({
       'goolord/alpha-nvim',
       requires = { 'kyazdani42/nvim-web-devicons' },
-      config = function()
-        require('user.plugins.alpha_cfg')
-      end,
+      config = "require('user.plugins.alpha')",
     })
 
     -- highlight color strings
@@ -83,6 +80,7 @@ packer.startup({
     -- better start/end matching
     use({
       'andymass/vim-matchup',
+      requires = 'nvim-lua/plenary.nvim',
       config = function()
         vim.g.matchup_matchparen_offscreen = { method = 'popup' }
       end,
@@ -140,11 +138,8 @@ packer.startup({
     -- for filetype features like syntax highlighting and indenting
     use({
       'nvim-treesitter/nvim-treesitter',
-      run = ':TSUpdate',
-      config = function()
-        require('user.plugins.nvim-treesitter_cfg')
-      end,
       requires = {
+        'nvim-lua/plenary.nvim',
         -- provide TSHighlightCapturesUnderCursor command
         'nvim-treesitter/playground',
         -- set proper commentstring for embedded languages
@@ -157,15 +152,16 @@ packer.startup({
           end,
         },
       },
+      run = ':TSUpdate',
+      config = "require('user.plugins.nvim-treesitter')",
     })
 
     -- fuzzy finding
     use({
       'nvim-telescope/telescope.nvim',
-      config = function()
-        require('user.plugins.telescope_cfg')
-      end,
       requires = {
+        'nvim-lua/plenary.nvim',
+        'kyazdani42/nvim-web-devicons',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
@@ -173,8 +169,12 @@ packer.startup({
             require('user.req')('telescope', 'load_extension', 'fzf')
           end,
         },
-        'nvim-telescope/telescope-symbols.nvim',
+        {
+          'nvim-telescope/telescope-symbols.nvim',
+          requires = 'nvim-lua/plenary.nvim',
+        },
       },
+      config = "require('user.plugins.telescope')",
     })
 
     -- easier movement between vim and tmux panes, and between vim panes
@@ -212,18 +212,17 @@ packer.startup({
     -- native LSP
     use({
       'neovim/nvim-lspconfig',
-      config = function()
-        require('user.lsp')
-      end,
+      config = "require('user.lsp')",
       requires = {
+        'nvim-lua/plenary.nvim',
         {
           'jose-elias-alvarez/null-ls.nvim',
-          config = function()
-            require('user.plugins.null-ls_cfg')
-          end,
+          requires = 'nvim-lua/plenary.nvim',
+          config = "require('user.plugins.null-ls')",
         },
         {
           'williamboman/nvim-lsp-installer',
+          requires = 'nvim-lua/plenary.nvim',
           config = function()
             require('user.req')('nvim-lsp-installer', function(installer)
               local lsp = require('user.lsp')
@@ -271,6 +270,10 @@ packer.startup({
     -- better git diff views
     use({
       'sindrets/diffview.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim',
+        'kyazdani42/nvim-web-devicons',
+      },
       config = function()
         require('user.req')('diffview', 'setup')
       end,
@@ -279,6 +282,7 @@ packer.startup({
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
+      requires = 'nvim-lua/plenary.nvim',
       config = function()
         require('user.req')('gitsigns', 'setup', {
           signs = {
@@ -300,13 +304,20 @@ packer.startup({
         'hrsh7th/cmp-nvim-lsp',
         'saadparwaiz1/cmp_luasnip',
       },
-      config = function()
-        require('user.plugins.nvim-cmp_cfg')
-      end,
+      config = "require('user.plugins.nvim-cmp')",
     })
 
     -- startup time profiling
     use('dstein64/vim-startuptime')
+
+    -- diagnostics display
+    use({
+      'folke/trouble.nvim',
+      requires = 'kyazdani42/nvim-web-devicons',
+      config = function()
+        require('user.req')('trouble', 'setup')
+      end,
+    })
   end,
 
   config = {
@@ -318,6 +329,4 @@ packer.startup({
     },
   },
 })
-
-return packer
 

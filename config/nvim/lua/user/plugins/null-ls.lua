@@ -3,7 +3,7 @@ if not null_ls then
   return
 end
 
-local lsp_on_attach = require('user.lsp.init').on_attach
+local lsp_on_attach = require('user.lsp').on_attach
 
 local helpers = require('null-ls.helpers')
 

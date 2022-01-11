@@ -4,7 +4,7 @@ vim.opt.shadafile = 'NONE'
 
 pcall(require, 'impatient')
 
-require('user.config.packer_cfg')
+require('user.config.packer')
 require('user.config.options')
 require('user.config.keymaps')
 require('user.config.autocommands')
