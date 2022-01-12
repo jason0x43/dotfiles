@@ -1,4 +1,4 @@
-# Handle navigation between kitty windows and nvim windows
+# Handle navigating between various splits (vim, kitty, tmux)
 
 import re
 from typing import Any, Sequence, cast
@@ -10,9 +10,12 @@ from kitty.typing import BossType, EdgeLiteral
 from kitty.window import Window
 
 
-def is_proc_window(window: Window, proc_name: str):
+def window_has_proc(window: Window, proc_name: str):
     fp = window.child.foreground_processes
-    return re.match(f"\\b{proc_name}$", fp[-1]["cmdline"][0])
+    for p in reversed(fp):
+        if re.search(f"\\b{proc_name}$", p["cmdline"][0]):
+            return True
+    return False
 
 
 def encode_key_mapping(key_mapping: str):
@@ -45,8 +48,7 @@ def handle_result(
     direction = cast(EdgeLiteral, args[2])
 
     if source == "kitty":
-        proc_name = args[4] if len(args) > 4 else "n?vim"
-        if is_proc_window(window, proc_name):
+        if window_has_proc(window, "(n?vim|tmux)"):
             key_mapping = args[3]
             encoded = encode_key_mapping(key_mapping)
             window.write_to_child(encoded)

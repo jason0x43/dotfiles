@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+# Handle navigating between various splits (vim, kitty, tmux)
+
+# dir is left, right, top, bottom
+dir=$1
+
+if [[ $dir == "left" ]]; then
+    pane_dir="-L"
+    pane_at_edge=$(tmux display-message -p "#{pane_at_left}")
+elif [[ $dir == "right" ]]; then
+    pane_dir="-R"
+    pane_at_edge=$(tmux display-message -p "#{pane_at_right}")
+elif [[ $dir == "top" ]]; then
+    pane_dir="-U"
+    pane_at_edge=$(tmux display-message -p "#{pane_at_top}")
+else
+    pane_dir="-D"
+    pane_at_edge=$(tmux display-message -p "#{pane_at_bottom}")
+fi
+
+if [[ $pane_at_edge == "1" ]]; then
+    kitty @ kitten nvim_nav.py tmux $dir
+else
+    tmux select-pane $pane_dir
+fi

@@ -179,25 +179,6 @@ packer.startup({
       config = "require('user.plugins.telescope')",
     })
 
-    -- easier movement between vim and tmux panes, and between vim panes
-    use({
-      'numToStr/Navigator.nvim',
-      cond = function()
-        return vim.fn.getenv('TMUX') ~= vim.NIL
-      end,
-      config = function()
-        require('user.req')('Navigator', function(Navigator)
-          Navigator.setup()
-
-          local nmap = require('user.util').nmap
-          nmap('<C-j>', '<cmd>lua require("Navigator").down()<cr>')
-          nmap('<C-h>', '<cmd>lua require("Navigator").left()<cr>')
-          nmap('<C-k>', '<cmd>lua require("Navigator").up()<cr>')
-          nmap('<C-l>', '<cmd>lua require("Navigator").right()<cr>')
-        end)
-      end,
-    })
-
     -- filetype plugins
     use('tpope/vim-markdown')
     use({
