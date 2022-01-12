@@ -4,11 +4,12 @@ session_file=$HOME/.local/share/kitty/session.ini
 size_line=$(head -1 $session_file)
 width=$(echo $size_line | awk '{ print $2 }')
 height=$(echo $size_line | awk '{ print $3 }')
+kitty_sock=$(cut -f 2 -d = $HOME/.config/kitty/macos-launch-services-cmdline)
 
 cd ~
 
 kitty \
-	--listen-on unix:/tmp/kitty \
+	--listen-on $kitty_sock \
 	--session $session_file \
 	--override initial_window_width=$width \
 	--override initial_window_height=$height > /dev/null 2>&1 &
