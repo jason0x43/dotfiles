@@ -173,5 +173,5 @@ def handle_result(
     return f"Session saved at {datetime.now()}"
 
 
-def main(args):
+def main():
     pass
