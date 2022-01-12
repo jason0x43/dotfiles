@@ -11,5 +11,6 @@ cd ~
 kitty \
 	--listen-on $kitty_sock \
 	--session $session_file \
+	--override remember_window_size=no \
 	--override initial_window_width=$width \
 	--override initial_window_height=$height > /dev/null 2>&1 &
