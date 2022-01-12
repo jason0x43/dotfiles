@@ -13,6 +13,9 @@ util.augroup('init_autocommands', {
   -- wrap lines in quickfix windows
   'FileType qf setlocal wrap linebreak nolist breakindent breakindentopt=shift:2 colorcolumn=""',
 
+  -- don't use the colorcolumn in Trouble windows
+  'FileType Trouble setlocal colorcolumn=""',
+
   -- don't show sign column in help panes
   'FileType help setlocal signcolumn=no',
 

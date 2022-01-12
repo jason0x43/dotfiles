@@ -318,6 +318,7 @@ packer.startup({
       requires = 'kyazdani42/nvim-web-devicons',
       config = function()
         require('user.req')('trouble', 'setup')
+        require('user.util').lmap('e', '<cmd>TroubleToggle<cr>')
       end,
     })
   end,
