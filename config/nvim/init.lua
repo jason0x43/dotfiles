@@ -10,5 +10,6 @@ require('user.config.keymaps')
 require('user.config.autocommands')
 require('user.plugins')
 require('user.theme')
+require('user.kitty')
 
 vim.opt.shadafile = ''
