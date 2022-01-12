@@ -8,8 +8,7 @@ I spend most of my time in [zsh](http://zsh.sourceforge.net),
 [tmux](http://tmux.sourceforge.net), and
 [kitty](https://sw.kovidgoyal.net/kitty/), and [neovim](http://neovim.io) is my
 editor of choice. I use a number of vim plugins, managed by
-[packer](https://github.com/wbthomason/packer.nvim), and a few tmux plugins,
-manged by [tpm](https://github.com/tmux-plugins/tpm).
+[packer](https://github.com/wbthomason/packer.nvim).
 
 ## Paths
 
