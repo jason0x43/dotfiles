@@ -1,3 +1,5 @@
+# Handle navigation between kitty windows and nvim windows
+
 import re
 from typing import Any, Sequence, cast
 
@@ -42,7 +44,7 @@ def handle_result(
     source = args[1]
     direction = cast(EdgeLiteral, args[2])
 
-    if source == 'kitty':
+    if source == "kitty":
         proc_name = args[4] if len(args) > 4 else "n?vim"
         if is_proc_window(window, proc_name):
             key_mapping = args[3]
