@@ -1,5 +1,6 @@
 {
 	"extraPaths": [
 		"/Users/jason/Code/kitty"
-	]
+	],
+	"reportMissingModuleSource": false
 }

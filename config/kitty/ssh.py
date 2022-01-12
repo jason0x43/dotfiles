@@ -2,12 +2,6 @@ from typing import List
 from kitty.boss import Boss
 
 
-def main(args: List[str]) -> str:
-    if len(args) < 3 or args[2] != "samehost":
-        return input("Remote host: ")
-    return ""
-
-
 def handle_result(
     args: List[str], answer: str, target_window_id: int, boss: Boss
 ) -> None:
@@ -40,3 +34,8 @@ def handle_result(
             "--type=window", "--location=hsplit", f"--title= {host}", "ssh", target
         )
 
+
+def main(args: List[str]) -> str:
+    if len(args) < 3 or args[2] != "samehost":
+        return input("Remote host: ")
+    return ""

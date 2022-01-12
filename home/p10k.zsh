@@ -1585,10 +1585,13 @@
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
-  # Segment that shows an icon if the processor architecture is non-standard
+  # Segment that shows an icon if the apparent processor architecture differs
+  # from the kernel processor architecture
   function prompt_arch() {
+    local os_ver=$(uname -v)
     local arch_text=$(uname -m)
-    if [[ $arch_text != "arm64" ]] then
+    local arch_check="RELEASE_${arch_text:u}"
+    if [[ "${os_ver#*$arch_check}" == "$os_ver" ]] then
       p10k segment -i  -f 19 -t $arch_text
     fi
   }
