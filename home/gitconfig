@@ -22,7 +22,7 @@
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
-	pager = less --chop-long-lines --QUIT-AT-EOF
+	pager = less --chop-long-lines --QUIT-AT-EOF -x1,5
 
 [alias]
 	a = add
@@ -93,12 +93,12 @@
 	main-view-date = relative-compact
 
 [tig "color"]
-	default = color7 default normal
-	cursor = color15 color18 normal
+	default = color15 default normal
+	cursor = default color8 normal
 	diff-del = color1 default normal
 	diff-add = color2 default normal
-	title-focus = color0 color19 normal
-	title-blur = color19 color18 normal
+	title-focus = color0 color4 normal
+	title-blur = color7 color8 normal
 
 [tig "bind"]
 	generic = <Ctrl-f> scroll-page-down
@@ -118,9 +118,10 @@
 	pushInsteadOf = git://gist.github.com/
 
 [filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
 	required = true
+	process = git-lfs filter-process
 
 [user]
 	name = Michelle Cheatham
@@ -146,8 +147,8 @@
 [rerere]
 	enabled = true
 
-[includeIf "gitdir:~/Work/projects/"]
-	path = ~/.gitconfig-work
+[includeIf "gitdir:~/Work/"]
+	path = ~/.config/git/work
 
 [help]
 	autoCorrect = 20

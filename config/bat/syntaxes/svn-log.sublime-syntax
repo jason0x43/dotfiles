@@ -1,0 +1,22 @@
+%YAML 1.2
+---
+name: Subversion log
+file_extensions: [svnlog]
+scope: source.svnlog
+
+contexts:
+  main:
+    - match: ^(-----+)$
+      captures:
+        1: invalid.deprecated
+    - match: ^(r\d+) (\|) (\w+) (\|) ([^(]+ \()([^)]+)(\)) (\|) (.+)$
+      captures:
+        1: entity.name.class
+        2: invalid.deprecated
+        3: invalid.deprecated
+        4: invalid.deprecated
+        5: invalid.deprecated
+        6: keyword
+        7: invalid.deprecated
+        8: invalid.deprecated
+        9: invalid.deprecated

@@ -37,10 +37,17 @@ typeset -gU mailpath path
 
 # Path
 # --------------------------------------------------------------------------
+if [[ -d /usr/local/bin ]]; then
+	path=(
+		/usr/local/bin
+		$path
+	)
+fi
+
 path=(
 	$HOME/Applications
-	$HOME/.local/bin
 	$DOTFILES/bin
+	$HOME/.local/bin
 	$HOMEBREW_BASE/bin
 	$HOMEBREW_BASE/sbin
 	$path
@@ -89,14 +96,17 @@ if [[ -z $TERM_PROGRAM ]]; then
 	elif [[ -n $KITTY_LISTEN_ON ]]; then
 		export TERM_PROGRAM=kitty
 	fi
+
+	# https://github.com/kovidgoyal/kitty/issues/1645#issuecomment-496221126 
+	export KITTY_DISABLE_WAYLAND=1
 fi
 
 # Tmux
 # --------------------------------------------------------------------------
-export TMUX_PLUGIN_MANAGER_PATH="$CACHEDIR/tmux/tmux-plugins/"
+export TMUX_PLUGIN_MANAGER_PATH="$DATADIR/tmux/tmux-plugins"
 
 # pkg-config
-typeset -U pkg_config_path=$PKG_CONFIG_PATH
+typeset -U pkg_config_path
 
 if [[ -d $HOMEBREW_BASE/opt/openssl ]]; then
 	pkg_config_path=(
@@ -131,9 +141,9 @@ if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
 		$path
 	)
 fi
-if [[ -d $HOMEBREW_BASE/lib/ruby/gems/2.7.0 ]]; then
+if [[ -d $HOMEBREW_BASE/lib/ruby/gems/3.0.0 ]]; then
 	path=(
-		$HOMEBREW_BASE/lib/ruby/gems/2.7.0/bin
+		$HOMEBREW_BASE/lib/ruby/gems/3.0.0/bin
 		$path
 	)
 fi

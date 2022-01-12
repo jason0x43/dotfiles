@@ -32,6 +32,13 @@ elif [[ $1 == "true" ]]; then
         }
         printf "\n";
     }'
+elif [[ $1 == "base" ]]; then
+    for i in {0..21} ; do
+        printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
+        if (( (i + 1) % 8 == 0 )); then
+            printf "\n";
+        fi
+    done
 else
     for i in {0..255} ; do
         printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"

@@ -1,0 +1,33 @@
+#compdef git-diff-fuzzy
+#description diff a specific file, found through a partial path match
+
+__git_command_successful () {
+	if (( ${#pipestatus:#0} > 0 )); then
+		_message 'not a git repository'
+		return 1
+	fi
+	return 0
+}
+
+__git_branch_names () {
+	local expl
+	declare -a branch_names
+
+	branch_names=(${(f)"$(_call_program branchrefs git for-each-ref --format='"%(refname)"' refs/{heads,remotes} | xargs basename | awk '!x[$0]++' | grep -v HEAD 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted branch-names expl branch-name compadd $* - $branch_names
+}
+
+__git_file_names () {
+	local expl
+	declare -a file_names
+
+	file_names=(${(f)"$(_call_program filenames git ls 2> /dev/null)"})
+	__git_command_successful || return
+
+	_wanted file-names expl file-name compadd $* - $file_names
+}
+
+_arguments '1:branch:__git_branch_names'
+_arguments '2:file:__git_file_names'

@@ -1,0 +1,16 @@
+root = true
+
+[*.lua]
+indent_style = space
+indent_size = 2
+max_line_length = 80
+
+[*.vim]
+indent_style = space
+indent_size = 2
+max_line_length = 80
+
+[*.js]
+indent_style = space
+indent_size = 2
+max_line_length = 80

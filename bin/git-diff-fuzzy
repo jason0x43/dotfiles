@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+commit=$1
+filepart=$2
+
+if [[ -n $filepart ]]; then
+	git diff $commit -- "*${filepart}*"
+else
+	git diff $commit
+fi

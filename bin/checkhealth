@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+function checkcmd {
+	local cmd=$1
+	if (( $+commands[$cmd] )); then
+		print -P "%F{green}✔%f $cmd is installed"
+	else
+		print -P "%F{red}✖ $cmd is missing%f"
+	fi
+}
+
+local os=$(uname)
+
+checkcmd asdf
+checkcmd tmux
+
+if [[ $os == "Darwin" ]]; then
+elif [[ $os == "Linux" ]]; then
+	checkcmd xclip
+fi

@@ -1,0 +1,23 @@
+%YAML 1.2
+---
+name: Subversion Status
+file_extensions: [svnstatus]
+scope: source.svnstatus
+
+contexts:
+  main:
+    - match: ^(M)\s
+      captures:
+        1: entity.name.class
+    - match: ^(\?)\s
+      captures:
+        1: invalid.deprecated
+    - match: ^(A\s.*)
+      captures:
+        1: markup.inserted
+    - match: ^(D\s.*)
+      captures:
+        1: markup.deleted
+    - match: ^(X\s+.*)
+      captures:
+        1: keyword

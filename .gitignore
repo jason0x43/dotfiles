@@ -1,11 +1,8 @@
 tmux/plugins/*
-vim/autoload/plug.vim
-vim/autoload/plug.old
-vim/autoload/plug.vim.old
-vim/plugged/*
-vim/spell/*.spl
-vim/sessions/*
-vim/.netrwhist
+config/nvim/lua/packer_compiled.lua
+config/nvim/spell/*.spl
+config/nvim/sessions/*
+config/nvim/.netrwhist
 fish/fishd.*
 fish/fish_history
 .vscode/

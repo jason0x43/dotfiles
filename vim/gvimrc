@@ -1,1 +1,0 @@
-ginit.vim

@@ -17,20 +17,12 @@ fi
 # Plugin init
 # ----------------------------------------------------------------------------
 zfetch $ZPLUGDIR zsh-users/zsh-completions
-zfetch $ZPLUGDIR chriskempson/base16-shell
 zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
 zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
 zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
 zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
-zfetch $CACHEDIR/tmux tmux-plugins/tpm
-
-# Colors
-# ----------------------------------------------------------------------------
-# Only load base16 shell locally
-BASE16_SHELL_HOOKS="$DOTFILES/colors/base16_hooks"
-source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
@@ -48,12 +40,6 @@ source $ZPLUGDIR/chriskempson/base16-shell/base16-shell.plugin.zsh
 typeset -gU cdpath
 typeset -gU fpath
 typeset -gU manpath
-
-# Brew
-# ----------------------------------------------------------------------------
-if [[ -d /home/linuxbrew ]]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-fi
 
 # manpath
 # ----------------------------------------------------------------------------
@@ -105,8 +91,6 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
-export BAT_THEME=base16
-
 # Completions
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
@@ -118,10 +102,10 @@ export ZCOMPFILE=$ZCACHEDIR/zcompdump
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
+    $fpath
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZCOMPDIR
     $HOMEBREW_BASE/share/zsh-completions
-    $fpath
 )
 
 # Load and initialize the completion system, ignoring insecure directories.
@@ -169,7 +153,7 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${ZCACHEDIR}"
 
 # Case-insensitive (all), partial-word, and then substring completion
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' '+r:|[._-]=* r:|=*' '+l:|=* r:|=*'
 
 # Group matches and describe
 zstyle ':completion:*'              menu select
@@ -271,6 +255,7 @@ unalias -m '*'
 # reload the environment
 alias refresh='source ~/.zshenv && source ~/.zshrc'
 alias reload='exec env -u DIRENV_WATCHES $SHELL'
+alias reloadx86='ARCHPREFERENCE=x86_64 exec arch -x86_64 env -u DIRENV_WATCHES $SHELL'
 
 # Default command options
 alias cp='cp -i'
@@ -327,7 +312,7 @@ alias ktn="kitty @ set-tab-title"
 alias gcln='git clean -nxd'
 alias gclf='git clean -fxd'
 
-alias gd='git d'
+alias gd='git diff-fuzzy'
 alias gds='git ds'
 alias gdv='git dv'
 alias gf='git f'
@@ -420,10 +405,6 @@ alias swiftc="xcrun -sdk macosx swiftc"
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
-# Color themes
-alias light='base16_theme solarized-light'
-alias dark='base16_theme ashes'
-
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
 alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log | bat --paging=never -l halog'
 alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
@@ -432,10 +413,11 @@ alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config
 # Colorize ls
 
 # Define colors for BSD ls
-export LSCOLORS='exfxcxdxbxGxDxabagacad'
+export LSCOLORS='ExFxCxDxBxfxdxacagafad'
 # Define colors for the completion system
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
-alias ls='ls -G -F'
+export CLICOLOR=1
+alias ls='ls -F'
 
 # Colorize cat
 if (( $+commands[bat] )); then
@@ -443,7 +425,7 @@ if (( $+commands[bat] )); then
 
     # BAT_THEME is also used by delta, so set it here rather than in the bat
     # config file
-    export BAT_THEME=base16_plus
+    export BAT_THEME=selenized
 fi
 
 # Better top
@@ -458,6 +440,7 @@ alias lld='ll -d'        # List directories
 alias llt='ls -lh -t'    # Lists human readable ordered by time
 alias lls='ls -lh -S'    # Lists human readable ordered by size
 alias la='ll -A'         # Lists human readable sizes, hidden files
+alias ds='direnv status' # Show state of direnv
 
 # Space usage
 alias dfh='df -h'
@@ -650,36 +633,28 @@ fi
 
 # TPM
 # ------------------------------------------------------------------------
+if [[ ! -d $DATADIR/tmux ]]; then
+    mkdir $DATADIR/tmux
+fi
+
+zfetch $DATADIR/tmux tmux-plugins/tpm
+
 if [[ ! -d $CACHEDIR/tmux ]]; then
     mkdir $CACHEDIR/tmux
 fi
 
-# asdf
+# direnv
 # ------------------------------------------------------------------------
-if (( $+commands[asdf] )); then
-    # Don't load the asd shell integration; direnv will load it when necessary
-    # Manually set ASDF_DIR; don't use `brew --prefix` because it's very slow
-    # see https://github.com/asdf-vm/asdf/issues/428#issuecomment-455022420
-    export ASDF_DIR=$HOMEBREW_BASE/opt/asdf
-
-    # Silence direnv. The prompt will indicate if it's active.
-    # export DIRENV_LOG_FORMAT=
-
-    eval "$(direnv hook $SHELL)"
-
-    # Wrap tmux to avoid environment loading issues
-    # See https://github.com/direnv/direnv/wiki/Tmux
-    alias tmux='direnv exec / tmux'
-
-    # Indicate which asdf version of node should be used with vim
-    # export VIM_NODE_VERSION=10.19.0
-fi
+# silence direnv's output; run `direnv status` to check
+export DIRENV_LOG_FORMAT=
+eval "$(direnv hook $SHELL)"
 
 # added by travis gem
 [ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
 
 # Line editor
 # ------------------------------------------------------------------------
+
 # History substring search -- load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
