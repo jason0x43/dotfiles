@@ -85,5 +85,6 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow": [".github/workflows/*.yaml"]
   },
-  "yaml.trace.server": "verbose"
+  "yaml.trace.server": "verbose",
+  "clangd.path": "/Users/michelle/.config/coc/extensions/coc-clangd-data/install/12.0.0/clangd_12.0.0/bin/clangd"
 }

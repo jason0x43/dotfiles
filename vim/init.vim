@@ -595,6 +595,25 @@ nnoremap <Leader>s :Startify<CR>
 " --------------------------------------------------------------------- 
 nnoremap <Leader>u :UndotreeToggle<CR>
 
+" vim-clang-format
+" ---------------------------------------------------------------------
+" https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+" https://github.com/rhysd/vim-clang-format
+let g:clang_format#style_options = {
+    \ "UseTab": "Never",
+    \ "IndentWidth": 4,
+    \ "AccessModifierOffset": -2,
+    \ "KeepEmptyLinesAtTheStartOfBlocks": "false",
+    \ }
+
+function s:initClangFile()
+    command! -nargs=0 -buffer Format :ClangFormat
+endfunction
+
+augroup clang_format
+    autocmd FileType cpp call s:initClangFile()
+augroup END
+
 " vim-jsx
 " ---------------------------------------------------------------------
 let g:jsx_ext_required = 1
@@ -712,6 +731,7 @@ Plug 'tpope/vim-classpath', {
 Plug 'lervag/vimtex', {
     \ 'for': ['tex', 'latex']
     \ }
+Plug 'rhysd/vim-clang-format'
 
 " Load the fzf plugin if fzf is available
 if executable('fzf') && has('nvim')
