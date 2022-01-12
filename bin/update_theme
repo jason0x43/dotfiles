@@ -161,15 +161,19 @@ def update_kitty_conf(variant):
 
 
 async def update_kitty_sessions(variant):
+    kitty_sock_info = Path.home().joinpath(
+        ".config/kitty/macos-launch-services-cmdline"
+    ).read_text().strip()
+    kitty_sock = kitty_sock_info.split('=')[1]
+
     colors = get_kitty_theme(variant)
     color_strings = [f"{c}={colors[c]}" for c in colors]
     color_string = " ".join(color_strings)
 
     # this requires that kitty be configured with `allow_remote_control=yes`
-    # and run with `--listen_on unix:/tmp/kitty`
     await (
         await asyncio.create_subprocess_shell(
-            f"kitty @ --to=unix:/tmp/kitty set-colors -c -a {color_string}",
+            f"kitty @ --to={kitty_sock} set-colors -c -a {color_string}",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -223,3 +227,4 @@ async def main():
 
 
 asyncio.run(main())
+

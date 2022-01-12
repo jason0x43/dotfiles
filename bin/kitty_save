@@ -1,2 +1,3 @@
 #!/bin/zsh
-kitty @ --to=unix:/tmp/kitty kitten save_session.py
+kitty_sock=$(cut -f 2 -d = $HOME/.config/kitty/macos-launch-services-cmdline)
+kitty @ --to=$kitty_sock kitten save_session.py
