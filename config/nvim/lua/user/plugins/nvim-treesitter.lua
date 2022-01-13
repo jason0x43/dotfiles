@@ -9,7 +9,8 @@ local legacy_filetypes = vim.list_extend({
   'scss',
   'lua',
   'json',
-  'python'
+  'python',
+  'java'
 }, require('user.util').ts_types)
 
 local config = {
