@@ -46,6 +46,7 @@ function M.on_attach(client, bufnr)
 
   if client.resolved_capabilities.document_formatting then
     util.bufcmd('Format', 'lua require("user.lsp").format_sync(nil, 5000)')
+    util.lmap('F', '<cmd>Format<cr>', opts)
   end
 
   if not packer_plugins['trouble.nvim'] then
