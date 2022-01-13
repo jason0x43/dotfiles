@@ -6,7 +6,7 @@ local M = {}
 M.config = {
   single_file_support = true,
 
-  root_dir = lspconfig.util.root_pattern('package.json'),
+  root_dir = lspconfig.util.root_pattern('tsconfig.json'),
 
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
