@@ -345,10 +345,6 @@ function dotfiles-python {
         err "Error updating packages"
         err $out
     fi
-
-    mkdir -p $ZCOMPDIR
-    pdm completion > $ZCOMPDIR/_pdm
-    logSub "Installed pdm completions"
 }
 
 # Update global npm packages
