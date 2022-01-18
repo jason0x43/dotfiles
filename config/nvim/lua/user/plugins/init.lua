@@ -302,6 +302,18 @@ packer.startup({
         require('user.util').lmap('e', '<cmd>TroubleToggle<cr>')
       end,
     })
+
+    -- show available code action indiciator
+    use({
+      'kosayoda/nvim-lightbulb',
+      config = function()
+        require('user.req')('nvim-lightulb', function()
+          vim.cmd(
+            'autocmd CursorHold,CursorHoldI * lua require("nvim-lightbulb").update_lightbulb()'
+          )
+        end)
+      end,
+    })
   end,
 
   config = {
@@ -315,3 +327,4 @@ packer.startup({
 })
 
 return packer
+

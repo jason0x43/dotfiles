@@ -17,7 +17,7 @@ telescope.setup({
       preview_height = 10,
 
       width = function(_, max_columns, _)
-        return math.min(max_columns - 3, 80)
+        return math.min(max_columns - 16, 80)
       end,
 
       height = function(_, _, max_lines)
@@ -73,6 +73,7 @@ telescope.setup({
 })
 
 local lmap = require('user.util').lmap
+lmap('a', '<cmd>Telescope lsp_code_actions<cr>')
 lmap('f', '<cmd>Telescope find_files<cr>')
 lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 lmap('g', '<cmd>Telescope git_files<cr>')
@@ -83,6 +84,5 @@ lmap('tl', '<cmd>Telescope highlights<cr>')
 lmap('ts', '<cmd>Telescope symbols<cr>')
 lmap('lr', '<cmd>Telescope lsp_references<cr>')
 lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
-lmap('la', '<cmd>Telescope lsp_code_actions<cr>')
 lmap('ld', '<cmd>Telescope diagnostics bufnr=0<cr>')
 lmap('lw', '<cmd>Telescope diagnostics<cr>')
