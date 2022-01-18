@@ -440,7 +440,7 @@ alias lld='ll -d'        # List directories
 alias llt='ls -lh -t'    # Lists human readable ordered by time
 alias lls='ls -lh -S'    # Lists human readable ordered by size
 alias la='ll -A'         # Lists human readable sizes, hidden files
-alias ds='direnv status' # Show state of direnv
+alias di='direnv-info'   # Show info about direnv
 
 # Space usage
 alias dfh='df -h'
