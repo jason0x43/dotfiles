@@ -659,10 +659,6 @@ eval "$(direnv hook $SHELL)"
 # https://github.com/zsh-users/zsh-history-substring-search
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-# autosuggest -- load this after zsh-syntax-highlighting and
-# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
-source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
-
 # Color for found substrings
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=14,fg=0,bold'
 
@@ -680,6 +676,11 @@ bindkey -M vicmd "j" history-substring-search-down
 bindkey '^f' vi-forward-word
 bindkey '^b' vi-forward-blank-word
 bindkey '^e' vi-end-of-line
+
+# autosuggest -- load this after zsh-syntax-highlighting and
+# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
+
+source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '[24~' autosuggest-toggle
 
 # Use a solarized-friendly background color
