@@ -167,14 +167,15 @@ packer.startup({
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
-          config = function()
-            require('user.req')('telescope', 'load_extension', 'fzf')
-          end,
         },
         {
           'nvim-telescope/telescope-symbols.nvim',
           requires = 'nvim-lua/plenary.nvim',
         },
+        {
+          'nvim-telescope/telescope-file-browser.nvim',
+          requires = 'nvim-lua/plenary.nvim',
+        }
       },
       config = "require('user.plugins.telescope')",
     })

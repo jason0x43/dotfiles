@@ -72,15 +72,20 @@ telescope.setup({
     oldfiles = {
       previewer = false,
     },
-    file_browser = {
-      previewer = false,
-    },
     lsp_workspace_diagnostics = {
       -- don't show hints
       severity_limit = vim.g.lsp_severity_limit,
     },
   },
+  extensions = {
+    file_browser = {
+      previewer = false,
+    },
+  },
 })
+
+require('user.req')('telescope', 'load_extension', 'fzf')
+require('user.req')('telescope', 'load_extension', 'file_browser')
 
 local lmap = require('user.util').lmap
 lmap('a', '<cmd>Telescope lsp_code_actions<cr>')
