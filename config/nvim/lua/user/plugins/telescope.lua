@@ -3,6 +3,8 @@ if not telescope then
   return
 end
 
+local action_set = require('telescope.actions.set')
+
 telescope.setup({
   defaults = {
     mappings = {
@@ -55,6 +57,14 @@ telescope.setup({
     },
     help_tags = {
       results_title = false,
+      previewer = false,
+      mappings = {
+        i = {
+          ['<cr>'] = function(prompt_bufnr)
+            action_set.select(prompt_bufnr, 'tab')
+          end,
+        },
+      },
     },
     live_grep = {
       results_title = false,
