@@ -10,10 +10,22 @@ from kitty.typing import BossType, EdgeLiteral
 from kitty.window import Window
 
 
-def window_has_proc(window: Window, proc_name: str):
+def window_has_pager(window: Window):
     fp = window.child.foreground_processes
-    for p in reversed(fp):
-        if re.search(f"\\b{proc_name}$", p["cmdline"][0]):
+    for p in fp:
+        if (
+            len(p["cmdline"]) > 1
+            and re.search("\\bzsh$", p["cmdline"][0])
+            and re.search("\\bnvim_pager$", p["cmdline"][1])
+        ):
+            return True
+    return False
+
+
+def window_has_navigable_proc(window: Window):
+    fp = window.child.foreground_processes
+    for p in fp:
+        if re.search("\\b(n?vim|tmux)$", p["cmdline"][0]):
             return True
     return False
 
@@ -48,7 +60,7 @@ def handle_result(
     direction = cast(EdgeLiteral, args[2])
 
     if source == "kitty":
-        if window_has_proc(window, "(n?vim|tmux)"):
+        if window_has_navigable_proc(window) and not window_has_pager(window):
             key_mapping = args[3]
             encoded = encode_key_mapping(key_mapping)
             window.write_to_child(encoded)
