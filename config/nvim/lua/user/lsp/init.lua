@@ -7,6 +7,15 @@ if not lspconfig then
   return
 end
 
+-- give LspInfo windows a border
+local lspconfig_win = require('lspconfig.ui.windows')
+local default_win_opts = lspconfig_win.default_opts
+lspconfig_win.default_opts = function(options)
+  local opts = default_win_opts(options)
+  opts.border = 'rounded'
+  return opts
+end
+
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
   local status, client_config = pcall(require, modbase .. '.' .. server_name)
