@@ -406,9 +406,9 @@ alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
-alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/home-assistant.log | bat --paging=never -l halog'
-alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
-alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -f /config/appdaemon/logs/error.log'
+alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/home-assistant.log | bat --paging=never -l halog'
+alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
+alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/error.log'
 
 # Colorize ls
 
