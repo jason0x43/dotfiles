@@ -3,20 +3,14 @@ local M = {}
 local denols = require('lspconfig.server_configurations.denols')
 local lspconfig = require('lspconfig')
 
-local denoconfig = vim.fn.findfile('deno.json', '.;')
-if denoconfig ~= '' then
-  denoconfig = vim.fn.fnamemodify(denoconfig, ':p')
-end
-
 M.config = {
   single_file_support = true,
 
-  root_dir = lspconfig.util.root_pattern('deno.json'),
+  root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc'),
 
   init_options = {
     lint = true,
     unstable = true,
-    config = denoconfig
   },
 
   should_attach = function()
