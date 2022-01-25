@@ -54,11 +54,11 @@ function M.on_attach(client, bufnr)
   end
 
   if client.resolved_capabilities.document_formatting then
-    util.bufcmd('Format', 'lua require("user.lsp").format_sync(nil, 5000)')
+    util.bufcmd('Format', 'lua require("user.lsp").format_sync()')
     util.lmap('F', '<cmd>Format<cr>', opts)
-    require('user.util').augroup('lsp_autosave', {
-      'BufWritePre <buffer> lua require("user.lsp").format_sync(nil, 5000)',
-    })
+    vim.cmd(
+      'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'
+    )
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -72,9 +72,32 @@ function M.on_attach(client, bufnr)
   )
 end
 
+-- auto-format the current buffer, but exclude certain cases
+function M.autoformat_sync()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local name = vim.api.nvim_buf_get_name(bufnr)
+
+  -- don't autoformat ignored code
+  local is_ignored = os.execute('git check-ignore ' .. name)
+  if is_ignored == 0 then
+    return
+  end
+
+  -- don't autoformat library code
+  if
+    name:find('/node_modules/')
+    or name:find('/__pypackages__/')
+    or name:find('/site_packages/')
+  then
+    return
+  end
+
+  M.format_sync()
+end
+
 -- format the current buffer, handling the case where multiple formatters are
 -- present
-function M.format_sync(options, timeout)
+function M.format_sync()
   local clients = vim.tbl_values(vim.lsp.buf_get_clients())
   local formatters = vim.tbl_filter(function(client)
     return client.supports_method('textDocument/formatting')
@@ -94,12 +117,12 @@ function M.format_sync(options, timeout)
     formatter = non_null_ls[1]
   end
 
-  local params = vim.lsp.util.make_formatting_params(options)
+  local params = vim.lsp.util.make_formatting_params(nil)
   local bufnr = vim.api.nvim_get_current_buf()
   local result, err = formatter.request_sync(
     'textDocument/formatting',
     params,
-    timeout,
+    5000,
     bufnr
   )
   if result and result.result then
