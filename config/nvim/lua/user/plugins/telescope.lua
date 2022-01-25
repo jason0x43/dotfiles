@@ -50,6 +50,8 @@ telescope.setup({
     find_files = {
       previewer = false,
       results_title = false,
+      no_ignore = true,
+      hidden = true,
     },
     git_files = {
       previewer = false,
