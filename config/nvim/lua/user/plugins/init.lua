@@ -175,7 +175,7 @@ packer.startup({
         {
           'nvim-telescope/telescope-file-browser.nvim',
           requires = 'nvim-lua/plenary.nvim',
-        }
+        },
       },
       config = "require('user.plugins.telescope')",
     })
@@ -219,25 +219,6 @@ packer.startup({
         },
         'b0o/schemastore.nvim',
       },
-    })
-
-    -- show buffer symbols, functions, etc in sidebar
-    use({
-      'simrat39/symbols-outline.nvim',
-      setup = function()
-        vim.g.symbols_outline = {
-          auto_preview = false,
-          width = 30,
-          relative_width = false,
-        }
-      end,
-      config = function()
-        local util = require('user.util')
-        util.augroup('init_symbols_outline', {
-          'FileType Outline setlocal signcolumn=no',
-        })
-        util.lmap('o', '<cmd>SymbolsOutline<cr>')
-      end,
     })
 
     -- highlight current word
@@ -328,4 +309,3 @@ packer.startup({
 })
 
 return packer
-
