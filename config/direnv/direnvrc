@@ -125,7 +125,7 @@ use_xcode_cpath() {
 # Add Android SDK to path
 use_android() {
   if [[ -z $ASDF_JAVA_VERSION ]]; then
-    local javas=($(asdf list java | grep 'jdk-8\|-8u' | awk '{ print $1 }'))
+    local javas=($(asdf list java | grep '\-11' | awk '{ print $1 }'))
     if [[ ${#javas[@]} -lt 1 ]]; then
       log_error 'a version of JDK 8 must be installed'
       return
@@ -142,7 +142,6 @@ use_android() {
     export ANDROID_HOME=$HOME/Library/Android/sdk
   fi
 
-  export ANDROID_SDK_HOME=$ANDROID_HOME
   export ANDROID_AVD_HOME=$HOME/.android/avd
   export PATH=$PATH:$ANDROID_HOME/emulator
   export PATH=$PATH:$ANDROID_HOME/tools
