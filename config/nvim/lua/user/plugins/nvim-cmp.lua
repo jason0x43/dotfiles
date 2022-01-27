@@ -12,7 +12,7 @@ cmp.setup({
   experimental = {
     -- use vim's native completion menu, which may avoid the undo breaking
     -- effect of floats (https://github.com/neovim/neovim/issues/11439)
-    native_menu = true,
+    native_menu = vim.fn.has('nvim-0.7') ~= 1,
   },
   snippet = {
     expand = function(args)
