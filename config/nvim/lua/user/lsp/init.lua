@@ -126,7 +126,11 @@ function M.format_sync()
     bufnr
   )
   if result and result.result then
-    vim.lsp.util.apply_text_edits(result.result, bufnr)
+    vim.lsp.util.apply_text_edits(
+      result.result,
+      bufnr,
+      formatter.offset_encoding
+    )
   elseif err then
     vim.notify('vim.lsp.buf.formatting_sync: ' .. err, vim.log.levels.WARN)
   end
