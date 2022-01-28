@@ -78,8 +78,8 @@ function M.autoformat_sync()
   local name = vim.api.nvim_buf_get_name(bufnr)
 
   -- don't autoformat ignored code
-  local is_ignored = os.execute('git check-ignore ' .. name)
-  if is_ignored == 0 then
+  local response = vim.fn.system({ 'git', 'is-ignored', name })
+  if response == '1' then
     return
   end
 
