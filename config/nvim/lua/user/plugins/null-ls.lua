@@ -71,7 +71,7 @@ local config = {
     null_ls.builtins.formatting.swiftformat,
   },
 
-  on_attach = lsp_on_attach
+  on_attach = lsp_on_attach,
 }
 
 if vim.fn.executable('htmlhint') ~= 0 then
