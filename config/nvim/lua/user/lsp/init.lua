@@ -56,9 +56,9 @@ function M.on_attach(client, bufnr)
   if client.resolved_capabilities.document_formatting then
     util.bufcmd('Format', 'lua require("user.lsp").format_sync()')
     util.lmap('F', '<cmd>Format<cr>', opts)
-    vim.cmd(
-      'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'
-    )
+    -- vim.cmd(
+    --   'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'
+    -- )
   end
 
   if not packer_plugins['trouble.nvim'] then
@@ -152,12 +152,6 @@ function M.get_lsp_config(server)
   -- default config for all servers
   local config = {}
 
-  -- add cmp capabilities
-  local cmp = require('cmp_nvim_lsp')
-  config.capabilities = cmp.update_capabilities(
-    vim.lsp.protocol.make_client_capabilities()
-  )
-
   -- add server-specific config if applicable
   local client_config = load_client_config(server)
   if client_config.config then
@@ -173,6 +167,12 @@ function M.get_lsp_config(server)
   else
     config.on_attach = M.on_attach
   end
+
+  -- add cmp capabilities
+  local cmp = require('cmp_nvim_lsp')
+  config.capabilities = cmp.update_capabilities(
+    vim.lsp.protocol.make_client_capabilities()
+  )
 
   return config
 end

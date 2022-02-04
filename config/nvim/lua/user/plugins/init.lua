@@ -208,11 +208,18 @@ packer.startup({
           'williamboman/nvim-lsp-installer',
           requires = 'nvim-lua/plenary.nvim',
           config = function()
-            require('user.req')('nvim-lsp-installer', function(installer)
-              local lsp = require('user.lsp')
+            local req = require('user.req')
+            req('nvim-lsp-installer', function(installer)
               installer.on_server_ready(function(server)
-                local config = lsp.get_lsp_config(server.name)
+                local name = server.name
+                local config = require('user.lsp').get_lsp_config(name)
                 server:setup(config)
+
+                req('user.lsp.' .. name, function(user_server)
+                  if user_server.start then
+                    user_server.start()
+                  end
+                end)
               end)
             end)
           end,
