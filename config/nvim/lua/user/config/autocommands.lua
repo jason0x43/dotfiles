@@ -10,9 +10,6 @@ util.augroup('init_autocommands', {
   -- automatically resize splits
   'VimResized * wincmd =',
 
-  -- show line numbers if the window is big enough
-  'VimResized * lua vim.opt.number = vim.go.columns > 88',
-
   -- wrap lines in quickfix windows
   'FileType qf setlocal wrap linebreak nolist breakindent breakindentopt=shift:2 colorcolumn=""',
 

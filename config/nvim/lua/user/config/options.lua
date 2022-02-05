@@ -26,9 +26,6 @@ o.joinspaces = false
 -- don't move to the beginning of a line when jumping
 o.startofline = false
 
--- show line numbers if the window is wide enough
-o.number = vim.go.columns >= 88
-
 -- give the cursor a 5 line margin when scrolling
 o.scrolloff = 5
 
