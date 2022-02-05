@@ -237,7 +237,6 @@ function dotfiles-brew {
         'asdf'        # version manager
         'bash'        # update from system stock version
         'bat'         # better cat
-        'deno'        # TS runtime
         'direnv'      # environment manager
         'fd'          # file finder
         'fzf'         # fuzzy finder
@@ -300,6 +299,29 @@ function dotfiles-brew {
     # Remove git's included zsh completions in favor of the system completions
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+    fi
+}
+
+# Install or update deno
+function dotfiles-deno {
+    log "Updating deno..."
+
+    local out=""
+    local version=""
+
+    if (( ! $+commands[deno] )); then
+        logSub "Installing..."
+        out=$(curl -fsSL https://deno.land/x/install/install.sh | sh)
+        if (( $? )); then
+            err "Error installing deno"
+            err $out
+        fi
+    else
+        out=$(deno upgrade)
+        if [[ ! $out =~ "is the most recent release" ]]; then
+            version=$(deno --version | grep 'deno [0-9]' | awk '{print $2}')
+            logSub "Installed version $version"
+        fi
     fi
 }
 
@@ -541,6 +563,7 @@ if [[ -n $1 ]]; then
         echo '    asdf           Update asdf plugins, install defaults'
         echo '    bat            Rebuild bat theme and filetype cache'
         echo '    brew           Update brew packages, install defaults'
+        echo '    deno           Update deno'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
         echo '    launchd        Link and bootstrap launchd scripts'
         echo '    node           Update global node packages, install defaults'
@@ -561,6 +584,7 @@ else
     dotfiles-brew
     dotfiles-buildtools
     dotfiles-asdf
+    dotfiles-deno
 
     dotfiles-zsh
     dotfiles-python
