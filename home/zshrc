@@ -410,6 +410,16 @@ alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/ho
 alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
 alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/error.log'
 
+if [[ -e $HOME/.theme ]]; then
+    theme=$(cat $HOME/.theme)
+    if [[ $theme == 'light' ]]; then
+        export THEME_VARIANT=$theme
+    elif [[ $theme == 'black' ]]; then
+        export THEME_VARIANT=$theme
+    fi
+    unset theme
+fi
+
 # Colorize ls
 
 # Define colors for BSD ls
