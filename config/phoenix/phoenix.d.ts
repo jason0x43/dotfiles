@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-  declare class Phoenix {
+  class Phoenix {
     static log(...args: unknown[]): void;
     static reload(): void;
     static set(prefs: Record<string, unknown>): void;
@@ -9,7 +9,7 @@ declare global {
     private constructor();
   }
 
-  declare class Key {
+  class Key {
     static on(key: string, modifiers: string[], callback: () => void): number;
     static once(key: string, modifiers: string[], callback: () => void): void;
     static off(id: number): void;
@@ -28,7 +28,7 @@ declare global {
     isEqual(other: unknown): boolean;
   }
 
-  declare class Event {
+  class Event {
     name: string;
 
     static on(event: string, callback: () => void): number;
@@ -44,9 +44,9 @@ declare global {
     isEqual(other: unknown): boolean;
   }
 
-  declare class Storage {
+  class Storage {
     static set(key: string, value: unknown): void;
-    static get(key: string): unkown;
+    static get(key: string): unknown;
     static remove(key: string): void;
     private constructor();
   }
@@ -68,7 +68,7 @@ declare global {
     previous(): T;
   }
 
-  declare class Space {
+  class Space {
     static active(): Space;
     static all(): Space[];
 
@@ -80,6 +80,7 @@ declare global {
     windows(optionals?: Record<string, unknown>): Window[];
     addWindows(windows: Window[]): void;
     removeWindows(windows: Window[]): void;
+    moveWindows(windows: Window[]): void;
 
     // Identifiable
     hash(): number;
@@ -90,7 +91,7 @@ declare global {
     previous(): Space;
   }
 
-  declare class Screen {
+  class Screen {
     static main(): Screen;
     static all(): Screen[];
 
@@ -114,7 +115,7 @@ declare global {
     previous(): Screen;
   }
 
-  declare class Image {
+  class Image {
     static fromFile(path: string): Image;
     private constructor();
 
@@ -123,9 +124,9 @@ declare global {
     isEqual(other: unknown): boolean;
   }
 
-  declare class App {
+  class App {
     static get(appName: string): App;
-    static launch(appName: string, optionals?: Record<string, unkown>): App;
+    static launch(appName: string, optionals?: Record<string, unknown>): App;
     static focused(): App;
     static all(): App[];
 
@@ -137,19 +138,19 @@ declare global {
     isHidden(): boolean;
     isTerminated(): boolean;
     mainWindow(): Window;
-    windows(optionals?: Record<string, unkown>): Window[];
+    windows(optionals?: Record<string, unknown>): Window[];
     activate(): boolean;
     focus(): boolean;
     show(): boolean;
     hide(): boolean;
-    terminate(optionals?: Record<string, unkown>): boolean;
+    terminate(optionals?: Record<string, unknown>): boolean;
 
     // Identifiable
     hash(): number;
     isEqual(other: unknown): boolean;
   }
 
-  declare class Window {
+  class Window {
     static focused(): Window;
     static at(point: Point): Window;
     static all(optionals?: Record<string, unknown>): Window[];
@@ -157,7 +158,7 @@ declare global {
 
     private constructor();
 
-    others(optionals?: Record<string, unkown>): Window[];
+    others(optionals?: Record<string, unknown>): Window[];
     title(): string;
     isMain(): boolean;
     isNormal(): boolean;
@@ -188,7 +189,7 @@ declare global {
     isEqual(other: unknown): boolean;
   }
 
-  declare class Modal {
+  class Modal {
     static build(properties: Record<string, unknown>): Modal;
 
     origin: Point;

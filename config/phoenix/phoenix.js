@@ -1,7 +1,4 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="es2015" />
 /// <reference types="./phoenix.d.ts" />
-// @ts-check
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -667,8 +664,7 @@ function moveToSpace(direction, window) {
     return;
   }
 
-  targetSpace.addWindows([window]);
-  space.removeWindows([window]);
+  targetSpace.moveWindows([window]);
   window.focus();
 }
 
