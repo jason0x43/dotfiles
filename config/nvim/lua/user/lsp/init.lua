@@ -177,13 +177,6 @@ function M.get_lsp_config(server)
   return config
 end
 
--- these are servers not managed by lspinstall
-local manual_servers = { 'sourcekit' }
-for _, server in ipairs(manual_servers) do
-  local config = M.get_lsp_config(server)
-  require('lspconfig')[server].setup(config)
-end
-
 -- UI
 vim.fn.sign_define(
   'DiagnosticSignError',

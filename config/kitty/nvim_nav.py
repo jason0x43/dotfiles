@@ -72,4 +72,3 @@ def handle_result(
 
 def main():
     pass
-
