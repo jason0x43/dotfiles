@@ -91,6 +91,7 @@ require('user.req')('telescope', 'load_extension', 'file_browser')
 
 local lmap = require('user.util').lmap
 lmap('a', '<cmd>Telescope lsp_code_actions<cr>')
+lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
 lmap('f', '<cmd>Telescope find_files<cr>')
 lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
 lmap('g', '<cmd>Telescope git_files<cr>')
@@ -101,5 +102,4 @@ lmap('tl', '<cmd>Telescope highlights<cr>')
 lmap('ts', '<cmd>Telescope symbols<cr>')
 lmap('lr', '<cmd>Telescope lsp_references<cr>')
 lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
-lmap('ld', '<cmd>Telescope diagnostics bufnr=0<cr>')
 lmap('lw', '<cmd>Telescope diagnostics<cr>')
