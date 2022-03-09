@@ -243,14 +243,10 @@ function dotfiles-brew {
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
         'jq'          # command line JSON processor
-        'neovim'      # editor
-        'node'        # Node.js
         'pdm'         # python package manager
         'python@3.9'  # default python
         'ripgrep'     # better grep
         'tig'         # terminal git ui
-        'tmux'        # terminal manager
-        'zsh'         # newer zsh
     )
 
     brew_casks=""
@@ -412,7 +408,6 @@ function dotfiles-node {
 
     local desired_packages=(
         eslint_d
-        prettier
         neovim
     )
 
@@ -589,7 +584,7 @@ else
     dotfiles-zsh
     dotfiles-python
     dotfiles-node
-    dotfiles-tmux
+    # dotfiles-tmux
     dotfiles-bat
 
     if [[ $OSTYPE == darwin* ]]; then
