@@ -185,7 +185,11 @@
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=3
+  if [[ -n $SSH_CLIENT ]]; then
+    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=1
+  else
+    typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=7
+  fi
   # Custom icon.
   # typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⭐'
 
