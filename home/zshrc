@@ -251,6 +251,9 @@ bindkey -v
 # Clear existing aliases
 unalias -m '*'
 
+# Simpler back
+alias b='back'
+
 # Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
 # reload the environment
 alias refresh='source ~/.zshenv && source ~/.zshrc'
