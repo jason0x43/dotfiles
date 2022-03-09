@@ -52,7 +52,7 @@ use_tools() {
 use_pyenv() {
   version=$(asdf current python | awk '{ print $2 }')
   if [[ ! -d .asdf/python-$version ]]; then
-    python -m venv .asdf/python-$version
+    python3 -m venv .asdf/python-$version
     .asdf/python-$version/bin/pip install --upgrade pip
     .asdf/python-$version/$dir/bin/pip install wheel
   fi
@@ -64,7 +64,7 @@ use_pyenv_home() {
   version=$(asdf current python | awk '{ print $2 }')
   dir=${PWD//\//_}
   if [[ ! -d ~/.asdf/python-$version/$dir ]]; then
-    python -m venv ~/.asdf/python-$version/$dir
+    python3 -m venv ~/.asdf/python-$version/$dir
     ~/.asdf/python-$version/$dir/bin/pip install --upgrade pip
     ~/.asdf/python-$version/$dir/bin/pip install wheel
   fi
