@@ -247,6 +247,7 @@ function dotfiles-brew {
         'python@3.9'  # default python
         'ripgrep'     # better grep
         'tig'         # terminal git ui
+        'tmux'        # terminal multiplexer
     )
 
     brew_casks=""
@@ -584,7 +585,7 @@ else
     dotfiles-zsh
     dotfiles-python
     dotfiles-node
-    # dotfiles-tmux
+    dotfiles-tmux
     dotfiles-bat
 
     if [[ $OSTYPE == darwin* ]]; then
