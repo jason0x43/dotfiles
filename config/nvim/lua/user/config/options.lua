@@ -1,6 +1,12 @@
 local o = vim.opt
 local g = vim.g
 
+-- Enable lua filetype detection
+if vim.fn.has('nvim-0.7') then
+  g.do_filetype_lua = 1
+  g.did_load_filetypes = 0
+end
+
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
 
