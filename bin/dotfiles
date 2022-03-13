@@ -246,6 +246,7 @@ function dotfiles-brew {
         'pdm'         # python package manager
         'python@3.9'  # default python
         'ripgrep'     # better grep
+        'stylua'      # lua formatter
         'tig'         # terminal git ui
         'tmux'        # terminal multiplexer
     )
