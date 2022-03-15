@@ -23,5 +23,5 @@ if [[ $branch =~ "^pr/" ]]; then
 	git reset --hard HEAD
 else
 	echo "Pulling from $remote..."
-	git pull --ff-only $remote $branch
+	git pull $remote $branch
 fi
