@@ -86,7 +86,8 @@ telescope.setup({
   },
 })
 
-require('user.req')('telescope', 'load_extension', 'fzf')
+-- require('user.req')('telescope', 'load_extension', 'fzf')
+require('user.req')('telescope', 'load_extension', 'zf-native')
 require('user.req')('telescope', 'load_extension', 'file_browser')
 
 local lmap = require('user.util').lmap

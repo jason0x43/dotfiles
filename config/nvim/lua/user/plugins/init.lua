@@ -165,6 +165,7 @@ packer.startup({
       requires = {
         'nvim-lua/plenary.nvim',
         'kyazdani42/nvim-web-devicons',
+        'natecraddock/telescope-zf-native.nvim',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
