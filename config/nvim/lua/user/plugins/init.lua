@@ -27,10 +27,6 @@ packer.startup({
     -- file explorer in sidebar
     use({
       'kyazdani42/nvim-tree.lua',
-      setup = function()
-        -- close the tree after opening a file
-        vim.g.nvim_tree_quit_on_open = 1
-      end,
       config = function()
         require('user.req')('nvim-tree', function(nvim_tree)
           nvim_tree.setup({
@@ -47,6 +43,11 @@ packer.startup({
             git = {
               ignore = true,
             },
+            actions = {
+              open_file = {
+                quit_on_open = true
+              }
+            }
           })
 
           require('user.util').lmap('n', '<cmd>NvimTreeToggle<cr>')
