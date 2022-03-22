@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+pkg=$1
+if [[ -z $pkg ]]; then
+	echo "usage: ${0:t} PACKAGE"
+	exit 1
+fi
+
+file_list=($(pkgutil --files $pkg --only-files))
+if (( $? )); then
+	exit 1
+fi
+
+echo "Removing package files..."
+
+for f in ${file_list[@]}; do
+	if [[ ${f[1]} != '/' ]]; then
+		f="/$f"
+	fi
+	if [[ -f $f ]]; then
+		sudo rm $f 2> /dev/null
+	fi
+done
+
+dir_list=($(pkgutil --files $pkg --only-dirs))
+if (( $? )); then
+	exit 1
+fi
+
+echo "Removing package directories..."
+
+# Process directories in reverse order so that subdirectories will be handled
+# before their containing directories
+for d in ${(Oa)dir_list[@]}; do
+	if [[ ${d[1]} != '/' ]]; then
+		d="/$d"
+	fi
+	# If directory is empty, remove it
+	if [[ -d $d ]] && [[ ! $(ls $d) ]]; then
+		sudo rmdir $d 2> /dev/null
+	fi
+done
+
+sudo pkgutil --forget $1
+echo "Removed package receipt"
