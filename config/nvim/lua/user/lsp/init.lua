@@ -7,15 +7,6 @@ if not lspconfig then
   return
 end
 
--- give LspInfo windows a border
-local lspconfig_win = require('lspconfig.ui.windows')
-local default_win_opts = lspconfig_win.default_opts
-lspconfig_win.default_opts = function(options)
-  local opts = default_win_opts(options)
-  opts.border = 'rounded'
-  return opts
-end
-
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
   local status, client_config = pcall(require, modbase .. '.' .. server_name)
@@ -27,8 +18,66 @@ end
 
 local M = {}
 
+M.config = function()
+  -- give LspInfo windows a border
+  local lspconfig_win = require('lspconfig.ui.windows')
+  local default_win_opts = lspconfig_win.default_opts
+  lspconfig_win.default_opts = function(options)
+    local opts = default_win_opts(options)
+    opts.border = 'rounded'
+    return opts
+  end
+
+  -- UI
+  vim.fn.sign_define(
+    'DiagnosticSignError',
+    { text = '', texthl = 'DiagnosticSignError' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignWarn',
+    { text = '', texthl = 'DiagnosticSignWarn' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignInfo',
+    { text = '', texthl = 'DiagnosticSignInfo' }
+  )
+  vim.fn.sign_define(
+    'DiagnosticSignHint',
+    { text = '', texthl = 'DiagnosticSignHint' }
+  )
+
+  local lsp = vim.lsp
+
+  lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
+    lsp.handlers['textDocument/publishDiagnostics'],
+    { virtual_text = false }
+  )
+
+  lsp.handlers['textDocument/hover'] = lsp.with(
+    lsp.handlers.hover,
+    { border = 'rounded' }
+  )
+
+  lsp.handlers['textDocument/signatureHelp'] = lsp.with(
+    lsp.handlers.signature_help,
+    { border = 'rounded' }
+  )
+
+  -- wrap lsp.buf_attach_client to allow clients to determine whether they should
+  -- actually be attached
+  local orig_buf_attach_client = lsp.buf_attach_client
+  function lsp.buf_attach_client(bufnr, client_id)
+    local client = lsp.get_client_by_id(client_id)
+    if
+      not client.config.should_attach or client.config.should_attach(bufnr)
+    then
+      return orig_buf_attach_client(bufnr, client_id)
+    end
+  end
+end
+
 -- configure a client when it's attached to a buffer
-function M.on_attach(client, bufnr)
+M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
   pcall(function()
@@ -73,7 +122,7 @@ function M.on_attach(client, bufnr)
 end
 
 -- auto-format the current buffer, but exclude certain cases
-function M.autoformat_sync()
+M.autoformat_sync = function()
   local bufnr = vim.api.nvim_get_current_buf()
   local name = vim.api.nvim_buf_get_name(bufnr)
 
@@ -97,7 +146,7 @@ end
 
 -- format the current buffer, handling the case where multiple formatters are
 -- present
-function M.format_sync()
+M.format_sync = function()
   local clients = vim.tbl_values(vim.lsp.buf_get_clients())
   local formatters = vim.tbl_filter(function(client)
     return client.supports_method('textDocument/formatting')
@@ -137,7 +186,7 @@ function M.format_sync()
 end
 
 -- style the line diagnostics popup
-function M.show_position_diagnostics()
+M.show_position_diagnostics = function()
   vim.diagnostic.open_float(0, {
     scope = 'cursor',
     border = 'rounded',
@@ -148,7 +197,7 @@ function M.show_position_diagnostics()
 end
 
 -- setup a server
-function M.get_lsp_config(server)
+M.get_lsp_config = function(server)
   -- default config for all servers
   local config = {}
 
@@ -175,51 +224,6 @@ function M.get_lsp_config(server)
   )
 
   return config
-end
-
--- UI
-vim.fn.sign_define(
-  'DiagnosticSignError',
-  { text = '', texthl = 'DiagnosticSignError' }
-)
-vim.fn.sign_define(
-  'DiagnosticSignWarn',
-  { text = '', texthl = 'DiagnosticSignWarn' }
-)
-vim.fn.sign_define(
-  'DiagnosticSignInfo',
-  { text = '', texthl = 'DiagnosticSignInfo' }
-)
-vim.fn.sign_define(
-  'DiagnosticSignHint',
-  { text = '', texthl = 'DiagnosticSignHint' }
-)
-
-local lsp = vim.lsp
-
-lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-  lsp.handlers['textDocument/publishDiagnostics'],
-  { virtual_text = false }
-)
-
-lsp.handlers['textDocument/hover'] = lsp.with(
-  lsp.handlers.hover,
-  { border = 'rounded' }
-)
-
-lsp.handlers['textDocument/signatureHelp'] = lsp.with(
-  lsp.handlers.signature_help,
-  { border = 'rounded' }
-)
-
--- wrap lsp.buf_attach_client to allow clients to determine whether they should
--- actually be attached
-local orig_buf_attach_client = lsp.buf_attach_client
-function lsp.buf_attach_client(bufnr, client_id)
-  local client = lsp.get_client_by_id(client_id)
-  if not client.config.should_attach or client.config.should_attach(bufnr) then
-    return orig_buf_attach_client(bufnr, client_id)
-  end
 end
 
 return M
