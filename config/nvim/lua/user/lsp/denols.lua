@@ -13,13 +13,6 @@ M.config = {
     unstable = true,
   },
 
-  on_new_config = function(config, root_dir)
-    local import_map = root_dir .. '/import_map.json'
-    if vim.fn.filereadable(import_map) then
-      config.init_options.importMap = import_map
-    end
-  end,
-
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
       -- If denols returns multiple results, goto the first local one
@@ -56,11 +49,14 @@ local function score_code_action(result)
   if title:find('Import ') == 1 then
     return 1
   end
+  if title:find('Update ') == 1 then
+    return 2
+  end
   -- disable/ignore last
   if title:find('Disable ') == 1 or title:find('Ignore ') == 1 then
-    return 3
+    return 5
   end
-  return 2
+  return 4
 end
 
 -- Override buf_request_sync to sort codeAction results before they get to
