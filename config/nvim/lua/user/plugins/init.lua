@@ -222,6 +222,8 @@ packer.startup({
       'kosayoda/nvim-lightbulb',
       config = "require('user.plugins.nvim-lightbulb').config()",
     })
+
+    use('github/copilot.vim')
   end,
 
   config = {
