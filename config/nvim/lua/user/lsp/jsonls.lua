@@ -16,7 +16,7 @@ if schemastore then
       schemas = vim.list_extend({
         {
           description = 'Deno configuration file',
-          fileMatch = { 'deno.json', 'deno.jsonc' },
+          fileMatch = { 'deno*.json', 'deno*.jsonc' },
           url = 'https://raw.githubusercontent.com/denoland/deno/main/cli/schemas/config-file.v1.json',
         },
       }, schemastore.json.schemas()),
