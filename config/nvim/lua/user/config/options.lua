@@ -7,6 +7,9 @@ if vim.fn.has('nvim-0.7') then
   g.did_load_filetypes = 0
 end
 
+-- yank to system clipboard
+o.clipboard = 'unnamedplus'
+
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
 
