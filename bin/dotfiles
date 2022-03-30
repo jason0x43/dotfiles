@@ -258,6 +258,7 @@ function dotfiles-brew {
             'font-jetbrains-mono-nerd-font'
             'kitty'
             'phoenix'
+            '1password-cli'
         )
 
         taps=($(brew tap))
@@ -297,6 +298,12 @@ function dotfiles-brew {
     # Remove git's included zsh completions in favor of the system completions
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+    fi
+
+    # Update 1password-cli zsh completions
+    if (( $+commands[op] )); then
+        logSub "Updating 1password-cli zsh completions..."
+        op completion zsh >! $HOMEBREW_BASE/share/zsh/site-functions/_op
     fi
 }
 
