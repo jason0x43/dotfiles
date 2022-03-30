@@ -63,16 +63,22 @@ fi
 export EDITOR=$SUDO_EDITOR
 export VISUAL=$SUDO_VISUAL
 
-# Start SSH agent if it's not already running
+# SSH agent
 # ------------------------------------------------------------------------
-if [[ -d $HOME/.ssh ]] && [[ -z $SSH_AUTH_SOCK || ! -a $SSH_AUTH_SOCK ]]; then
+if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
     if [[ -e $HOME/.ssh/env ]]; then
         . $HOME/.ssh/env
     fi
-    if [[ ! -a $SSH_AUTH_SOCK ]]; then
+fi
+if [[ -z "$SSH_AUTH_SOCK" || ! -S "$SSH_AUTH_SOCK" ]]; then
+    if [[ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]]; then
+        # If the 1Password agent is available, use it
+        export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    else
+        # Start an ssh-agent process if necessary
         eval `ssh-agent` > /dev/null
-        echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >! $HOME/.ssh/env
     fi
+    echo "export SSH_AUTH_SOCK='$SSH_AUTH_SOCK'" >! $HOME/.ssh/env
 fi
 
 # Turn on color for everything
