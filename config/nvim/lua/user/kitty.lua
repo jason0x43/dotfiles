@@ -6,7 +6,14 @@ util.nmap('<c-j>', '<cmd>lua require("user.kitty").kittyNav("j")<cr>')
 util.nmap('<c-k>', '<cmd>lua require("user.kitty").kittyNav("k")<cr>')
 util.nmap('<c-l>', '<cmd>lua require("user.kitty").kittyNav("l")<cr>')
 
-local mappings = {
+local dirs = {
+  h = "left",
+  j = "bottom",
+  k = "top",
+  l = "right"
+}
+
+local tmux_dirs = {
   h = "left",
   j = "bottom",
   k = "top",
@@ -19,7 +26,11 @@ function M.kittyNav(direction)
   local initial_win = vim.fn.winnr()
   vim.cmd('wincmd ' .. direction)
   if vim.fn.winnr() == initial_win then
-    vim.fn.system('kitty @ kitten nvim_nav.py nvim ' .. mappings[direction])
+    if os.getenv('TMUX') then
+      vim.fn.system('tmux select-pane -' .. tmux_dirs[direction])
+    else
+      vim.fn.system('kitty @ kitten nvim_nav.py nvim ' .. dirs[direction])
+    end
   end
 end
 
