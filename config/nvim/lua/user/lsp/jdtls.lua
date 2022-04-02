@@ -1,9 +1,2 @@
-local M = {}
-
-M.config = {
-  init_options = {
-    workspace = os.getenv('HOME') .. '/.cache/workspace'
-  },
-}
-
-return M
+vim.fn.setenv('WORKSPACE', vim.fn.getenv('HOME') .. '/.cache/workspace')
+return {}
