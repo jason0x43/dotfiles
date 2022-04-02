@@ -223,7 +223,7 @@ packer.startup({
       config = "require('user.plugins.nvim-lightbulb').config()",
     })
 
-    use('github/copilot.vim')
+    -- use('github/copilot.vim')
   end,
 
   config = {
