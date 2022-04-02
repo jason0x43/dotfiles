@@ -14,10 +14,10 @@ local dirs = {
 }
 
 local tmux_dirs = {
-  h = "left",
-  j = "bottom",
-  k = "top",
-  l = "right"
+  h = "L",
+  j = "D",
+  k = "U",
+  l = "R"
 }
 
 local M = {}
