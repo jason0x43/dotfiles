@@ -321,6 +321,7 @@ function dotfiles-deno {
             err "Error installing deno"
             err $out
         fi
+        rehash
     else
         out=$(deno upgrade)
         if [[ ! $out =~ "is the most recent release" ]]; then
