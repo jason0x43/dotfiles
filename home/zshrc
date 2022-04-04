@@ -719,4 +719,8 @@ source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 
+# ASDF
+# --------------------------------------------------------------------------
+source ${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc
+
 # vim:shiftwidth=4:tabstop=4:expandtab
