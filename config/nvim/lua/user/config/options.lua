@@ -7,6 +7,9 @@ if vim.fn.has('nvim-0.7') then
   g.did_load_filetypes = 0
 end
 
+-- Expand tabs by default
+o.expandtab = true
+
 -- yank to system clipboard
 o.clipboard = 'unnamedplus'
 
