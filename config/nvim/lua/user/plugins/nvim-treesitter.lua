@@ -11,6 +11,7 @@ M.config = function()
     'css',
     'scss',
     'lua',
+    'java',
     'json',
     'python',
   }, require('user.util').ts_types)
