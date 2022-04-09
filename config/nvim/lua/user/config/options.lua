@@ -7,7 +7,7 @@ if vim.fn.has('nvim-0.7') and not vim.fn.has('nvim-0.8') then
   g.did_load_filetypes = 0
 end
 
--- Expand tabs by default
+-- Use spaces by default
 o.expandtab = true
 
 -- yank to system clipboard
