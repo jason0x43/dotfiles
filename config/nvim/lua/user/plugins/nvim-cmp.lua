@@ -53,6 +53,7 @@ M.config = function()
       end, { 'i', 's' }),
     },
     sources = {
+      { name = 'copilot' },
       { name = 'nvim_lua' },
       { name = 'nvim_lsp' },
       { name = 'path' },

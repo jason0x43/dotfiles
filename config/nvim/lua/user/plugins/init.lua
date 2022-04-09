@@ -203,6 +203,15 @@ packer.startup({
         'hrsh7th/cmp-nvim-lua',
         'hrsh7th/cmp-nvim-lsp',
         'saadparwaiz1/cmp_luasnip',
+        {
+          'zbirenbaum/copilot-cmp',
+          requires = { 
+            {
+              'zbirenbaum/copilot.lua',
+              config = "require('user.plugins.copilot').config()"
+            },
+          }
+        },
       },
       config = "require('user.plugins.nvim-cmp').config()",
     })
