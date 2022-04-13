@@ -7,7 +7,6 @@ fish/fishd.*
 fish/fish_history
 .vscode/
 .mypy_cache/
-config/kitty/colors.conf
-config/kitty/local.conf
+config/kitty/kitty.d/*.conf
 config/direnv/allow
 .tool-versions

@@ -83,7 +83,7 @@ async def update_kitty_sessions():
 
 
 def update_kitty_conf():
-    kitty_conf = f'{getenv("HOME")}/.config/kitty/colors.conf'
+    kitty_conf = f'{getenv("HOME")}/.config/kitty/kitty.d/colors.conf'
     colors = base16_to_kitty()
     color_strings = []
     for c in colors:

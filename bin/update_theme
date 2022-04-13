@@ -151,7 +151,7 @@ def get_kitty_theme(variant):
 
 
 def update_kitty_conf(variant):
-    kitty_conf = f'{getenv("HOME")}/.config/kitty/colors.conf'
+    kitty_conf = f'{getenv("HOME")}/.config/kitty/kitty.d/colors.conf'
     colors = get_kitty_theme(variant)
     color_strings = [f"{c} {colors[c]}" for c in colors]
 
