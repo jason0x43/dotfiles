@@ -63,7 +63,7 @@ def handle_result(
         if window_has_navigable_proc(window) and not window_has_pager(window):
             key_mapping = args[3]
             encoded = encode_key_mapping(key_mapping)
-            window.write_to_child(encoded)
+            window.write_to_child(str.encode(encoded))
             return
 
     if boss.active_tab:
