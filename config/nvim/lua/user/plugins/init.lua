@@ -205,7 +205,7 @@ packer.startup({
         'saadparwaiz1/cmp_luasnip',
         {
           'zbirenbaum/copilot-cmp',
-          requires = { 
+          requires = {
             {
               'zbirenbaum/copilot.lua',
               config = "require('user.plugins.copilot').config()"
