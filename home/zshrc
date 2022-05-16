@@ -297,9 +297,6 @@ alias gcpe='git cp -e'
 alias gcpn='git cpn'
 alias gcpr='git checkout-pr'
 
-# Kitty shortcuts
-alias ktn="kitty @ set-tab-title"
-
 # Cleanup
 alias gcln='git clean -nxd'
 alias gclf='git clean -fxd'
@@ -721,6 +718,6 @@ source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 
 # ASDF
 # --------------------------------------------------------------------------
-source ${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc
+source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
 
 # vim:shiftwidth=4:tabstop=4:expandtab
