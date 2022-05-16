@@ -1,5 +1,6 @@
 root = true
 
+; insert_final_newline = false
 [*.{ts,tsx,js,jsx,css,scss}]
 indent_style = space
 indent_size = 2
