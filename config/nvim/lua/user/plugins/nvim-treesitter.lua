@@ -12,6 +12,7 @@ M.config = function()
     'scss',
     'lua',
     'java',
+    'go',
     'json',
     'python',
   }, require('user.util').ts_types)
@@ -40,34 +41,30 @@ M.config = function()
     },
   }
 
-  if vim.fn.has('mac') == 1 then
-    config.ensure_installed = 'maintained'
-  else
-    config.ensure_installed = {
-      'bash',
-      'c',
-      'comment',
-      'cpp',
-      'dockerfile',
-      'go',
-      'html',
-      'java',
-      'javascript',
-      'jsdoc',
-      'json',
-      'json5',
-      'jsonc',
-      'lua',
-      'python',
-      'rust',
-      'scss',
-      'swift',
-      'tsx',
-      'typescript',
-      'vim',
-      'yaml',
-    }
-  end
+  config.ensure_installed = {
+    'bash',
+    'c',
+    'comment',
+    'cpp',
+    'dockerfile',
+    'go',
+    'html',
+    'java',
+    'javascript',
+    'jsdoc',
+    'json',
+    'json5',
+    'jsonc',
+    'lua',
+    'python',
+    'rust',
+    'scss',
+    'swift',
+    'tsx',
+    'typescript',
+    'vim',
+    'yaml',
+  }
 
   configs.setup(config)
 end
