@@ -9,14 +9,9 @@ end
 local M = {}
 
 M.config = function()
-  vim.opt.completeopt = { 'menuone', 'noselect' }
+  vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
 
   cmp.setup({
-    experimental = {
-      -- use vim's native completion menu, which may avoid the undo breaking
-      -- effect of floats (https://github.com/neovim/neovim/issues/11439)
-      native_menu = vim.fn.has('nvim-0.7') ~= 1,
-    },
     snippet = {
       expand = function(args)
         luasnip.lsp_expand(args.body)
@@ -26,6 +21,8 @@ M.config = function()
       ['<C-d>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-e>'] = cmp.mapping.abort(),
+      ['<C-p>'] = cmp.mapping.select_prev_item(),
+      ['<C-n>'] = cmp.mapping.select_next_item(),
       ['<C-y>'] = cmp.mapping.confirm({
         behavior = cmp.ConfirmBehavior.Insert,
         select = true,
@@ -36,12 +33,7 @@ M.config = function()
         elseif luasnip and luasnip.expand_or_jumpable() then
           luasnip.expand_or_jump()
         else
-          -- local copilot_keys = vim.fn['copilot#Accept']()
-          -- if copilot_keys ~= "" then
-          --   vim.api.nvim_feedkeys(copilot_keys, "i", true)
-          -- else
-            fallback()
-          -- end
+          fallback()
         end
       end, { 'i', 's' }),
       ['<S-Tab>'] = cmp.mapping(function(fallback)
@@ -60,6 +52,7 @@ M.config = function()
       { name = 'luasnip' },
       { name = 'buffer' },
     },
+    preselect = 'none'
   })
 end
 
