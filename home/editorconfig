@@ -1,7 +1,14 @@
 root = true
 
+[*]
+trim_trailing_whitespace = false
 ; insert_final_newline = false
+tab_width = 4
+
 [*.{ts,tsx,js,jsx,css,scss}]
 indent_style = space
 indent_size = 2
+max_line_length = 80
+
+[*.rs]
 max_line_length = 80
