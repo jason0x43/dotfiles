@@ -132,6 +132,7 @@ packer.startup({
           requires = 'nvim-lua/plenary.nvim',
         },
         'nvim-telescope/telescope-live-grep-raw.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
       },
       config = "require('user.plugins.telescope').config()",
     })

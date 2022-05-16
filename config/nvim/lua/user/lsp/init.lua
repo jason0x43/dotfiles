@@ -116,6 +116,10 @@ M.on_attach = function(client, bufnr)
 
   -- perform general setup
 
+  if client.resolved_capabilities.code_action then
+    util.lmap('a', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+  end
+
   if client.resolved_capabilities.goto_definition then
     util.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
