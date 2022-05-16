@@ -161,7 +161,6 @@ packer.startup({
         {
           'williamboman/nvim-lsp-installer',
           requires = 'nvim-lua/plenary.nvim',
-          config = "require('user.plugins.nvim-lsp-installer').config()",
         },
         'b0o/schemastore.nvim',
       },

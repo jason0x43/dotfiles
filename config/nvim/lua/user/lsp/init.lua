@@ -74,6 +74,32 @@ M.config = function()
       return orig_buf_attach_client(bufnr, client_id)
     end
   end
+
+  local servers = {
+    'clangd',
+    'cssls',
+    'denols',
+    'eslint',
+    'groovyls',
+    'html',
+    'jdtls',
+    'jsonls',
+    'pyright',
+    'rust_analyzer',
+    'solargraph',
+    'sourcekit',
+    'sumneko_lua',
+    'svelte',
+    'tsserver',
+  }
+
+  -- If we're using lsp-installer, make sure it's setup
+  require('user.req')('nvim-lsp-installer', 'setup')
+
+  for _, server in ipairs(servers) do
+    local config = M.get_lsp_config(server)
+    lspconfig[server].setup(config)
+  end
 end
 
 -- configure a client when it's attached to a buffer
