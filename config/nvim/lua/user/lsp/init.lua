@@ -68,8 +68,7 @@ M.config = function()
   local orig_buf_attach_client = lsp.buf_attach_client
   function lsp.buf_attach_client(bufnr, client_id)
     local client = lsp.get_client_by_id(client_id)
-    if
-      not client.config.should_attach or client.config.should_attach(bufnr)
+    if not client.config.should_attach or client.config.should_attach(bufnr)
     then
       return orig_buf_attach_client(bufnr, client_id)
     end
@@ -80,10 +79,12 @@ M.config = function()
     'cssls',
     'denols',
     'eslint',
+    'gopls',
     'groovyls',
     'html',
     'jdtls',
     'jsonls',
+    'prismals',
     'pyright',
     'rust_analyzer',
     'solargraph',
@@ -91,6 +92,7 @@ M.config = function()
     'sumneko_lua',
     'svelte',
     'tsserver',
+    'vimls',
   }
 
   -- If we're using lsp-installer, make sure it's setup
@@ -163,10 +165,9 @@ M.autoformat_sync = function()
   end
 
   -- don't autoformat library code
-  if
-    name:find('/node_modules/')
-    or name:find('/__pypackages__/')
-    or name:find('/site_packages/')
+  if name:find('/node_modules/')
+      or name:find('/__pypackages__/')
+      or name:find('/site_packages/')
   then
     return
   end
