@@ -334,6 +334,17 @@ function dotfiles-deno {
     deno completions zsh >! $ZDATADIR/functions/_deno
 }
 
+# Install or update rust
+function dotfiles-rust {
+    if (( ! $+commands[rustup] )); then
+        log "Installing rust..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    else
+        log "Updating rust..."
+        rustup update
+    fi
+}
+
 # Update zsh plugins
 function dotfiles-zsh {
     log "Updating zsh plugins..."
@@ -572,6 +583,7 @@ if [[ -n $1 ]]; then
         echo '    bat            Rebuild bat theme and filetype cache'
         echo '    brew           Update brew packages, install defaults'
         echo '    deno           Update deno'
+        echo '    rust           Update rust'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
         echo '    launchd        Link and bootstrap launchd scripts'
         echo '    node           Update global node packages, install defaults'
@@ -593,6 +605,7 @@ else
     dotfiles-buildtools
     dotfiles-asdf
     dotfiles-deno
+    dotfiles-rust
 
     dotfiles-zsh
     dotfiles-python
