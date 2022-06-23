@@ -46,6 +46,7 @@ M.config = function()
     'c',
     'comment',
     'cpp',
+    'css',
     'dockerfile',
     'go',
     'html',
@@ -56,13 +57,14 @@ M.config = function()
     'json5',
     'jsonc',
     'lua',
+    'prisma',
     'python',
     'rust',
     'scss',
+    'svelte',
     'swift',
     'tsx',
     'typescript',
-    'vim',
     'yaml',
   }
 
