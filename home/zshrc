@@ -23,7 +23,6 @@ zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 zfetch $ZPLUGDIR romkatv/powerlevel10k
 zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
-zfetch $ZPLUGDIR wfxr/forgit
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # ----------------------------------------------------------------------------
@@ -720,8 +719,5 @@ source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 # ASDF
 # --------------------------------------------------------------------------
 source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
-
-# forgit
-source $ZPLUGDIR/wfxr/forgit/forgit.plugin.zsh
 
 # vim:shiftwidth=4:tabstop=4:expandtab
