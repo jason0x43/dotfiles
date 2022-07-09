@@ -392,6 +392,7 @@ alias swiftc="xcrun -sdk macosx swiftc"
 
 alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
+alias px="pnpm exec"
 
 alias ha='TERM=xterm-256color ssh root@homeassistant.local'
 alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/home-assistant.log | bat --paging=never -l halog'
