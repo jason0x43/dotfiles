@@ -12,5 +12,12 @@ M.config = {
   },
 }
 
+if vim.fn.executable('stylua') ~= 0 then
+  M.config.on_attach = function(client)
+    -- disable formatting; we'll use stylua instead
+    client.resolved_capabilities.document_formatting = false
+  end
+end
+
 return M
 

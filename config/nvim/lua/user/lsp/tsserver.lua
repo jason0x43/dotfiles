@@ -17,7 +17,7 @@ M.config = {
     end,
 
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
-      result.diagnostics = vim.tbl_filter(function (diag)
+      result.diagnostics = vim.tbl_filter(function(diag)
         -- ignore 80001 (file is a CommonJS module)
         if diag.code == 80001 then
           return false
@@ -39,8 +39,10 @@ M.config = {
   },
 
   on_attach = function(client)
-    -- disable formatting for typescript; we'll use prettier instead
-    client.resolved_capabilities.document_formatting = false
+    if vim.fn.executable('prettier') then
+      -- disable formatting; we'll use prettier instead
+      client.resolved_capabilities.document_formatting = false
+    end
 
     require('user.util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
   end,

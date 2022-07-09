@@ -52,14 +52,33 @@ M.config = function()
 
   -- run null_ls.config to make null-ls available through lspconfig
   local config = {
-    sources = {
+    sources = {},
+    on_attach = lsp_on_attach,
+  }
+
+  if vim.fn.executable('black') ~= 0 then
+    table.insert(config.sources, null_ls.builtins.formatting.black)
+  end
+
+  if vim.fn.executable('swiftformat') ~= 0 then
+    table.insert(config.sources, null_ls.builtins.formatting.swiftformat)
+  end
+
+  if vim.fn.executable('prettier') ~= 0 then
+    table.insert(
+      config.sources,
       null_ls.builtins.formatting.prettier.with({
         filetypes = vim.list_extend(
           { 'xml' },
           null_ls.builtins.formatting.prettier.filetypes
         ),
-      }),
+      })
+    )
+  end
 
+  if vim.fn.executable('stylua') ~= 0 then
+    table.insert(
+      config.sources,
       null_ls.builtins.formatting.stylua.with({
         args = {
           '--stdin-filepath',
@@ -67,14 +86,9 @@ M.config = function()
           '--search-parent-directories',
           '-',
         },
-      }),
-
-      null_ls.builtins.formatting.black,
-      null_ls.builtins.formatting.swiftformat,
-    },
-
-    on_attach = lsp_on_attach,
-  }
+      })
+    )
+  end
 
   if vim.fn.executable('htmlhint') ~= 0 then
     table.insert(config.sources, htmlhint_source)
