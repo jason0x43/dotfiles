@@ -104,8 +104,8 @@ packer.startup({
         'JoosepAlviste/nvim-ts-context-commentstring',
         -- show semantic file location (e.g., what function you're in)
         {
-          'SmiteshP/nvim-gps',
-          config = "require('user.plugins.nvim-gps').config()",
+          'SmiteshP/nvim-navic',
+          config = "require('user.plugins.nvim-navic').config()",
         },
       },
       run = ':TSUpdate',

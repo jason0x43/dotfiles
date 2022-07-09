@@ -114,6 +114,11 @@ M.on_attach = function(client, bufnr)
   req('illuminate', function(illuminate) illuminate.on_attach(client) end)
   req('lsp_signature', function(sig) sig.on_attach({ max_width = 80 }) end)
 
+  -- navic can only attach to one client per buffer, so don't attach to clients
+  -- that don't supply useful info
+  if client.name ~= 'null-ls' and client.name ~= 'copilot' then 
+    req('nvim-navic', function(navic) navic.attach(client, bufnr) end)
+  end
 
   -- perform general setup
 

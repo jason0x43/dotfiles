@@ -52,11 +52,11 @@ M.config = function()
     extensions = { 'nvim-tree', 'quickfix', 'symbols_outline' },
   }
 
-  local gps = req('nvim-gps')
-  if gps then
+  local navic = req('nvim-navic')
+  if navic then
     table.insert(
       config.sections.lualine_c,
-      { gps.get_location, cond = gps.is_available }
+      { navic.get_location, cond = navic.is_available }
     )
   end
 
