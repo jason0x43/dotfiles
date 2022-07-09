@@ -111,13 +111,9 @@ end
 M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
-  pcall(function()
-    require('illuminate').on_attach(client)
-  end)
+  req('illuminate', function(illuminate) illuminate.on_attach(client) end)
+  req('lsp_signature', function(sig) sig.on_attach({ max_width = 80 }) end)
 
-  pcall(function()
-    require('lsp_signature').on_attach({ max_width = 80 })
-  end)
 
   -- perform general setup
 
