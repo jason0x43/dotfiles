@@ -78,7 +78,6 @@ M.config = function()
     'clangd',
     'cssls',
     'denols',
-    'eslint',
     'gopls',
     'groovyls',
     'html',
@@ -94,6 +93,10 @@ M.config = function()
     'tsserver',
     'vimls',
   }
+
+  if os.getenv('NVIM_ESLINT') ~= '0' then
+    table.insert(servers, 'eslint')
+  end
 
   -- If we're using lsp-installer, make sure it's setup
   require('user.req')('nvim-lsp-installer', 'setup')
