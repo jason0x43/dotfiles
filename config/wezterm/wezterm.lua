@@ -170,6 +170,7 @@ function TabName(title)
 	end
 end
 
+-- Run a command, return the output.
 local run = function(cmd)
 	local f = assert(io.popen(cmd, "r"))
 	local s = assert(f:read("*a"))
@@ -187,38 +188,26 @@ local vim_dir_map = {
 	Right = "right",
 }
 
-local move = function(window, pane, dir)
-	if pane:get_foreground_process_name():sub(-4) == "nvim" then
-		-- window:perform_action(wezterm.action({ SendString = '\x17' .. nvim_dir }), pane)
-		local result = run(
-			"/opt/homebrew/bin/nvim --server /tmp/nvim-wt"
-				.. pane:pane_id()
-				.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
-				.. vim_dir_map[dir]
-				.. "()' 2>&1"
-		)
-		if result ~= "" then
-			return
+-- Return an action callback for managing movement between panes
+local move_action = function(dir)
+	return wezterm.action_callback(function(window, pane)
+		if pane:get_foreground_process_name():sub(-4) == "nvim" then
+			-- Try to do the move in vim. If it doesn't work, do the move in
+			-- wezterm.
+			local result = run(
+				"/opt/homebrew/bin/nvim --server /tmp/nvim-wt"
+					.. pane:pane_id()
+					.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
+					.. vim_dir_map[dir]
+					.. "()' 2>&1"
+			)
+			if result ~= "" then
+				return
+			end
 		end
-	end
-	window:perform_action(act.ActivatePaneDirection(dir), pane)
+		window:perform_action(act.ActivatePaneDirection(dir), pane)
+	end)
 end
-
-wezterm.on("move-left", function(window, pane)
-	move(window, pane, "Left")
-end)
-
-wezterm.on("move-right", function(window, pane)
-	move(window, pane, "Right")
-end)
-
-wezterm.on("move-up", function(window, pane)
-	move(window, pane, "Up")
-end)
-
-wezterm.on("move-down", function(window, pane)
-	move(window, pane, "Down")
-end)
 
 local appearance = wezterm.gui.get_appearance()
 local scheme = "light"
@@ -235,9 +224,12 @@ return {
 		tab_bar = color_schemes[scheme].tab_bar,
 	},
 
-	hide_tab_bar_if_only_one_tab = true,
-
 	font_size = 13,
+
+	-- disable ligatures
+	harfbuzz_features = { "calt=0", "clig=0", "liga=0" },
+
+	hide_tab_bar_if_only_one_tab = true,
 
 	key_tables = {
 		resize_pane = {
@@ -258,10 +250,10 @@ return {
 	},
 
 	keys = {
-		{ key = "j", mods = "CTRL", action = act.EmitEvent("move-down") },
-		{ key = "k", mods = "CTRL", action = act.EmitEvent("move-up") },
-		{ key = "h", mods = "CTRL", action = act.EmitEvent("move-left") },
-		{ key = "l", mods = "CTRL", action = act.EmitEvent("move-right") },
+		{ key = "j", mods = "CTRL", action = move_action("Down") },
+		{ key = "k", mods = "CTRL", action = move_action("Up") },
+		{ key = "h", mods = "CTRL", action = move_action("Left") },
+		{ key = "l", mods = "CTRL", action = move_action("Right") },
 		{
 			key = "\\",
 			mods = "CMD|CTRL",
@@ -280,6 +272,7 @@ return {
 			action = act.ActivateKeyTable({
 				name = "resize_pane",
 				one_shot = false,
+				until_unknown = true,
 				replace_current = true,
 			}),
 		},
