@@ -53,22 +53,19 @@ M.config = function()
     { virtual_text = false }
   )
 
-  lsp.handlers['textDocument/hover'] = lsp.with(
-    lsp.handlers.hover,
-    { border = 'rounded' }
-  )
+  lsp.handlers['textDocument/hover'] =
+    lsp.with(lsp.handlers.hover, { border = 'rounded' })
 
-  lsp.handlers['textDocument/signatureHelp'] = lsp.with(
-    lsp.handlers.signature_help,
-    { border = 'rounded' }
-  )
+  lsp.handlers['textDocument/signatureHelp'] =
+    lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
 
   -- wrap lsp.buf_attach_client to allow clients to determine whether they should
   -- actually be attached
   local orig_buf_attach_client = lsp.buf_attach_client
   function lsp.buf_attach_client(bufnr, client_id)
     local client = lsp.get_client_by_id(client_id)
-    if not client.config.should_attach or client.config.should_attach(bufnr)
+    if
+      not client.config.should_attach or client.config.should_attach(bufnr)
     then
       return orig_buf_attach_client(bufnr, client_id)
     end
@@ -111,13 +108,22 @@ end
 M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
-  req('illuminate', function(illuminate) illuminate.on_attach(client) end)
-  req('lsp_signature', function(sig) sig.on_attach({ max_width = 80 }) end)
+  req('illuminate', function(illuminate)
+    illuminate.on_attach(client)
+  end)
+  req('lsp_signature', function(sig)
+    sig.on_attach({ max_width = 80 })
+  end)
 
   -- navic can only attach to one client per buffer, so don't attach to clients
   -- that don't supply useful info
-  if client.name ~= 'null-ls' and client.name ~= 'copilot' then 
-    req('nvim-navic', function(navic) navic.attach(client, bufnr) end)
+  if
+    client.name ~= 'null-ls'
+    and client.name ~= 'copilot'
+  then
+    req('nvim-navic', function(navic)
+      navic.attach(client, bufnr)
+    end)
   end
 
   -- perform general setup
@@ -169,9 +175,10 @@ M.autoformat_sync = function()
   end
 
   -- don't autoformat library code
-  if name:find('/node_modules/')
-      or name:find('/__pypackages__/')
-      or name:find('/site_packages/')
+  if
+    name:find('/node_modules/')
+    or name:find('/__pypackages__/')
+    or name:find('/site_packages/')
   then
     return
   end
@@ -203,12 +210,8 @@ M.format_sync = function()
 
   local params = vim.lsp.util.make_formatting_params(nil)
   local bufnr = vim.api.nvim_get_current_buf()
-  local result, err = formatter.request_sync(
-    'textDocument/formatting',
-    params,
-    5000,
-    bufnr
-  )
+  local result, err =
+    formatter.request_sync('textDocument/formatting', params, 5000, bufnr)
   if result and result.result then
     vim.lsp.util.apply_text_edits(
       result.result,
@@ -254,9 +257,8 @@ M.get_lsp_config = function(server)
 
   -- add cmp capabilities
   local cmp = require('cmp_nvim_lsp')
-  config.capabilities = cmp.update_capabilities(
-    vim.lsp.protocol.make_client_capabilities()
-  )
+  config.capabilities =
+    cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
   return config
 end
