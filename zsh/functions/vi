@@ -1,5 +1,9 @@
 if (( $+commands[nvim] )); then
-	nvim $*
+	if [[ -n $WEZTERM_PANE ]]; then
+		nvim --listen /tmp/nvim-wt$WEZTERM_PANE $*
+	else
+		nvim $*
+	fi
 elif (( $+commands[vim] )); then
 	vim $*
 else
