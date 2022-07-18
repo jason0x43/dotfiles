@@ -721,4 +721,10 @@ source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 # --------------------------------------------------------------------------
 source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
 
+# Bun
+# --------------------------------------------------------------------------
+if [ -s "$HOME/.bun/_bun" ]; then
+    source "$HOME/.bun/_bun"
+fi
+
 # vim:shiftwidth=4:tabstop=4:expandtab
