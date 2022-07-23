@@ -208,6 +208,14 @@ local move_action = function(dir)
 	end)
 end
 
+local copy_mode_action = function()
+	return wezterm.action_callback(function(window, pane)
+		if window:active_key_table() == "window_ops" then
+			window:perform_action(act.PopKeyTable, pane)
+		end
+		window:perform_action(act.ActivateCopyMode, pane)
+	end)
+end
 local appearance = wezterm.gui.get_appearance()
 local scheme = "light"
 if appearance:find("Dark") then
@@ -231,6 +239,78 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 
 	key_tables = {
+		copy_mode = {
+			{ key = "c", mods = "CTRL", action = act.CopyMode("Close") },
+			{ key = "g", mods = "CTRL", action = act.CopyMode("Close") },
+			{ key = "q", mods = "NONE", action = act.CopyMode("Close") },
+			{ key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
+
+			{ key = "h", mods = "NONE", action = act.CopyMode("MoveLeft") },
+			{ key = "j", mods = "NONE", action = act.CopyMode("MoveDown") },
+			{ key = "k", mods = "NONE", action = act.CopyMode("MoveUp") },
+			{ key = "l", mods = "NONE", action = act.CopyMode("MoveRight") },
+
+			{ key = "LeftArrow", mods = "NONE", action = act.CopyMode("MoveLeft") },
+			{ key = "DownArrow", mods = "NONE", action = act.CopyMode("MoveDown") },
+			{ key = "UpArrow", mods = "NONE", action = act.CopyMode("MoveUp") },
+			{ key = "RightArrow", mods = "NONE", action = act.CopyMode("MoveRight") },
+
+			{ key = "RightArrow", mods = "ALT", action = act.CopyMode("MoveForwardWord") },
+			{ key = "f", mods = "ALT", action = act.CopyMode("MoveForwardWord") },
+			{ key = "Tab", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
+			{ key = "w", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
+
+			{ key = "LeftArrow", mods = "ALT", action = act.CopyMode("MoveBackwardWord") },
+			{ key = "b", mods = "ALT", action = act.CopyMode("MoveBackwardWord") },
+			{ key = "Tab", mods = "SHIFT", action = act.CopyMode("MoveBackwardWord") },
+			{ key = "b", mods = "NONE", action = act.CopyMode("MoveBackwardWord") },
+
+			{ key = "0", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
+			{ key = "Enter", mods = "NONE", action = act.CopyMode("MoveToStartOfNextLine") },
+
+			{ key = "$", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
+			{ key = "$", mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
+			{ key = "^", mods = "NONE", action = act.CopyMode("MoveToStartOfLineContent") },
+			{ key = "^", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
+			{ key = "m", mods = "ALT", action = act.CopyMode("MoveToStartOfLineContent") },
+
+			{ key = " ", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "v", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "V", mods = "SHIFT", action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "v", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Block" }) },
+
+			{ key = "G", mods = "NONE", action = act.CopyMode("MoveToScrollbackBottom") },
+			{ key = "G", mods = "SHIFT", action = act.CopyMode("MoveToScrollbackBottom") },
+			{ key = "g", mods = "NONE", action = act.CopyMode("MoveToScrollbackTop") },
+
+			{ key = "H", mods = "NONE", action = act.CopyMode("MoveToViewportTop") },
+			{ key = "H", mods = "SHIFT", action = act.CopyMode("MoveToViewportTop") },
+			{ key = "M", mods = "NONE", action = act.CopyMode("MoveToViewportMiddle") },
+			{ key = "M", mods = "SHIFT", action = act.CopyMode("MoveToViewportMiddle") },
+			{ key = "L", mods = "NONE", action = act.CopyMode("MoveToViewportBottom") },
+			{ key = "L", mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
+
+			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
+			{ key = "O", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+			{ key = "O", mods = "SHIFT", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+
+			{ key = "PageUp", mods = "NONE", action = act.CopyMode("PageUp") },
+			{ key = "PageDown", mods = "NONE", action = act.CopyMode("PageDown") },
+
+			{
+				key = "y",
+				action = act.Multiple({
+					act.CopyTo("ClipboardAndPrimarySelection"),
+					act.CopyMode("Close"),
+				}),
+			},
+
+			{ key = "u", mods = "CTRL", action = act.CopyMode("PageUp") },
+			{ key = "b", mods = "CTRL", action = act.CopyMode("PageUp") },
+			{ key = "f", mods = "CTRL", action = act.CopyMode("PageDown") },
+		},
+
 		window_ops = {
 			{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
 			{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
@@ -243,7 +323,7 @@ return {
 			{ key = "-", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 			{ key = "\\", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 			{ key = "Escape", action = act.PopKeyTable },
-			{ key = "c", action = act.ActivateCopyMode },
+			{ key = "c", action = copy_mode_action() },
 			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
 		},
 	},
