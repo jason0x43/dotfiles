@@ -1,6 +1,7 @@
 local modbase = ...
 local util = require('user.util')
 local req = require('user.req')
+local lsp_util = require('user.lsp.util')
 
 local lspconfig = req('lspconfig')
 if not lspconfig then
@@ -78,6 +79,7 @@ M.config = function()
     'gopls',
     'groovyls',
     'html',
+    'intelephense',
     'jdtls',
     'jsonls',
     'prismals',
@@ -119,6 +121,7 @@ M.on_attach = function(client, bufnr)
   -- that don't supply useful info
   if
     client.name ~= 'null-ls'
+    and client.name ~= 'eslint'
     and client.name ~= 'copilot'
   then
     req('nvim-navic', function(navic)
@@ -127,24 +130,25 @@ M.on_attach = function(client, bufnr)
   end
 
   -- perform general setup
+  local caps = client.server_capabilities
 
-  if client.resolved_capabilities.code_action then
+  if caps.codeActionProvider then
     util.lmap('a', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
   end
 
-  if client.resolved_capabilities.goto_definition then
+  if caps.definitionProvider then
     util.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
 
-  if client.resolved_capabilities.hover then
+  if caps.hoverProvider then
     util.map('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
   end
 
-  if client.resolved_capabilities.rename then
+  if caps.renameProvider then
     util.lmap('r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   end
 
-  if client.resolved_capabilities.document_formatting then
+  if caps.documentFormattingProvider then
     util.bufcmd('Format', 'lua require("user.lsp").format_sync()')
     util.lmap('F', '<cmd>Format<cr>', opts)
     -- vim.cmd(

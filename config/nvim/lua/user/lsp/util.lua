@@ -28,4 +28,8 @@ function M.create_autostart_autocmd(server, filetypes)
   })
 end
 
+function M.disable_formatting(client)
+  client.server_capabilities.documentFormattingProvider = false
+end
+
 return M

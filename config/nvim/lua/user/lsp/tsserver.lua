@@ -41,7 +41,7 @@ M.config = {
   on_attach = function(client)
     if vim.fn.executable('prettier') then
       -- disable formatting; we'll use prettier instead
-      client.resolved_capabilities.document_formatting = false
+      lsp_util.disable_formatting(client)
     end
 
     require('user.util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
