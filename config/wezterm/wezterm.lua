@@ -156,15 +156,14 @@ wezterm.on("update-right-status", function(window)
 	window:set_right_status(status)
 end)
 
-function TabName(title)
+-- Set a tab title
+function Title(title)
+	---@diagnostic disable-next-line:undefined-field
 	local gui_window = _G.window
 	local window = wezterm.mux.get_window(gui_window:window_id())
 	for _, tab_info in ipairs(window:tabs_with_info()) do
 		if tab_info.is_active then
 			tab_info.tab:set_title(title)
-			wezterm.log_info(
-				"Changed title for tab " .. tostring(tab_info.tab:tab_id()) .. " to " .. tab_info.tab:get_title()
-			)
 			break
 		end
 	end
