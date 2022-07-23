@@ -280,6 +280,8 @@ return {
 		{ key = "/", mods = "CMD", action = act.ShowDebugOverlay },
 	},
 
+	term = "wezterm",
+
 	use_fancy_tab_bar = false,
 
 	window_padding = {
