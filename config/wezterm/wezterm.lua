@@ -320,6 +320,7 @@ return {
 			{ key = "k", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 4 }) },
 			{ key = "h", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 4 }) },
 			{ key = "l", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 4 }) },
+			{ key = "m", action = act.PaneSelect({ mode = "SwapWithActive" }) },
 			{ key = "-", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 			{ key = "\\", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 			{ key = "Escape", action = act.PopKeyTable },
@@ -345,6 +346,8 @@ return {
 		},
 		{ key = "LeftArrow", mods = "SHIFT", action = act.ActivateTabRelative(-1) },
 		{ key = "RightArrow", mods = "SHIFT", action = act.ActivateTabRelative(1) },
+		{ key = "LeftArrow", mods = "CMD|SHIFT", action = act.MoveTabRelative(-1) },
+		{ key = "RightArrow", mods = "CMD|SHIFT", action = act.MoveTabRelative(1) },
 		{
 			key = "s",
 			mods = "CTRL",
