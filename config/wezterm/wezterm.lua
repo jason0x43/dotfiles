@@ -1,5 +1,4 @@
 local wezterm = require("wezterm")
-local os = require("os")
 local io = require("io")
 local act = wezterm.action
 local left_decor = utf8.char(0xe0ba)
@@ -192,15 +191,18 @@ local move_action = function(dir)
 	return wezterm.action_callback(function(window, pane)
 		if pane:get_foreground_process_name():sub(-4) == "nvim" then
 			-- Try to do the move in vim. If it doesn't work, do the move in
-			-- wezterm.
+			-- wezterm. Use timeout because `nvim --remote-expr` will hang
+			-- indefinitely if the messages area is focused in nvim.
+			local timeout = '/opt/homebrew/bin/timeout'
+			local nvim = '/opt/homebrew/bin/nvim'
 			local result = run(
-				"/opt/homebrew/bin/nvim --server /tmp/nvim-wt"
+				timeout .. " 0.2 " .. nvim .. " --server /tmp/nvim-wt"
 					.. pane:pane_id()
 					.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
 					.. vim_dir_map[dir]
 					.. "()' 2>&1"
 			)
-			if result ~= "" then
+			if result ~= "" and not result:find('SIGTERM') then
 				return
 			end
 		end
