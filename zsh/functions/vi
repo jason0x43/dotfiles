@@ -1,6 +1,9 @@
 if (( $+commands[nvim] )); then
 	if [[ -n $WEZTERM_PANE ]]; then
-		nvim --listen /tmp/nvim-wt$WEZTERM_PANE $*
+		local socket
+		socket=/tmp/nvim-wt$WEZTERM_PANE
+		rm -f $socket
+		nvim --listen $socket $*
 	else
 		nvim $*
 	fi
