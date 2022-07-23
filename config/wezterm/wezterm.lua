@@ -232,7 +232,7 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 
 	key_tables = {
-		resize_pane = {
+		window_ops = {
 			{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
 			{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
 			{ key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
@@ -270,8 +270,9 @@ return {
 			key = "s",
 			mods = "CTRL",
 			action = act.ActivateKeyTable({
-				name = "resize_pane",
+				name = "window_ops",
 				one_shot = false,
+				timeout_milliseconds = 1000,
 				until_unknown = true,
 				replace_current = true,
 			}),
