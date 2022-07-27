@@ -334,6 +334,29 @@ function dotfiles-deno {
     deno completions zsh >! $ZDATADIR/functions/_deno
 }
 
+# Install or update bun
+function dotfiles-bun {
+    log "Updating bun..."
+
+    local out=""
+    local version=""
+
+    if (( ! $+commands[bun] )); then
+        logSub "Installing..."
+        out=$(curl https://bun.sh/install | bash)
+        if (( $? )); then
+            err "Error installing bun"
+            err $out
+        fi
+        rehash
+    else
+        bun upgrade
+    fi
+
+    logSub "Updating bun zsh completions..."
+    bun completions
+}
+
 # Install or update rust
 function dotfiles-rust {
     if (( ! $+commands[rustup] )); then
