@@ -1,7 +1,6 @@
 local modbase = ...
 local util = require('user.util')
 local req = require('user.req')
-local lsp_util = require('user.lsp.util')
 
 local lspconfig = req('lspconfig')
 if not lspconfig then
@@ -20,15 +19,6 @@ end
 local M = {}
 
 M.config = function()
-  -- give LspInfo windows a border
-  local lspconfig_win = require('lspconfig.ui.windows')
-  local default_win_opts = lspconfig_win.default_opts
-  lspconfig_win.default_opts = function(options)
-    local opts = default_win_opts(options)
-    opts.border = 'rounded'
-    return opts
-  end
-
   -- UI
   vim.fn.sign_define(
     'DiagnosticSignError',
