@@ -97,9 +97,6 @@ M.config = function()
     table.insert(servers, 'eslint')
   end
 
-  -- If we're using lsp-installer, make sure it's setup
-  require('user.req')('nvim-lsp-installer', 'setup')
-
   for _, server in ipairs(servers) do
     local config = M.get_lsp_config(server)
     lspconfig[server].setup(config)

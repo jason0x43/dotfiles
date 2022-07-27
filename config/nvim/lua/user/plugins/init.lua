@@ -162,8 +162,9 @@ packer.startup({
           config = "require('user.plugins.null-ls').config()",
         },
         {
-          'williamboman/nvim-lsp-installer',
-          requires = 'nvim-lua/plenary.nvim',
+          'williamboman/mason.nvim',
+          requires = 'williamboman/mason-lspconfig.nvim',
+          config = "require('user.plugins.mason').config()",
         },
         'b0o/schemastore.nvim',
       },
