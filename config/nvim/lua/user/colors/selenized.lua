@@ -309,7 +309,6 @@ function M.apply_theme(theme_name)
       M.update_background(context.event:find('Enter'))
     end
   });
-  print('installed focus handler')
 end
 
 function M.update_background(focused)
