@@ -1,12 +1,11 @@
 local lspconfig = require('lspconfig')
-local denols = require('user.lsp.denols')
+local lsp_util = require('user.lsp.util')
 
 local M = {}
 
 M.config = {
-  single_file_support = true,
-
-  root_dir = lspconfig.util.root_pattern('tsconfig.json'),
+  autostart = false,
+  root_dir = lspconfig.util.root_pattern('tsconfig.json', 'jsconfig.json'),
 
   handlers = {
     ['textDocument/definition'] = function(err, result, ctx, config)
@@ -18,7 +17,7 @@ M.config = {
     end,
 
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
-      result.diagnostics = vim.tbl_filter(function (diag)
+      result.diagnostics = vim.tbl_filter(function(diag)
         -- ignore 80001 (file is a CommonJS module)
         if diag.code == 80001 then
           return false
@@ -40,14 +39,12 @@ M.config = {
   },
 
   on_attach = function(client)
-    -- disable formatting for typescript; we'll use prettier instead
-    client.resolved_capabilities.document_formatting = false
+    if vim.fn.executable('prettier') then
+      -- disable formatting; we'll use prettier instead
+      lsp_util.disable_formatting(client)
+    end
 
     require('user.util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
-  end,
-
-  should_attach = function()
-    return not denols.config.should_attach()
   end,
 
   commands = {
@@ -63,5 +60,9 @@ M.config = {
     },
   },
 }
+
+M.start = lsp_util.create_start('tsserver')
+
+lsp_util.create_autostart_autocmd('tsserver', require('user.util').ts_types)
 
 return M

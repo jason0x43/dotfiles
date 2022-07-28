@@ -1,15 +1,15 @@
-local denols = require('user.lsp.denols')
+local lspconfig = require('lspconfig')
+local lsp_util = require('user.lsp.util')
 
 local M = {}
 
 M.config = {
-  -- enable single file support so lspconfig doesn't print a "root dir not
-  -- detected" message every time a js/ts file is opened.
-  single_file_support = true,
-
-  should_attach = function()
-    return not denols.config.should_attach()
-  end,
+  autostart = false,
+  root_dir = lspconfig.util.root_pattern('tsconfig.json', 'jsconfig.json'),
 }
+
+M.start = lsp_util.create_start('eslint')
+
+lsp_util.create_autostart_autocmd('eslint', require('user.util').ts_types)
 
 return M

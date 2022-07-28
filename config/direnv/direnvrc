@@ -1,5 +1,3 @@
-source $(asdf direnv hook asdf)
-
 # Return the currently active version of a particular tool
 #
 # This works by looking at the full path to a given executable. If it fits a
@@ -52,7 +50,7 @@ use_tools() {
 use_pyenv() {
   version=$(asdf current python | awk '{ print $2 }')
   if [[ ! -d .asdf/python-$version ]]; then
-    python -m venv .asdf/python-$version
+    python3 -m venv .asdf/python-$version
     .asdf/python-$version/bin/pip install --upgrade pip
     .asdf/python-$version/$dir/bin/pip install wheel
   fi
@@ -64,7 +62,7 @@ use_pyenv_home() {
   version=$(asdf current python | awk '{ print $2 }')
   dir=${PWD//\//_}
   if [[ ! -d ~/.asdf/python-$version/$dir ]]; then
-    python -m venv ~/.asdf/python-$version/$dir
+    python3 -m venv ~/.asdf/python-$version/$dir
     ~/.asdf/python-$version/$dir/bin/pip install --upgrade pip
     ~/.asdf/python-$version/$dir/bin/pip install wheel
   fi
@@ -124,21 +122,24 @@ use_xcode_cpath() {
 
 # Add Android SDK to path
 use_android() {
-  local javas=($(asdf list java | grep 'jdk-8\|-8u' | awk '{ print $1 }'))
-  if [[ ${#javas[@]} -lt 1 ]]; then
-    log_error 'a version of JDK 8 must be installed'
-    return
+  if [[ -z $ASDF_JAVA_VERSION ]]; then
+    local javas=($(asdf list java | grep '\-11' | awk '{ print $1 }'))
+    if [[ ${#javas[@]} -lt 1 ]]; then
+      log_error 'a version of JDK 8 must be installed'
+      return
+    fi
+
+    local java=${javas[0]}
+    export ASDF_JAVA_VERSION=$java
   fi
 
-  local java=${javas[0]}
-  export JAVA_HOME=$java
-  export PATH=$java/bin:$PATH
+  export JAVA_HOME=$(dirname $(dirname $(asdf which java)))
+  export CLASSPATH=$(dirname $(dirname $(asdf which java)))/lib
 
   if [[ -z $ANDROID_HOME ]]; then
     export ANDROID_HOME=$HOME/Library/Android/sdk
   fi
 
-  export ANDROID_SDK_HOME=$ANDROID_HOME
   export ANDROID_AVD_HOME=$HOME/.android/avd
   export PATH=$PATH:$ANDROID_HOME/emulator
   export PATH=$PATH:$ANDROID_HOME/tools

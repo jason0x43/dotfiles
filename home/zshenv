@@ -224,6 +224,15 @@ if [[ -d $HOME/.deno/bin ]]; then
 	)
 fi
 
+# Bun
+if [[ -d $HOME/.bun/bin ]]; then
+    export BUN_INSTALL="$HOME/.bun"
+	path=(
+		$path
+		$BUN_INSTALL/bin
+	)
+fi
+
 # Homebrew
 # ----------------------------------------------------------------------------
 # Use Bootsnap to speed up repeated brew calls

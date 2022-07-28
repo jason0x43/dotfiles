@@ -1,6 +1,18 @@
 local o = vim.opt
 local g = vim.g
 
+-- Enable lua filetype detection
+if vim.fn.has('nvim-0.7') and not vim.fn.has('nvim-0.8') then
+  g.do_filetype_lua = 1
+  g.did_load_filetypes = 0
+end
+
+-- Expand tabs by default
+o.expandtab = true
+
+-- yank to system clipboard
+o.clipboard = 'unnamedplus'
+
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
 
@@ -25,9 +37,6 @@ o.joinspaces = false
 
 -- don't move to the beginning of a line when jumping
 o.startofline = false
-
--- show line numbers
-o.number = true
 
 -- give the cursor a 5 line margin when scrolling
 o.scrolloff = 5
@@ -70,6 +79,9 @@ o.updatetime = 500
 -- don't show the mode on the last line
 o.showmode = false
 
+-- use a global status line
+o.laststatus = 3
+
 -- enable mouse support
 o.mouse = 'a'
 
@@ -85,9 +97,6 @@ o.wildignore = o.wildignore + '*.pyc' + '*.obj' + '*.bin' + 'a.out'
 
 -- better diffing
 o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
-
--- don't add a trailing newline to files that are missing one
-o.fixeol = false
 
 -- set python version for pyx commands
 if vim.fn.has('pythonx') == 1 then

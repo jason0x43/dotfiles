@@ -20,20 +20,21 @@ util.lmap('Q', '<cmd>qall!<cr>')
 util.lmap('c', '<cmd>close<cr>')
 
 -- show the syntax highlight state of the character under the cursor
-util.lmap(
-  'hl',
-  '<cmd>lua require("user.util").print_syn_group()<cr>'
-)
+util.lmap('hl', '', {
+  callback = util.print_syn_group
+})
 
 -- space to clear search highlights
 util.map('<space>', '<cmd>noh<cr>')
 
 -- yank to and paste from system clipboard
-util.lmap(
-  'y',
-  'y<cmd>lua require("user.util").yank(vim.fn.getreg("0"))<CR>',
-  { mode = 'nvo' }
-)
+util.lmap('y', '', {
+  mode = 'nvo',
+  callback = function()
+    util.yank(vim.fn.getreg("0"))
+  end
+})
+
 util.lmap('p', '"*p')
 
 -- disable "Entering Ex mode"

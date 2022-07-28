@@ -1,18 +1,20 @@
 local packer = require('packer')
 
+local function config(name)
+  return "require('user.plugins." .. name .. "').config()"
+end
+
+local function setup(name)
+  return "require('user.plugins." .. name .. "').setup()"
+end
+
 packer.startup({
   function(use)
     -- manage the package manager
-    use({
-      'wbthomason/packer.nvim',
-      requires = 'nvim-lua/plenary.nvim',
-    })
+    use('wbthomason/packer.nvim')
 
     -- speed up the lua loader
-    use({
-      'lewis6991/impatient.nvim',
-      requires = 'nvim-lua/plenary.nvim',
-    })
+    use('lewis6991/impatient.nvim')
 
     -- flashy status bar
     use({
@@ -21,82 +23,45 @@ packer.startup({
         'arkav/lualine-lsp-progress',
         'kyazdani42/nvim-web-devicons',
       },
-      config = "require('user.plugins.lualine')",
+      config = config('lualine')
     })
 
     -- file explorer in sidebar
     use({
       'kyazdani42/nvim-tree.lua',
-      setup = function()
-        -- close the tree after opening a file
-        vim.g.nvim_tree_quit_on_open = 1
-      end,
-      config = function()
-        require('user.req')('nvim-tree', function(nvim_tree)
-          nvim_tree.setup({
-            update_focused_file = {
-              enable = true,
-            },
-            diagnostics = {
-              enable = true,
-            },
-            view = {
-              side = 'right',
-              width = 40,
-            },
-            git = {
-              ignore = true,
-            },
-          })
-
-          require('user.util').lmap('n', '<cmd>NvimTreeToggle<cr>')
-        end)
-      end,
+      config = config('nvim-tree'),
     })
 
     -- autodetect buffer formatting
     use({
       'tpope/vim-sleuth',
-      disable = true,
-      config = function()
-        -- Disable sleuth for markdown files as it slows the load time
-        -- significantly
-        vim.cmd('autocmd FileType markdown :let b:sleuth_automatic = 0')
-      end,
+      config = config('vim-sleuth'),
     })
 
     -- Useful startup text, menu
     use({
       'goolord/alpha-nvim',
       requires = { 'kyazdani42/nvim-web-devicons' },
-      config = "require('user.plugins.alpha')",
+      config = config('alpha'),
     })
 
     -- highlight color strings
     use({
       'norcalli/nvim-colorizer.lua',
-      config = function()
-        require('user.req')('colorizer', 'setup', { '*' }, { names = false })
-      end,
+      config = config('nvim-colorizer'),
     })
 
     -- better start/end matching
     use({
       'andymass/vim-matchup',
       requires = 'nvim-lua/plenary.nvim',
-      config = function()
-        vim.g.matchup_matchparen_offscreen = { method = 'popup' }
-      end,
+      config = config('vim-matchup')
     })
 
     -- preserve layout when closing buffers; used for <leader>k
     use({
       'moll/vim-bbye',
-      config = function()
-        local util = require('user.util')
-        util.lmap('k', '<cmd>Bdelete<cr>')
-        util.lmap('K', '<cmd>Bdelete!<cr>')
-      end,
+      config = config('vim-bbye')
     })
 
     -- more efficient cursorhold behavior
@@ -109,11 +74,7 @@ packer.startup({
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      setup = function()
-        -- Don't let editorconfig set the max line -- it's handled via an
-        -- autocommand
-        vim.g.EditorConfig_max_line_indicator = 'none'
-      end,
+      setup = setup('editorconfig-vim')
     })
 
     -- git utilities
@@ -131,11 +92,7 @@ packer.startup({
     -- visualize the undo tree
     use({
       'mbbill/undotree',
-      config = function()
-        vim.g.undotree_DiffAutoOpen = 0
-        vim.g.undotree_SetFocusWhenToggle = 1
-        require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
-      end,
+      config = config('undotree')
     })
 
     -- for filetype features like syntax highlighting and indenting
@@ -149,14 +106,16 @@ packer.startup({
         'JoosepAlviste/nvim-ts-context-commentstring',
         -- show semantic file location (e.g., what function you're in)
         {
-          'SmiteshP/nvim-gps',
+          -- 'SmiteshP/nvim-navic',
+          'jason0x43/nvim-navic',
+          branch = 'symbolinformation-support',
           config = function()
-            require('user.req')('nvim-gps', 'setup')
-          end,
+            require('nvim-navic').setup()
+          end 
         },
       },
       run = ':TSUpdate',
-      config = "require('user.plugins.nvim-treesitter')",
+      config = config('nvim-treesitter')
     })
 
     -- fuzzy finding
@@ -165,28 +124,30 @@ packer.startup({
       requires = {
         'nvim-lua/plenary.nvim',
         'kyazdani42/nvim-web-devicons',
+        'natecraddock/telescope-zf-native.nvim',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
-          config = function()
-            require('user.req')('telescope', 'load_extension', 'fzf')
-          end,
         },
         {
           'nvim-telescope/telescope-symbols.nvim',
           requires = 'nvim-lua/plenary.nvim',
         },
+        {
+          'nvim-telescope/telescope-file-browser.nvim',
+          requires = 'nvim-lua/plenary.nvim',
+        },
+        'nvim-telescope/telescope-live-grep-raw.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
       },
-      config = "require('user.plugins.telescope')",
+      config = config('telescope')
     })
 
     -- filetype plugins
     use('tpope/vim-markdown')
     use({
       'mzlogin/vim-markdown-toc',
-      setup = function()
-        vim.g.vmt_auto_update_on_save = 0
-      end,
+      setup = setup('vim-markdown-toc')
     })
     use('tpope/vim-classpath')
     use('MaxMEllon/vim-jsx-pretty')
@@ -195,50 +156,28 @@ packer.startup({
 
     -- native LSP
     use({
-      'neovim/nvim-lspconfig',
-      config = "require('user.lsp')",
-      requires = {
-        'nvim-lua/plenary.nvim',
-        {
-          'jose-elias-alvarez/null-ls.nvim',
-          requires = 'nvim-lua/plenary.nvim',
-          config = "require('user.plugins.null-ls')",
-        },
-        {
-          'williamboman/nvim-lsp-installer',
-          requires = 'nvim-lua/plenary.nvim',
-          config = function()
-            require('user.req')('nvim-lsp-installer', function(installer)
-              local lsp = require('user.lsp')
-              installer.on_server_ready(function(server)
-                local config = lsp.get_lsp_config(server.name)
-                server:setup(config)
-              end)
-            end)
-          end,
-        },
-        'b0o/schemastore.nvim',
-      },
-    })
-
-    -- show buffer symbols, functions, etc in sidebar
-    use({
-      'simrat39/symbols-outline.nvim',
-      setup = function()
-        vim.g.symbols_outline = {
-          auto_preview = false,
-          width = 30,
-          relative_width = false,
-        }
-      end,
+      'williamboman/mason.nvim',
       config = function()
-        local util = require('user.util')
-        util.augroup('init_symbols_outline', {
-          'FileType Outline setlocal signcolumn=no',
-        })
-        util.lmap('o', '<cmd>SymbolsOutline<cr>')
-      end,
+        require('mason').setup()
+      end
     })
+    use({
+      'williamboman/mason-lspconfig.nvim',
+      config = function()
+        -- setup mason-lspconfig before configuring any lsp servers
+        require('mason-lspconfig').setup()
+      end
+    })
+    use({
+      'neovim/nvim-lspconfig',
+      config = "require('user.lsp').config()",
+    })
+    use({
+      'jose-elias-alvarez/null-ls.nvim',
+      requires = 'nvim-lua/plenary.nvim',
+      config = config('null-ls')
+    })
+    use('b0o/schemastore.nvim')
 
     -- highlight current word
     use({
@@ -246,9 +185,7 @@ packer.startup({
       -- disabled because it conflicts with matchup's highlighting for
       -- function/end and if/end pairs
       disable = true,
-      setup = function()
-        vim.g.Illuminate_highlightPriority = -10
-      end,
+      setup = setup('vim-illuminate')
     })
 
     -- better git diff views
@@ -259,36 +196,43 @@ packer.startup({
         'kyazdani42/nvim-web-devicons',
       },
       config = function()
-        require('user.req')('diffview', 'setup')
-      end,
+        require('diffview').setup()
+      end
     })
 
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
-      config = function()
-        require('user.req')('gitsigns', 'setup', {
-          signs = {
-            add = { text = '▋' },
-            change = { text = '▋' },
-          },
-        })
-      end,
+      config = config('gitsigns')
     })
 
     -- completion
     use({
-      'hrsh7th/nvim-cmp',
-      requires = {
-        'L3MON4D3/LuaSnip',
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-nvim-lua',
-        'hrsh7th/cmp-nvim-lsp',
-        'saadparwaiz1/cmp_luasnip',
+      {
+        'hrsh7th/nvim-cmp',
+        config = config('nvim-cmp')
       },
-      config = "require('user.plugins.nvim-cmp')",
+      'L3MON4D3/LuaSnip',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lua',
+      'hrsh7th/cmp-nvim-lsp',
+      'saadparwaiz1/cmp_luasnip',
+      {
+        'zbirenbaum/copilot-cmp',
+        requires = {
+          {
+            'zbirenbaum/copilot.lua',
+            event = { 'VimEnter' },
+            config = function()
+              vim.defer_fn(function()
+                require('copilot').setup()
+              end, 100)
+            end
+          },
+        }
+      },
     })
 
     -- startup time profiling
@@ -299,9 +243,21 @@ packer.startup({
       'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
       config = function()
-        require('user.req')('trouble', 'setup')
-        require('user.util').lmap('e', '<cmd>TroubleToggle<cr>')
-      end,
+        require('trouble').setup()
+      end
+    })
+
+    -- show available code action indiciator
+    use({
+      'kosayoda/nvim-lightbulb',
+      config = function()
+        vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI'}, {
+          pattern = '*',
+          callback = function()
+            require('nvim-lightbulb').update_lightbulb()
+          end
+        })
+      end
     })
   end,
 

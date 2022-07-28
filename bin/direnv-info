@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+# Needs qpdf (for zlib-flate) and jq
+
+if [[ -z $DIRENV_FILE ]]; then
+	echo "Not using direnv"
+	exit
+fi
+
+echo "Using config: $DIRENV_FILE"
+
+direnv_diff_z=$(echo $DIRENV_DIFF | base64 -d)
+direnv_diff_text=$(echo $direnv_diff_z | zlib-flate -uncompress)
+echo "New/updated variables:"
+echo $direnv_diff_text | jq ".n"
+
+# direnv_watches_z=$(echo $DIRENV_WATCHES | base64 -d)
+# direnv_watches_text=$(echo $direnv_watches_z | zlib-flate -uncompress)
+# echo $direnv_watches_text | json_pp

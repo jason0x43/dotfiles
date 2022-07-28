@@ -121,7 +121,8 @@ def handle_result(
             # the size of the initial window
             size = get_win_size(os_win)
             print(
-                f"os_window_size {size['width']}c {size['height']}c", file=session_file
+                f"os_window_size {size['width']}c {size['height']}c",
+                file=session_file,
             )
 
             for tab in os_win["tabs"]:
@@ -166,7 +167,9 @@ def handle_result(
             # base shell), take the alternate text since we don't want the
             # contents of a full-screen app
             text = win.as_text(
-                as_ansi=True, add_history=True, alternate_screen=has_fg_process(win)
+                as_ansi=True,
+                add_history=True,
+                alternate_screen=has_fg_process(win),
             )
             buf_file.write(text.strip())
 

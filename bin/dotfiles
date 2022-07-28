@@ -237,21 +237,18 @@ function dotfiles-brew {
         'asdf'        # version manager
         'bash'        # update from system stock version
         'bat'         # better cat
-        'deno'        # TS runtime
         'direnv'      # environment manager
         'fd'          # file finder
         'fzf'         # fuzzy finder
         'git'         # update from system stock git
         'git-delta'   # prettier git diffs
         'jq'          # command line JSON processor
-        'neovim'      # editor
-        'node'        # Node.js
         'pdm'         # python package manager
-        'python'      # default python
+        'python@3.9'  # default python
         'ripgrep'     # better grep
+        'stylua'      # lua formatter
         'tig'         # terminal git ui
-        'tmux'        # terminal manager
-        'zsh'         # newer zsh
+        'tmux'        # terminal multiplexer
     )
 
     brew_casks=""
@@ -261,6 +258,7 @@ function dotfiles-brew {
             'font-jetbrains-mono-nerd-font'
             'kitty'
             'phoenix'
+            '1password-cli'
         )
 
         taps=($(brew tap))
@@ -300,6 +298,73 @@ function dotfiles-brew {
     # Remove git's included zsh completions in favor of the system completions
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
         rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+    fi
+
+    # Update 1password-cli zsh completions
+    if (( $+commands[op] )); then
+        logSub "Updating 1password-cli zsh completions..."
+        op completion zsh >! $ZDATADIR/functions/_op
+    fi
+}
+
+# Install or update deno
+function dotfiles-deno {
+    log "Updating deno..."
+
+    local out=""
+    local version=""
+
+    if (( ! $+commands[deno] )); then
+        logSub "Installing..."
+        out=$(curl -fsSL https://deno.land/x/install/install.sh | sh)
+        if (( $? )); then
+            err "Error installing deno"
+            err $out
+        fi
+        rehash
+    else
+        out=$(deno upgrade)
+        if [[ ! $out =~ "is the most recent release" ]]; then
+            version=$(deno --version | grep 'deno [0-9]' | awk '{print $2}')
+            logSub "Installed version $version"
+        fi
+    fi
+
+    logSub "Updating deno zsh completions..."
+    deno completions zsh >! $ZDATADIR/functions/_deno
+}
+
+# Install or update bun
+function dotfiles-bun {
+    log "Updating bun..."
+
+    local out=""
+    local version=""
+
+    if (( ! $+commands[bun] )); then
+        logSub "Installing..."
+        out=$(curl https://bun.sh/install | bash)
+        if (( $? )); then
+            err "Error installing bun"
+            err $out
+        fi
+        rehash
+    else
+        bun upgrade
+    fi
+
+    logSub "Updating bun zsh completions..."
+    bun completions
+}
+
+# Install or update rust
+function dotfiles-rust {
+    if (( ! $+commands[rustup] )); then
+        log "Installing rust..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    else
+        log "Updating rust..."
+        rustup update
     fi
 }
 
@@ -345,10 +410,6 @@ function dotfiles-python {
         err "Error updating packages"
         err $out
     fi
-
-    mkdir -p $ZCOMPDIR
-    pdm completion > $ZCOMPDIR/_pdm
-    logSub "Installed pdm completions"
 }
 
 # Update global npm packages
@@ -394,7 +455,6 @@ function dotfiles-node {
 
     local desired_packages=(
         eslint_d
-        prettier
         neovim
     )
 
@@ -545,6 +605,8 @@ if [[ -n $1 ]]; then
         echo '    asdf           Update asdf plugins, install defaults'
         echo '    bat            Rebuild bat theme and filetype cache'
         echo '    brew           Update brew packages, install defaults'
+        echo '    deno           Update deno'
+        echo '    rust           Update rust'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
         echo '    launchd        Link and bootstrap launchd scripts'
         echo '    node           Update global node packages, install defaults'
@@ -565,6 +627,8 @@ else
     dotfiles-brew
     dotfiles-buildtools
     dotfiles-asdf
+    dotfiles-deno
+    dotfiles-rust
 
     dotfiles-zsh
     dotfiles-python

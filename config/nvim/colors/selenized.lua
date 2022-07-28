@@ -8,6 +8,8 @@ else
     local lines = vim.fn.readfile(theme_file)
     local theme_name = vim.fn.trim(lines[1])
     selenized.apply_theme(theme_name)
+  elseif os.getenv('THEME_VARIANT') then
+    selenized.apply_theme(os.getenv('THEME_VARIANT'))
   else
     selenized.apply_theme('black')
   end

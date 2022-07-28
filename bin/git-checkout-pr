@@ -8,6 +8,11 @@ if (( $# < 1 )); then
 fi
 
 pr=$1
+remote=origin
 
-git fetch --force --update-head-ok origin refs/pull/$pr/head:pr/$pr
+if [[ -n $2 ]]; then
+	remote=$2
+fi
+
+git fetch --force --update-head-ok $remote refs/pull/$pr/head:pr/$pr
 git checkout pr/$pr

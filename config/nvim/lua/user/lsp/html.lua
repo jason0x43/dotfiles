@@ -1,3 +1,4 @@
+local lsp_util = require('user.lsp.util')
 local M = {}
 
 M.config = {
@@ -5,7 +6,7 @@ M.config = {
 
   on_attach = function(client)
     -- disable formatting for html; we'll use prettier instead
-    client.resolved_capabilities.document_formatting = false
+    lsp_util.disable_formatting(client)
   end,
 }
 

@@ -1,7 +1,4 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="es2015" />
 /// <reference types="./phoenix.d.ts" />
-// @ts-check
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -193,7 +190,10 @@ function autoLayout() {
     ...getWindowsInSpace("Google Chrome", space),
     ...getWindowsInSpace("Firefox", space),
   ];
-  const terminalWins = getWindowsInSpace("kitty", space);
+  const terminalWins = [
+    ...getWindowsInSpace("kitty", space),
+    ...getWindowsInSpace("WezTerm", space),
+  ];
   if (browserWins.length === 1 && terminalWins.length === 1) {
     fill(LEFT, { window: browserWins[0], portion: 1 - THIN_WIDTH });
     fill(RIGHT, { window: terminalWins[0], portion: THIN_WIDTH });
@@ -667,8 +667,7 @@ function moveToSpace(direction, window) {
     return;
   }
 
-  targetSpace.addWindows([window]);
-  space.removeWindows([window]);
+  targetSpace.moveWindows([window]);
   window.focus();
 }
 

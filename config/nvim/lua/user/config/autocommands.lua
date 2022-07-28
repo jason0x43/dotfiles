@@ -19,8 +19,9 @@ util.augroup('init_autocommands', {
   -- don't show sign column in help panes
   'FileType help setlocal signcolumn=no',
 
-  -- close help files and qf panes with 'q' or Esc
-  'FileType help,qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
+  -- close qf panes and help tabs with 'q'
+  'FileType qf,fugitiveblame,lspinfo,startuptime noremap <buffer> <silent> q :bd<CR>',
+  'FileType help noremap <buffer> <silent> q :tabclose<CR>',
   'BufEnter output:///info nnoremap <buffer> <silent> q :bd<CR>',
 
   -- auto-set quickfix height

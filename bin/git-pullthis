@@ -1,19 +1,27 @@
-#!/bin/sh
+#!/bin/zsh
 
 # Git pull current branch, but only if it can be fast-forwarded
 
 remote=$1
 branch=$(git rev-parse --abbrev-ref HEAD)
 
-if [ -z $remote ]; then 
+if [[ -z $remote ]]; then 
 	# If the branch is tracking an upstream branch, use that
 	remote=$(git status -sb | awk '{split($0,a,"\\.\\.\\."); print a[2]}' | cut -d / -f 1)
 fi
 
-if [ -z $remote ]; then 
+if [[ -z $remote ]]; then 
 	# If there's nothing available, default to 'origin'
 	remote='origin'
 fi
 
-echo "Pulling from $remote..."
-git pull --ff-only $remote $branch
+if [[ $branch =~ "^pr/" ]]; then
+	parts=(${(s|/|)branch})
+	pr=${parts[2]}
+	echo "Updating PR $pr from $remote..."
+	git fetch --force --update-head-ok origin refs/pull/$pr/head:pr/$pr
+	git reset --hard HEAD
+else
+	echo "Pulling from $remote..."
+	git pull $remote $branch
+fi
