@@ -46,15 +46,24 @@ function fixterm {
         infocmp xterm-kitty > $tmpfile
         tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
         rm $tmpfile
+        logSub "Installed kitty terminfo"
+    fi
+
+    if [[ $TERM == "wezterm" && $(uname -s) == "Darwin" && ! -d $HOME/.terminfo/77/wezterm ]]; then
+        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+        curl -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
+        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+        rm $tmpfile
+        logSub "Installed wezterm terminfo"
     fi
 
     # Fix terminal definition so C-H works properly in neovim
     kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
     if [[ $kbs =~ "kbs=^[hH]" ]]; then
-        logSub "Fixing backspace code in terminfo..."
         infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > /tmp/$TERM.ti
         tic /tmp/$TERM.ti
         rm /tmp/$TERM.ti
+        logSub "Fixed backspace code in terminfo"
     fi
 }
 
@@ -140,6 +149,20 @@ function dotfiles-buildtools {
         if (( $? )); then
             err "Error installing build tools"
             err $out
+        fi
+    fi
+}
+
+# Install terminal fonts
+function dotfiles-fonts {
+    log "Installing terminal fonts..."
+
+    if [[ $OSTYPE == darwin* ]]; then
+        local fonts
+        fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
+        if (( ${#fonts} == 0 )) then
+            curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf"
+            logSub "Installed Symbols-1000-em Nerd Font Complete"
         fi
     fi
 }
@@ -606,6 +629,7 @@ if [[ -n $1 ]]; then
         echo '    bat            Rebuild bat theme and filetype cache'
         echo '    brew           Update brew packages, install defaults'
         echo '    deno           Update deno'
+        echo '    fonts          Install terminal fonts'
         echo '    rust           Update rust'
         echo '    home           Update dotfiles and home directories, fixup terminfo database'
         echo '    launchd        Link and bootstrap launchd scripts'
@@ -625,6 +649,7 @@ else
     dotfiles-health
     dotfiles-home
     dotfiles-brew
+    dotfiles-fonts
     dotfiles-buildtools
     dotfiles-asdf
     dotfiles-deno
