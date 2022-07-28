@@ -221,6 +221,7 @@ packer.startup({
       'saadparwaiz1/cmp_luasnip',
       {
         'zbirenbaum/copilot-cmp',
+        disable = true,
         requires = {
           {
             'zbirenbaum/copilot.lua',
