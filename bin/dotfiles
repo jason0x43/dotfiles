@@ -589,26 +589,8 @@ function dotfiles-asdf {
     done
 
     # Setup the "system" install for asdf-direnv
-    if [[ -d $ASDF_DATA_DIR ]]; then
-        # For `asdf exec direnv` to work, asdf needs a direnv shim. For it to
-        # be able to create that, *some* installed version of direnv needs a
-        # binary. If we only want to use the system install, we have to create
-        # a link to the system direnv binary in installs/direnv/system/bin.
-        if [[ ! -L $ASDF_DATA_DIR/installs/direnv/system/bin/direnv ]]; then
-            mkdir -p $ASDF_DATA_DIR/installs/direnv/system/bin
-            ln -s $HOMEBREW_BASE/bin/direnv $ASDF_DATA_DIR/installs/direnv/system/bin
-            asdf reshim
-            logSub "Created direnv link"
-        fi
-
-        # asdf needs a directory to create environments for each installed
-        # version. 
-        if [[ ! -d $ASDF_DATA_DIR/installs/direnv/system/env ]]; then
-            mkdir -p $ASDF_DATA_DIR/installs/direnv/system/env
-            logSub "Created direnv environment directory"
-        fi
-
-        asdf global direnv system
+    if [[ ! -d $CONFIGDIR/asdf-direnv ]]; then
+        asdf direnv setup --shell zsh --version system
     fi
 }
 
