@@ -183,6 +183,20 @@ function dotfiles-home {
     fixterm
 }
 
+# Install terminal fonts
+function dotfiles-fonts {
+    log "Installing terminal fonts..."
+    local fonts
+
+    if [[ $OSTYPE == darwin* ]]; then
+        fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
+        if (( ${#fonts} == 0 )) then
+            curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" 'https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf'
+            logSub "Installed Symbols font"
+        fi
+    fi
+}
+
 # Link and activate launchd scripts
 function dotfiles-launchd {
     log "Linking and bootstrapping launchd scripts..."
@@ -632,6 +646,7 @@ if [[ -n $1 ]]; then
 else
     dotfiles-health
     dotfiles-home
+    dotfiles-fonts
     dotfiles-brew
     dotfiles-buildtools
     dotfiles-asdf
