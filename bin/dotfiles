@@ -48,6 +48,14 @@ function fixterm {
         rm $tmpfile
     fi
 
+    if [[ $TERM == "wezterm" && $(uname -s) == "Darwin" && ! -d $HOME/.terminfo/77/wezterm ]]; then
+        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+        curl -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
+        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+        rm $tmpfile
+    fi
+
+
     # Fix terminal definition so C-H works properly in neovim
     kbs=$(infocmp $TERM | grep -o 'kbs=[^,]\+')
     if [[ $kbs =~ "kbs=^[hH]" ]]; then
