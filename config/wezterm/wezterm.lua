@@ -188,6 +188,7 @@ local vim_dir_map = {
 
 local timeout = '/opt/homebrew/bin/timeout'
 local nvim = '/opt/homebrew/bin/nvim'
+
 -- Return an action callback for managing movement between panes
 local move_action = function(dir)
 	return wezterm.action_callback(function(window, pane)
@@ -218,6 +219,48 @@ local copy_mode_action = function()
 		window:perform_action(act.ActivateCopyMode, pane)
 	end)
 end
+
+local save_win_state = function(window)
+	local data = {}
+
+	local windows = {}
+	for _, win in ipairs(wezterm.mux.all_windows()) do
+		local gui_win = win:gui_window()
+		local dims = gui_win:get_dimensions()
+
+		local tabs = {}
+		for _, tab in ipairs(win:tabs()) do
+			local panes = {}
+			for _, pane in ipairs(tab:panes_with_info()) do
+				table.insert(panes, {
+					top = pane.top,
+					left = pane.left,
+					width = pane.width,
+					height = pane.height,
+				})
+			end
+			table.insert(tabs, {
+				id = tab:tab_id(),
+				panes = panes
+			})
+		end
+
+		table.insert(windows, {
+			id = win:window_id(),
+			width = dims.pixel_width,
+			height = dims.pixel_height,
+			tabs = tabs
+		})
+	end
+
+	data.windows = windows
+
+	local filename = wezterm.home_dir .. "/.local/share/wezterm/win_state.json"
+	local file = assert(io.open(filename, "w"))
+	file:write(wezterm.json_encode(data))
+	file:close()
+end
+
 local scheme = "light"
 if wezterm.gui.get_appearance():find("Dark") then
 	scheme = "dark"
@@ -369,6 +412,11 @@ return {
 		},
 		{ key = "/", mods = "ALT", action = wezterm.action.ShowLauncher },
 		{ key = "/", mods = "CMD", action = act.ShowDebugOverlay },
+		{
+			key = "s",
+			mods = "CMD|CTRL",
+			action = wezterm.action_callback(save_win_state),
+		},
 	},
 
 	term = "wezterm",
