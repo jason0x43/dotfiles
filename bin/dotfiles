@@ -379,11 +379,25 @@ function dotfiles-bun {
         fi
         rehash
     else
-        bun upgrade
+        local message=$(bun upgrade 2>&1)
+        if [[ $message == "Congrats *" ]]; then
+            logSub "Upgraded bun to v$(bun -v)"
+        fi
     fi
 
     logSub "Updating bun zsh completions..."
-    bun completions
+    bun completions > /dev/null
+
+    # remove completion line added to zshrc
+    local zshrc=$HOME/.dotfiles/home/zshrc
+    local line=$(grep -n '# bun completions' $HOME/.zshrc | cut -f1 -d:)
+    if [[ -n $line ]]; then
+        local start
+        (( start = $line - 1 ))
+        local end
+        (( end = $line + 1 ))
+        sed -i "" "${start},${end}d" "$zshrc"
+    fi
 }
 
 # Install or update rust
