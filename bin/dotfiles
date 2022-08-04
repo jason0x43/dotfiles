@@ -331,7 +331,6 @@ function dotfiles-brew {
 
     # Update 1password-cli zsh completions
     if (( $+commands[op] )); then
-        logSub "Updating 1password-cli zsh completions..."
         op completion zsh >! $ZDATADIR/functions/_op
     fi
 }
@@ -359,7 +358,6 @@ function dotfiles-deno {
         fi
     fi
 
-    logSub "Updating deno zsh completions..."
     deno completions zsh >! $ZDATADIR/functions/_deno
 }
 
@@ -385,7 +383,6 @@ function dotfiles-bun {
         fi
     fi
 
-    logSub "Updating bun zsh completions..."
     bun completions > /dev/null
 
     # remove completion line added to zshrc
@@ -601,10 +598,12 @@ function dotfiles-asdf {
     done
 
     # Update all plugins
-    logSub "Updating plugins..."
     for plugin in $(asdf plugin list); do
         if ((! $installed_plugins[(Ie)$plugin])); then
-            asdf plugin update $plugin > /dev/null
+            local out=$(asdf plugin update $plugin)
+            if [[ ! $out =~ 'Your branch is up to date' ]]; then
+                logSub "Updated $plugin"
+            fi
         fi
     done
 
