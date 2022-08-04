@@ -377,6 +377,7 @@ return {
 			{ key = "Escape", action = act.PopKeyTable },
 			{ key = "c", action = copy_mode_action() },
 			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
+			{ key = "w", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
 		},
 	},
 
