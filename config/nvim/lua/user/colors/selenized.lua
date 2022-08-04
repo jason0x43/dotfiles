@@ -300,24 +300,27 @@ function M.apply_theme(theme_name)
   hi_link('LspDiagnosticsSignWarning', 'DiagnosticSignWarn')
   hi_link('LspDiagnosticsSignError', 'DiagnosticSignError')
 
+  -- neotree
+  hi('NeoTreeFloatBorder', palette.bg_0, palette.bg_0)
+
   -- update the theme background when focus is gained or lost, as tmux does
-  vim.api.nvim_create_augroup('selenized-theme', { clear = false })
-  vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
-    group = 'selenized-theme',
-    pattern = '*',
-    callback = function(context)
-      M.update_background(context.event:find('Enter'))
-    end
-  });
+  -- vim.api.nvim_create_augroup('selenized-theme', { clear = false })
+  -- vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
+  --   group = 'selenized-theme',
+  --   pattern = '*',
+  --   callback = function(context)
+  --     M.update_background(context.event:find('Enter'))
+  --   end
+  -- });
 end
 
 function M.update_background(focused)
-  local ap = active_palette
-  if focused == nil then
-    vim.b.winhighlight = 'Normal:NormalNC'
-  else
-    vim.b.winhighlight = nil
-  end
+  -- local ap = active_palette
+  -- if focused == nil then
+  --   vim.b.winhighlight = 'Normal:NormalNC'
+  -- else
+  --   vim.b.winhighlight = nil
+  -- end
 end
 
 function M.active_palette()
