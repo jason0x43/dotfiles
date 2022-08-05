@@ -79,6 +79,7 @@ M.config = function()
     'sourcekit',
     'sumneko_lua',
     'svelte',
+    'taplo',
     'tsserver',
     'vimls',
   }
