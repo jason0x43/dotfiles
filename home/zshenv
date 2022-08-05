@@ -181,6 +181,20 @@ if [[ -d $HOME/.poetry/bin ]]; then
 	)
 fi
 
+if (( $+commands[pdm] )); then
+	function () {
+		local pdm_dirs=($HOMEBREW_BASE/Cellar/pdm/*)
+		local pdm_dir=${pdm_dirs[-1]}
+		local lib_dirs=($pdm_dir/libexec/lib/*)
+		local lib_dir=${lib_dirs[-1]}
+		if [[ -z $PYTHONPATH ]]; then
+			export PYTHONPATH=$lib_dir/site-packages/pdm/pep582
+		elif [[ ! $PYTHONPATH =~ $lib_dir ]]; then 
+			export PYTHONPATH=$lib_dir/site-packages/pdm/pep582:$PYTHONPATH
+		fi
+	}
+fi
+
 # Go
 if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
 	path=(
