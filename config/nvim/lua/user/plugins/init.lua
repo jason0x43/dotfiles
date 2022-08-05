@@ -27,16 +27,12 @@ packer.startup({
     })
 
     -- file explorer in sidebar
-    -- use({
-    --   'kyazdani42/nvim-tree.lua',
-    --   config = config('nvim-tree'),
-    -- })
     use({
       'nvim-neo-tree/neo-tree.nvim',
       branch = 'v2.x',
       requires = {
         'nvim-lua/plenary.nvim',
-        'kyazdani42/nvim-web-devicons', -- not strictly required, but recommended
+        'kyazdani42/nvim-web-devicons',
         'MunifTanjim/nui.nvim',
       },
       config = config('neotree')
