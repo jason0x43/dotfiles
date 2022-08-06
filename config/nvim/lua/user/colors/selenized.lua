@@ -173,7 +173,12 @@ function M.apply_theme(theme_name)
 
   -- basic groups
   hi('Normal', palette.fg_0, palette.bg_0, '', '')
-  hi('NormalNC', palette.dim_0, palette.bg_1)
+  if vim.wo.diff then
+    hi('NormalNC', palette.dim_0, palette.bg_0)
+  else
+    -- only fade unfocused windows if we're not in diff mode
+    hi('NormalNC', palette.dim_0, palette.bg_1)
+  end
   hi('Comment', palette.dim_0, '', 'italic', '')
   hi('Constant', palette.cyan, '', '', '')
   hi('Delimiter', palette.fg_0, '', '', '')
