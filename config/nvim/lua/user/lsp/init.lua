@@ -79,6 +79,7 @@ M.config = function()
     'sourcekit',
     'sumneko_lua',
     'svelte',
+    'taplo',
     'tsserver',
     'vimls',
   }
@@ -182,7 +183,7 @@ end
 M.format_sync = function()
   local clients = vim.tbl_values(vim.lsp.buf_get_clients())
   local formatters = vim.tbl_filter(function(client)
-    return client.supports_method('textDocument/formatting')
+    return client.server_capabilities.documentFormattingProvider
   end, clients)
 
   local formatter
@@ -190,13 +191,14 @@ M.format_sync = function()
     return
   end
 
-  if #formatters == 1 then
-    formatter = formatters[1]
-  else
+  -- if there are multiple formatters, use the one that's not null-ls
+  if #formatters > 1 then
     local non_null_ls = vim.tbl_filter(function(client)
       return client.name ~= 'null-ls'
     end, formatters)
     formatter = non_null_ls[1]
+  else
+    formatter = formatters[1]
   end
 
   local params = vim.lsp.util.make_formatting_params(nil)

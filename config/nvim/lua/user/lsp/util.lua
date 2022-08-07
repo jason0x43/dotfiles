@@ -19,12 +19,14 @@ end
 
 function M.create_autostart_autocmd(server, filetypes)
   local ft_str = table.concat(filetypes, ',')
-  require('user.util').augroup('autostart_' .. server, {
-    'FileType '
-      .. ft_str
-      .. ' lua require("user.lsp.'
-      .. server
-      .. '").start()',
+  local group = 'autostart_' .. server
+  vim.api.nvim_create_augroup(group, {})
+  vim.api.nvim_create_autocmd('FileType', {
+    group = group,
+    pattern = ft_str,
+    callback = function()
+      require('user.lsp.' .. server).start()
+    end
   })
 end
 

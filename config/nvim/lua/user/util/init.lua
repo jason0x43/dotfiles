@@ -149,7 +149,7 @@ function M.show_view_width()
   local filetype = vim.bo.filetype
   local tw = vim.bo.textwidth
 
-  if filetype == 'help' or tw == 0 then
+  if vim.wo.diff or filetype == 'help' or tw == 0 then
     vim.wo.colorcolumn = ''
   else
     vim.wo.colorcolumn = fn.join(fn.range(tw + 1, tw + 1 + vim.go.columns), ',')
