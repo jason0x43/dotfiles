@@ -186,8 +186,8 @@ local vim_dir_map = {
 	Right = "right",
 }
 
-local timeout = '/opt/homebrew/bin/timeout'
-local nvim = '/opt/homebrew/bin/nvim'
+local timeout = "/opt/homebrew/bin/timeout"
+local nvim = "/opt/homebrew/bin/nvim"
 
 -- Return an action callback for managing movement between panes
 local move_action = function(dir)
@@ -197,13 +197,16 @@ local move_action = function(dir)
 			-- wezterm. Use timeout because `nvim --remote-expr` will hang
 			-- indefinitely if the messages area is focused in nvim.
 			local result = run(
-				timeout .. " 0.2 " .. nvim .. " --server /tmp/nvim-wt"
-				.. pane:pane_id()
-				.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
-				.. vim_dir_map[dir]
-				.. "()' 2>&1"
+				timeout
+					.. " 0.2 "
+					.. nvim
+					.. " --server /tmp/nvim-wt"
+					.. pane:pane_id()
+					.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
+					.. vim_dir_map[dir]
+					.. "()' 2>&1"
 			)
-			if result ~= "" and not result:find('SIGTERM') then
+			if result ~= "" and not result:find("SIGTERM") then
 				return
 			end
 		end
@@ -241,7 +244,7 @@ local save_win_state = function(window)
 			end
 			table.insert(tabs, {
 				id = tab:tab_id(),
-				panes = panes
+				panes = panes,
 			})
 		end
 
@@ -249,7 +252,7 @@ local save_win_state = function(window)
 			id = win:window_id(),
 			width = dims.pixel_width,
 			height = dims.pixel_height,
-			tabs = tabs
+			tabs = tabs,
 		})
 	end
 
@@ -318,16 +321,11 @@ return {
 			{ key = "^", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
 			{ key = "m", mods = "ALT", action = act.CopyMode("MoveToStartOfLineContent") },
 
-			{ key = " ", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "v", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "V", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "V", mods = "SHIFT",
-				action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "v", mods = "CTRL",
-				action = act.CopyMode({ SetSelectionMode = "Block" }) },
+			{ key = " ", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "v", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "V", mods = "SHIFT", action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "v", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Block" }) },
 
 			{ key = "G", mods = "NONE", action = act.CopyMode("MoveToScrollbackBottom") },
 			{ key = "G", mods = "SHIFT", action = act.CopyMode("MoveToScrollbackBottom") },
@@ -341,10 +339,8 @@ return {
 			{ key = "L", mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
 
 			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
-			{ key = "O", mods = "NONE",
-				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
-			{ key = "O", mods = "SHIFT",
-				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+			{ key = "O", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+			{ key = "O", mods = "SHIFT", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
 
 			{ key = "PageUp", mods = "NONE", action = act.CopyMode("PageUp") },
 			{ key = "PageDown", mods = "NONE", action = act.CopyMode("PageDown") },
@@ -411,7 +407,11 @@ return {
 				replace_current = true,
 			}),
 		},
-		{ key = "/", mods = "ALT", action = wezterm.action.ShowLauncher },
+		{
+			key = "/",
+			mods = "ALT",
+			action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS" }),
+		},
 		{ key = "/", mods = "CMD", action = act.ShowDebugOverlay },
 		{
 			key = "s",
