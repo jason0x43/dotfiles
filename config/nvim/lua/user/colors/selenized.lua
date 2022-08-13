@@ -138,7 +138,7 @@ function M.apply_theme(theme_name)
   g.terminal_color_14 = palette.br_cyan
   g.terminal_color_15 = palette.fg_1
 
-  local sign_col_bg = palette.bg_0
+  local sign_col_bg = ''
 
   -- link groups
   hi_link('Boolean', 'Constant')
