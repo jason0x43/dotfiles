@@ -72,6 +72,7 @@ M.config = function()
     'intelephense',
     'jdtls',
     'jsonls',
+    'omnisharp',
     'prismals',
     'pyright',
     'rust_analyzer',
@@ -79,6 +80,7 @@ M.config = function()
     'sourcekit',
     'sumneko_lua',
     'svelte',
+    'tailwindcss',
     'taplo',
     'tsserver',
     'vimls',
@@ -107,11 +109,7 @@ M.on_attach = function(client, bufnr)
 
   -- navic can only attach to one client per buffer, so don't attach to clients
   -- that don't supply useful info
-  if
-    client.name ~= 'null-ls'
-    and client.name ~= 'eslint'
-    and client.name ~= 'copilot'
-  then
+  if client.server_capabilities.documentSymbolProvider then
     req('nvim-navic', function(navic)
       navic.attach(client, bufnr)
     end)
