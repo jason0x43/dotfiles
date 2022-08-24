@@ -252,19 +252,6 @@ packer.startup({
         require('trouble').setup()
       end
     })
-
-    -- show available code action indiciator
-    use({
-      'kosayoda/nvim-lightbulb',
-      config = function()
-        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          pattern = '*',
-          callback = function()
-            require('nvim-lightbulb').update_lightbulb()
-          end
-        })
-      end
-    })
   end,
 
   config = {
