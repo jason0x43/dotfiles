@@ -1,8 +1,7 @@
 local wezterm = require("wezterm")
 local io = require("io")
 local act = wezterm.action
-local left_decor = utf8.char(0xe0ba)
-local right_decor = utf8.char(0xe0b8)
+
 local color_schemes = {
 	light = {
 		tab_bar = {
@@ -108,8 +107,11 @@ local color_schemes = {
 	},
 }
 
+local left_decor = utf8.char(0xe0ba)
+local right_decor = utf8.char(0xe0b8)
+
 wezterm.on("format-tab-title", function(tab, _, _, config, hover, max_width)
-	local colors = config.colors
+	local colors = config.color_schemes[config.color_scheme]
 	if colors == nil then
 		return
 	end
@@ -273,10 +275,6 @@ return {
 	color_schemes = color_schemes,
 
 	color_scheme = scheme,
-
-	colors = {
-		tab_bar = color_schemes[scheme].tab_bar,
-	},
 
 	font_size = 13,
 
