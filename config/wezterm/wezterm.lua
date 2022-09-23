@@ -188,8 +188,13 @@ local vim_dir_map = {
 	Right = "right",
 }
 
-local timeout = "/opt/homebrew/bin/timeout"
-local nvim = "/opt/homebrew/bin/nvim"
+local arch = run('arch')
+local homebrew_base = '/opt/homebrew/bin'
+if arch == 'i386' then
+  homebrew_base = '/usr/local';
+end
+local timeout = homebrew_base .. "/bin/timeout"
+local nvim = homebrew_base .. "/bin/nvim"
 
 -- Return an action callback for managing movement between panes
 local move_action = function(dir)
