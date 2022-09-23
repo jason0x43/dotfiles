@@ -22,11 +22,12 @@ M.config = function()
         preview_height = 10,
 
         width = function(_, max_columns, _)
-          return math.min(max_columns - 16, 80)
+          print('max cols: ' .. max_columns)
+          return math.max(max_columns - 16, 80)
         end,
 
         height = function(_, _, max_lines)
-          return math.min(max_lines - 2, 30)
+          return math.max(max_lines - 6, 30)
         end,
       },
       sorting_strategy = 'ascending',
