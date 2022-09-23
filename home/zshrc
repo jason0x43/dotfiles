@@ -120,7 +120,7 @@ fi
 } &!
 
 # Kitty completions
-if (( $+commands[kitty] )); then
+if [[ $TERM == "kitty" ]]; then
     kitty + complete setup zsh | source /dev/stdin
 fi
 
