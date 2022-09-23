@@ -69,7 +69,7 @@ M.config = function()
       config.sources,
       null_ls.builtins.formatting.prettier.with({
         filetypes = vim.list_extend(
-          { 'xml' },
+          { 'xml', 'php' },
           null_ls.builtins.formatting.prettier.filetypes
         ),
       })

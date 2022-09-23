@@ -75,6 +75,7 @@ M.config = function()
     'jsonls',
     'omnisharp',
     'prismals',
+    'psalm',
     'pyright',
     'rust_analyzer',
     'solargraph',

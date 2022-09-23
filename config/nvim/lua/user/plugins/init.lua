@@ -252,6 +252,9 @@ packer.startup({
         require('trouble').setup()
       end
     })
+
+    -- Laravel Blade template support
+    use('jwalton512/vim-blade')
   end,
 
   config = {
