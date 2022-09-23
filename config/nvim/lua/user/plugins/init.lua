@@ -112,9 +112,7 @@ packer.startup({
         'JoosepAlviste/nvim-ts-context-commentstring',
         -- show semantic file location (e.g., what function you're in)
         {
-          -- 'SmiteshP/nvim-navic',
-          'jason0x43/nvim-navic',
-          branch = 'symbolinformation-support',
+          'SmiteshP/nvim-navic',
           config = function()
             require('nvim-navic').setup()
           end,
