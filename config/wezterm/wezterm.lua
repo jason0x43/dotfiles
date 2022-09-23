@@ -358,10 +358,10 @@ return {
 		},
 
 		window_ops = {
-			{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
-			{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
-			{ key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
-			{ key = "l", action = act.AdjustPaneSize({ "Right", 1 }) },
+			{ key = "j", action = move_action("Down") },
+			{ key = "k", action = move_action("Up") },
+			{ key = "h", action = move_action("Left") },
+			{ key = "l", action = move_action("Right") },
 			{ key = "j", mods = "SHIFT", action = act.AdjustPaneSize({ "Down", 4 }) },
 			{ key = "k", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 4 }) },
 			{ key = "h", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 4 }) },
@@ -369,6 +369,7 @@ return {
 			{ key = "m", action = act.PaneSelect({ mode = "SwapWithActive" }) },
 			{ key = "-", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 			{ key = "\\", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+			{ key = "|", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 			{ key = "Escape", action = act.PopKeyTable },
 			{ key = "c", action = copy_mode_action() },
 			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
@@ -381,6 +382,7 @@ return {
 		{ key = "k", mods = "CTRL", action = move_action("Up") },
 		{ key = "h", mods = "CTRL", action = move_action("Left") },
 		{ key = "l", mods = "CTRL", action = move_action("Right") },
+		{ key = "t", mods = "CTRL", action = act.SpawnTab("DefaultDomain") },
 		{
 			key = "\\",
 			mods = "CMD|CTRL",
