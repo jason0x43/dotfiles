@@ -41,9 +41,9 @@ o.startofline = false
 -- give the cursor a 5 line margin when scrolling
 o.scrolloff = 5
 
--- 4-space indents
-o.shiftwidth = 4
-o.tabstop = 4
+-- 2-space indents
+o.shiftwidth = 2
+o.tabstop = 2
 
 -- don't give ins-completion-menu messages
 o.shortmess = o.shortmess + 'c'
