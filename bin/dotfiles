@@ -41,35 +41,17 @@ function link {
 
 # Fix terminal config
 function fixterm {
-    if [[ $TERM == "xterm-kitty" ]]; then
-        infocmp &> /dev/null
-        if (( $? )); then
-            local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
-            curl --silent -o $tmpfile https://raw.githubusercontent.com/kovidgoyal/kitty/master/terminfo/x/xterm-kitty
-            tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
-            rm $tmpfile
-            logSub "Installed kitty terminfo"
-        fi
-    fi
+    local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+    curl --silent -o $tmpfile https://raw.githubusercontent.com/kovidgoyal/kitty/master/terminfo/x/xterm-kitty
+    tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+    rm $tmpfile
+    logSub "Installed kitty terminfo"
 
-    if [[ $TERM == "wezterm" ]]; then
-        infocmp &> /dev/null
-        if (( $? )); then
-            local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
-            curl --silent -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
-            tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
-            rm $tmpfile
-            logSub "Installed wezterm terminfo"
-        fi
-    fi
-
-    if [[ $TERM == "wezterm" && $(uname -s) == "Darwin" && ! -d $HOME/.terminfo/77/wezterm ]]; then
-        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
-        curl -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
-        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
-        rm $tmpfile
-    fi
-
+    local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+    curl --silent -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
+    tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+    rm $tmpfile
+    logSub "Installed wezterm terminfo"
 
     # Fix terminal definition so C-H works properly in neovim
     kbs=$(infocmp | grep -o 'kbs=[^,]\+')
