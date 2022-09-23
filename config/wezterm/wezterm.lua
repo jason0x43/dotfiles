@@ -194,7 +194,8 @@ local nvim = "/opt/homebrew/bin/nvim"
 -- Return an action callback for managing movement between panes
 local move_action = function(dir)
 	return wezterm.action_callback(function(window, pane)
-		if pane:get_foreground_process_name():sub(-4) == "nvim" then
+		local name = pane:get_foreground_process_name()
+		if name ~= nil and pane:get_foreground_process_name():sub(-4) == "nvim" then
 			-- Try to do the move in vim. If it doesn't work, do the move in
 			-- wezterm. Use timeout because `nvim --remote-expr` will hang
 			-- indefinitely if the messages area is focused in nvim.
