@@ -23,7 +23,7 @@ packer.startup({
         'arkav/lualine-lsp-progress',
         'kyazdani42/nvim-web-devicons',
       },
-      config = config('lualine')
+      config = config('lualine'),
     })
 
     -- file explorer in sidebar
@@ -35,7 +35,7 @@ packer.startup({
         'kyazdani42/nvim-web-devicons',
         'MunifTanjim/nui.nvim',
       },
-      config = config('neotree')
+      config = config('neotree'),
     })
 
     -- autodetect buffer formatting
@@ -61,13 +61,13 @@ packer.startup({
     use({
       'andymass/vim-matchup',
       requires = 'nvim-lua/plenary.nvim',
-      config = config('vim-matchup')
+      config = config('vim-matchup'),
     })
 
     -- preserve layout when closing buffers; used for <leader>k
     use({
       'moll/vim-bbye',
-      config = config('vim-bbye')
+      config = config('vim-bbye'),
     })
 
     -- more efficient cursorhold behavior
@@ -80,7 +80,7 @@ packer.startup({
     -- EditorConfig
     use({
       'editorconfig/editorconfig-vim',
-      setup = setup('editorconfig-vim')
+      setup = setup('editorconfig-vim'),
     })
 
     -- git utilities
@@ -98,7 +98,7 @@ packer.startup({
     -- visualize the undo tree
     use({
       'mbbill/undotree',
-      config = config('undotree')
+      config = config('undotree'),
     })
 
     -- for filetype features like syntax highlighting and indenting
@@ -117,11 +117,11 @@ packer.startup({
           branch = 'symbolinformation-support',
           config = function()
             require('nvim-navic').setup()
-          end
+          end,
         },
       },
       run = ':TSUpdate',
-      config = config('nvim-treesitter')
+      config = config('nvim-treesitter'),
     })
 
     -- fuzzy finding
@@ -146,14 +146,14 @@ packer.startup({
         'nvim-telescope/telescope-live-grep-raw.nvim',
         'nvim-telescope/telescope-ui-select.nvim',
       },
-      config = config('telescope')
+      config = config('telescope'),
     })
 
     -- filetype plugins
     use('tpope/vim-markdown')
     use({
       'mzlogin/vim-markdown-toc',
-      setup = setup('vim-markdown-toc')
+      setup = setup('vim-markdown-toc'),
     })
     use('tpope/vim-classpath')
     use('MaxMEllon/vim-jsx-pretty')
@@ -165,14 +165,14 @@ packer.startup({
       'williamboman/mason.nvim',
       config = function()
         require('mason').setup()
-      end
+      end,
     })
     use({
       'williamboman/mason-lspconfig.nvim',
       config = function()
         -- setup mason-lspconfig before configuring any lsp servers
         require('mason-lspconfig').setup()
-      end
+      end,
     })
     use({
       'neovim/nvim-lspconfig',
@@ -181,7 +181,7 @@ packer.startup({
     use({
       'jose-elias-alvarez/null-ls.nvim',
       requires = 'nvim-lua/plenary.nvim',
-      config = config('null-ls')
+      config = config('null-ls'),
     })
     use('b0o/schemastore.nvim')
 
@@ -191,7 +191,7 @@ packer.startup({
       -- disabled because it conflicts with matchup's highlighting for
       -- function/end and if/end pairs
       disable = true,
-      setup = setup('vim-illuminate')
+      setup = setup('vim-illuminate'),
     })
 
     -- better git diff views
@@ -203,21 +203,21 @@ packer.startup({
       },
       config = function()
         require('diffview').setup()
-      end
+      end,
     })
 
     -- better git decorations
     use({
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
-      config = config('gitsigns')
+      config = config('gitsigns'),
     })
 
     -- completion
     use({
       {
         'hrsh7th/nvim-cmp',
-        config = config('nvim-cmp')
+        config = config('nvim-cmp'),
       },
       'L3MON4D3/LuaSnip',
       'hrsh7th/cmp-buffer',
@@ -235,9 +235,9 @@ packer.startup({
               vim.defer_fn(function()
                 require('copilot').setup()
               end, 100)
-            end
+            end,
           },
-        }
+        },
       },
     })
 
@@ -250,7 +250,7 @@ packer.startup({
       requires = 'kyazdani42/nvim-web-devicons',
       config = function()
         require('trouble').setup()
-      end
+      end,
     })
 
     -- Laravel Blade template support
