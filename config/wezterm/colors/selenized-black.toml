@@ -36,6 +36,7 @@ selection_fg = "none"
 19 = "#fa9153"
 20 = "#a580e2"
 21 = "#b891f5"
+
 [colors.tab_bar]
 background = "#3b3b3b"
 
