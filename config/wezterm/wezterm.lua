@@ -7,6 +7,42 @@ local theme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
 local left_decor = utf8.char(0xe0ba)
 local right_decor = utf8.char(0xe0b8)
 
+-- Split a multiline string into a table
+local splitlines = function(str)
+	local lines = {}
+	for s in str:gmatch("[^\r\n]+") do
+		table.insert(lines, s)
+	end
+	return lines
+end
+
+-- Trim a string
+local trim = function(str)
+	return str:gsub("^%s*(.-)%s*$", "%1")
+end
+
+-- Run a command, return the output.
+local run = function(cmd)
+	local _, stdout, stderr = wezterm.run_child_process(cmd)
+	local out
+	if stdout and stderr then
+		out = stdout .. " " .. stderr
+	elseif stdout then
+		out = stdout
+	else
+		out = stderr
+	end
+	return trim(out)
+end
+
+-- Determine the brew command prefix
+local arch = run({ "arch" })
+local homebrew_base = "/opt/homebrew/bin"
+if arch == "i386" then
+	homebrew_base = "/usr/local"
+end
+
+-- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, config, hover, max_width)
 	local colors = config.color_schemes[config.color_scheme]
 	if colors == nil then
@@ -46,6 +82,7 @@ wezterm.on("format-tab-title", function(tab, _, _, config, hover, max_width)
 	}
 end)
 
+-- Show an icon in the status area when a key table is active
 wezterm.on("update-right-status", function(window)
 	local status = ""
 	if window:active_key_table() ~= nil then
@@ -54,7 +91,7 @@ wezterm.on("update-right-status", function(window)
 	window:set_right_status(status)
 end)
 
--- Set a tab title
+-- Set a tab title from the debug overlay
 function Title(title)
 	---@diagnostic disable-next-line:undefined-field
 	local gui_window = _G.window
@@ -67,29 +104,6 @@ function Title(title)
 	end
 end
 
--- Run a command, return the output.
-local run = function(cmd)
-	local f = assert(io.popen(cmd, "r"))
-	local s = assert(f:read("*a"))
-	f:close()
-	s = s:gsub("^%s+", "")
-	s = s:gsub("%s+$", "")
-	s = s:gsub("[\n\r]+", " ")
-	return s
-end
-
--- Run a command, return the output.
-local runw = function(cmd)
-	local success, stdout, _ = wezterm.run_child_process(cmd)
-	local lines = {}
-	if success then
-		for s in stdout:gmatch("[^\r\n]+") do
-			table.insert(lines, s)
-		end
-	end
-	return lines
-end
-
 local vim_dir_map = {
 	Up = "up",
 	Down = "down",
@@ -97,11 +111,6 @@ local vim_dir_map = {
 	Right = "right",
 }
 
-local arch = run("arch")
-local homebrew_base = "/opt/homebrew/bin"
-if arch == "i386" then
-	homebrew_base = "/usr/local"
-end
 local timeout = homebrew_base .. "/bin/timeout"
 local nvim = homebrew_base .. "/bin/nvim"
 
@@ -113,16 +122,16 @@ local move_action = function(dir)
 			-- Try to do the move in vim. If it doesn't work, do the move in
 			-- wezterm. Use timeout because `nvim --remote-expr` will hang
 			-- indefinitely if the messages area is focused in nvim.
-			local result = run(
-				timeout
-					.. " 0.2 "
-					.. nvim
-					.. " --server /tmp/nvim-wt"
-					.. pane:pane_id()
-					.. ' --remote-expr \'v:lua.require("user.wezterm").go_'
-					.. vim_dir_map[dir]
-					.. "()' 2>&1"
-			)
+			local result = run({
+				timeout,
+				"0.2",
+				nvim,
+				"--server",
+				"/tmp/nvim-wt" .. pane:pane_id(),
+				"--remote-expr",
+				"v:lua.require('user.wezterm').go_" .. vim_dir_map[dir] .. "()",
+			})
+			print('result: "' .. result .. '"')
 			if result ~= "" and not result:find("SIGTERM") then
 				return
 			end
@@ -141,8 +150,9 @@ local change_scheme_action = function(dir)
 			table.insert(schemes, name)
 		end
 
+		-- Find the next or previous scheme in the list
 		local current_scheme = config.color_scheme
-		local new_scheme
+		local scheme_name
 		if dir == "next" then
 			for i, name in ipairs(schemes) do
 				if name == current_scheme then
@@ -150,7 +160,7 @@ local change_scheme_action = function(dir)
 					if new_i > #schemes then
 						new_i = 1
 					end
-					new_scheme = schemes[new_i]
+					scheme_name = schemes[new_i]
 					break
 				end
 			end
@@ -161,65 +171,90 @@ local change_scheme_action = function(dir)
 					if new_i < 1 then
 						new_i = #schemes
 					end
-					new_scheme = schemes[new_i]
+					scheme_name = schemes[new_i]
 					break
 				end
 			end
 		end
 
-		if new_scheme == nil then
-			new_scheme = schemes[1]
+		if scheme_name == nil then
+			scheme_name = schemes[1]
 		end
 
-		print('Setting scheme to "' .. new_scheme .. '"')
+		print('Setting scheme to "' .. scheme_name .. '"')
 
-		local scheme_data = wezterm.get_builtin_color_schemes()[new_scheme]
-		local bg = wezterm.color.parse(scheme_data.background)
+		local scheme = wezterm.get_builtin_color_schemes()[scheme_name]
+		local overrides = window:get_config_overrides() or {}
+
+		if not scheme.tab_bar then
+			scheme.tab_bar = {
+				background = scheme.brights[1],
+				active_tab = {
+					bg_color = scheme.background,
+					fg_color = scheme.brights[8],
+				},
+				inactive_tab = {
+					bg_color = scheme.ansi[1],
+					fg_color = scheme.ansi[8],
+				},
+				new_tab = {
+					bg_color = scheme.brights[1],
+					fg_color = scheme.brights[1],
+				},
+			}
+
+			if not overrides.color_schemes then
+				overrides.color_schemes = {}
+			end
+			overrides.color_schemes[scheme_name] = scheme
+			print("Setting override for " .. scheme_name)
+		end
+
+		local bg = wezterm.color.parse(scheme.background)
 		local _, _, l, _ = bg:hsla()
 
 		local scheme_json = {
-			name = new_scheme,
+			name = scheme_name,
 			is_dark = l < 0.5,
 
-			bg_0 = scheme_data.background,
-			fg_0 = scheme_data.foreground,
+			bg_0 = scheme.background,
+			fg_0 = scheme.foreground,
 
-			bg_1 = scheme_data.ansi[1],
-			red = scheme_data.ansi[2],
-			green = scheme_data.ansi[3],
-			yellow = scheme_data.ansi[4],
-			blue = scheme_data.ansi[5],
-			magenta = scheme_data.ansi[6],
-			cyan = scheme_data.ansi[7],
-			dim_0 = scheme_data.ansi[8],
+			bg_1 = scheme.ansi[1],
+			red = scheme.ansi[2],
+			green = scheme.ansi[3],
+			yellow = scheme.ansi[4],
+			blue = scheme.ansi[5],
+			magenta = scheme.ansi[6],
+			cyan = scheme.ansi[7],
+			dim_0 = scheme.ansi[8],
 
-			bg_2 = scheme_data.brights[1],
-			br_red = scheme_data.brights[2],
-			br_green = scheme_data.brights[3],
-			br_yellow = scheme_data.brights[4],
-			br_blue = scheme_data.brights[5],
-			br_magenta = scheme_data.brights[6],
-			br_cyan = scheme_data.brights[7],
-			fg_1 = scheme_data.brights[8],
+			bg_2 = scheme.brights[1],
+			br_red = scheme.brights[2],
+			br_green = scheme.brights[3],
+			br_yellow = scheme.brights[4],
+			br_blue = scheme.brights[5],
+			br_magenta = scheme.brights[6],
+			br_cyan = scheme.brights[7],
+			fg_1 = scheme.brights[8],
 
-			orange = scheme_data.indexed[18] or scheme_data.ansi[2],
-			violet = scheme_data.indexed[20] or scheme_data.ansi[5],
-			br_orange = scheme_data.indexed[19] or scheme_data.brights[2],
-			br_violet = scheme_data.indexed[21] or scheme_data.brights[5],
+			orange = scheme.indexed[18] or scheme.ansi[2],
+			violet = scheme.indexed[20] or scheme.ansi[5],
+			br_orange = scheme.indexed[19] or scheme.brights[2],
+			br_violet = scheme.indexed[21] or scheme.brights[5],
 		}
 
 		local file = assert(io.open(theme_file, "w"))
 		file:write(wezterm.json_encode(scheme_json))
 		file:close()
 
-		local overrides = window:get_config_overrides() or {}
-		overrides.color_scheme = new_scheme
+		overrides.color_scheme = scheme_name
 		window:set_config_overrides(overrides)
 
-		local lines = runw({ homebrew_base .. "/bin/nvr", "--serverlist" })
+		local lines = splitlines(run({ homebrew_base .. "/bin/nvr", "--serverlist" }))
 		local servers = { table.unpack(lines, 2, #lines) }
 		for _, server in ipairs(servers) do
-			runw({
+			run({
 				timeout,
 				"0.2",
 				nvim,
@@ -232,6 +267,7 @@ local change_scheme_action = function(dir)
 	end)
 end
 
+-- Switch to copy mode from the window op keytable
 local copy_mode_action = function()
 	return wezterm.action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
@@ -241,6 +277,7 @@ local copy_mode_action = function()
 	end)
 end
 
+-- Save the window state to a JSON file (WIP)
 local save_win_state = function()
 	local data = {}
 
@@ -282,8 +319,10 @@ local save_win_state = function()
 	file:close()
 end
 
+-- The default scheme
 local scheme = "Selenized Light"
 
+-- Check for a theme file
 local file = io.open(theme_file, "r")
 if file ~= nil then
 	-- If a theme file exists, use the scheme specified there
