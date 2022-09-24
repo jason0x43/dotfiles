@@ -48,11 +48,11 @@ end
 local arch = run({ "arch" })
 local homebrew_base = "/opt/homebrew/bin"
 if arch == "i386" then
-	homebrew_base = "/usr/local"
+	homebrew_base = "/usr/local/bin"
 end
 
-local timeout = homebrew_base .. "/bin/timeout"
-local nvim = homebrew_base .. "/bin/nvim"
+local timeout = homebrew_base .. "/timeout"
+local nvim = homebrew_base .. "/nvim"
 
 -- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, config, hover, max_width)
@@ -202,7 +202,7 @@ function Scheme(name, window)
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 
-	local lines = splitlines(run({ homebrew_base .. "/bin/nvr", "--serverlist" }))
+	local lines = splitlines(run({ homebrew_base .. "/nvr", "--serverlist" }))
 	local servers = { table.unpack(lines, 2, #lines) }
 	for _, server in ipairs(servers) do
 		run({
