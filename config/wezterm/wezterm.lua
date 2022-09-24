@@ -2,7 +2,16 @@ local wezterm = require("wezterm")
 local io = require("io")
 local act = wezterm.action
 
-local theme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
+local scheme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
+
+local scheme_config = {
+	light = "Selenized Light",
+	dark = "Selenized Black",
+	default = "Selenized Light",
+	auto_switch = true,
+}
+
+local scheme = scheme_config.default
 
 local left_decor = utf8.char(0xe0ba)
 local right_decor = utf8.char(0xe0b8)
@@ -41,6 +50,9 @@ local homebrew_base = "/opt/homebrew/bin"
 if arch == "i386" then
 	homebrew_base = "/usr/local"
 end
+
+local timeout = homebrew_base .. "/bin/timeout"
+local nvim = homebrew_base .. "/bin/nvim"
 
 -- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, config, hover, max_width)
@@ -91,6 +103,120 @@ wezterm.on("update-right-status", function(window)
 	window:set_right_status(status)
 end)
 
+-- Whenever the config is reloaded, update the color scheme file
+wezterm.on("window-config-reloaded", function(window)
+	local cfg = window:effective_config()
+	local color_scheme = cfg.color_scheme
+
+	if scheme_config.auto_switch then
+		if wezterm.gui.get_appearance():find("Dark") then
+			color_scheme = scheme_config.dark
+		else
+			color_scheme = scheme_config.light
+		end
+	end
+
+	print("config reloaded, scheme is", cfg.color_scheme)
+	Scheme(color_scheme, window)
+end)
+
+-- Set the color scheme
+function Scheme(name, window)
+	if not window then
+		---@diagnostic disable-next-line:undefined-field
+		window = _G.window
+	end
+
+	local config = window:effective_config()
+	local scheme = wezterm.color.get_builtin_schemes()[name]
+	if not scheme then
+		scheme = config.color_schemes[name]
+	end
+
+	local overrides = window:get_config_overrides() or {}
+
+	if not scheme.tab_bar then
+		scheme.tab_bar = {
+			background = scheme.brights[1],
+			active_tab = {
+				bg_color = scheme.background,
+				fg_color = scheme.brights[8],
+			},
+			inactive_tab = {
+				bg_color = scheme.ansi[1],
+				fg_color = scheme.ansi[8],
+			},
+			new_tab = {
+				bg_color = scheme.brights[1],
+				fg_color = scheme.brights[1],
+			},
+		}
+
+		if not overrides.color_schemes then
+			overrides.color_schemes = {}
+		end
+		overrides.color_schemes[name] = scheme
+		print("Setting override for " .. name)
+	end
+
+	local bg = wezterm.color.parse(scheme.background)
+	local _, _, l, _ = bg:hsla()
+
+	-- Create the scheme data that will be written to the theme file for other
+	-- apps to use
+	local scheme_json = {
+		name = name,
+		is_dark = l < 0.5,
+
+		bg_0 = scheme.background,
+		fg_0 = scheme.foreground,
+
+		bg_1 = scheme.ansi[1],
+		red = scheme.ansi[2],
+		green = scheme.ansi[3],
+		yellow = scheme.ansi[4],
+		blue = scheme.ansi[5],
+		magenta = scheme.ansi[6],
+		cyan = scheme.ansi[7],
+		dim_0 = scheme.ansi[8],
+
+		bg_2 = scheme.brights[1],
+		br_red = scheme.brights[2],
+		br_green = scheme.brights[3],
+		br_yellow = scheme.brights[4],
+		br_blue = scheme.brights[5],
+		br_magenta = scheme.brights[6],
+		br_cyan = scheme.brights[7],
+		fg_1 = scheme.brights[8],
+
+		orange = scheme.indexed[18] or scheme.ansi[2],
+		violet = scheme.indexed[20] or scheme.ansi[5],
+		br_orange = scheme.indexed[19] or scheme.brights[2],
+		br_violet = scheme.indexed[21] or scheme.brights[5],
+	}
+
+	local file = assert(io.open(scheme_file, "w"))
+	file:write(wezterm.json_encode(scheme_json))
+	file:close()
+
+	overrides.color_scheme = name
+	window:set_config_overrides(overrides)
+
+	local lines = splitlines(run({ homebrew_base .. "/bin/nvr", "--serverlist" }))
+	local servers = { table.unpack(lines, 2, #lines) }
+	for _, server in ipairs(servers) do
+		run({
+			timeout,
+			"0.2",
+			nvim,
+			"--server",
+			server,
+			"--remote-expr",
+			"v:lua.require('user.colors.wezterm').apply_theme()",
+		})
+	end
+end
+
 -- Set a tab title from the debug overlay
 function Title(title)
 	---@diagnostic disable-next-line:undefined-field
@@ -110,9 +236,6 @@ local vim_dir_map = {
 	Left = "left",
 	Right = "right",
 }
-
-local timeout = homebrew_base .. "/bin/timeout"
-local nvim = homebrew_base .. "/bin/nvim"
 
 -- Return an action callback for managing movement between panes
 local move_action = function(dir)
@@ -145,33 +268,36 @@ local change_scheme_action = function(dir)
 	return wezterm.action_callback(function(window)
 		local config = window:effective_config()
 
-		local schemes = {}
-		for name, _ in pairs(wezterm.get_builtin_color_schemes()) do
+		local schemes = config.color_schemes
+		for name, _ in pairs(wezterm.color.get_builtin_schemes()) do
 			table.insert(schemes, name)
 		end
+
+		table.sort(schemes)
 
 		-- Find the next or previous scheme in the list
 		local current_scheme = config.color_scheme
 		local scheme_name
+		local index
 		if dir == "next" then
 			for i, name in ipairs(schemes) do
 				if name == current_scheme then
-					local new_i = i + 1
-					if new_i > #schemes then
-						new_i = 1
+					index = i + 1
+					if index > #schemes then
+						index = 1
 					end
-					scheme_name = schemes[new_i]
+					scheme_name = schemes[index]
 					break
 				end
 			end
 		else
 			for i = #schemes, 1, -1 do
 				if schemes[i] == current_scheme then
-					local new_i = i - 1
-					if new_i < 1 then
-						new_i = #schemes
+					index = i - 1
+					if index < 1 then
+						index = #schemes
 					end
-					scheme_name = schemes[new_i]
+					scheme_name = schemes[index]
 					break
 				end
 			end
@@ -181,89 +307,8 @@ local change_scheme_action = function(dir)
 			scheme_name = schemes[1]
 		end
 
-		print('Setting scheme to "' .. scheme_name .. '"')
-
-		local scheme = wezterm.get_builtin_color_schemes()[scheme_name]
-		local overrides = window:get_config_overrides() or {}
-
-		if not scheme.tab_bar then
-			scheme.tab_bar = {
-				background = scheme.brights[1],
-				active_tab = {
-					bg_color = scheme.background,
-					fg_color = scheme.brights[8],
-				},
-				inactive_tab = {
-					bg_color = scheme.ansi[1],
-					fg_color = scheme.ansi[8],
-				},
-				new_tab = {
-					bg_color = scheme.brights[1],
-					fg_color = scheme.brights[1],
-				},
-			}
-
-			if not overrides.color_schemes then
-				overrides.color_schemes = {}
-			end
-			overrides.color_schemes[scheme_name] = scheme
-			print("Setting override for " .. scheme_name)
-		end
-
-		local bg = wezterm.color.parse(scheme.background)
-		local _, _, l, _ = bg:hsla()
-
-		local scheme_json = {
-			name = scheme_name,
-			is_dark = l < 0.5,
-
-			bg_0 = scheme.background,
-			fg_0 = scheme.foreground,
-
-			bg_1 = scheme.ansi[1],
-			red = scheme.ansi[2],
-			green = scheme.ansi[3],
-			yellow = scheme.ansi[4],
-			blue = scheme.ansi[5],
-			magenta = scheme.ansi[6],
-			cyan = scheme.ansi[7],
-			dim_0 = scheme.ansi[8],
-
-			bg_2 = scheme.brights[1],
-			br_red = scheme.brights[2],
-			br_green = scheme.brights[3],
-			br_yellow = scheme.brights[4],
-			br_blue = scheme.brights[5],
-			br_magenta = scheme.brights[6],
-			br_cyan = scheme.brights[7],
-			fg_1 = scheme.brights[8],
-
-			orange = scheme.indexed[18] or scheme.ansi[2],
-			violet = scheme.indexed[20] or scheme.ansi[5],
-			br_orange = scheme.indexed[19] or scheme.brights[2],
-			br_violet = scheme.indexed[21] or scheme.brights[5],
-		}
-
-		local file = assert(io.open(theme_file, "w"))
-		file:write(wezterm.json_encode(scheme_json))
-		file:close()
-
-		overrides.color_scheme = scheme_name
-		window:set_config_overrides(overrides)
-
-		local lines = splitlines(run({ homebrew_base .. "/bin/nvr", "--serverlist" }))
-		local servers = { table.unpack(lines, 2, #lines) }
-		for _, server in ipairs(servers) do
-			run({
-				timeout,
-				"0.2",
-				nvim,
-				"--server",
-				server,
-				"--remote-expr",
-				"v:lua.require('user.colors.wezterm').apply_theme()",
-			})
-		end
+		print('Setting scheme to "' .. scheme_name)
+		Scheme(scheme_name, window)
 	end)
 end
 
@@ -319,28 +364,25 @@ local save_win_state = function()
 	file:close()
 end
 
--- The default scheme
-local scheme = "Selenized Light"
-
 -- Check for a theme file
-local file = io.open(theme_file, "r")
-if file ~= nil then
-	-- If a theme file exists, use the scheme specified there
-	local text = assert(file:read("*a"))
-	file:close()
-	local theme = wezterm.json_parse(text)
-	scheme = theme.name
+if not scheme_config.auto_switch then
+	local file = io.open(scheme_file, "r")
+	if file ~= nil then
+		-- If a theme file exists, use the scheme specified there
+		local text = assert(file:read("*a"))
+		file:close()
+		local theme = wezterm.json_parse(text)
+		scheme = theme.name
+	end
 else
 	-- Otherwise, switch between light and dark themes based on the system theme
 	if wezterm.gui.get_appearance():find("Dark") then
-		scheme = "Selenized Black"
+		scheme = scheme_config.dark
 	end
 end
 
 return {
 	color_scheme = scheme,
-
-	color_scheme_dirs = { "./colors" },
 
 	font_size = 13,
 
