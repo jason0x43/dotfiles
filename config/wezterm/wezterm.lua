@@ -202,8 +202,7 @@ function Scheme(name, window)
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 
-	local lines = splitlines(run({ homebrew_base .. "/nvr", "--serverlist" }))
-	local servers = { table.unpack(lines, 2, #lines) }
+	local servers = splitlines(run({ homebrew_base .. "/nvr", "--serverlist" }))
 	for _, server in ipairs(servers) do
 		run({
 			timeout,
@@ -254,7 +253,6 @@ local move_action = function(dir)
 				"--remote-expr",
 				"v:lua.require('user.wezterm').go_" .. vim_dir_map[dir] .. "()",
 			})
-			print('result: "' .. result .. '"')
 			if result ~= "" and not result:find("SIGTERM") then
 				return
 			end
