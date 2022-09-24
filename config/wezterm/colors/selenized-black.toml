@@ -1,0 +1,52 @@
+[metadata]
+name = "Selenized Black"
+
+[colors]
+ansi = [
+  "#252525",
+  "#ed4a46",
+  "#70b433",
+  "#dbb32d",
+  "#368aeb",
+  "#eb6eb7",
+  "#3fc5b7",
+  "#777777",
+]
+background = "#181818"
+brights = [
+  "#3b3b3b",
+  "#ff5e56",
+  "#83c746",
+  "#efc541",
+  "#4f9cfe",
+  "#ff81ca",
+  "#56d8c9",
+  "#dedede",
+]
+cursor_bg = "#ed4a46"
+cursor_fg = "#181818"
+foreground = "#b9b9b9"
+selection_bg = "#3b3b3b"
+selection_fg = "none"
+
+[colors.indexed]
+16 = "#181818"
+17 = "#b9b9b9"
+18 = "#e67f43"
+19 = "#fa9153"
+20 = "#a580e2"
+21 = "#b891f5"
+[colors.tab_bar]
+background = "#3b3b3b"
+
+[colors.tab_bar.active_tab]
+bg_color = "#181818"
+fg_color = "#dedede"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#252525"
+fg_color = "#777777"
+
+[colors.tab_bar.new_tab]
+bg_color = "#3b3b3b"
+fg_color = "#3b3b3b"

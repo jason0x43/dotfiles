@@ -2,111 +2,6 @@ local wezterm = require("wezterm")
 local io = require("io")
 local act = wezterm.action
 
-local color_schemes = {
-	light = {
-		tab_bar = {
-			background = "#cbc3ab",
-			active_tab = {
-				bg_color = "#fbf3db",
-				fg_color = "#53676d",
-			},
-			inactive_tab = {
-				bg_color = "#ebe3cb",
-				fg_color = "#83878d",
-			},
-			new_tab = {
-				bg_color = "#cbc3ab",
-				fg_color = "#cbc3ab",
-			},
-		},
-		foreground = "#53676d",
-		background = "#fbf3db",
-		cursor_bg = "#d2212d",
-		cursor_fg = "#fbf3db",
-		ansi = {
-			"#e9e4d0",
-			"#d2212d",
-			"#489100",
-			"#ad8900",
-			"#0072d4",
-			"#ca4898",
-			"#009c8f",
-			"#909995",
-		},
-		brights = {
-			"#cfcebe",
-			"#cc1729",
-			"#428b00",
-			"#a78300",
-			"#006dce",
-			"#c44392",
-			"#00978a",
-			"#3a4d53",
-		},
-		indexed = {
-			[16] = "#fbf3db",
-			[17] = "#53676d",
-			[18] = "#c25d1e",
-			[19] = "#bc5819",
-			[20] = "#8762c6",
-			[21] = "#825dc0",
-		},
-		selection_fg = "none",
-		selection_bg = "#cfcebe",
-	},
-	dark = {
-		tab_bar = {
-			background = "#3b3b3b",
-			active_tab = {
-				bg_color = "#181818",
-				fg_color = "#dedede",
-			},
-			inactive_tab = {
-				bg_color = "#252525",
-				fg_color = "#777777",
-			},
-			new_tab = {
-				bg_color = "#3b3b3b",
-				fg_color = "#3b3b3b",
-			},
-		},
-		foreground = "#b9b9b9",
-		background = "#181818",
-		cursor_bg = "#ed4a46",
-		cursor_fg = "#181818",
-		ansi = {
-			"#252525",
-			"#ed4a46",
-			"#70b433",
-			"#dbb32d",
-			"#368aeb",
-			"#eb6eb7",
-			"#3fc5b7",
-			"#777777",
-		},
-		brights = {
-			"#3b3b3b",
-			"#ff5e56",
-			"#83c746",
-			"#efc541",
-			"#4f9cfe",
-			"#ff81ca",
-			"#56d8c9",
-			"#dedede",
-		},
-		indexed = {
-			[16] = "#181818",
-			[17] = "#b9b9b9",
-			[18] = "#e67f43",
-			[19] = "#fa9153",
-			[20] = "#a580e2",
-			[21] = "#b891f5",
-		},
-		selection_fg = "none",
-		selection_bg = "#3b3b3b",
-	},
-}
-
 local left_decor = utf8.char(0xe0ba)
 local right_decor = utf8.char(0xe0b8)
 
@@ -188,10 +83,10 @@ local vim_dir_map = {
 	Right = "right",
 }
 
-local arch = run('arch')
-local homebrew_base = '/opt/homebrew/bin'
-if arch == 'i386' then
-  homebrew_base = '/usr/local';
+local arch = run("arch")
+local homebrew_base = "/opt/homebrew/bin"
+if arch == "i386" then
+	homebrew_base = "/usr/local"
 end
 local timeout = homebrew_base .. "/bin/timeout"
 local nvim = homebrew_base .. "/bin/nvim"
@@ -222,6 +117,54 @@ local move_action = function(dir)
 	end)
 end
 
+-- Return an action callback for cycling through changing color schemes
+local change_scheme_action = function(dir)
+	return wezterm.action_callback(function(window)
+		local config = window:effective_config()
+
+		local schemes = {}
+		for name, _ in pairs(wezterm.get_builtin_color_schemes()) do
+			table.insert(schemes, name)
+		end
+
+		local current_scheme = config.color_scheme
+		local new_scheme
+		if dir == "next" then
+			for i, name in ipairs(schemes) do
+				if name == current_scheme then
+					local new_i = i + 1
+					if new_i > #schemes then
+						new_i = 1
+					end
+					new_scheme = schemes[new_i]
+					break
+				end
+			end
+		else
+			for i = #schemes, 1, -1 do
+				if schemes[i] == current_scheme then
+					local new_i = i - 1
+					if new_i < 1 then
+						new_i = #schemes
+					end
+					new_scheme = schemes[new_i]
+					break
+				end
+			end
+		end
+
+		if new_scheme == nil then
+			new_scheme = schemes[1]
+		end
+
+		print('Setting scheme to "' .. new_scheme .. '"')
+
+		local overrides = window:get_config_overrides() or {}
+		overrides.color_scheme = new_scheme
+		window:set_config_overrides(overrides)
+	end)
+end
+
 local copy_mode_action = function()
 	return wezterm.action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
@@ -231,7 +174,7 @@ local copy_mode_action = function()
 	end)
 end
 
-local save_win_state = function(window)
+local save_win_state = function()
 	local data = {}
 
 	local windows = {}
@@ -272,15 +215,15 @@ local save_win_state = function(window)
 	file:close()
 end
 
-local scheme = "light"
+local scheme = "Selenized Light"
 if wezterm.gui.get_appearance():find("Dark") then
-	scheme = "dark"
+	scheme = "Selenized Black"
 end
 
 return {
-	color_schemes = color_schemes,
-
 	color_scheme = scheme,
+
+	color_scheme_dirs = { "./colors" },
 
 	font_size = 13,
 
@@ -424,6 +367,8 @@ return {
 			mods = "CMD|CTRL",
 			action = wezterm.action_callback(save_win_state),
 		},
+		{ key = "<", mods="CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
+		{ key = ">", mods="CMD|SHIFT|CTRL", action = change_scheme_action("next") },
 	},
 
 	term = "wezterm",

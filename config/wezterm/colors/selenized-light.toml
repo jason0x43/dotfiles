@@ -1,0 +1,53 @@
+[metadata]
+name = "Selenized Light"
+
+[colors]
+ansi = [
+  "#e9e4d0",
+  "#d2212d",
+  "#489100",
+  "#ad8900",
+  "#0072d4",
+  "#ca4898",
+  "#009c8f",
+  "#909995",
+]
+background = "#fbf3db"
+brights = [
+  "#cfcebe",
+  "#cc1729",
+  "#428b00",
+  "#a78300",
+  "#006dce",
+  "#c44392",
+  "#00978a",
+  "#3a4d53",
+]
+cursor_bg = "#d2212d"
+cursor_fg = "#fbf3db"
+foreground = "#53676d"
+selection_fg = "none"
+selection_bg = "#cfcebe"
+
+[colors.indexed]
+16 = "#fbf3db"
+17 = "#53676d"
+18 = "#c25d1e"
+19 = "#bc5819"
+20 = "#8762c6"
+21 = "#825dc0"
+
+[colors.tab_bar]
+background = "#cbc3ab"
+
+[colors.tab_bar.active_tab]
+bg_color = "#fbf3db"
+fg_color = "#53676d"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#ebe3cb"
+fg_color = "#83878d"
+
+[colors.tab_bar.new_tab]
+bg_color = "#cbc3ab"
+fg_color = "#cbc3ab"
