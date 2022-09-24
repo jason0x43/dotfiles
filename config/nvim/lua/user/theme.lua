@@ -1,2 +1,2 @@
 -- set default colorscheme
-vim.cmd('colorscheme selenized')
+vim.cmd('colorscheme wezterm')

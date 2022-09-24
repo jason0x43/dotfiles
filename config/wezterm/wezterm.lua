@@ -2,6 +2,8 @@ local wezterm = require("wezterm")
 local io = require("io")
 local act = wezterm.action
 
+local theme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
+
 local left_decor = utf8.char(0xe0ba)
 local right_decor = utf8.char(0xe0b8)
 
@@ -74,6 +76,18 @@ local run = function(cmd)
 	s = s:gsub("%s+$", "")
 	s = s:gsub("[\n\r]+", " ")
 	return s
+end
+
+-- Run a command, return the output.
+local runw = function(cmd)
+	local success, stdout, _ = wezterm.run_child_process(cmd)
+	local lines = {}
+	if success then
+		for s in stdout:gmatch("[^\r\n]+") do
+			table.insert(lines, s)
+		end
+	end
+	return lines
 end
 
 local vim_dir_map = {
@@ -159,9 +173,62 @@ local change_scheme_action = function(dir)
 
 		print('Setting scheme to "' .. new_scheme .. '"')
 
+		local scheme_data = wezterm.get_builtin_color_schemes()[new_scheme]
+		local bg = wezterm.color.parse(scheme_data.background)
+		local _, _, l, _ = bg:hsla()
+
+		local scheme_json = {
+			name = new_scheme,
+			is_dark = l < 0.5,
+
+			bg_0 = scheme_data.background,
+			fg_0 = scheme_data.foreground,
+
+			bg_1 = scheme_data.ansi[1],
+			red = scheme_data.ansi[2],
+			green = scheme_data.ansi[3],
+			yellow = scheme_data.ansi[4],
+			blue = scheme_data.ansi[5],
+			magenta = scheme_data.ansi[6],
+			cyan = scheme_data.ansi[7],
+			dim_0 = scheme_data.ansi[8],
+
+			bg_2 = scheme_data.brights[1],
+			br_red = scheme_data.brights[2],
+			br_green = scheme_data.brights[3],
+			br_yellow = scheme_data.brights[4],
+			br_blue = scheme_data.brights[5],
+			br_magenta = scheme_data.brights[6],
+			br_cyan = scheme_data.brights[7],
+			fg_1 = scheme_data.brights[8],
+
+			orange = scheme_data.indexed[18] or scheme_data.ansi[2],
+			violet = scheme_data.indexed[20] or scheme_data.ansi[5],
+			br_orange = scheme_data.indexed[19] or scheme_data.brights[2],
+			br_violet = scheme_data.indexed[21] or scheme_data.brights[5],
+		}
+
+		local file = assert(io.open(theme_file, "w"))
+		file:write(wezterm.json_encode(scheme_json))
+		file:close()
+
 		local overrides = window:get_config_overrides() or {}
 		overrides.color_scheme = new_scheme
 		window:set_config_overrides(overrides)
+
+		local lines = runw({ homebrew_base .. "/bin/nvr", "--serverlist" })
+		local servers = { table.unpack(lines, 2, #lines) }
+		for _, server in ipairs(servers) do
+			runw({
+				timeout,
+				"0.2",
+				nvim,
+				"--server",
+				server,
+				"--remote-expr",
+				"v:lua.require('user.colors.wezterm').apply_theme()",
+			})
+		end
 	end)
 end
 
@@ -216,8 +283,19 @@ local save_win_state = function()
 end
 
 local scheme = "Selenized Light"
-if wezterm.gui.get_appearance():find("Dark") then
-	scheme = "Selenized Black"
+
+local file = io.open(theme_file, "r")
+if file ~= nil then
+	-- If a theme file exists, use the scheme specified there
+	local text = assert(file:read("*a"))
+	file:close()
+	local theme = wezterm.json_parse(text)
+	scheme = theme.name
+else
+	-- Otherwise, switch between light and dark themes based on the system theme
+	if wezterm.gui.get_appearance():find("Dark") then
+		scheme = "Selenized Black"
+	end
 end
 
 return {
@@ -367,8 +445,8 @@ return {
 			mods = "CMD|CTRL",
 			action = wezterm.action_callback(save_win_state),
 		},
-		{ key = "<", mods="CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
-		{ key = ">", mods="CMD|SHIFT|CTRL", action = change_scheme_action("next") },
+		{ key = "<", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
+		{ key = ">", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("next") },
 	},
 
 	term = "wezterm",

@@ -10,7 +10,7 @@ M.config = function()
 
   local config = {
     options = {
-      theme = 'selenized',
+      theme = 'wezterm',
       section_separators = { left = ' ', right = ' ' },
       component_separators = { left = '│', right = '│' },
       globalstatus = true,
