@@ -20,7 +20,7 @@
 [core]
 	excludesfile = /Users/jason/.gitignore
 	autocrlf = input
-	editor = nvim --noplugin
+	editor = nvim
 	precomposeunicode = true
 	pager = less --chop-long-lines --QUIT-AT-EOF -x1,5
 
