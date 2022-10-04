@@ -113,7 +113,7 @@ M.config = function()
   lmap('th', '<cmd>Telescope help_tags<cr>')
   lmap('tl', '<cmd>Telescope highlights<cr>')
   lmap('ts', '<cmd>Telescope symbols<cr>')
-  lmap('lr', '<cmd>Telescope lsp_references<cr>')
+  lmap('lr', '<cmd>Telescope lsp_references show_line=false<cr>')
   lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
   lmap('lw', '<cmd>Telescope diagnostics<cr>')
 end
