@@ -15,9 +15,9 @@ source $ZDOTDIR/common.zsh
 
 # Cache and temp files
 # ----------------------------------------------------------------------------
-[[ -d "$CACHEDIR" ]] || mkdir -p "$CACHEDIR"
+[[ -d "$XDG_CACHE_HOME" ]] || mkdir -p "$XDG_CACHE_HOME"
 [[ -d "$ZCACHEDIR" ]] || mkdir -p "$ZCACHEDIR"
-[[ -d "$DATADIR" ]] || mkdir -p "$DATADIR"
+[[ -d "$XDG_DATA_HOME" ]] || mkdir -p "$XDG_DATA_HOME"
 [[ -d "$ZFUNCDIR" ]] || mkdir -p "$ZFUNCDIR"
 
 if [[ -d "$TMPDIR" ]]; then
@@ -103,7 +103,7 @@ fi
 
 # Tmux
 # --------------------------------------------------------------------------
-export TMUX_PLUGIN_MANAGER_PATH="$DATADIR/tmux/tmux-plugins"
+export TMUX_PLUGIN_MANAGER_PATH="$XDG_DATA_HOME/tmux/tmux-plugins"
 
 # pkg-config
 typeset -U pkg_config_path

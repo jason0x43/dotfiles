@@ -21,7 +21,7 @@ automatically look in `~/.config/git/config`, and the other tools I use can be
 pointed at `~/.config` as necessary.
 
 Transient files, like vim sessions or zsh completions, are stored under
-`CACHEDIR`, set to `~/.cache` by default.
+`XDG_CACHE_HOME`, set to `~/.cache` by default.
 
 There’s a `bin/dotfiles` script that will put things in their expected places,
 as well as installing some core homebrew packages and updating plugins.

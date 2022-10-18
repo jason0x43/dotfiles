@@ -28,8 +28,8 @@ zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
 # ----------------------------------------------------------------------------
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block, everything else may go below.
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
 # fi
 
 # Enable profiling
@@ -632,14 +632,14 @@ fi
 
 # TPM
 # ------------------------------------------------------------------------
-if [[ ! -d $DATADIR/tmux ]]; then
-    mkdir $DATADIR/tmux
+if [[ ! -d $XDG_DATA_HOME/tmux ]]; then
+    mkdir $XDG_DATA_HOME/tmux
 fi
 
-zfetch $DATADIR/tmux tmux-plugins/tpm
+zfetch $XDG_DATA_HOME/tmux tmux-plugins/tpm
 
-if [[ ! -d $CACHEDIR/tmux ]]; then
-    mkdir $CACHEDIR/tmux
+if [[ ! -d $XDG_CACHE_HOME/tmux ]]; then
+    mkdir $XDG_CACHE_HOME/tmux
 fi
 
 # direnv
@@ -719,7 +719,7 @@ source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 
 # ASDF
 # --------------------------------------------------------------------------
-source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
+source "$XDG_CONFIG_HOME/asdf-direnv/zshrc"
 
 # Bun
 # --------------------------------------------------------------------------

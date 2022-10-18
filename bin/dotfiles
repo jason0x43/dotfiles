@@ -185,9 +185,9 @@ function dotfiles-home {
         link $f $CONFIGDIR/$f:t
     done
 
-    makedir $CACHEDIR/tmux/resurrect
-    makedir $CACHEDIR/zsh
-    makedir $CACHEDIR/direnv/allow
+    makedir $XDG_CACHE_HOME/tmux/resurrect
+    makedir $XDG_CACHE_HOME/zsh
+    makedir $XDG_CACHE_HOME/direnv/allow
 
     # Fix the terminal definition so that C-H works properly in neovim. This
     # function may also need to be run for the tmux terminal type.
