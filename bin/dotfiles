@@ -168,7 +168,7 @@ function dotfiles-home {
     log "Updating home directory files..."
 
     # Remove broken links
-    for f in $HOME/.*(@) $CONFIGDIR/*(@); do
+    for f in $HOME/.*(@) $XDG_CONFIG_HOME/*(@); do
         if [[ ! -e $f ]]; then
             rm $f
             logSub "Removed $f"
@@ -179,10 +179,15 @@ function dotfiles-home {
         link $f $HOME/.$f:t
     done
 
-    makedir $CONFIGDIR
+    makedir $XDG_CONFIG_HOME
 
     for f in $DOTFILES/config/*; do
-        link $f $CONFIGDIR/$f:t
+        if [[ -d $XDG_CONFIG_HOME/$f ]] && [[ ! -L $XDG_CONFIG_HOME/$f ]]; then
+            mkdir -p $XDG_CONFIG_HOME/local
+            mv $XDG_CONFIG_HOME/$f $XDG_CONFIG_HOME/local/$f
+            logSub "Moved $XDG_CONFIG_HOME/$f -> $XDG_CONFIG_HOME/local/$f"
+        fi
+        link $f $XDG_CONFIG_HOME/$f:t
     done
 
     makedir $XDG_CACHE_HOME/tmux/resurrect
@@ -617,7 +622,7 @@ function dotfiles-asdf {
     done
 
     # Setup the "system" install for asdf-direnv
-    if [[ ! -d $CONFIGDIR/asdf-direnv ]]; then
+    if [[ ! -d $XDG_CONFIG_HOME/asdf-direnv ]]; then
         asdf direnv setup --shell zsh --version system
     fi
 }
