@@ -390,14 +390,19 @@ function dotfiles-bun {
     bun completions > /dev/null
 
     # remove completion line added to zshrc
-    local zshrc=$HOME/.dotfiles/home/zshrc
-    local line=$(grep -n '# bun completions' $HOME/.zshrc | cut -f1 -d:)
+    local zshrc=$ZDOTDIR/.zshrc
+    local line=$(grep -n '# bun completions' $ZDOTDIR/.zshrc | cut -f1 -d:)
     if [[ -n $line ]]; then
         local start
         (( start = $line - 1 ))
         local end
         (( end = $line + 1 ))
         sed -i "" "${start},${end}d" "$zshrc"
+    fi
+
+    # remove compinit call in bun completions
+    if [[ -f "$HOME/.bun/_bun" ]]; then
+        sed -i "" "/^autoload .* compinit/s/^/# /" "$HOME/.bun/_bun"
     fi
 }
 

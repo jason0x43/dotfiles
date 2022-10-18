@@ -7,9 +7,9 @@ export CONFIGDIR=$HOME/.config
 export DATADIR=$HOME/.local/share
 
 export ZDATADIR=$DATADIR/zsh
+export ZCONFDIR=$CONFIGDIR/zsh
 export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
-
 export ZCACHEDIR=$CACHEDIR/zsh
 export ZCOMPDIR=$ZCACHEDIR/completions
 

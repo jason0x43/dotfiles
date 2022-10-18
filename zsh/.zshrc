@@ -704,11 +704,11 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 # Prompt
 # --------------------------------------------------------------------------
 source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+[[ -f $ZDOTDIR/p10k.zsh ]] && source $ZDOTDIR/p10k.zsh
 
 # Local config
 # --------------------------------------------------------------------------
-[[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+[[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
 
 # Syntax highlighting
 # --------------------------------------------------------------------------
