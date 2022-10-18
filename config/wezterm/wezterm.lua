@@ -531,6 +531,8 @@ return {
 		{ key = ">", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("next") },
 	},
 
+	scrollback_lines = 20000,
+
 	term = "wezterm",
 
 	use_fancy_tab_bar = false,
