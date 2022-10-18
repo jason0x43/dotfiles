@@ -39,6 +39,15 @@ function link {
     fi
 }
 
+# Sed
+function sedInPlace {
+    if [[ $OSTYPE == darwin* ]]; then
+        sed -i "" $@
+    else
+        sed -i"" $@
+    fi
+}
+
 # Fix terminal config
 function fixterm {
     local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
@@ -182,10 +191,10 @@ function dotfiles-home {
     makedir $XDG_CONFIG_HOME
 
     for f in $DOTFILES/config/*; do
-        if [[ -d $XDG_CONFIG_HOME/$f ]] && [[ ! -L $XDG_CONFIG_HOME/$f ]]; then
+        if [[ -d $XDG_CONFIG_HOME/$f:t ]] && [[ ! -L $XDG_CONFIG_HOME/$f:t ]]; then
             mkdir -p $XDG_CONFIG_HOME/local
-            mv $XDG_CONFIG_HOME/$f $XDG_CONFIG_HOME/local/$f
-            logSub "Moved $XDG_CONFIG_HOME/$f -> $XDG_CONFIG_HOME/local/$f"
+            mv $XDG_CONFIG_HOME/$f:t $XDG_CONFIG_HOME/local/$f:t
+            logSub "Moved $XDG_CONFIG_HOME/$f:t -> $XDG_CONFIG_HOME/local/$f:t"
         fi
         link $f $XDG_CONFIG_HOME/$f:t
     done
@@ -402,12 +411,12 @@ function dotfiles-bun {
         (( start = $line - 1 ))
         local end
         (( end = $line + 1 ))
-        sed -i "" "${start},${end}d" "$zshrc"
+        sedInPlace "${start},${end}d" "$zshrc"
     fi
 
     # remove compinit call in bun completions
     if [[ -f "$HOME/.bun/_bun" ]]; then
-        sed -i "" "/^autoload .* compinit/s/^/# /" "$HOME/.bun/_bun"
+        sedInPlace "/^autoload .* compinit/s/^/# /" "$HOME/.bun/_bun"
     fi
 }
 
