@@ -9,12 +9,14 @@ function M.apply_theme()
 
   g.colors_name = 'wezterm'
 
+  local theme_data = ""
   local theme_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
-  if vim.fn.filereadable(theme_file) ~= 1 then
-    return
+  if vim.fn.filereadable(theme_file) == 1 then
+    theme_data = vim.fn.readfile(theme_file)
+  else
+    theme_data = '{"bg_0":"#fbf3db","bg_1":"#e9e4d0","bg_2":"#cfcebe","blue":"#0072d4","br_blue":"#006dce","br_cyan":"#00978a","br_green":"#428b00","br_magenta":"#c44392","br_orange":"#bc5819","br_red":"#cc1729","br_violet":"#825dc0","br_yellow":"#a78300","cyan":"#009c8f","dim_0":"#909995","fg_0":"#53676d","fg_1":"#3a4d53","green":"#489100","is_dark":false,"magenta":"#ca4898","name":"Selenized Light","orange":"#c25d1e","red":"#d2212d","violet":"#8762c6","yellow":"#ad8900"}'
   end
 
-  local theme_data = vim.fn.readfile(theme_file)
   local theme = vim.fn.json_decode(theme_data)
 
   if theme.is_dark then
