@@ -18,7 +18,6 @@
 	cmd = vimdiff "$REMOTE" "$LOCAL"
 
 [core]
-	excludesfile = /Users/jason/.gitignore
 	autocrlf = input
 	editor = nvim
 	precomposeunicode = true
@@ -143,9 +142,6 @@
 [rerere]
 	enabled = true
 
-[includeIf "gitdir:~/Work/"]
-	path = ~/.config/git/work
-
 [help]
 	autoCorrect = 20
 
@@ -157,3 +153,9 @@
 
 [init]
 	defaultBranch = main
+
+[include]
+	path = ~/.local/config/git/config
+
+[includeIf "gitdir:~/Work/"]
+	path = ~/.local/config/git/work
