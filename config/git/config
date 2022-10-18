@@ -155,7 +155,7 @@
 	defaultBranch = main
 
 [include]
-	path = ~/.local/config/git/config
+	path = ~/.config/local/git/config
 
 [includeIf "gitdir:~/Work/"]
-	path = ~/.local/config/git/work
+	path = ~/.config/local/git/work

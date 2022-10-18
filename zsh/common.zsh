@@ -2,12 +2,12 @@
 # base16_theme that may be run in a non-standard environment.
 
 export DOTFILES=$HOME/.dotfiles
-export CACHEDIR=$HOME/.cache
-export CONFIGDIR=$HOME/.config
-export DATADIR=$HOME/.local/share
+export CACHEDIR=${XDG_CACHE_HOME:-$HOME/.cache}
+export CONFIGDIR=${XDG_CONFIG_HOME:-$HOME/.config}
+export DATADIR=${XDG_DATA_HOME:-$HOME/.local/share}
 
 export ZDATADIR=$DATADIR/zsh
-export ZCONFDIR=$CONFIGDIR/zsh
+export ZCONFDIR=$CONFIGDIR/local/zsh
 export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
 export ZCACHEDIR=$CACHEDIR/zsh
