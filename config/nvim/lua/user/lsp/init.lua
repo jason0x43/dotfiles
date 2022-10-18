@@ -249,8 +249,7 @@ M.get_lsp_config = function(server)
 
   -- add cmp capabilities
   local cmp = require('cmp_nvim_lsp')
-  config.capabilities =
-    cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  config.capabilities = cmp.default_capabilities()
 
   return config
 end
