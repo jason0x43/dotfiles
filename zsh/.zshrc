@@ -349,6 +349,17 @@ alias ts='tig status'
 # ssh in interactive shells
 # alias ssh=themed_ssh
 
+# vim
+if (( $+commands[nvim] )); then
+    if [[ -n $WEZTERM_PANE ]]; then
+        alias vi="nvim --listen /tmp/nvim-wt$WEZTERM_PANE"
+    else
+        alias vi=nvim
+    fi
+elif (( $+commands[vim] )); then
+    alias vi=vim
+fi
+
 # tmux
 alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
@@ -375,6 +386,7 @@ alias mkdir="nocorrect ${aliases[mkdir]:-mkdir}"
 alias mv="nocorrect ${aliases[mv]:-mv}"
 alias rm="nocorrect ${aliases[rm]:-rm}"
 alias vim="nocorrect ${aliases[vim]:-vim}"
+alias nvim="nocorrect ${aliases[nvim]:-nvim}"
 alias tsd="nocorrect ${aliases[tsd]:-tsd}"
 alias jake="nocorrect ${aliases[jake]:-jake}"
 
