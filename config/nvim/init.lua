@@ -11,6 +11,5 @@ require('user.config.autocommands')
 require('user.config.linenr')
 require('user.plugins')
 require('user.theme')
-require('user.kitty')
 
 vim.opt.shadafile = ''
