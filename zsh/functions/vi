@@ -3,12 +3,12 @@ if (( $+commands[nvim] )); then
 		local socket
 		socket=/tmp/nvim-wt$WEZTERM_PANE
 		rm -f $socket
-		nvim --listen $socket $*
+		nvim --listen $socket $@
 	else
-		nvim $*
+		nvim $@
 	fi
 elif (( $+commands[vim] )); then
-	vim $*
+	vim $@
 else
-	command vi $*
+	command vi $@
 fi
