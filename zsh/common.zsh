@@ -6,8 +6,7 @@ export DOTFILES=$HOME/.dotfiles
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
-export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
-export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/Library/Application Support}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$TMPDIR}
 
 export ZDATADIR=$XDG_DATA_HOME/zsh
 export ZCONFDIR=$XDG_CONFIG_HOME/local/zsh
