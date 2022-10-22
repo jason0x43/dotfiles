@@ -1,11 +1,7 @@
 local M = {}
 
 M.config = function()
-  local telescope = require('user.req')('telescope')
-  if not telescope then
-    return
-  end
-
+  local telescope = require('telescope')
   local action_set = require('telescope.actions.set')
 
   telescope.setup({
@@ -82,6 +78,13 @@ M.config = function()
         -- don't show hints
         severity_limit = vim.g.lsp_severity_limit,
       },
+      lsp_references = {
+        show_line = false,
+      },
+      jumplist = {
+        show_line = false,
+        preview_title = 'Preview',
+      },
     },
     extensions = {
       file_browser = {
@@ -106,14 +109,26 @@ M.config = function()
   local lmap = require('user.util').lmap
   lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
   lmap('f', '<cmd>Telescope find_files<cr>')
+  lmap('j', '<cmd>Telescope jumplist<cr>')
   lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
-  lmap('g', '<cmd>Telescope git_files<cr>')
+  lmap('g', '', {
+    mode = 'n',
+    callback = function()
+      local opts = {}
+      local builtin = require('telescope.builtin')
+      local in_worktree = require('user.util').in_git_dir()
+      if in_worktree then
+        builtin.git_files(opts)
+      else
+        builtin.find_files(opts)
+      end
+    end,
+  })
   lmap('b', '<cmd>Telescope buffers<cr>')
   lmap('tg', '<cmd>Telescope live_grep<cr>')
   lmap('th', '<cmd>Telescope help_tags<cr>')
-  lmap('tl', '<cmd>Telescope highlights<cr>')
   lmap('ts', '<cmd>Telescope symbols<cr>')
-  lmap('lr', '<cmd>Telescope lsp_references show_line=false<cr>')
+  lmap('lr', '<cmd>Telescope lsp_references<cr>')
   lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
   lmap('lw', '<cmd>Telescope diagnostics<cr>')
 end

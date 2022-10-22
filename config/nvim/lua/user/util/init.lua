@@ -130,7 +130,6 @@ function M.bufcmd(name, argsOrCmd, cmd)
   M.cmd(name, argsOrCmd, cmd)
 end
 
-
 -- settings for text files
 function M.text_mode()
   vim.wo.wrap = true
@@ -214,6 +213,11 @@ function M.print_syn_group()
   else
     print('No highlight')
   end
+end
+
+function M.in_git_dir()
+  vim.fn.system({ 'git', 'rev-parse', '--is-inside-work-tree' })
+  return vim.v.shell_error == 0
 end
 
 return M
