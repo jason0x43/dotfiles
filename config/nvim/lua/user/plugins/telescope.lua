@@ -19,7 +19,7 @@ M.config = function()
       layout_config = {
         prompt_position = 'top',
         preview_cutoff = 35,
-        preview_height = 10,
+        preview_height = 0.5,
 
         width = function(_, max_columns, _)
           print('max cols: ' .. max_columns)
