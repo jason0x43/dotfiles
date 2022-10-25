@@ -51,12 +51,6 @@ function sedInPlace {
 # Fix terminal config
 function fixterm {
     local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
-    curl --silent -o $tmpfile https://raw.githubusercontent.com/kovidgoyal/kitty/master/terminfo/x/xterm-kitty
-    tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
-    rm $tmpfile
-    logSub "Installed kitty terminfo"
-
-    local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
     curl --silent -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
     tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
     rm $tmpfile
@@ -303,7 +297,6 @@ function dotfiles-brew {
     if [[ $OSTYPE == darwin* ]]; then
         brew_casks=(
             'font-jetbrains-mono-nerd-font'
-            'kitty'
             'phoenix'
             '1password-cli'
         )
