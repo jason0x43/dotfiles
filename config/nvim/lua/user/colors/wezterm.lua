@@ -14,7 +14,12 @@ function M.apply_theme()
   if vim.fn.filereadable(theme_file) == 1 then
     theme_data = vim.fn.readfile(theme_file)
   else
-    theme_data = '{"bg_0":"#fbf3db","bg_1":"#e9e4d0","bg_2":"#cfcebe","blue":"#0072d4","br_blue":"#006dce","br_cyan":"#00978a","br_green":"#428b00","br_magenta":"#c44392","br_orange":"#bc5819","br_red":"#cc1729","br_violet":"#825dc0","br_yellow":"#a78300","cyan":"#009c8f","dim_0":"#909995","fg_0":"#53676d","fg_1":"#3a4d53","green":"#489100","is_dark":false,"magenta":"#ca4898","name":"Selenized Light","orange":"#c25d1e","red":"#d2212d","violet":"#8762c6","yellow":"#ad8900"}'
+    local theme_variant = os.getenv('THEME_VARIANT') or 'black'
+    if theme_variant == 'light' then
+      theme_data = '{"bg_0":"#fbf3db","bg_1":"#e9e4d0","bg_2":"#cfcebe","blue":"#0072d4","br_blue":"#006dce","br_cyan":"#00978a","br_green":"#428b00","br_magenta":"#c44392","br_orange":"#bc5819","br_red":"#cc1729","br_violet":"#825dc0","br_yellow":"#a78300","cyan":"#009c8f","dim_0":"#909995","fg_0":"#53676d","fg_1":"#3a4d53","green":"#489100","is_dark":false,"magenta":"#ca4898","name":"Selenized Light","orange":"#c25d1e","red":"#d2212d","violet":"#8762c6","yellow":"#ad8900"}'
+    else
+      theme_data = '{"bg_0":"#181818","bg_1":"#252525","bg_2":"#3b3b3b","blue":"#368aeb","br_blue":"#4f9cfe","br_cyan":"#56d8c9","br_green":"#83c746","br_magenta":"#ff81ca","br_orange":"#fa9153","br_red":"#ff5e56","br_violet":"#b891f5","br_yellow":"#efc541","cyan":"#3fc5b7","dim_0":"#777777","fg_0":"#b9b9b9","fg_1":"#dedede","green":"#70b433","is_dark":true,"magenta":"#eb6eb7","name":"Selenized Black","orange":"#e67f43","red":"#ed4a46","violet":"#a580e2","yellow":"#dbb32d"}'
+    end
   end
 
   local theme = vim.fn.json_decode(theme_data)
@@ -105,7 +110,7 @@ function M.apply_theme()
   hi('Conceal', '', '', '', '')
   hi('Cursor', '', '', 'reverse', '')
   hi('CursorColumn', '', palette.bg_1, '', '')
-  hi('CursorLine', '', palette.bg_1, '', '')
+  hi('CursorLine', '', palette.bg_2, '', '')
   hi('CursorLineNr', palette.fg_1, '', '', '')
   hi('DiagnosticHint', palette.dim_0)
   hi('DiagnosticSignHint', palette.dim_0, sign_col_bg)
@@ -175,6 +180,13 @@ function M.apply_theme()
   hi_link('TSConstMacro', 'Constant')
   hi_link('TSFuncBuiltin', 'Function')
   hi_link('TSConstructor', 'Function')
+  hi_link('@tag', 'Statement')
+  hi_link('@tag.delimiter', 'Delimiter')
+  hi_link('@tag.attribute', 'Type')
+  hi_link('@operator', 'PreProc')
+  hi_link('@string', 'Constant')
+  hi_link('@variable', 'Identifier')
+  hi_link('@keyword', 'Keyword')
 
   -- TypeScript
   hi_link('typescriptBraces', 'Delimiter')
@@ -214,25 +226,6 @@ function M.apply_theme()
 
   -- neotree
   hi('NeoTreeFloatBorder', palette.bg_0, palette.bg_0)
-
-  -- update the theme background when focus is gained or lost, as tmux does
-  -- vim.api.nvim_create_augroup('selenized-theme', { clear = false })
-  -- vim.api.nvim_create_autocmd({ 'WinEnter', 'WinLeave' }, {
-  --   group = 'selenized-theme',
-  --   pattern = '*',
-  --   callback = function(context)
-  --     M.update_background(context.event:find('Enter'))
-  --   end
-  -- });
-end
-
-function M.update_background(focused)
-  -- local ap = active_palette
-  -- if focused == nil then
-  --   vim.b.winhighlight = 'Normal:NormalNC'
-  -- else
-  --   vim.b.winhighlight = nil
-  -- end
 end
 
 function M.active_palette()
