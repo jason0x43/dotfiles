@@ -419,27 +419,6 @@ function focusNeighbor(direction, window = Window.focused()) {
   }
 }
 
-/** @type {number} */
-let focusTimer;
-
-/**
- * Focus the window currently under the mouse cursor
- *
- * @param {Point} position
- */
-function _focusWindowUnderMouse(position) {
-  clearTimeout(focusTimer);
-  const args = Array.prototype.slice.call(arguments);
-  focusTimer = setTimeout(() => {
-    Phoenix.log("Focus event: " + JSON.stringify(args));
-    const window = getWindowAt(position);
-    if (window) {
-      Phoenix.log("Focusing window", JSON.stringify(window.app().name()));
-      // window.focus();
-    }
-  }, 100);
-}
-
 /**
  * Indicate whether two frames are equal
  *
@@ -490,40 +469,6 @@ function getScreenFrame(window = Window.focused()) {
 }
 
 /**
- * Return the window at a given position
- *
- * @param {Point} position
- */
-function getWindowAt(position) {
-  // If Window.at works, take it
-  let win = Window.at(position);
-  if (win) {
-    Phoenix.log("Returning Window.at");
-    return win;
-  }
-
-  // If the mouse is still within the bounds of the currently focused window,
-  // keep focus there
-  const focused = Window.focused();
-  if (focused && isWithin(position, focused.frame())) {
-    Phoenix.log("Returning focused window");
-    return focused;
-  }
-
-  // Return the first window that the mouse is within
-  for (const w of Window.all({ visible: true })) {
-    if (isWithin(position, w.frame())) {
-      Phoenix.log("May be " + w.app().name());
-      if (!win) {
-        win = w;
-      }
-      // return w;
-    }
-  }
-  return win;
-}
-
-/**
  * Get a percent of the screen height
  *
  * @param {number} percent
@@ -532,21 +477,6 @@ function getWindowAt(position) {
 function heightPercent(percent, window = Window.focused()) {
   const screen = getScreenFrame(window);
   return Math.round(screen.height * percent);
-}
-
-/**
- * Return true if a point is within a frame
- *
- * @param {Point} point
- * @param {Rectangle} frame
- */
-function isWithin(point, frame) {
-  return (
-    point.x >= frame.x &&
-    point.y >= frame.y &&
-    point.x < frame.x + frame.width &&
-    point.y < frame.y + frame.height
-  );
 }
 
 /**
@@ -767,8 +697,8 @@ function showHelp() {
  */
 function toggleFillScreen(window = Window.focused()) {
   const windowId = window.hash();
-  /** @type {{ [key: number]: Rectangle }} */
-  const lastPositions = Storage.get("lastPositions") || {};
+  const lastPositions =
+    /** @type {{ [key: number]: Rectangle }} */ (Storage.get("lastPositions"));
   const windowFrame = window.frame();
   const screenFrame = getScreenFrame();
 
