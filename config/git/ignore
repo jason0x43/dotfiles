@@ -12,6 +12,7 @@
 # Project files
 .tern-project
 .tern-port
+.watchmanconfig
 
 # OS folders
 .DS_Store
