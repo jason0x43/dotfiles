@@ -81,7 +81,7 @@ symbol = " "
 
 [hostname]
 format = "[$ssh_symbol$hostname]($style) "
-ssh_symbol = ' '
+ssh_symbol = ' '
 
 [java]
 format = ' [${symbol}(${version} )]($style)'
