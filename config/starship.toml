@@ -9,7 +9,7 @@ $git_branch\
 $git_state\
 $git_status\
 $fill\
-$docker_context\
+${custom.direnv}\
 $package\
 $deno\
 $golang\
@@ -17,7 +17,6 @@ $java\
 $lua\
 $nodejs\
 $python\
-${custom.direnv}\
 $line_break\
 $character"""
 
@@ -26,9 +25,40 @@ success_symbol = "[➜](bold green)"
 error_symbol = "[✗](bold red)"
 vimcmd_symbol = "[:](bold blue)"
 
+[aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
 [custom.direnv]
 when = """ test "$DIRENV_DIR" != "" """
-symbol = "⭐ "
+style = "bold red"
+symbol = " "
+
+[dart]
+symbol = " "
+
+[deno]
+format = ' [$symbol($version )]($style)'
+
+[directory]
+read_only = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
 
 [fill]
 symbol = " "
@@ -38,24 +68,70 @@ format = '[$symbol$branch]($style) '
 symbol = ' '
 
 [golang]
-format = '[$symbol($version )]($style) '
+format = ' [$symbol($version )]($style)'
+symbol = " "
 version_format = '${raw}'
 
+[haskell]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
 [java]
-format = '[${symbol}(${version} )]($style) '
+format = ' [${symbol}(${version} )]($style)'
+symbol = " "
 version_format = '${raw}'
 
 [nodejs]
-format = '[$symbol($version )]($style) '
+format = ' [$symbol($version )]($style)'
 version_format = '${raw}'
 
+[julia]
+symbol = " "
+
+[lua]
+format = ' [$symbol($version )]($style)'
+symbol = " "
+
+[memory_usage]
+symbol = " "
+
+[meson]
+symbol = "喝 "
+
+[nim]
+symbol = " "
+
+[nix_shell]
+symbol = " "
+
 [package]
-format = '[$symbol$version]($style) '
+format = ' [$symbol$version]($style)'
+symbol = " "
 version_format = '${raw}'
 
 [python]
-format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style) '
+format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
 version_format = '${raw}'
+
+[rlang]
+symbol = "ﳒ "
+
+[ruby]
+format = ' [$symbol$version]($style)'
+symbol = " "
+version_format = '${raw}'
+
+[rust]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[spack]
+symbol = "🅢 "
 
 [time]
 disabled = false
