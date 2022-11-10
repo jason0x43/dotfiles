@@ -3,6 +3,7 @@
 add_newline = true
 
 format = """
+$hostname\
 $time\
 $directory\
 $git_branch\
@@ -77,6 +78,10 @@ symbol = " "
 
 [hg_branch]
 symbol = " "
+
+[hostname]
+format = "[$ssh_symbol$hostname]($style) "
+ssh_symbol = ' '
 
 [java]
 format = ' [${symbol}(${version} )]($style)'
