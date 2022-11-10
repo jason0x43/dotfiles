@@ -715,8 +715,12 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 
 # Prompt
 # --------------------------------------------------------------------------
-source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
-[[ -f $ZDOTDIR/p10k.zsh ]] && source $ZDOTDIR/p10k.zsh
+if (( $+commands[starship] )); then
+    eval $(starship init zsh)
+else
+    source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
+    [[ -f $ZDOTDIR/p10k.zsh ]] && source $ZDOTDIR/p10k.zsh
+fi
 
 # Local config
 # --------------------------------------------------------------------------

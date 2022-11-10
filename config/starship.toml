@@ -1,0 +1,62 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+
+format = """
+$time\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$fill\
+$docker_context\
+$package\
+$deno\
+$golang\
+$java\
+$lua\
+$nodejs\
+$python\
+${custom.direnv}\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+vimcmd_symbol = "[:](bold blue)"
+
+[custom.direnv]
+when = """ test "$DIRENV_DIR" != "" """
+symbol = "⭐ "
+
+[fill]
+symbol = " "
+
+[git_branch]
+format = '[$symbol$branch]($style) '
+symbol = ' '
+
+[golang]
+format = '[$symbol($version )]($style) '
+version_format = '${raw}'
+
+[java]
+format = '[${symbol}(${version} )]($style) '
+version_format = '${raw}'
+
+[nodejs]
+format = '[$symbol($version )]($style) '
+version_format = '${raw}'
+
+[package]
+format = '[$symbol$version]($style) '
+version_format = '${raw}'
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style) '
+version_format = '${raw}'
+
+[time]
+disabled = false
+format = "[$time]($style) "
