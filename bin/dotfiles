@@ -319,14 +319,16 @@ function dotfiles-brew {
         fi
     done
 
-    local installed_casks=($(brew ls --versions --cask $brew_casks | awk '{ print $1 }'))
-    for pkg in $brew_casks; do
-        if ((! $installed_casks[(Ie)$pkg])); then
-            logSub "Installing $pkg..."
-            brew install $pkg
-            need_rehash=1
-        fi
-    done
+    if [[ $OSTYPE == darwin* ]]; then
+        local installed_casks=($(brew ls --versions --cask $brew_casks | awk '{ print $1 }'))
+        for pkg in $brew_casks; do
+            if ((! $installed_casks[(Ie)$pkg])); then
+                logSub "Installing $pkg..."
+                brew install $pkg
+                need_rehash=1
+            fi
+        done
+    fi
 
     if (( $need_rehash )); then
         # Let the shell know about any newly installed packages
