@@ -32,17 +32,17 @@ M.config = function()
         },
         { 'diff', padding = { left = 0, right = 1 } },
       },
-      lualine_c = {},
-      lualine_x = {
+      lualine_c = {
         {
           'lsp_progress',
           display_components = { 'spinner' },
           spinner_symbols = { '⠦', '⠖', '⠲', '⠴' },
           -- spinner_symbols = { '⠐', '⠠', '⠄', '⠂' },
           timer = { spinner = refresh_time },
-          padding = { left = 1, right = 0 },
+          padding = { left = 0, right = 0 },
         },
       },
+      lualine_x = {},
       lualine_y = {
         { 'progress', padding = { left = 1, right = 0 } },
       },
@@ -69,7 +69,7 @@ M.config = function()
   if navic then
     table.insert(
       config.sections.lualine_c,
-      { navic.get_location, cond = navic.is_available }
+      { navic.get_location, cond = navic.is_available, padding = { left = 0 } }
     )
   end
 
