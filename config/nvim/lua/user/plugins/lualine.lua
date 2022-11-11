@@ -8,12 +8,19 @@ M.config = function()
   theme.hi('StatusLine', { bg = '' })
   theme.hi('StatusLineNC', { bg = '' })
 
+  local refresh_time = 500
+
   local config = {
     options = {
       theme = 'wezterm',
       section_separators = { left = ' ', right = ' ' },
       component_separators = { left = '│', right = '│' },
       globalstatus = true,
+      refresh = {
+        -- match refresh time of block containing lsp_progress block to the 
+        -- lsp_progress timer
+        statusline = refresh_time,
+      },
     },
     sections = {
       lualine_b = {
@@ -26,7 +33,15 @@ M.config = function()
         { 'diff', padding = { left = 0, right = 1 } },
       },
       lualine_c = {},
-      lualine_x = {},
+      lualine_x = {
+        {
+          'lsp_progress',
+          display_components = { 'spinner' },
+          spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽'},
+          timer = { spinner = refresh_time },
+          padding = { left = 1, right = 0 },
+        },
+      },
       lualine_y = {
         { 'progress', padding = { left = 1, right = 0 } },
       },
@@ -40,13 +55,6 @@ M.config = function()
         {
           'language_servers',
           separator = '',
-          padding = { left = 1, right = 1 },
-        },
-        {
-          'lsp_progress',
-          display_components = { 'spinner' },
-          spinner_symbols = { '⠖', '⠲', '⠴', '⠦' },
-          timer = { spinner = 250 },
           padding = { left = 1, right = 1 },
         },
       },
