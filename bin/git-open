@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Open an older version of a file
+
+branch=$1
+file=$2
+
+git show $branch:$file | nvim -R +"doautocmd BufRead $file" +"file $branch:$file" -
