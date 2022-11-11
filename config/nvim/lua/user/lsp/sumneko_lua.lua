@@ -9,6 +9,9 @@ M.config = {
         -- This seems to always generate false positives
         disable = { 'different-requires' },
       },
+      workspace = {
+        checkThirdParty = false,
+      }
     },
   },
 }
