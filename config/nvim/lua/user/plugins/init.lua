@@ -249,9 +249,7 @@ packer.startup({
     use({
       'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
-      config = function()
-        require('trouble').setup()
-      end,
+      config = config('trouble'),
     })
 
     -- Laravel Blade template support

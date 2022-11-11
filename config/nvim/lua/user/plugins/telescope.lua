@@ -107,7 +107,7 @@ M.config = function()
   telescope.load_extension('ui-select')
 
   local lmap = require('user.util').lmap
-  lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
+  -- lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
   lmap('f', '<cmd>Telescope find_files<cr>')
   lmap('j', '<cmd>Telescope jumplist<cr>')
   lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
