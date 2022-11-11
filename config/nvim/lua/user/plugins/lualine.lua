@@ -17,7 +17,7 @@ M.config = function()
       component_separators = { left = '│', right = '│' },
       globalstatus = true,
       refresh = {
-        -- match refresh time of block containing lsp_progress block to the 
+        -- match refresh time of block containing lsp_progress block to the
         -- lsp_progress timer
         statusline = refresh_time,
       },
@@ -37,7 +37,8 @@ M.config = function()
         {
           'lsp_progress',
           display_components = { 'spinner' },
-          spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽'},
+          spinner_symbols = { '⠦', '⠖', '⠲', '⠴' },
+          -- spinner_symbols = { '⠐', '⠠', '⠄', '⠂' },
           timer = { spinner = refresh_time },
           padding = { left = 1, right = 0 },
         },
