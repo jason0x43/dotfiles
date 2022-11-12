@@ -33,7 +33,7 @@
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
     # os_icon               # os identifier
-    arch                    # different architecture indicator
+    # arch                  # different architecture indicator
     context                 # user@hostname
     dir                     # current directory
     vcs                     # git status
