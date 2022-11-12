@@ -23,6 +23,19 @@ function err {
     log $1 $fg_bold[red]
 }
 
+# Log warning output
+function warn {
+    log $1 $fg_bold[yellow]
+}
+
+# Get a file owner
+function owner {
+    if [[ $OSTYPE == darwin* ]]; then
+        return $(stat -f '%Su' $1)
+    fi
+    return $(stat -c '%U' $1)
+}
+
 # Create a directory
 function makedir {
     if [[ ! -d $1 ]]; then
@@ -94,7 +107,7 @@ function dotfiles-health {
 # Rebuild bat cache
 function dotfiles-bat {
     if (( ! $+commands[bat] )); then
-      log "Skipping bat cache update"
+      warn "Skipping bat cache update due to missing bat"
       return
     fi
     log "Rebuilding bat cache..."
@@ -232,12 +245,6 @@ function dotfiles-launchd {
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
     if [[ $OSTYPE == linux* ]]; then
-        groups | grep brew > /dev/null
-        if (( $? )); then
-            err 'User is not in brew group'
-            return
-        fi
-
         local base_group=$(stat -c '%G' $HOMEBREW_BASE)
         if [[ $base_group != 'brew' ]]; then
             err "$HOMEBREW_BASE is not owned by brew group"
@@ -340,7 +347,12 @@ function dotfiles-brew {
 
     # Remove git's included zsh completions in favor of the system completions
     if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
-        rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+	hb_owner=$(owner $HOMEBREW_BASE)
+	if [[ $hb_owner == $USER ]]; then
+            rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+	else
+            sudo rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+	fi
     fi
 
     # Update 1password-cli zsh completions
@@ -461,6 +473,11 @@ function dotfiles-zsh {
 
 # Update global python packages
 function dotfiles-python {
+    if (( ! $+commands[python] )); then
+        warn "Skipping python update due to missing python"
+	return
+    fi
+
     log "Updating global python packages..."
 
     local out=""
@@ -473,6 +490,11 @@ function dotfiles-python {
 
 # Update global npm packages
 function dotfiles-node {
+    if (( ! $+commands[npm] )); then
+        warn "Skipping node update due to missing npm"
+	return
+    fi
+
     log "Updating global node packages..."
 
     # get list of outdated global packages
@@ -587,7 +609,7 @@ function get-asdf-version {
 # Update asdf plugins
 function dotfiles-asdf {
     if (( ! $+commands[asdf] )); then
-        log "Skipping asdf update"
+        warn "Skipping asdf update due to missing asdf"
         return
     fi
 
