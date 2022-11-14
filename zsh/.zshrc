@@ -1,3 +1,6 @@
+# Enable profiling
+# zmodload zsh/zprof
+
 # Setup fpath
 # ------------------------------------------------------------------------
 # The fpath should be initialized before trying to load plugins (with zfetch)
@@ -14,26 +17,13 @@ if [[ -d $DOTFILES/zsh/functions ]]; then
     for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
 fi
 
-# Plugin init
-# ----------------------------------------------------------------------------
-zfetch $ZPLUGDIR zsh-users/zsh-completions
-zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
-zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
-zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
-zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
-zfetch $ZPLUGDIR romkatv/powerlevel10k
-zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
-
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# ----------------------------------------------------------------------------
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block, everything else may go below.
-# if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-
-# Enable profiling
-# zmodload zsh/zprof
+# Prompt
+# --------------------------------------------------------------------------
+if [[ -f $ZDOTDIR/p10k.zsh ]]; then
+    zfetch $ZPLUGDIR romkatv/powerlevel10k
+    source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
+    source $ZDOTDIR/p10k.zsh
+fi
 
 # Declare some key global variables
 # ------------------------------------------------------------------------
@@ -79,14 +69,28 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
+# zsh-autocomplete
+# --------------------------------------------------------------------------
+# Should be loaded before completions
+# zstyle ':autocomplete:list-choices:*' max-lines 5
+# zstyle ':autocomplete:space:*' magic expand-history
+# zstyle ':autocomplete:tab:*' completion select
+# zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
+# source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
 # Completions
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
 # completion plugins
 
 export ZCOMPDIR=$ZCACHEDIR/completions
-[[ -d "$ZCOMPDIR" ]] || mkdir -p "$ZCOMPDIR"
+if [[ ! -d "$ZCOMPDIR" ]]; then
+    mkdir -p "$ZCOMPDIR"
+fi
 export ZCOMPFILE=$ZCACHEDIR/zcompdump
+
+# Install community completions
+zfetch $ZPLUGDIR zsh-users/zsh-completions
 
 # Completion directories should be added to the fpath before compinit is called
 fpath=(
@@ -236,181 +240,10 @@ bindkey -v
 
 # Aliases
 # ------------------------------------------------------------------------
-# Clear existing aliases
-unalias -m '*'
+source $ZDOTDIR/alias.zsh
 
-# Simpler back
-alias b='back'
-
-# Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
-# reload the environment
-alias refresh='source ~/.zshenv && source ~/.zshrc'
-alias reload='exec env -u DIRENV_WATCHES $SHELL'
-alias reloadx86='ARCHPREFERENCE=x86_64 exec arch -x86_64 env -u DIRENV_WATCHES $SHELL'
-
-# Default command options
-alias cp='cp -i'
-alias ln='ln -i'
-alias mkdir='mkdir -p'
-alias mv='mv -i'
-alias rm='rm -i'
-alias type='type -a'
-alias fda='fd -I'
-
-# Let node use local readline setup (vi mode)
-if (( $+commands[rlwrap] )); then
-    alias node='env NODE_NO_READLINE=1 rlwrap node'
-fi
-
-# Shortcuts
-alias agl='ag -l'
-alias rgl='rg -l'
-alias rgla='rg -l -u'
-alias back='popd'
-alias help='run-help'
-alias se='sudo -e'
-
-# Disable certificate check for wget
-alias wget='wget --no-check-certificate'
-
-# Docker shortcuts
-alias dk='docker kill'
-alias dl='docker logs'
-alias dlf='docker logs -f'
-alias dps='docker ps --format "{{.Names}}"'
-
-# Git shortcuts
-alias ga='git a'
-alias gb='git b'
-alias gba='git ba'
-alias gbd='git branch -D'
-alias gbk='git killbranch'
-alias gbdo='git push -d origin' 
-alias gbm='git mybranches' 
-alias gbf='git bf'
-alias gc='git c'
-alias gca='git ca'
-alias gcb='git cb'
-alias gco='git co'
-alias gcp='git cp'
-alias gcpe='git cp -e'
-alias gcpn='git cpn'
-alias gcpr='git checkout-pr'
-
-# Cleanup
-alias gcln='git clean -nxd'
-alias gclf='git clean -fxd'
-
-alias gd='git diff'
-alias gds='git ds'
-alias gdv='git dv'
-alias gf='git f'
-alias gfp='git fp'
-alias gfr='git fr'
-alias gg='git g'
-alias ggi='git gi'
-alias ggil='git gil'
-alias ggl='git gl'
-alias gid='git rev-parse HEAD'
-
-# Display graph logs
-local lg="git log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'"
-local lga="$lg --all"
-alias gl="$lga -n 20"
-alias gla="$lga"
-alias glb="$lg -n 20"
-alias glba="$lg"
-
-# Show descendents from a particular commit
-alias glf="$lga --ancestry-path"
-alias glfm="$lg --ancestry-path"
-
-alias gls='git ls'
-alias gmb='git mb'
-alias gp='git p'
-alias gr='git r'
-alias gri='git ri'
-alias grc='git rc'
-alias grm='git rm'
-alias gro='git ro'
-alias grv='git rv'
-alias gs='git -c status.color=always status --short'
-alias gsh='git show'
-alias gshs='git show --stat'
-alias gsu='gs | grep UU'
-alias gwl='git worktree list'
-alias gwa='git worktree add'
-alias gwr='git worktree remove'
-
-alias tiga='tig --all'
-alias fgl='fzf-git-log'
-alias ts='tig status'
-
-# ssh in interactive shells
-# alias ssh=themed_ssh
-
-# vim
-if (( $+commands[nvim] )); then
-    if [[ -n $WEZTERM_PANE ]]; then
-        alias vi="nvim --listen /tmp/nvim-wt$WEZTERM_PANE"
-    else
-        alias vi=nvim
-    fi
-elif (( $+commands[vim] )); then
-    alias vi=vim
-fi
-
-# tmux
-alias tls='tmux list-sessions'
-alias tas='tmux attach -t'
-alias tks='tmux kill-session -t'
-
-# xcode
-alias xcr='xcrun'
-
-# Pretty print json
-alias json='python -m json.tool'
-
-# Tree
-alias t1='tree -L 1'
-
-# Disable correction for some commands
-alias cd="nocorrect ${aliases[cd]:-cd}"
-alias cp="nocorrect ${aliases[cp]:-cp}"
-alias gcc="nocorrect ${aliases[gcc]:-gcc}"
-alias grep="nocorrect ${aliases[grep]:-grep}"
-alias gulp="nocorrect ${aliases[gulp]:-gulp}"
-alias ln="nocorrect ${aliases[ln]:-ln}"
-alias man="nocorrect ${aliases[man]:-man}"
-alias mkdir="nocorrect ${aliases[mkdir]:-mkdir}"
-alias mv="nocorrect ${aliases[mv]:-mv}"
-alias rm="nocorrect ${aliases[rm]:-rm}"
-alias vim="nocorrect ${aliases[vim]:-vim}"
-alias nvim="nocorrect ${aliases[nvim]:-nvim}"
-alias tsd="nocorrect ${aliases[tsd]:-tsd}"
-alias jake="nocorrect ${aliases[jake]:-jake}"
-
-# Disable globbing for some commands
-alias bower="noglob ${aliases[bower]:-bower}"
-alias find="noglob ${aliases[find]:-find}"
-alias ftp="noglob ${aliases[ftp]:-ftp}"
-alias history="noglob ${aliases[history]:-history}"
-alias rsync="noglob ${aliases[rsync]:-rsync}"
-alias scp="noglob ${aliases[scp]:-scp}"
-alias sftp="noglob ${aliases[sftp]:-sftp}"
-
-# Default swift compilation options
-alias swiftc="xcrun -sdk macosx swiftc"
-
-alias npmv="npm --loglevel error"
-alias npmr="npm --registry=https://registry.npmjs.org"
-alias px="pnpm exec"
-
-alias ha='TERM=xterm-256color ssh root@homeassistant.local'
-alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/home-assistant.log | bat --paging=never -l halog'
-alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
-alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/error.log'
-
+# Theme
+# ------------------------------------------------------------------------
 if [[ -e $HOME/.theme ]]; then
     theme=$(cat $HOME/.theme)
     if [[ $theme == 'light' ]]; then
@@ -421,46 +254,10 @@ if [[ -e $HOME/.theme ]]; then
     unset theme
 fi
 
-# Colorize ls
-
-# Define colors for BSD ls
 export LSCOLORS='ExFxCxDxBxfxdxacagafad'
-# Define colors for the completion system
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
+
 export CLICOLOR=1
-alias ls='ls --color -F'
-
-# Colorize cat
-if (( $+commands[bat] )); then
-    alias cat=bat
-
-    # BAT_THEME is also used by delta, so set it here rather than in the bat
-    # config file
-    export BAT_THEME=selenized
-fi
-
-# Better top
-if (( $+commands[htop] )); then
-    alias top=htop
-fi
-
-# Other ls aliases
-alias l='ls -1A'         # Lists in one column, hidden files
-alias ll='ls -lh'        # Lists human readable sizes
-alias lld='ll -d'        # List directories
-alias llt='ls -lh -t'    # Lists human readable ordered by time
-alias lls='ls -lh -S'    # Lists human readable ordered by size
-alias la='ll -A'         # Lists human readable sizes, hidden files
-alias di='direnv-info'   # Show info about direnv
-
-# Space usage
-alias dfh='df -h'
-alias duh='du -h *(D) | sort -h'
-
-if [[ -d '/Applications/VMware Fusion.app' ]]; then
-    alias vmrun='/Applications/VMware\ Fusion.app/Contents/Public/vmrun'
-    alias vctl='/Applications/VMware\ Fusion.app/Contents/Public/vctl'
-fi
 
 # Shell options
 # ------------------------------------------------------------------------
@@ -548,51 +345,7 @@ if (( $+commands[fzf] )); then
         source $FZF_PATH/shell/key-bindings.zsh
     fi
 
-    # Select commits using fgl
-    fzf-git-log-widget() {
-        LBUFFER="${LBUFFER}$(fgl)"
-        local ret=$?
-        zle reset-prompt
-        return $ret
-    }
-    zle -N fzf-git-log-widget
-    # Use alt-g to bring up the git log
-    bindkey 'g' fzf-git-log-widget
-
-    # Select git files 
-    __gfsel() {
-      setopt localoptions pipefail 2> /dev/null
-      eval git ls-files | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse $FZF_DEFAULT_OPTS $FZF_CTRL_T_OPTS" $(__fzfcmd) -m "$@"
-      return $?
-    }
-    fzf-git-file-widget() {
-      local selection=$(__gfsel)
-      LBUFFER="${LBUFFER}$selection"
-      local ret=$?
-      if [[ -n $selection ]]; then
-          # Execute the command buffer immediately
-          zle accept-line
-      else
-          zle reset-prompt
-      fi
-      return $ret
-    }
-    zle -N   fzf-git-file-widget
-    bindkey '^G' fzf-git-file-widget
-
-    # Bind the file widget to ^P since we use ^T for tmux
-    bindkey '^P' fzf-file-widget
-
-    # Use fd (https://github.com/sharkdp/fd) instead of the default find
-    # # command for listing path candidates.
-    _fzf_compgen_path() {
-        fd --hidden --follow --exclude ".git" . "$1"
-    }
-
-    # Use fd to generate the list for directory completion
-    _fzf_compgen_dir() {
-        fd --type d --hidden --follow --exclude ".git" . "$1"
-    }
+    source $ZDOTDIR/fzf.zsh
 fi
 
 # History key bindings
@@ -639,6 +392,7 @@ fi
 
 # Load NPM completion
 if (( $+commands[npm] )); then
+    zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
     source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
 fi
 
@@ -666,8 +420,36 @@ eval "$(direnv hook $SHELL)"
 # Line editor
 # ------------------------------------------------------------------------
 
-# History substring search -- load this after zsh-syntax-highlighting
+# Let vi keys jump through the suggestion
+bindkey '^f' vi-forward-word
+bindkey '^b' vi-forward-blank-word
+bindkey '^e' vi-end-of-line
+
+# ASDF
+# --------------------------------------------------------------------------
+if [[ -d "$XDG_CONFIG_HOME/asdf-direnv/zshrc" ]]; then
+    source "$XDG_CONFIG_HOME/asdf-direnv/zshrc"
+fi
+
+# Bun
+# --------------------------------------------------------------------------
+if [[ -s "$HOME/.bun/_bun" ]]; then
+    source "$HOME/.bun/_bun"
+fi
+
+# zsh-syntax-highlighting
+# --------------------------------------------------------------------------
+# This should be near the end (preferably at the end) of the zshrc
+# https://github.com/zsh-users/zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
+source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+
+# zsh-history-substring-search
+# --------------------------------------------------------------------------
+# Load this after zsh-syntax-highlighting
 # https://github.com/zsh-users/zsh-history-substring-search
+zfetch $ZPLUGDIR zsh-users/zsh-history-substring-search
 source $ZPLUGDIR/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # Color for found substrings
@@ -683,16 +465,12 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 bindkey -M vicmd "k" history-substring-search-up
 bindkey -M vicmd "j" history-substring-search-down
 
-# Let vi keys jump through the suggestion
-bindkey '^f' vi-forward-word
-bindkey '^b' vi-forward-blank-word
-bindkey '^e' vi-end-of-line
-
-# autosuggest -- load this after zsh-syntax-highlighting and
-# zsh-history-substring-search (https://github.com/tarruda/zsh-autosuggestions)
-
+# zsh-autosuggestions
+# --------------------------------------------------------------------------
+# Load this after zsh-syntax-highlighting and zsh-history-substring-search
+# (https://github.com/tarruda/zsh-autosuggestions)
+zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
-bindkey '[24~' autosuggest-toggle
 
 # Use a solarized-friendly background color
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
@@ -706,37 +484,8 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
-# autocomplete
-# --------------------------------------------------------------------------
-# source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-# zstyle ':autocomplete:list-choices:*' max-lines 5
-# zstyle ':autocomplete:space:*' magic expand-history
-# zstyle ':autocomplete:tab:*' completion select
-
-# Prompt
-# --------------------------------------------------------------------------
-source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
-[[ -f $ZDOTDIR/p10k.zsh ]] && source $ZDOTDIR/p10k.zsh
-
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
-
-# Syntax highlighting
-# --------------------------------------------------------------------------
-# This should be near the end (preferably at the end) of the zshrc
-# https://github.com/zsh-users/zsh-syntax-highlighting
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
-
-# ASDF
-# --------------------------------------------------------------------------
-source "$XDG_CONFIG_HOME/asdf-direnv/zshrc"
-
-# Bun
-# --------------------------------------------------------------------------
-if [ -s "$HOME/.bun/_bun" ]; then
-    source "$HOME/.bun/_bun"
-fi
 
 # vim:shiftwidth=4:tabstop=4:expandtab
