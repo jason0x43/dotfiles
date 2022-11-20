@@ -14,7 +14,7 @@ function M.apply_theme()
   if vim.fn.filereadable(theme_file) == 1 then
     theme_data = vim.fn.readfile(theme_file)
   else
-    local theme_variant = os.getenv('THEME_VARIANT') or 'black'
+    local theme_variant = vim.go.background
     if theme_variant == 'light' then
       theme_data = '{"bg_0":"#fbf3db","bg_1":"#e9e4d0","bg_2":"#cfcebe","blue":"#0072d4","br_blue":"#006dce","br_cyan":"#00978a","br_green":"#428b00","br_magenta":"#c44392","br_orange":"#bc5819","br_red":"#cc1729","br_violet":"#825dc0","br_yellow":"#a78300","cyan":"#009c8f","dim_0":"#909995","fg_0":"#53676d","fg_1":"#3a4d53","green":"#489100","is_dark":false,"magenta":"#ca4898","name":"Selenized Light","orange":"#c25d1e","red":"#d2212d","violet":"#8762c6","yellow":"#ad8900"}'
     else
@@ -23,12 +23,6 @@ function M.apply_theme()
   end
 
   local theme = vim.fn.json_decode(theme_data)
-
-  if theme.is_dark then
-    vim.go.background = 'dark'
-  else
-    vim.go.background = 'light'
-  end
 
   local palette = theme
   active_palette = theme
