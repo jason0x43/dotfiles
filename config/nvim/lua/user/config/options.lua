@@ -79,9 +79,6 @@ o.updatetime = 500
 -- don't show the mode on the last line
 o.showmode = false
 
--- use a global status line
-o.laststatus = 3
-
 -- enable mouse support
 o.mouse = 'a'
 
