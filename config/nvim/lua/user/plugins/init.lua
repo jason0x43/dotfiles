@@ -254,6 +254,18 @@ packer.startup({
 
     -- Laravel Blade template support
     use('jwalton512/vim-blade')
+
+    -- Autosave files
+    use({
+      'Pocco81/auto-save.nvim',
+      config = function()
+        require('auto-save').setup({
+          condition = function(buf)
+            return vim.bo[buf].filetype == 'rust'
+          end
+        })
+      end,
+    })
   end,
 
   config = {
