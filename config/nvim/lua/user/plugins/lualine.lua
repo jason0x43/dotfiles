@@ -24,24 +24,24 @@ M.config = function()
     },
     sections = {
       lualine_b = {
+        { 'file_status', padding = { left = 0, right = 1 } },
         -- { 'branch', icon = '', padding = { left = 0, right = 1 } },
-        {
-          'diagnostics',
-          sources = { 'nvim_diagnostic' },
-          padding = { left = 0, right = 1 },
-        },
         { 'diff', padding = { left = 0, right = 1 } },
-      },
-      lualine_c = {
         {
           'lsp_progress',
           display_components = { 'spinner' },
           spinner_symbols = { '⠦', '⠖', '⠲', '⠴' },
           -- spinner_symbols = { '⠐', '⠠', '⠄', '⠂' },
           timer = { spinner = refresh_time },
-          padding = { left = 0, right = 0 },
+          padding = { left = 0, right = 1 },
+        },
+        {
+          'diagnostics',
+          sources = { 'nvim_diagnostic' },
+          padding = { left = 0, right = 1 },
         },
       },
+      lualine_c = {},
       lualine_x = {},
       lualine_y = {
         { 'progress', padding = { left = 1, right = 0 } },
@@ -49,8 +49,8 @@ M.config = function()
     },
     winbar = {
       lualine_c = {
-        { 'filetype', icon_only = 1 },
-        { 'filename', path = 1, padding = { left = 1, right = 1 } },
+        { 'filetype', icon_only = 1, separator = '' },
+        { 'filename', path = 1, padding = { left = 1, right = 1 }, file_status = false },
       },
       lualine_x = {
         {
@@ -63,7 +63,12 @@ M.config = function()
     extensions = { 'nvim-tree', 'quickfix' },
   }
 
-  config.inactive_winbar = config.winbar
+  config.inactive_winbar = {
+    lualine_c = {
+      { 'filetype', icon_only = 1 },
+      { 'filename', path = 1, padding = { left = 1, right = 1 } },
+    },
+  }
 
   local navic = req('nvim-navic')
   if navic then
