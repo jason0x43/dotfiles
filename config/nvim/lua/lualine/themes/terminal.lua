@@ -15,5 +15,6 @@ return {
 
   inactive = {
     a = { fg = c['bg_0'], bg = c['bg_1'] },
+    c = { fg = c['dim_0'], bg = c['bg_0'] },
   },
 }

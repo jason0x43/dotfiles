@@ -79,12 +79,7 @@ function M.apply()
 
   -- basic groups
   hi('Normal', palette.fg_0, palette.bg_0, '', '')
-  if vim.wo.diff then
-    hi('NormalNC', palette.dim_0, palette.bg_0)
-  else
-    -- only fade unfocused windows if we're not in diff mode
-    hi('NormalNC', palette.dim_0, palette.bg_1)
-  end
+  hi('NormalNC', palette.dim_0, palette.bg_0)
   hi('Comment', palette.dim_0, '', 'italic', '')
   hi('Constant', palette.cyan, '', '', '')
   hi('Delimiter', palette.fg_0, '', '', '')
@@ -104,7 +99,7 @@ function M.apply()
   hi('Conceal', '', '', '', '')
   hi('Cursor', '', '', 'reverse', '')
   hi('CursorColumn', '', palette.bg_1, '', '')
-  hi('CursorLine', '', palette.bg_2, '', '')
+  hi('CursorLine', '', palette.bg_1, '', '')
   hi('CursorLineNr', palette.fg_1, '', '', '')
   hi('DiagnosticHint', palette.dim_0)
   hi('DiagnosticSignHint', palette.dim_0, sign_col_bg)
@@ -157,7 +152,7 @@ function M.apply()
   hi('Title', palette.orange, '', 'bold', '')
   hi('ToolbarButton', '', '', 'reverse', '')
   hi('ToolbarLine', '', palette.bg_2, '', '')
-  hi('VertSplit', palette.dim_0, palette.bg_1, '')
+  hi('VertSplit', palette.dim_0, palette.bg_0, '')
   hi('VimCommand', palette.yellow, '', '', '')
   hi('Visual', '', palette.bg_2, '', '')
   hi('VisualNOS', '', '', '', '')
@@ -219,7 +214,7 @@ function M.apply()
   hi_link('LspDiagnosticsSignError', 'DiagnosticSignError')
 
   -- neotree
-  hi('NeoTreeFloatBorder', palette.bg_0, palette.bg_0)
+  hi_link('NeoTreeFloatBorder', 'Normal')
 end
 
 function M.active_palette()
