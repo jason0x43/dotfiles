@@ -481,7 +481,7 @@ function dotfiles-python {
     log "Updating global python packages..."
 
     local out=""
-    out=$(direnv exec / pip install -U pip setuptools pynvim neovim-remote > /dev/null 2>& 1)
+    out=$(pip install -U pip setuptools pynvim neovim-remote > /dev/null 2>& 1)
     if (( $? )); then
         err "Error updating packages"
         err $out
@@ -498,7 +498,7 @@ function dotfiles-node {
     log "Updating global node packages..."
 
     # get list of outdated global packages
-    local mods=($(direnv exec / npm --registry=https://registry.npmjs.org outdated -g --parseable))
+    local mods=($(npm --registry=https://registry.npmjs.org outdated -g --parseable))
     for mod in $mods; do
         # extract current and latest fields
         array=(${(@s/:/)mod})
@@ -529,27 +529,14 @@ function dotfiles-node {
                 (( latest[3] > current[3] ));
             };
         }; then
-            direnv exec / npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
-            logSub "Installed $latestPkg"
-        fi
-    done
+            local npm=$(which npm)
 
-    local desired_packages=(
-        eslint_d
-        neovim
-    )
-
-    for pkg in $desired_packages; do
-        direnv exec / npm ls -g --depth=0 $pkg > /dev/null 2>&1
-        if (( $? )); then
-            local out=""
-            out=$(direnv exec / npm install -g $pkg > /dev/null 2>&1 )
-            if (( $? )); then
-                err "Error installing $pkg"
-                err $out
-            else
-                logSub "Installed $pkg"
+            if [[ $(which node) =~ linuxbrew ]]; then
+                npm=sudo --preserve-env=PATH -u brew $npm
             fi
+
+            $npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+            logSub "Installed $latestPkg"
         fi
     done
 }
