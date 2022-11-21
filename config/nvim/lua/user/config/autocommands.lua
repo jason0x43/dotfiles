@@ -6,7 +6,7 @@ local function autocmd(type, pattern, callback)
   vim.api.nvim_create_autocmd(type, {
     group = 'init_autocmds',
     pattern = pattern,
-    callback = callback
+    callback = callback,
   })
 end
 
@@ -17,7 +17,7 @@ end)
 
 autocmd('BufEnter', '*.*', function()
   -- show the current textwidth with color columns
-  require("user.util").show_view_width()
+  require('user.util').show_view_width()
 end)
 
 autocmd('VimResized', '*', function()
@@ -27,7 +27,6 @@ autocmd('VimResized', '*', function()
   -- show line numbers if the window is big enough
   vim.opt.number = vim.go.columns > 88
 end)
-
 
 -- wrap lines in quickfix windows
 autocmd('FileType', 'qf', function()
@@ -62,19 +61,23 @@ end)
 
 -- auto-set quickfix height
 autocmd('FileType', 'qf', function()
-  require("user.util").adjust_window_height(1, 10)
+  require('user.util').adjust_window_height(1, 10)
 end)
 
 -- highlight yanked text
 autocmd('TextYankPost', '*', function()
-  vim.highlight.on_yank({ higroup = "IncSearch", timeout = 150, on_visual = true })
+  vim.highlight.on_yank({
+    higroup = 'IncSearch',
+    timeout = 150,
+    on_visual = true,
+  })
 end)
 
 -- restore cursor position when opening a file
 -- run this in BufWinEnter instead of BufReadPost so that this won't override
 -- a line number provided on the commandline
 autocmd('BufWinEnter', '*', function()
-  require("user.util").restore_cursor()
+  require('user.util').restore_cursor()
 end)
 
 -- set filetypes
@@ -96,3 +99,8 @@ autoft('{ts,js}config.json', 'jsonc')
 autoft('intern.json', 'jsonc')
 autoft('intern{-.}*.json', 'jsonc')
 autoft('*.textile', 'textile')
+
+-- set colorscheme after TUI has set the background option
+autocmd('OptionSet', 'background', function()
+  vim.cmd('colorscheme terminal')
+end)

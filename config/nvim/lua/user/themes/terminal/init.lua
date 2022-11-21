@@ -1,28 +1,28 @@
 local M = {}
-local hi = require('user.util.theme').hi
-local hi_link = require('user.util.theme').hi_link
+local get_script_path = require('user.util').get_script_path
+local theme_util = require('user.util.theme')
+
+local hi = theme_util.hi
+local hi_link = theme_util.hi_link
 
 local active_palette
 
-function M.apply_theme()
+function M.apply()
   local g = vim.g
 
-  g.colors_name = 'wezterm'
+  g.colors_name = 'selenized'
 
-  local theme_data = ""
+  local theme = ""
   local theme_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
   if vim.fn.filereadable(theme_file) == 1 then
-    theme_data = vim.fn.readfile(theme_file)
+    local theme_data = vim.fn.readfile(theme_file)
+    theme = vim.fn.json_decode(theme_data)
   else
-    local theme_variant = vim.go.background
-    if theme_variant == 'light' then
-      theme_data = '{"bg_0":"#fbf3db","bg_1":"#e9e4d0","bg_2":"#cfcebe","blue":"#0072d4","br_blue":"#006dce","br_cyan":"#00978a","br_green":"#428b00","br_magenta":"#c44392","br_orange":"#bc5819","br_red":"#cc1729","br_violet":"#825dc0","br_yellow":"#a78300","cyan":"#009c8f","dim_0":"#909995","fg_0":"#53676d","fg_1":"#3a4d53","green":"#489100","is_dark":false,"magenta":"#ca4898","name":"Selenized Light","orange":"#c25d1e","red":"#d2212d","violet":"#8762c6","yellow":"#ad8900"}'
-    else
-      theme_data = '{"bg_0":"#181818","bg_1":"#252525","bg_2":"#3b3b3b","blue":"#368aeb","br_blue":"#4f9cfe","br_cyan":"#56d8c9","br_green":"#83c746","br_magenta":"#ff81ca","br_orange":"#fa9153","br_red":"#ff5e56","br_violet":"#b891f5","br_yellow":"#efc541","cyan":"#3fc5b7","dim_0":"#777777","fg_0":"#b9b9b9","fg_1":"#dedede","green":"#70b433","is_dark":true,"magenta":"#eb6eb7","name":"Selenized Black","orange":"#e67f43","red":"#ed4a46","violet":"#a580e2","yellow":"#dbb32d"}'
-    end
+    local dirname = get_script_path()
+    local theme_data = vim.fn.readfile(dirname .. '/themes.json')
+    local themes = vim.fn.json_decode(theme_data)
+    theme = themes[vim.go.background]
   end
-
-  local theme = vim.fn.json_decode(theme_data)
 
   local palette = theme
   active_palette = theme

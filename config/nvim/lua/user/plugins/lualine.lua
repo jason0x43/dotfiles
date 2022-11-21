@@ -1,18 +1,18 @@
 local M = {}
 
 M.config = function()
-  local theme = require('user.util.theme')
+  local hi = require('user.util.theme').hi
   local req = require('user.req')
 
   -- make statusline transparent so we don't get a flash before lualine renders
-  theme.hi('StatusLine', { bg = '' })
-  theme.hi('StatusLineNC', { bg = '' })
+  hi('StatusLine', { bg = '' })
+  hi('StatusLineNC', { bg = '' })
 
   local refresh_time = 500
 
   local config = {
     options = {
-      theme = 'wezterm',
+      theme = 'terminal',
       section_separators = { left = ' ', right = ' ' },
       component_separators = { left = '│', right = '│' },
       globalstatus = true,

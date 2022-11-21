@@ -220,4 +220,9 @@ function M.in_git_dir()
   return vim.v.shell_error == 0
 end
 
+function M.get_script_path()
+  local str = debug.getinfo(2, 'S').source:sub(2)
+  return str:match('(.*/)')
+end
+
 return M

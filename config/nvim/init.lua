@@ -10,6 +10,5 @@ require('user.config.keymaps')
 require('user.config.autocommands')
 require('user.config.linenr')
 require('user.plugins')
-require('user.theme')
 
 vim.opt.shadafile = ''
