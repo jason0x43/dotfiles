@@ -100,7 +100,15 @@ autoft('intern.json', 'jsonc')
 autoft('intern{-.}*.json', 'jsonc')
 autoft('*.textile', 'textile')
 
--- set colorscheme after TUI has set the background option
+-- set colorscheme after TUI has loaded
+autocmd('UIEnter', '*', function()
+  local timer = vim.loop.new_timer()
+  timer:start(0, 0, vim.schedule_wrap(function()
+    vim.api.nvim_command('colorscheme terminal')
+  end))
+end)
+
+-- set colorscheme whenever the background option is set
 autocmd('OptionSet', 'background', function()
   vim.cmd('colorscheme terminal')
 end)
