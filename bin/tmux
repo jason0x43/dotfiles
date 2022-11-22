@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-local tmux_bin
+export TERMINAL_BG_COLOR=$(term_bg)
 
 if [[ -x $HOMEBREW_BASE/bin/tmux ]]; then
 	tmux_bin=$HOMEBREW_BASE/bin/tmux

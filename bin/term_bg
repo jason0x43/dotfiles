@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Read the result of an OSC11 call into BG
+read -rs -d \\ -p $'\e]11;?\e\\' result
+
+# Extract the RGB color from the result
+bg=$(echo "$result" | sed 's/.*rgb:\([0-9a-f/]*\).*/\1/')
+
+# Convert the color to a 6-digit hex string
+parts=(${bg//\// })
+r=${parts[0]:0:2}
+g=${parts[1]:0:2}
+b=${parts[2]:0:2}
+echo "#$r$g$b"
