@@ -116,7 +116,6 @@ wezterm.on("window-config-reloaded", function(window)
 		end
 	end
 
-	print("config reloaded, scheme is", cfg.color_scheme)
 	Scheme(color_scheme, window)
 end)
 
@@ -128,38 +127,38 @@ function Scheme(name, window)
 	end
 
 	local config = window:effective_config()
-	local scheme = wezterm.color.get_builtin_schemes()[name]
-	if not scheme then
-		scheme = config.color_schemes[name]
+	local schm = wezterm.color.get_builtin_schemes()[name]
+	if not schm then
+		schm = config.color_schemes[name]
 	end
 
 	local overrides = window:get_config_overrides() or {}
 
-	if not scheme.tab_bar then
-		scheme.tab_bar = {
-			background = scheme.brights[1],
+	if not schm.tab_bar then
+		schm.tab_bar = {
+			background = schm.brights[1],
 			active_tab = {
-				bg_color = scheme.background,
-				fg_color = scheme.brights[8],
+				bg_color = schm.background,
+				fg_color = schm.brights[8],
 			},
 			inactive_tab = {
-				bg_color = scheme.ansi[1],
-				fg_color = scheme.ansi[8],
+				bg_color = schm.ansi[1],
+				fg_color = schm.ansi[8],
 			},
 			new_tab = {
-				bg_color = scheme.brights[1],
-				fg_color = scheme.brights[1],
+				bg_color = schm.brights[1],
+				fg_color = schm.brights[1],
 			},
 		}
 
 		if not overrides.color_schemes then
 			overrides.color_schemes = {}
 		end
-		overrides.color_schemes[name] = scheme
+		overrides.color_schemes[name] = schm
 		print("Setting override for " .. name)
 	end
 
-	local bg = wezterm.color.parse(scheme.background)
+	local bg = wezterm.color.parse(schm.background)
 	local _, _, l, _ = bg:hsla()
 
 	-- Create the scheme data that will be written to the theme file for other
@@ -168,31 +167,31 @@ function Scheme(name, window)
 		name = name,
 		is_dark = l < 0.5,
 
-		bg_0 = scheme.background,
-		fg_0 = scheme.foreground,
+		bg_0 = schm.background,
+		fg_0 = schm.foreground,
 
-		bg_1 = scheme.ansi[1],
-		red = scheme.ansi[2],
-		green = scheme.ansi[3],
-		yellow = scheme.ansi[4],
-		blue = scheme.ansi[5],
-		magenta = scheme.ansi[6],
-		cyan = scheme.ansi[7],
-		dim_0 = scheme.ansi[8],
+		bg_1 = schm.ansi[1],
+		red = schm.ansi[2],
+		green = schm.ansi[3],
+		yellow = schm.ansi[4],
+		blue = schm.ansi[5],
+		magenta = schm.ansi[6],
+		cyan = schm.ansi[7],
+		dim_0 = schm.ansi[8],
 
-		bg_2 = scheme.brights[1],
-		br_red = scheme.brights[2],
-		br_green = scheme.brights[3],
-		br_yellow = scheme.brights[4],
-		br_blue = scheme.brights[5],
-		br_magenta = scheme.brights[6],
-		br_cyan = scheme.brights[7],
-		fg_1 = scheme.brights[8],
+		bg_2 = schm.brights[1],
+		br_red = schm.brights[2],
+		br_green = schm.brights[3],
+		br_yellow = schm.brights[4],
+		br_blue = schm.brights[5],
+		br_magenta = schm.brights[6],
+		br_cyan = schm.brights[7],
+		fg_1 = schm.brights[8],
 
-		orange = scheme.indexed[18] or scheme.ansi[2],
-		violet = scheme.indexed[20] or scheme.ansi[5],
-		br_orange = scheme.indexed[19] or scheme.brights[2],
-		br_violet = scheme.indexed[21] or scheme.brights[5],
+		orange = schm.indexed[18] or schm.ansi[2],
+		violet = schm.indexed[20] or schm.ansi[5],
+		br_orange = schm.indexed[19] or schm.brights[2],
+		br_violet = schm.indexed[21] or schm.brights[5],
 	}
 
 	local file = assert(io.open(scheme_file, "w"))
