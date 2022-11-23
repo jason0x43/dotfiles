@@ -320,6 +320,21 @@ local copy_mode_action = function()
 	end)
 end
 
+-- Open a new split and exit window managment mode
+local split_action = function(dir)
+	return wezterm.action_callback(function(window, pane)
+		if window:active_key_table() == "window_ops" then
+			window:perform_action(act.PopKeyTable, pane)
+		end
+
+		if dir == 'vertical' then
+			window:perform_action(act.SplitVertical({ domain = "CurrentPaneDomain" }), pane)
+		else
+			window:perform_action(act.SplitHorizontal({ domain = "CurrentPaneDomain" }), pane)
+		end
+	end)
+end
+
 -- Save the window state to a JSON file (WIP)
 local save_win_state = function()
 	local data = {}
@@ -474,9 +489,9 @@ return {
 			{ key = "h", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 4 }) },
 			{ key = "l", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 4 }) },
 			{ key = "m", action = act.PaneSelect({ mode = "SwapWithActive" }) },
-			{ key = "-", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-			{ key = "\\", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-			{ key = "|", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+			{ key = "-", action = split_action('vertical') },
+			{ key = "\\", action = split_action('horizontal') },
+			{ key = "|", action = split_action('horizontal') },
 			{ key = "Escape", action = act.PopKeyTable },
 			{ key = "c", action = copy_mode_action() },
 			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
