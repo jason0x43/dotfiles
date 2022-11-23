@@ -35,23 +35,12 @@ fi
 # ----------------------------------------------------------------------------
 typeset -gU mailpath path
 
-# Path
-# --------------------------------------------------------------------------
 if [[ -d /usr/local/bin ]]; then
 	path=(
 		/usr/local/bin
 		$path
 	)
 fi
-
-path=(
-	$HOME/Applications
-	$DOTFILES/bin
-	$HOME/.local/bin
-	$HOMEBREW_BASE/bin
-	$HOMEBREW_BASE/sbin
-	$path
-)
 
 # Groovy
 # ----------------------------------------------------------------------------
@@ -196,14 +185,6 @@ if (( $+commands[pdm] )); then
 	}
 fi
 
-# Go
-if (( $+commands[go] )) && [[ -n $GOPATH ]]; then
-	path=(
-		$GOPATH/bin
-		$path
-	)
-fi
-
 # PHP
 if [[ -d $HOMEBREW_BASE/opt/php@7.1/bin ]]; then
 	path=(
@@ -250,7 +231,44 @@ fi
 # Homebrew
 # ----------------------------------------------------------------------------
 # Use Bootsnap to speed up repeated brew calls
-export HOMEBREW_BOOTSNAP=1
+if [[ -d $HOMEBREW_BASE ]]; then
+	export HOMEBREW_BOOTSNAP=1
+
+	path=(
+		$HOMEBREW_BASE/bin
+		$HOMEBREW_BASE/sbin
+		$path
+	)
+fi
+
+# Add user dirs to path
+# --------------------------------------------------------------------------
+path=($DOTFILES/bin $path)
+
+# From user-level packages
+if [[ -d $HOME/.local/bin ]]; then
+	path=($HOME/.local/bin $path)
+fi
+
+# From go install
+if [[ -d $GOPATH ]]; then
+	path=($GOPATH/bin $path)
+fi
+
+# From cargo install
+if [[ -d $HOME/.cargo/bin ]]; then
+	path=($HOME/.cargo/bin $path)
+fi
+
+# Local apps
+if [[ -d $HOME/bin ]]; then
+	path=($HOME/bin $path)
+fi
+
+# Local apps
+if [[ -d $HOME/Applications ]]; then
+	path=($HOME/Applications $path)
+fi
 
 # Local config
 # --------------------------------------------------------------------------
