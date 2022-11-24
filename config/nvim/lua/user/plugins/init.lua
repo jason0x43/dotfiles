@@ -9,25 +9,25 @@ local function setup(name)
 end
 
 packer.startup({
-  function(use)
+  {
     -- manage the package manager
-    use('wbthomason/packer.nvim')
+    'wbthomason/packer.nvim',
 
     -- speed up the lua loader
-    use('lewis6991/impatient.nvim')
+    'lewis6991/impatient.nvim',
 
     -- flashy status bar
-    use({
+    {
       'nvim-lualine/lualine.nvim',
       requires = {
         'arkav/lualine-lsp-progress',
         'kyazdani42/nvim-web-devicons',
       },
       config = config('lualine'),
-    })
+    },
 
     -- file explorer in sidebar
-    use({
+    {
       'nvim-neo-tree/neo-tree.nvim',
       branch = 'v2.x',
       requires = {
@@ -36,73 +36,73 @@ packer.startup({
         'MunifTanjim/nui.nvim',
       },
       config = config('neotree'),
-    })
+    },
 
     -- autodetect buffer formatting
-    use({
+    {
       'tpope/vim-sleuth',
       config = config('vim-sleuth'),
-    })
+    },
 
     -- Useful startup text, menu
-    use({
+    {
       'goolord/alpha-nvim',
       requires = { 'kyazdani42/nvim-web-devicons' },
       config = config('alpha'),
-    })
+    },
 
     -- highlight color strings
-    use({
+    {
       'norcalli/nvim-colorizer.lua',
       config = config('nvim-colorizer'),
-    })
+    },
 
     -- better start/end matching
-    use({
+    {
       'andymass/vim-matchup',
       requires = 'nvim-lua/plenary.nvim',
       config = config('vim-matchup'),
-    })
+    },
 
     -- preserve layout when closing buffers; used for <leader>k
-    use({
+    {
       'moll/vim-bbye',
       config = config('vim-bbye'),
-    })
+    },
 
     -- more efficient cursorhold behavior
     -- see https://github.com/neovim/neovim/issues/12587
-    use('antoinemadec/FixCursorHold.nvim')
+    'antoinemadec/FixCursorHold.nvim',
 
     -- gc for commenting code blocks
-    use('tpope/vim-commentary')
+    'tpope/vim-commentary',
 
     -- EditorConfig
-    use({
+    {
       'editorconfig/editorconfig-vim',
       setup = setup('editorconfig-vim'),
-    })
+    },
 
     -- git utilities
-    use('tpope/vim-fugitive')
+    'tpope/vim-fugitive',
 
     -- support for repeating mapped commands
-    use('tpope/vim-repeat')
+    'tpope/vim-repeat',
 
     -- for manipulating parens and such
-    use('tpope/vim-surround')
+    'tpope/vim-surround',
 
     -- easy vertical alignment of code elements
-    use('junegunn/vim-easy-align')
+    'junegunn/vim-easy-align',
 
     -- visualize the undo tree
-    use({
+    {
       'mbbill/undotree',
       config = config('undotree'),
-    })
+    },
 
     -- for filetype features like syntax highlighting and indenting
-    use({
+    {
       'nvim-treesitter/nvim-treesitter',
       requires = {
         'nvim-lua/plenary.nvim',
@@ -120,10 +120,10 @@ packer.startup({
       },
       run = ':TSUpdate',
       config = config('nvim-treesitter'),
-    })
+    },
 
     -- fuzzy finding
-    use({
+    {
       'nvim-telescope/telescope.nvim',
       requires = {
         'nvim-lua/plenary.nvim',
@@ -145,55 +145,55 @@ packer.startup({
         'nvim-telescope/telescope-ui-select.nvim',
       },
       config = config('telescope'),
-    })
+    },
 
     -- filetype plugins
-    use('tpope/vim-markdown')
-    use({
+    'tpope/vim-markdown',
+    {
       'mzlogin/vim-markdown-toc',
       setup = setup('vim-markdown-toc'),
-    })
-    use('tpope/vim-classpath')
-    use('MaxMEllon/vim-jsx-pretty')
-    use('vim-scripts/applescript.vim')
-    use('vim-scripts/Textile-for-VIM')
+    },
+    'tpope/vim-classpath',
+    'MaxMEllon/vim-jsx-pretty',
+    'vim-scripts/applescript.vim',
+    'vim-scripts/Textile-for-VIM',
 
     -- native LSP
-    use({
+    {
       'williamboman/mason.nvim',
       config = function()
         require('mason').setup()
       end,
-    })
-    use({
+    },
+    {
       'williamboman/mason-lspconfig.nvim',
       config = function()
         -- setup mason-lspconfig before configuring any lsp servers
         require('mason-lspconfig').setup()
       end,
-    })
-    use({
+    },
+    {
       'neovim/nvim-lspconfig',
       config = "require('user.lsp').config()",
-    })
-    use({
+    },
+    {
       'jose-elias-alvarez/null-ls.nvim',
       requires = 'nvim-lua/plenary.nvim',
       config = config('null-ls'),
-    })
-    use('b0o/schemastore.nvim')
+    },
+    'b0o/schemastore.nvim',
 
     -- highlight current word
-    use({
+    {
       'RRethy/vim-illuminate',
       -- disabled because it conflicts with matchup's highlighting for
       -- function/end and if/end pairs
       disable = true,
       setup = setup('vim-illuminate'),
-    })
+    },
 
     -- better git diff views
-    use({
+    {
       'sindrets/diffview.nvim',
       requires = {
         'nvim-lua/plenary.nvim',
@@ -202,17 +202,17 @@ packer.startup({
       config = function()
         require('diffview').setup()
       end,
-    })
+    },
 
     -- better git decorations
-    use({
+    {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
       config = config('gitsigns'),
-    })
+    },
 
     -- completion
-    use({
+    {
       {
         'hrsh7th/nvim-cmp',
         config = config('nvim-cmp'),
@@ -240,33 +240,33 @@ packer.startup({
           },
         },
       },
-    })
+    },
 
     -- startup time profiling
-    use('dstein64/vim-startuptime')
+    'dstein64/vim-startuptime',
 
     -- diagnostics display
-    use({
+    {
       'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
       config = config('trouble'),
-    })
+    },
 
     -- Laravel Blade template support
-    use('jwalton512/vim-blade')
+    'jwalton512/vim-blade',
 
     -- Autosave files
-    use({
+    {
       'Pocco81/auto-save.nvim',
       config = function()
         require('auto-save').setup({
           condition = function(buf)
             return vim.bo[buf].filetype == 'rust'
-          end
+          end,
         })
       end,
-    })
-  end,
+    },
+  },
 
   config = {
     display = {
