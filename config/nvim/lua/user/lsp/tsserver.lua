@@ -8,14 +8,6 @@ M.config = {
   root_dir = lspconfig.util.root_pattern('tsconfig.json', 'jsconfig.json'),
 
   handlers = {
-    ['textDocument/definition'] = function(err, result, ctx, config)
-      -- If tsserver returns multiple results, ignore all but the first
-      if #result > 1 then
-        result = { result[1] }
-      end
-      vim.lsp.handlers['textDocument/definition'](err, result, ctx, config)
-    end,
-
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
       result.diagnostics = vim.tbl_filter(function(diag)
         -- ignore 80001 (file is a CommonJS module)

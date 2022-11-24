@@ -50,13 +50,21 @@ M.config = function()
   lsp.handlers['textDocument/signatureHelp'] =
     lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
 
-  -- wrap lsp.buf_attach_client to allow clients to determine whether they should
-  -- actually be attached
+  local origTextDocDef = vim.lsp.handlers['textDocument/definition']
+  lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
+    -- If tsserver returns multiple results, only keep the first one
+    if result ~= nil and #result > 1 then
+      result = { result[1] }
+    end
+    origTextDocDef(err, result, ctx, config)
+  end
+
+  -- wrap lsp.buf_attach_client to allow clients to determine whether they
+  -- should actually be attached
   local orig_buf_attach_client = lsp.buf_attach_client
   function lsp.buf_attach_client(bufnr, client_id)
     local client = lsp.get_client_by_id(client_id)
-    if
-      not client.config.should_attach or client.config.should_attach(bufnr)
+    if not client.config.should_attach or client.config.should_attach(bufnr)
     then
       return orig_buf_attach_client(bufnr, client_id)
     end
