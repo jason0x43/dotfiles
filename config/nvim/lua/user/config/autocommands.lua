@@ -104,11 +104,11 @@ autoft('*.textile', 'textile')
 autocmd('UIEnter', '*', function()
   local timer = vim.loop.new_timer()
   timer:start(0, 0, vim.schedule_wrap(function()
-    vim.api.nvim_command('colorscheme terminal')
+    vim.api.nvim_command('colorscheme wezterm')
   end))
 end)
 
 -- set colorscheme whenever the background option is set
 autocmd('OptionSet', 'background', function()
-  vim.cmd('colorscheme terminal')
+  vim.cmd('colorscheme wezterm')
 end)

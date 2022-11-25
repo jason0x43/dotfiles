@@ -1,4 +1,4 @@
-local c = require('user.themes.terminal').active_palette()
+local c = require('user.themes.wezterm').active_palette()
 
 return {
   normal = {

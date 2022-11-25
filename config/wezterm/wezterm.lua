@@ -2,22 +2,114 @@ local wezterm = require("wezterm")
 local io = require("io")
 local act = wezterm.action
 
+-- Load JSON data from a file
+local function load_json(file)
+	local f = assert(io.open(file, "r"))
+	local text = assert(f:read("*a"))
+	f:close()
+	return wezterm.json_parse(text)
+end
+
+-- Save JSON data a file
+local function save_json(data, file)
+	local f = assert(io.open(file, "w"))
+	f:write(wezterm.json_encode(data))
+	f:close()
+end
+
+-- Load custom schemes from a JSON file
+local function load_schemes(file)
+	local schemes = load_json(file)
+	for _, scheme in pairs(schemes.schemes) do
+		-- JSON can't use numeric keys, but the scheme `indexed` property requires
+		-- numeric keys
+		if scheme.indexed ~= nil then
+			local indexed = {}
+			for key, value in pairs(scheme.indexed) do
+				indexed[tonumber(key)] = value
+			end
+			scheme.indexed = indexed
+		end
+	end
+	return schemes
+end
+
+-- A file that the active scheme is read from and written to. This is only used
+-- if scheme_config.auto_switch is false
 local scheme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
 
+-- Save a flat palette JSON file
+local function load_dynamic_scheme()
+	local file = io.open(scheme_file, "r")
+	if file ~= nil then
+		local text = assert(file:read("*a"))
+		file:close()
+		return wezterm.json_parse(text)
+	end
+end
+
+-- Save a wezterm scheme to a flat palette JSON file
+local function save_dynamic_scheme(scheme, name)
+	local bg = wezterm.color.parse(scheme.background)
+	local _, _, l, _ = bg:hsla()
+
+	-- Create the scheme data that will be written to the theme file for other
+	-- apps to use
+	local scheme_json = {
+		name = name,
+		is_dark = l < 0.5,
+
+		bg_0 = scheme.background,
+		fg_0 = scheme.foreground,
+
+		bg_1 = scheme.ansi[1],
+		red = scheme.ansi[2],
+		green = scheme.ansi[3],
+		yellow = scheme.ansi[4],
+		blue = scheme.ansi[5],
+		magenta = scheme.ansi[6],
+		cyan = scheme.ansi[7],
+		dim_0 = scheme.ansi[8],
+
+		bg_2 = scheme.brights[1],
+		br_red = scheme.brights[2],
+		br_green = scheme.brights[3],
+		br_yellow = scheme.brights[4],
+		br_blue = scheme.brights[5],
+		br_magenta = scheme.brights[6],
+		br_cyan = scheme.brights[7],
+		fg_1 = scheme.brights[8],
+
+		orange = scheme.indexed[18] or scheme.ansi[2],
+		violet = scheme.indexed[20] or scheme.ansi[5],
+		br_orange = scheme.indexed[19] or scheme.brights[2],
+		br_violet = scheme.indexed[21] or scheme.brights[5],
+	}
+
+	save_json(scheme_json, scheme_file)
+end
+
+-- Load schemes from a JSON file rather than using the TOML files implicitly
+-- understood by Wezterm. These schemes can also be loaded and used by nvim and
+-- other clients.
+local schemes = load_schemes(wezterm.home_dir ..
+	"/.config/wezterm/colors/schemes.json")
+local color_schemes = schemes.schemes
+
+-- Scheme handling options. These are local to this config, and aren't used by
+-- Wezterm itself.
 local scheme_config = {
-	light = "Selenized Light",
-	dark = "Selenized Black",
-	default = "Selenized Light",
+	light = schemes.light,
+	dark = schemes.dark,
+	default = schemes.light,
 	auto_switch = true,
 }
-
-local scheme = scheme_config.default
 
 local left_decor = utf8.char(0xe0ba)
 local right_decor = utf8.char(0xe0b8)
 
 -- Split a multiline string into a table
-local splitlines = function(str)
+local function splitlines(str)
 	local lines = {}
 	for s in str:gmatch("[^\r\n]+") do
 		table.insert(lines, s)
@@ -26,12 +118,12 @@ local splitlines = function(str)
 end
 
 -- Trim a string
-local trim = function(str)
+local function trim(str)
 	return str:gsub("^%s*(.-)%s*$", "%1")
 end
 
 -- Run a command, return the output.
-local run = function(cmd)
+local function run(cmd)
 	local _, stdout, stderr = wezterm.run_child_process(cmd)
 	local out
 	if stdout and stderr then
@@ -119,7 +211,31 @@ wezterm.on("window-config-reloaded", function(window)
 	Scheme(color_scheme, window)
 end)
 
+-- Reload the them in any running neovim sessions
+local function reload_neovim_theme()
+	local appearance = "light"
+	if wezterm.gui.get_appearance():find("Dark") then
+		appearance = "dark"
+	end
+
+	local servers = splitlines(run({ homebrew_base .. "/nvr", "--serverlist" }))
+	for _, server in ipairs(servers) do
+		print("Reloading Neovim theme for " .. server)
+		run({
+			timeout,
+			"0.2",
+			nvim,
+			"--server",
+			server,
+			"--remote-expr",
+			"v:lua.require('user.themes.wezterm.').apply('" .. appearance .. "')",
+		})
+	end
+end
+
 -- Set the color scheme
+-- This function needs to be global to be called from the config-reloaded event
+-- handler
 function Scheme(name, window)
 	if not window then
 		---@diagnostic disable-next-line:undefined-field
@@ -158,61 +274,14 @@ function Scheme(name, window)
 		print("Setting override for " .. name)
 	end
 
-	local bg = wezterm.color.parse(schm.background)
-	local _, _, l, _ = bg:hsla()
-
-	-- Create the scheme data that will be written to the theme file for other
-	-- apps to use
-	local scheme_json = {
-		name = name,
-		is_dark = l < 0.5,
-
-		bg_0 = schm.background,
-		fg_0 = schm.foreground,
-
-		bg_1 = schm.ansi[1],
-		red = schm.ansi[2],
-		green = schm.ansi[3],
-		yellow = schm.ansi[4],
-		blue = schm.ansi[5],
-		magenta = schm.ansi[6],
-		cyan = schm.ansi[7],
-		dim_0 = schm.ansi[8],
-
-		bg_2 = schm.brights[1],
-		br_red = schm.brights[2],
-		br_green = schm.brights[3],
-		br_yellow = schm.brights[4],
-		br_blue = schm.brights[5],
-		br_magenta = schm.brights[6],
-		br_cyan = schm.brights[7],
-		fg_1 = schm.brights[8],
-
-		orange = schm.indexed[18] or schm.ansi[2],
-		violet = schm.indexed[20] or schm.ansi[5],
-		br_orange = schm.indexed[19] or schm.brights[2],
-		br_violet = schm.indexed[21] or schm.brights[5],
-	}
-
-	local file = assert(io.open(scheme_file, "w"))
-	file:write(wezterm.json_encode(scheme_json))
-	file:close()
+	if not scheme_config.auto_switch then
+		save_dynamic_scheme(schm, name)
+	end
 
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 
-	local servers = splitlines(run({ homebrew_base .. "/nvr", "--serverlist" }))
-	for _, server in ipairs(servers) do
-		run({
-			timeout,
-			"0.2",
-			nvim,
-			"--server",
-			server,
-			"--remote-expr",
-			"v:lua.require('user.colors.wezterm').apply_theme()",
-		})
-	end
+	reload_neovim_theme()
 end
 
 -- Set a tab title from the debug overlay
@@ -236,7 +305,7 @@ local vim_dir_map = {
 }
 
 -- Return an action callback for managing movement between panes
-local move_action = function(dir)
+local function move_action(dir)
 	return wezterm.action_callback(function(window, pane)
 		local name = pane:get_foreground_process_name()
 		if name ~= nil and pane:get_foreground_process_name():sub(-4) == "nvim" then
@@ -261,47 +330,47 @@ local move_action = function(dir)
 end
 
 -- Return an action callback for cycling through changing color schemes
-local change_scheme_action = function(dir)
+local function change_scheme_action(dir)
 	return wezterm.action_callback(function(window)
 		local config = window:effective_config()
 
-		local schemes = config.color_schemes
+		local schms = config.color_schemes
 		for name, _ in pairs(wezterm.color.get_builtin_schemes()) do
-			table.insert(schemes, name)
+			table.insert(schms, name)
 		end
 
-		table.sort(schemes)
+		table.sort(schms)
 
 		-- Find the next or previous scheme in the list
 		local current_scheme = config.color_scheme
 		local scheme_name
 		local index
 		if dir == "next" then
-			for i, name in ipairs(schemes) do
+			for i, name in ipairs(schms) do
 				if name == current_scheme then
 					index = i + 1
-					if index > #schemes then
+					if index > #schms then
 						index = 1
 					end
-					scheme_name = schemes[index]
+					scheme_name = schms[index]
 					break
 				end
 			end
 		else
-			for i = #schemes, 1, -1 do
-				if schemes[i] == current_scheme then
+			for i = #schms, 1, -1 do
+				if schms[i] == current_scheme then
 					index = i - 1
 					if index < 1 then
-						index = #schemes
+						index = #schms
 					end
-					scheme_name = schemes[index]
+					scheme_name = schms[index]
 					break
 				end
 			end
 		end
 
 		if scheme_name == nil then
-			scheme_name = schemes[1]
+			scheme_name = schms[1]
 		end
 
 		print('Setting scheme to "' .. scheme_name)
@@ -309,8 +378,8 @@ local change_scheme_action = function(dir)
 	end)
 end
 
--- Switch to copy mode from the window op keytable
-local copy_mode_action = function()
+-- Return an action callback to switch to copy mode from the window op keytable
+local function copy_mode_action()
 	return wezterm.action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
 			window:perform_action(act.PopKeyTable, pane)
@@ -319,23 +388,25 @@ local copy_mode_action = function()
 	end)
 end
 
--- Open a new split and exit window managment mode
-local split_action = function(dir)
+-- Return an action callback to open a new split and exit window managment mode
+local function split_action(dir)
 	return wezterm.action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
 			window:perform_action(act.PopKeyTable, pane)
 		end
 
-		if dir == 'vertical' then
-			window:perform_action(act.SplitVertical({ domain = "CurrentPaneDomain" }), pane)
+		if dir == "vertical" then
+			window:perform_action(act.SplitVertical({ domain = "CurrentPaneDomain" }),
+				pane)
 		else
-			window:perform_action(act.SplitHorizontal({ domain = "CurrentPaneDomain" }), pane)
+			window:perform_action(act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+				pane)
 		end
 	end)
 end
 
 -- Save the window state to a JSON file (WIP)
-local save_win_state = function()
+local function save_win_state()
 	local data = {}
 
 	local windows = {}
@@ -371,32 +442,32 @@ local save_win_state = function()
 	data.windows = windows
 
 	local filename = wezterm.home_dir .. "/.local/share/wezterm/win_state.json"
-	local file = assert(io.open(filename, "w"))
-	file:write(wezterm.json_encode(data))
-	file:close()
+	save_json(data, filename)
 end
 
--- Check for a theme file
-if not scheme_config.auto_switch then
-	local file = io.open(scheme_file, "r")
-	if file ~= nil then
-		-- If a theme file exists, use the scheme specified there
-		local text = assert(file:read("*a"))
-		file:close()
-		local theme = wezterm.json_parse(text)
-		scheme = theme.name
+-- The name of the active color scheme
+local color_scheme = scheme_config.light
+
+if scheme_config.auto_switch then
+	-- Switch between light and dark themes based on the system theme
+	if wezterm.gui.get_appearance():find("Dark") then
+		color_scheme = scheme_config.dark
 	end
 else
-	-- Otherwise, switch between light and dark themes based on the system theme
-	if wezterm.gui.get_appearance():find("Dark") then
-		scheme = scheme_config.dark
+	-- Check for a theme file
+	local theme = load_dynamic_scheme()
+	if theme ~= nil then
+		color_scheme = theme.name
 	end
 end
 
+-- Return the config
 return {
 	adjust_window_size_when_changing_font_size = false,
 
-	color_scheme = scheme,
+	color_scheme = color_scheme,
+
+	color_schemes = color_schemes,
 
 	font_size = 13,
 
@@ -441,11 +512,16 @@ return {
 			{ key = "^", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
 			{ key = "m", mods = "ALT", action = act.CopyMode("MoveToStartOfLineContent") },
 
-			{ key = " ", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "v", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "V", mods = "SHIFT", action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "v", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Block" }) },
+			{ key = " ", mods = "NONE",
+				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "v", mods = "NONE",
+				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+			{ key = "V", mods = "NONE",
+				action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "V", mods = "SHIFT",
+				action = act.CopyMode({ SetSelectionMode = "Line" }) },
+			{ key = "v", mods = "CTRL",
+				action = act.CopyMode({ SetSelectionMode = "Block" }) },
 
 			{ key = "G", mods = "NONE", action = act.CopyMode("MoveToScrollbackBottom") },
 			{ key = "G", mods = "SHIFT", action = act.CopyMode("MoveToScrollbackBottom") },
@@ -459,8 +535,10 @@ return {
 			{ key = "L", mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
 
 			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
-			{ key = "O", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
-			{ key = "O", mods = "SHIFT", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+			{ key = "O", mods = "NONE",
+				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
+			{ key = "O", mods = "SHIFT",
+				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
 
 			{ key = "PageUp", mods = "NONE", action = act.CopyMode("PageUp") },
 			{ key = "PageDown", mods = "NONE", action = act.CopyMode("PageDown") },
@@ -488,9 +566,9 @@ return {
 			{ key = "h", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 4 }) },
 			{ key = "l", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 4 }) },
 			{ key = "m", action = act.PaneSelect({ mode = "SwapWithActive" }) },
-			{ key = "-", action = split_action('vertical') },
-			{ key = "\\", action = split_action('horizontal') },
-			{ key = "|", action = split_action('horizontal') },
+			{ key = "-", action = split_action("vertical") },
+			{ key = "\\", action = split_action("horizontal") },
+			{ key = "|", action = split_action("horizontal") },
 			{ key = "Escape", action = act.PopKeyTable },
 			{ key = "c", action = copy_mode_action() },
 			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
