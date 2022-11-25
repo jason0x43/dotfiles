@@ -328,6 +328,16 @@ alias history-stat="history 0 | awk '{print \$2}' | sort | uniq -c | sort -n -r 
 export LESS='-F -g -i -M -R -w -X -z-4'
 export PAGER='less'
 
+# bat
+# ------------------------------------------------------------------------
+if (( $+commands[bat] )); then
+    alias cat=bat
+
+    # BAT_THEME is also used by delta, so set it here rather than in the bat
+    # config file
+    export BAT_THEME=wezterm
+fi
+
 # fzf (https://github.com/junegunn/fzf)
 # ------------------------------------------------------------------------
 if (( $+commands[fzf] )); then
