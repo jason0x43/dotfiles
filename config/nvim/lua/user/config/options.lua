@@ -11,7 +11,9 @@ end
 o.expandtab = true
 
 -- yank to system clipboard
-o.clipboard = 'unnamedplus'
+if vim.fn.has('clipboard') == 1 then
+  o.clipboard = 'unnamedplus'
+end
 
 -- overwrite the original file when saving
 o.backupcopy = 'yes'
@@ -142,7 +144,7 @@ local disabled_plugins = {
   'vimball',
   'vimballPlugin',
   'zip',
-  'zipPlugin'
+  'zipPlugin',
 }
 for _, plugin in pairs(disabled_plugins) do
   g['loaded_' .. plugin] = 1
