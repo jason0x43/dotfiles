@@ -76,20 +76,6 @@ M.config = function()
     )
   end
 
-  if vim.fn.executable('stylua') ~= 0 then
-    table.insert(
-      config.sources,
-      null_ls.builtins.formatting.stylua.with({
-        args = {
-          '--stdin-filepath',
-          '$FILENAME',
-          '--search-parent-directories',
-          '-',
-        },
-      })
-    )
-  end
-
   if vim.fn.executable('htmlhint') ~= 0 then
     table.insert(config.sources, htmlhint_source)
   end

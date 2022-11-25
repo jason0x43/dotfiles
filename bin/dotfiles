@@ -295,7 +295,6 @@ function dotfiles-brew {
         'python@3.9'  # default python
         'ripgrep'     # better grep
         'starship'    # prompt
-        'stylua'      # lua formatter
         'tig'         # terminal git ui
         'tmux'        # terminal multiplexer
     )
