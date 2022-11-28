@@ -93,6 +93,7 @@ M.config = function()
     'taplo',
     'tsserver',
     'vimls',
+    'yamlls',
   }
 
   if os.getenv('NVIM_ESLINT') ~= '0' then
