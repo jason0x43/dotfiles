@@ -280,6 +280,9 @@ function dotfiles-brew {
         rehash
     fi
 
+    logSub "Updating brew package list..."
+    brew update
+
     logSub "Checking for missing brew packages..."
     brew_packages=(
         'asdf'        # version manager
