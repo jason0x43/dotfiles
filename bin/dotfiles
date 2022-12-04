@@ -555,30 +555,14 @@ function dotfiles-tmux {
     fi
 
     if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
-        out=$($TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins 2>&1)
-        if (( $? )); then
-            err "Error installing plugins"
-            err $out
-        fi
-    fi
+        logSub "Installing plugins..."
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins
 
-    if [[ -d $TMUX_PLUGIN_MANAGER_PATH ]]; then
-        for plugin in $TMUX_PLUGIN_MANAGER_PATH/*; do
-            head=$(git -C $plugin rev-parse HEAD)
-            git -C $plugin pull -q --recurse-submodules > /dev/null
-            if (( $? )); then
-                err "Error updating $plugin"
-                continue
-            fi
-            git -C $plugin submodule update --remote -q
-            if (( $? )); then
-                err "Error updating $plugin"
-                continue
-            fi
-            if [[ $(git -C $plugin rev-parse HEAD) != $head ]]; then 
-                logSub "Updated ${plugin:t}"
-            fi
-        done
+        logSub "Removing unused plugins..."
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/clean_plugins
+
+        logSub "Updating plugins..."
+        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/update_plugins all
     fi
 }
 
