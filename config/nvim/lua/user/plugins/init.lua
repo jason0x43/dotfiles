@@ -161,9 +161,7 @@ packer.startup({
     -- native LSP
     {
       'williamboman/mason.nvim',
-      config = function()
-        require('mason').setup()
-      end,
+      config = config('mason'),
     },
     {
       'williamboman/mason-lspconfig.nvim',
