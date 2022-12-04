@@ -24,7 +24,6 @@ M.config = function()
     },
     sections = {
       lualine_b = {
-        { 'file_status', padding = { left = 0, right = 1 } },
         -- { 'branch', icon = '', padding = { left = 0, right = 1 } },
         { 'diff', padding = { left = 0, right = 1 } },
         {
@@ -41,17 +40,27 @@ M.config = function()
           padding = { left = 0, right = 1 },
         },
       },
-      lualine_c = {},
-      lualine_x = {},
+      lualine_c = {
+        { 'filename', path = 1, padding = { left = 1, right = 1 } },
+      },
+      lualine_x = {
+        { 'filetype', icon_only = 1, separator = '', padding = { left = 0 } },
+			},
       lualine_y = {
         { 'progress', padding = { left = 1, right = 0 } },
       },
     },
     winbar = {
-      lualine_c = {
-        { 'filetype', icon_only = 1, separator = '' },
-        { 'filename', path = 1, padding = { left = 1, right = 1 }, file_status = false },
+      lualine_c = {},
+      lualine_x = {
+        {
+          'language_servers',
+          separator = '',
+          padding = { left = 1, right = 1 },
+        },
       },
+    },
+    inactive_winbar = {
       lualine_x = {
         {
           'language_servers',
@@ -63,18 +72,11 @@ M.config = function()
     extensions = { 'nvim-tree', 'quickfix' },
   }
 
-  config.inactive_winbar = {
-    lualine_c = {
-      { 'filetype', icon_only = 1 },
-      { 'filename', path = 1, padding = { left = 1, right = 1 } },
-    },
-  }
-
   local navic = req('nvim-navic')
   if navic then
     table.insert(
-      config.sections.lualine_c,
-      { navic.get_location, cond = navic.is_available, padding = { left = 0 } }
+      config.winbar.lualine_c,
+      { navic.get_location, cond = navic.is_available, padding = { left = 1 } }
     )
   end
 
