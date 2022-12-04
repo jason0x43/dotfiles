@@ -6,7 +6,19 @@ vim.g.mapleader = ';'
 util.lmap('<leader>', '<C-^>')
 
 -- toggle crosshairs
-util.map('#', '<cmd>set cursorcolumn! cursorline!<cr>')
+util.map('#', '', {
+	mode = 'n',
+	callback = function()
+		if vim.wo.cursorline and vim.wo.cursorcolumn then
+			vim.wo.cursorline = false
+			vim.wo.cursorcolumn = false
+		elseif vim.go.cursorline then
+			vim.wo.cursorcolumn = true
+		else
+			vim.wo.cursorline = true
+		end
+	end
+})
 
 -- save the current file
 util.lmap('w', '<cmd>w<cr>')
