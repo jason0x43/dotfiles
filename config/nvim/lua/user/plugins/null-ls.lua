@@ -50,6 +50,29 @@ M.config = function()
     }),
   }
 
+  local tidy_xml_source = {
+    name = 'tidy_xml',
+    method = null_ls.methods.FORMATTING,
+    filetypes = { 'xml', 'svg' },
+    generator = helpers.formatter_factory({
+      command = 'tidy',
+      args = {
+        '--tidy-mark',
+        'no',
+        '-quiet',
+        '-indent',
+        '--wrap',
+        '80',
+        '-xml',
+        '--indent-attributes',
+        'yes',
+        '--indent-spaces',
+        '2',
+      },
+      to_stdin = true,
+    }),
+  }
+
   -- run null_ls.config to make null-ls available through lspconfig
   local config = {
     sources = {},
@@ -69,7 +92,7 @@ M.config = function()
       config.sources,
       null_ls.builtins.formatting.prettier.with({
         filetypes = vim.list_extend(
-          { 'xml', 'php' },
+          { 'php' },
           null_ls.builtins.formatting.prettier.filetypes
         ),
       })
@@ -93,6 +116,22 @@ M.config = function()
   if vim.fn.executable('htmlhint') ~= 0 then
     table.insert(config.sources, htmlhint_source)
   end
+
+  if vim.fn.executable('tidy') ~= 0 then
+    table.insert(config.sources, tidy_xml_source)
+  end
+
+  -- if vim.fn.executable('xmllint') ~= 0 then
+  --   table.insert(
+  --     config.sources,
+  --     null_ls.builtins.formatting.xmllint.with({
+  --       filetypes = vim.list_extend(
+  --         { 'svg' },
+  --         null_ls.builtins.formatting.xmllint.filetypes
+  --       ),
+  --     })
+  --   )
+  -- end
 
   null_ls.setup(config)
 end
