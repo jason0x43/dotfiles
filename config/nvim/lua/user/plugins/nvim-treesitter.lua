@@ -6,16 +6,17 @@ M.config = function()
     return
   end
 
-  local legacy_filetypes = vim.list_extend({
-    'html',
-    'css',
-    'scss',
-    'lua',
-    'java',
-    'go',
-    'json',
-    'python',
-  }, require('user.util').ts_types)
+  -- local legacy_filetypes = vim.list_extend({
+  --   'html',
+  --   'css',
+  --   'scss',
+  --   'lua',
+  --   'java',
+  --   'go',
+  --   'json',
+  --   'python',
+  -- }, require('user.util').ts_types)
+	local legacy_filetypes = {}
 
   local config = {
     highlight = {
