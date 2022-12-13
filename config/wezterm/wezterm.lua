@@ -1,6 +1,7 @@
 local wezterm = require("wezterm")
 local io = require("io")
-local act = wezterm.action
+local action = wezterm.action
+local action_callback = wezterm.action_callback
 
 -- Load JSON data from a file
 local function load_json(file)
@@ -92,8 +93,7 @@ end
 -- Load schemes from a JSON file rather than using the TOML files implicitly
 -- understood by Wezterm. These schemes can also be loaded and used by nvim and
 -- other clients.
-local schemes = load_schemes(wezterm.home_dir ..
-	"/.config/wezterm/colors/schemes.json")
+local schemes = load_schemes(wezterm.home_dir .. "/.config/wezterm/colors/schemes.json")
 local color_schemes = schemes.schemes
 
 -- Scheme handling options. These are local to this config, and aren't used by
@@ -306,7 +306,7 @@ local vim_dir_map = {
 
 -- Return an action callback for managing movement between panes
 local function move_action(dir)
-	return wezterm.action_callback(function(window, pane)
+	return action_callback(function(window, pane)
 		local name = pane:get_foreground_process_name()
 		if name ~= nil and pane:get_foreground_process_name():sub(-4) == "nvim" then
 			-- Try to do the move in vim. If it doesn't work, do the move in
@@ -325,13 +325,13 @@ local function move_action(dir)
 				return
 			end
 		end
-		window:perform_action(act.ActivatePaneDirection(dir), pane)
+		window:perform_action(action.ActivatePaneDirection(dir), pane)
 	end)
 end
 
 -- Return an action callback for cycling through changing color schemes
 local function change_scheme_action(dir)
-	return wezterm.action_callback(function(window)
+	return action_callback(function(window)
 		local config = window:effective_config()
 
 		local schms = config.color_schemes
@@ -380,27 +380,25 @@ end
 
 -- Return an action callback to switch to copy mode from the window op keytable
 local function copy_mode_action()
-	return wezterm.action_callback(function(window, pane)
+	return action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
-			window:perform_action(act.PopKeyTable, pane)
+			window:perform_action(action.PopKeyTable, pane)
 		end
-		window:perform_action(act.ActivateCopyMode, pane)
+		window:perform_action(action.ActivateCopyMode, pane)
 	end)
 end
 
 -- Return an action callback to open a new split and exit window managment mode
 local function split_action(dir)
-	return wezterm.action_callback(function(window, pane)
+	return action_callback(function(window, pane)
 		if window:active_key_table() == "window_ops" then
-			window:perform_action(act.PopKeyTable, pane)
+			window:perform_action(action.PopKeyTable, pane)
 		end
 
 		if dir == "vertical" then
-			window:perform_action(act.SplitVertical({ domain = "CurrentPaneDomain" }),
-				pane)
+			window:perform_action(action.SplitVertical({ domain = "CurrentPaneDomain" }), pane)
 		else
-			window:perform_action(act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-				pane)
+			window:perform_action(action.SplitHorizontal({ domain = "CurrentPaneDomain" }), pane)
 		end
 	end)
 end
@@ -461,6 +459,87 @@ else
 	end
 end
 
+-- Copy mode key bindings
+local copy_mode = nil
+if wezterm.gui then
+	local copy_keys = {
+		{
+			key = "y",
+			mods = "NONE",
+			action = action.Multiple({
+				action.CopyTo("ClipboardAndPrimarySelection"),
+				action.CopyMode("ClearPattern"),
+				action.CopyMode("Close"),
+			}),
+		},
+		{
+			key = "/",
+			mods = "NONE",
+			action = action.Multiple({
+				action.CopyMode("ClearPattern"),
+				action.Search({ CaseSensitiveString = "" }),
+			}),
+		},
+		{
+			key = "n",
+			mods = "NONE",
+			action = action.Multiple({
+				action.CopyMode("PriorMatch"),
+				action.CopyMode("ClearSelectionMode"),
+			}),
+		},
+		{
+			key = "N",
+			mods = "SHIFT",
+			action = action.Multiple({
+				action.CopyMode("NextMatch"),
+				action.CopyMode("ClearSelectionMode"),
+			}),
+		},
+		{
+			key = "Escape",
+			mods = "NONE",
+			action = action.Multiple({
+				action.CopyMode("ClearPattern"),
+				action.CopyMode("Close"),
+			}),
+		},
+	}
+
+	copy_mode = wezterm.gui.default_key_tables().copy_mode
+	for _, v in ipairs(copy_keys) do
+		table.insert(copy_mode, v)
+	end
+end
+
+-- Search mode key bindings
+local search_mode = nil
+if wezterm.gui then
+	local search_keys = {
+		{
+			key = "Enter",
+			mods = "NONE",
+			action = action.Multiple({
+				action.ActivateCopyMode,
+				action.CopyMode("ClearSelectionMode"),
+			}),
+		},
+		{
+			key = "Escape",
+			mods = "NONE",
+			action = action.Multiple({
+				action.CopyMode("ClearPattern"),
+				action.CopyMode("Close"),
+			}),
+		},
+	}
+
+	search_mode = wezterm.gui.default_key_tables().search_mode
+	for _, v in ipairs(search_keys) do
+		table.insert(search_mode, v)
+	end
+end
+
 -- Return the config
 return {
 	adjust_window_size_when_changing_font_size = false,
@@ -477,103 +556,29 @@ return {
 	hide_tab_bar_if_only_one_tab = true,
 
 	key_tables = {
-		copy_mode = {
-			{ key = "c", mods = "CTRL", action = act.CopyMode("Close") },
-			{ key = "g", mods = "CTRL", action = act.CopyMode("Close") },
-			{ key = "q", mods = "NONE", action = act.CopyMode("Close") },
-			{ key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
+		copy_mode = copy_mode,
 
-			{ key = "h", mods = "NONE", action = act.CopyMode("MoveLeft") },
-			{ key = "j", mods = "NONE", action = act.CopyMode("MoveDown") },
-			{ key = "k", mods = "NONE", action = act.CopyMode("MoveUp") },
-			{ key = "l", mods = "NONE", action = act.CopyMode("MoveRight") },
-
-			{ key = "LeftArrow", mods = "NONE", action = act.CopyMode("MoveLeft") },
-			{ key = "DownArrow", mods = "NONE", action = act.CopyMode("MoveDown") },
-			{ key = "UpArrow", mods = "NONE", action = act.CopyMode("MoveUp") },
-			{ key = "RightArrow", mods = "NONE", action = act.CopyMode("MoveRight") },
-
-			{ key = "RightArrow", mods = "ALT", action = act.CopyMode("MoveForwardWord") },
-			{ key = "f", mods = "ALT", action = act.CopyMode("MoveForwardWord") },
-			{ key = "Tab", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
-			{ key = "w", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
-
-			{ key = "LeftArrow", mods = "ALT", action = act.CopyMode("MoveBackwardWord") },
-			{ key = "b", mods = "ALT", action = act.CopyMode("MoveBackwardWord") },
-			{ key = "Tab", mods = "SHIFT", action = act.CopyMode("MoveBackwardWord") },
-			{ key = "b", mods = "NONE", action = act.CopyMode("MoveBackwardWord") },
-
-			{ key = "0", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
-			{ key = "Enter", mods = "NONE", action = act.CopyMode("MoveToStartOfNextLine") },
-
-			{ key = "$", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
-			{ key = "$", mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
-			{ key = "^", mods = "NONE", action = act.CopyMode("MoveToStartOfLineContent") },
-			{ key = "^", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
-			{ key = "m", mods = "ALT", action = act.CopyMode("MoveToStartOfLineContent") },
-
-			{ key = " ", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "v", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Cell" }) },
-			{ key = "V", mods = "NONE",
-				action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "V", mods = "SHIFT",
-				action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "v", mods = "CTRL",
-				action = act.CopyMode({ SetSelectionMode = "Block" }) },
-
-			{ key = "G", mods = "NONE", action = act.CopyMode("MoveToScrollbackBottom") },
-			{ key = "G", mods = "SHIFT", action = act.CopyMode("MoveToScrollbackBottom") },
-			{ key = "g", mods = "NONE", action = act.CopyMode("MoveToScrollbackTop") },
-
-			{ key = "H", mods = "NONE", action = act.CopyMode("MoveToViewportTop") },
-			{ key = "H", mods = "SHIFT", action = act.CopyMode("MoveToViewportTop") },
-			{ key = "M", mods = "NONE", action = act.CopyMode("MoveToViewportMiddle") },
-			{ key = "M", mods = "SHIFT", action = act.CopyMode("MoveToViewportMiddle") },
-			{ key = "L", mods = "NONE", action = act.CopyMode("MoveToViewportBottom") },
-			{ key = "L", mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
-
-			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
-			{ key = "O", mods = "NONE",
-				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
-			{ key = "O", mods = "SHIFT",
-				action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
-
-			{ key = "PageUp", mods = "NONE", action = act.CopyMode("PageUp") },
-			{ key = "PageDown", mods = "NONE", action = act.CopyMode("PageDown") },
-
-			{
-				key = "y",
-				action = act.Multiple({
-					act.CopyTo("ClipboardAndPrimarySelection"),
-					act.CopyMode("Close"),
-				}),
-			},
-
-			{ key = "u", mods = "CTRL", action = act.CopyMode("PageUp") },
-			{ key = "b", mods = "CTRL", action = act.CopyMode("PageUp") },
-			{ key = "f", mods = "CTRL", action = act.CopyMode("PageDown") },
-		},
+		search_mode = search_mode,
 
 		window_ops = {
 			{ key = "j", action = move_action("Down") },
 			{ key = "k", action = move_action("Up") },
 			{ key = "h", action = move_action("Left") },
 			{ key = "l", action = move_action("Right") },
-			{ key = "j", mods = "SHIFT", action = act.AdjustPaneSize({ "Down", 4 }) },
-			{ key = "k", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 4 }) },
-			{ key = "h", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 4 }) },
-			{ key = "l", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 4 }) },
-			{ key = "m", action = act.PaneSelect({ mode = "SwapWithActive" }) },
+			{ key = "j", mods = "SHIFT", action = action.AdjustPaneSize({ "Down", 4 }) },
+			{ key = "k", mods = "SHIFT", action = action.AdjustPaneSize({ "Up", 4 }) },
+			{ key = "h", mods = "SHIFT", action = action.AdjustPaneSize({ "Left", 4 }) },
+			{ key = "l", mods = "SHIFT", action = action.AdjustPaneSize({ "Right", 4 }) },
+			{ key = "m", action = action.PaneSelect({ mode = "SwapWithActive" }) },
 			{ key = "-", action = split_action("vertical") },
 			{ key = "\\", action = split_action("horizontal") },
 			{ key = "|", action = split_action("horizontal") },
-			{ key = "Escape", action = act.PopKeyTable },
+			{ key = "Escape", action = action.PopKeyTable },
 			{ key = "c", action = copy_mode_action() },
-			{ key = "c", mods = "CTRL", action = act.PopKeyTable },
-			{ key = "z", action = act.TogglePaneZoomState },
-			{ key = "w", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
+			{ key = "c", mods = "CTRL", action = action.PopKeyTable },
+			{ key = "q", action = action.QuickSelect },
+			{ key = "z", action = action.TogglePaneZoomState },
+			{ key = "w", action = action.CloseCurrentPane({ confirm = true }) },
 		},
 	},
 
@@ -582,25 +587,25 @@ return {
 		{ key = "k", mods = "CTRL", action = move_action("Up") },
 		{ key = "h", mods = "CTRL", action = move_action("Left") },
 		{ key = "l", mods = "CTRL", action = move_action("Right") },
-		{ key = "t", mods = "CTRL", action = act.SpawnTab("DefaultDomain") },
+		{ key = "t", mods = "CTRL", action = action.SpawnTab("DefaultDomain") },
 		{
 			key = "\\",
 			mods = "CMD|CTRL",
-			action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+			action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
 		},
 		{
 			key = "-",
 			mods = "CMD|CTRL",
-			action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
+			action = action.SplitVertical({ domain = "CurrentPaneDomain" }),
 		},
-		{ key = "LeftArrow", mods = "SHIFT", action = act.ActivateTabRelative(-1) },
-		{ key = "RightArrow", mods = "SHIFT", action = act.ActivateTabRelative(1) },
-		{ key = "LeftArrow", mods = "CMD|SHIFT", action = act.MoveTabRelative(-1) },
-		{ key = "RightArrow", mods = "CMD|SHIFT", action = act.MoveTabRelative(1) },
+		{ key = "LeftArrow", mods = "SHIFT", action = action.ActivateTabRelative(-1) },
+		{ key = "RightArrow", mods = "SHIFT", action = action.ActivateTabRelative(1) },
+		{ key = "LeftArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(-1) },
+		{ key = "RightArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(1) },
 		{
 			key = "s",
 			mods = "CTRL",
-			action = act.ActivateKeyTable({
+			action = action.ActivateKeyTable({
 				name = "window_ops",
 				one_shot = false,
 				timeout_milliseconds = 1000,
@@ -611,13 +616,13 @@ return {
 		{
 			key = "/",
 			mods = "ALT",
-			action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS" }),
+			action = action.ShowLauncherArgs({ flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS" }),
 		},
-		{ key = "/", mods = "CMD", action = act.ShowDebugOverlay },
+		{ key = "/", mods = "CMD", action = action.ShowDebugOverlay },
 		{
 			key = "s",
 			mods = "CMD|CTRL",
-			action = wezterm.action_callback(save_win_state),
+			action = action_callback(save_win_state),
 		},
 		{ key = "<", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
 		{ key = ">", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("next") },
