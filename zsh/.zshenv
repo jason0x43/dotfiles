@@ -42,6 +42,15 @@ if [[ -d /usr/local/bin ]]; then
 	)
 fi
 
+# Homebrew needs to be in the path for later tests to work
+if [[ -d $HOMEBREW_BASE ]]; then
+	path=(
+		$HOMEBREW_BASE/bin
+		$HOMEBREW_BASE/sbin
+		$path
+	)
+fi
+
 # Groovy
 # ----------------------------------------------------------------------------
 if [[ -z "$GROOVY_HOME" ]]; then
