@@ -8,42 +8,24 @@
 *.orig
 *.log
 *~
+tmp/
 
-# Project files
-.tern-project
-.tern-port
-.watchmanconfig
-
-# OS folders
+# OS files and folders
 .DS_Store
-.cache
+.cache/
 
 # Other folders
-.hg
-.svn
+.hg/
+.svn/
+.git/
 
 # Node
-/node_modules
-/npm-debug.log
+node_modules/
+npm-debug.log
 
-# Other stuff
+# Python
 *.pyc
-/tmp
+__pycache__/
 
 # direnv config files
 .envrc
-
-# Intern files
-.internrc
-intern-local.js
-intern-local.json
-intern-local.ts
-selftest.local.sh
-html-report
-local.intern.js
-
-# TypeScript
-tscommand-*.txt
-
-.jscsrc
-.vimprojrc
