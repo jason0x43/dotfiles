@@ -51,6 +51,11 @@ if [[ -d $HOMEBREW_BASE ]]; then
 	)
 fi
 
+# Docker
+# ----------------------------------------------------------------------------
+# Disable Docker's "Use 'docker scan' to run Snyk" message
+export DOCKER_SCAN_SUGGEST=false
+
 # Groovy
 # ----------------------------------------------------------------------------
 if [[ -z "$GROOVY_HOME" ]]; then
@@ -65,6 +70,7 @@ if [[ -z "$JAVA_HOME" ]]; then
 	fi
 fi
 export PATH_TO_FX=$HOME/Development/libs/javafx-sdk-11.0.2/lib
+
 # Node
 # ----------------------------------------------------------------------------
 if [[ -e $HOME/.config/ssl/ca.pem ]]; then

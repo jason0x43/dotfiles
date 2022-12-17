@@ -499,9 +499,6 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
-# Disable Docker's "Use 'docker scan' to run Snyk" message
-export DOCKER_SCAN_SUGGEST=false
-
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
