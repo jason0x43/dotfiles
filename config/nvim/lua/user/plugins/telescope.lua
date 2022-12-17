@@ -106,6 +106,7 @@ M.config = function()
   telescope.load_extension('ui-select')
 
   local lmap = require('user.util').lmap
+  lmap('d', '<cmd>Telescope diagnostics<cr>')
   lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
   lmap('f', '<cmd>Telescope find_files<cr>')
   lmap('j', '<cmd>Telescope jumplist<cr>')
@@ -129,7 +130,6 @@ M.config = function()
   lmap('ts', '<cmd>Telescope symbols<cr>')
   lmap('lr', '<cmd>Telescope lsp_references<cr>')
   lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
-  lmap('lw', '<cmd>Telescope diagnostics<cr>')
 end
 
 return M
