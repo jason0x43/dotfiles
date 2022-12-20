@@ -130,6 +130,8 @@ M.config = function()
   lmap('lr', '<cmd>Telescope lsp_references<cr>')
   lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
   lmap('ld', '<cmd>Telescope diagnostics<cr>')
+
+	print('set telescope mappings')
 end
 
 return M

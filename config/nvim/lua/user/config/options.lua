@@ -7,6 +7,9 @@ if vim.fn.has('nvim-0.7') and not vim.fn.has('nvim-0.8') then
   g.did_load_filetypes = 0
 end
 
+-- Leader for mappings
+g.mapleader = ';'
+
 -- Use spaces by default
 o.expandtab = true
 

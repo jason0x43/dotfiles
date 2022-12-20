@@ -152,9 +152,9 @@ M.on_attach = function(client, bufnr)
     -- )
   end
 
-  if not packer_plugins['trouble.nvim'] then
-    util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
-  end
+  -- if not packer_plugins['trouble.nvim'] then
+  --   util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+  -- end
 
   util.lmap(
     'd',

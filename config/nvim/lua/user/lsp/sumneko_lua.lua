@@ -5,7 +5,7 @@ M.config = {
   settings = {
     Lua = {
       diagnostics = {
-        globals = { 'hs', 'vim', 'packer_plugins' },
+        globals = { 'hs', 'vim' },
         -- This seems to always generate false positives
         disable = { 'different-requires' },
       },

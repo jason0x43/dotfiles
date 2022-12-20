@@ -1,7 +1,5 @@
 local util = require('user.util')
 
-vim.g.mapleader = ';'
-
 -- go to previous buffer
 util.lmap('<leader>', '<C-^>')
 
