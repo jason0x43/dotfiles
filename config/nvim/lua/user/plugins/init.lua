@@ -1,7 +1,4 @@
 return {
-  -- speed up the lua loader
-  'lewis6991/impatient.nvim',
-
   -- highlight color strings
   {
     'norcalli/nvim-colorizer.lua',
