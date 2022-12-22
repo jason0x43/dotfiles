@@ -29,10 +29,6 @@ return {
     end,
   },
 
-  -- more efficient cursorhold behavior
-  -- see https://github.com/neovim/neovim/issues/12587
-  'antoinemadec/FixCursorHold.nvim',
-
   -- gc for commenting code blocks
   'tpope/vim-commentary',
 
