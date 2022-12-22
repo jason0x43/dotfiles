@@ -19,7 +19,7 @@ return {
     },
     'nvim-telescope/telescope-live-grep-raw.nvim',
     'nvim-telescope/telescope-ui-select.nvim',
-    'jason0x43/telescope-undo.nvim',
+    'debugloop/telescope-undo.nvim',
   },
 
   config = function()
