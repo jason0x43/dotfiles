@@ -4,11 +4,10 @@ vim.opt.shadafile = 'NONE'
 
 pcall(require, 'impatient')
 
-require('user.config.lazy')
 require('user.config.options')
+require('user.config.lazy')
 require('user.config.keymaps')
 require('user.config.autocommands')
 require('user.config.linenr')
-require('user.plugins')
 
 vim.opt.shadafile = ''

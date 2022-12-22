@@ -1,67 +1,35 @@
-local function config(name)
-  return require('user.plugins.' .. name).config()
-end
-
-local function setup(name)
-  return require('user.plugins.' .. name).setup()
-end
-
-require('lazy').setup({
+return {
   -- speed up the lua loader
   'lewis6991/impatient.nvim',
-
-  -- flashy status bar
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = {
-      'arkav/lualine-lsp-progress',
-      'kyazdani42/nvim-web-devicons',
-    },
-    config = config('lualine'),
-  },
-
-  -- file explorer in sidebar
-  {
-    'nvim-neo-tree/neo-tree.nvim',
-    branch = 'v2.x',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'kyazdani42/nvim-web-devicons',
-      'MunifTanjim/nui.nvim',
-    },
-    config = config('neotree'),
-  },
-
-  -- autodetect buffer formatting
-  {
-    'tpope/vim-sleuth',
-    config = config('vim-sleuth'),
-  },
-
-  -- Useful startup text, menu
-  {
-    'goolord/alpha-nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons' },
-    config = config('alpha'),
-  },
 
   -- highlight color strings
   {
     'norcalli/nvim-colorizer.lua',
-    config = config('nvim-colorizer'),
+    config = function()
+      require('user.req')('colorizer', 'setup', { '*' }, {
+        names = false,
+        rgb_fn = true,
+      })
+    end,
   },
 
   -- better start/end matching
   {
     'andymass/vim-matchup',
     dependencies = 'nvim-lua/plenary.nvim',
-    config = config('vim-matchup'),
+    config = function()
+      vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+    end,
   },
 
   -- preserve layout when closing buffers; used for <leader>k
   {
     'moll/vim-bbye',
-    config = config('vim-bbye'),
+    config = function()
+      local util = require('user.util')
+      util.lmap('k', '<cmd>Bdelete<cr>')
+      util.lmap('K', '<cmd>Bdelete!<cr>')
+    end,
   },
 
   -- more efficient cursorhold behavior
@@ -74,7 +42,15 @@ require('lazy').setup({
   -- EditorConfig
   {
     'editorconfig/editorconfig-vim',
-    init = setup('editorconfig-vim'),
+    init = function()
+      -- Don't let editorconfig set the max line -- it's handled via an
+      -- autocommand
+      vim.g.EditorConfig_max_line_indicator = 'none'
+      vim.g.EditorConfig_disable_rules = {
+        'trim_trailing_whitespace',
+        'insert_final_newline',
+      }
+    end,
   },
 
   -- git utilities
@@ -92,25 +68,14 @@ require('lazy').setup({
   -- visualize the undo tree
   {
     'mbbill/undotree',
-    config = config('undotree'),
+    config = function()
+      vim.g.undotree_DiffAutoOpen = 0
+      vim.g.undotree_SetFocusWhenToggle = 1
+      require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
+    end,
   },
 
-  -- for filetype features like syntax highlighting and indenting
-  {
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      -- provide TSHighlightCapturesUnderCursor command
-      'nvim-treesitter/playground',
-      -- set proper commentstring for embedded languages
-      'JoosepAlviste/nvim-ts-context-commentstring',
-      -- show semantic file location (e.g., what function you're in)
-    },
-    build = ':TSUpdate',
-    config = config('nvim-treesitter'),
-  },
-
-	-- Show semantic location in current file
+  -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
     dependencies = {
@@ -121,36 +86,13 @@ require('lazy').setup({
     end,
   },
 
-  -- fuzzy finding
-  {
-    'nvim-telescope/telescope.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'kyazdani42/nvim-web-devicons',
-      'natecraddock/telescope-zf-native.nvim',
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-      },
-      {
-        'nvim-telescope/telescope-symbols.nvim',
-        dependencies = 'nvim-lua/plenary.nvim',
-      },
-      {
-        'nvim-telescope/telescope-file-browser.nvim',
-        dependencies = 'nvim-lua/plenary.nvim',
-      },
-      'nvim-telescope/telescope-live-grep-raw.nvim',
-      'nvim-telescope/telescope-ui-select.nvim',
-    },
-    config = config('telescope'),
-  },
-
   -- filetype plugins
   'tpope/vim-markdown',
   {
     'mzlogin/vim-markdown-toc',
-    init = setup('vim-markdown-toc'),
+    init = function()
+      vim.g.vmt_auto_update_on_save = 0
+    end,
   },
   'tpope/vim-classpath',
   'MaxMEllon/vim-jsx-pretty',
@@ -160,7 +102,13 @@ require('lazy').setup({
   -- native LSP
   {
     'williamboman/mason.nvim',
-    config = config('mason'),
+    config = function()
+      require('mason').setup({
+        ui = {
+          border = 'rounded',
+        },
+      })
+    end,
   },
   {
     'williamboman/mason-lspconfig.nvim',
@@ -171,13 +119,12 @@ require('lazy').setup({
   },
   {
     'neovim/nvim-lspconfig',
-    config = require('user.lsp').config(),
+    config = function()
+			require('user.lsp').config()
+		end
   },
-  {
-    'jose-elias-alvarez/null-ls.nvim',
-    dependencies = 'nvim-lua/plenary.nvim',
-    config = config('null-ls'),
-  },
+
+  -- JSON schemas
   'b0o/schemastore.nvim',
 
   -- highlight current word
@@ -186,7 +133,9 @@ require('lazy').setup({
     -- disabled because it conflicts with matchup's highlighting for
     -- function/end and if/end pairs
     disable = true,
-    init = setup('vim-illuminate'),
+    init = function()
+      vim.g.Illuminate_highlightPriority = -10
+    end,
   },
 
   -- better git diff views
@@ -205,38 +154,14 @@ require('lazy').setup({
   {
     'lewis6991/gitsigns.nvim',
     dependencies = 'nvim-lua/plenary.nvim',
-    config = config('gitsigns'),
-  },
-
-  -- completion
-  {
-    {
-      'hrsh7th/nvim-cmp',
-      config = config('nvim-cmp'),
-    },
-    'L3MON4D3/LuaSnip',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-path',
-    'hrsh7th/cmp-nvim-lua',
-    'hrsh7th/cmp-nvim-lsp',
-    'saadparwaiz1/cmp_luasnip',
-    {
-      'zbirenbaum/copilot-cmp',
-      config = function()
-        require('copilot_cmp').setup()
-      end,
-      dependencies = {
-        {
-          'zbirenbaum/copilot.lua',
-          event = { 'VimEnter' },
-          config = function()
-            vim.defer_fn(function()
-              require('copilot').setup()
-            end, 100)
-          end,
+    config = function()
+      require('user.req')('gitsigns', 'setup', {
+        signs = {
+          add = { text = '▋' },
+          change = { text = '▋' },
         },
-      },
-    },
+      })
+    end,
   },
 
   -- startup time profiling
@@ -246,7 +171,9 @@ require('lazy').setup({
   {
     'folke/trouble.nvim',
     dependencies = 'kyazdani42/nvim-web-devicons',
-    config = config('trouble'),
+    config = function()
+      require('trouble').setup()
+    end,
   },
 
   -- Laravel Blade template support
@@ -263,8 +190,4 @@ require('lazy').setup({
       })
     end,
   },
-}, {
-  ui = {
-    border = 'rounded',
-  },
-})
+}
