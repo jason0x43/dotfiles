@@ -19,7 +19,7 @@ return {
     },
     'nvim-telescope/telescope-live-grep-raw.nvim',
     'nvim-telescope/telescope-ui-select.nvim',
-    'debugloop/telescope-undo.nvim',
+    'jason0x43/telescope-undo.nvim',
   },
 
   config = function()
@@ -35,6 +35,7 @@ return {
         },
         layout_strategy = 'vertical',
         layout_config = {
+          prompt_position = 'top',
           preview_cutoff = 35,
           preview_height = 0.5,
 
@@ -46,6 +47,7 @@ return {
             return math.max(max_lines - 6, 30)
           end,
         },
+        sorting_strategy = 'ascending',
         path_display = { 'truncate' },
       },
       pickers = {
