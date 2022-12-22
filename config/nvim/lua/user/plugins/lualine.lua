@@ -5,11 +5,12 @@ return {
   dependencies = {
     'arkav/lualine-lsp-progress',
     'kyazdani42/nvim-web-devicons',
+    'SmiteshP/nvim-navic',
   },
 
   config = function()
     local hi = require('user.util.theme').hi
-    local req = require('user.req')
+    local navic = require('nvim-navic')
 
     -- make statusline transparent so we don't get a flash before lualine renders
     hi('StatusLine', { bg = '' })
@@ -62,7 +63,13 @@ return {
         },
       },
       winbar = {
-        lualine_c = {},
+        lualine_c = {
+          {
+            navic.get_location,
+            cond = navic.is_available,
+            padding = { left = 1 },
+          },
+        },
         lualine_x = {
           {
             'language_servers',
@@ -82,20 +89,6 @@ return {
       },
       extensions = { 'nvim-tree', 'quickfix' },
     }
-
-    local navic = req('nvim-navic')
-    if navic then
-      table.insert(config.winbar.lualine_c, {
-        navic.get_location,
-        cond = navic.is_available,
-        padding = { left = 1 },
-      })
-    end
-
-    local outline = req('symbols-outline')
-    if outline then
-      table.insert(config.extensions, 'symbols_outline')
-    end
 
     require('lualine').setup(config)
   end,

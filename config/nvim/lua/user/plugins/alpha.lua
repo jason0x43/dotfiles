@@ -2,13 +2,10 @@
 return {
   'goolord/alpha-nvim',
 
-  dependencies = { 'kyazdani42/nvim-web-devicons' },
+  dependencies = 'kyazdani42/nvim-web-devicons',
 
   config = function()
-    local startify = require('user.req')('alpha.themes.startify')
-    if not startify then
-      return
-    end
+    local startify = require('alpha.themes.startify')
 
     startify.section.header.val = {
       ' ____ ____ ____ ____ ____ ____ ',

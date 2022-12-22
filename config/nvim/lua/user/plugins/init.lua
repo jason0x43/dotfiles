@@ -3,7 +3,7 @@ return {
   {
     'norcalli/nvim-colorizer.lua',
     config = function()
-      require('user.req')('colorizer', 'setup', { '*' }, {
+      require('colorizer').setup({ '*' }, {
         names = false,
         rgb_fn = true,
       })
@@ -71,9 +71,7 @@ return {
   -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
+    dependencies = 'nvim-treesitter/nvim-treesitter',
     config = function()
       require('nvim-navic').setup()
     end,
@@ -94,27 +92,23 @@ return {
 
   -- native LSP
   {
-    'williamboman/mason.nvim',
+    'neovim/nvim-lspconfig',
+
     config = function()
+      -- setup mason and mason-lspconfig before configuring any lsp servers
       require('mason').setup({
         ui = {
           border = 'rounded',
         },
       })
-    end,
-  },
-  {
-    'williamboman/mason-lspconfig.nvim',
-    config = function()
-      -- setup mason-lspconfig before configuring any lsp servers
       require('mason-lspconfig').setup()
+      require('user.lsp').config()
     end,
-  },
-  {
-    'neovim/nvim-lspconfig',
-    config = function()
-			require('user.lsp').config()
-		end
+
+    dependencies = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+    },
   },
 
   -- JSON schemas
@@ -148,7 +142,7 @@ return {
     'lewis6991/gitsigns.nvim',
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
-      require('user.req')('gitsigns', 'setup', {
+      require('gitsigns').setup({
         signs = {
           add = { text = '▋' },
           change = { text = '▋' },

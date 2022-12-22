@@ -1,11 +1,6 @@
 local modbase = ...
 local util = require('user.util')
-local req = require('user.req')
-
-local lspconfig = req('lspconfig')
-if not lspconfig then
-  return
-end
+local lspconfig = require('lspconfig')
 
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
@@ -110,19 +105,12 @@ end
 M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
-  req('illuminate', function(illuminate)
-    illuminate.on_attach(client)
-  end)
-  req('lsp_signature', function(sig)
-    sig.on_attach({ max_width = 80 })
-  end)
+  require('illuminate').on_attach(client)
 
   -- navic can only attach to one client per buffer, so don't attach to clients
   -- that don't supply useful info
   if client.server_capabilities.documentSymbolProvider then
-    req('nvim-navic', function(navic)
-      navic.attach(client, bufnr)
-    end)
+    require('nvim-navic').attach(client, bufnr)
   end
 
   -- perform general setup
