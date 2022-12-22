@@ -19,6 +19,7 @@ return {
     },
     'nvim-telescope/telescope-live-grep-raw.nvim',
     'nvim-telescope/telescope-ui-select.nvim',
+    'debugloop/telescope-undo.nvim',
   },
 
   config = function()
@@ -34,7 +35,6 @@ return {
         },
         layout_strategy = 'vertical',
         layout_config = {
-          prompt_position = 'top',
           preview_cutoff = 35,
           preview_height = 0.5,
 
@@ -45,19 +45,6 @@ return {
           height = function(_, _, max_lines)
             return math.max(max_lines - 6, 30)
           end,
-        },
-        sorting_strategy = 'ascending',
-        borderchars = {
-          -- no border, just separators
-          -- prompt = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-          -- results = { '─', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-          -- preview = { ' ', ' ', '─', ' ', ' ', ' ', ' ', ' ' },
-
-          -- single border
-          { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-          prompt = { '─', '│', ' ', '│', '╭', '╮', '│', '│' },
-          results = { '─', '│', '─', '│', '├', '┤', '╯', '╰' },
-          preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
         },
         path_display = { 'truncate' },
       },
@@ -118,6 +105,9 @@ return {
         fzf = {
           override_file_sorter = false,
         },
+        undo = {
+          use_delta = false,
+        },
       },
     })
 
@@ -125,6 +115,7 @@ return {
     telescope.load_extension('zf-native')
     telescope.load_extension('file_browser')
     telescope.load_extension('ui-select')
+    telescope.load_extension('undo')
 
     local lmap = require('user.util').lmap
     lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
