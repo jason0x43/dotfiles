@@ -63,6 +63,9 @@ o.signcolumn = 'yes'
 o.splitbelow = true
 o.splitright = true
 
+-- don't add EOL to files that don't already have one
+o.fixendofline = false
+
 o.formatoptions = o.formatoptions
   + 'r' -- automatically insert comment leader after CR
   + 'o' -- automatically insert comment leader for o/O
