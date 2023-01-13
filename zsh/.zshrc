@@ -392,9 +392,9 @@ if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
     [[ -z $precmd_functions ]] && precmd_functions=()
     precmd_functions=($precmd_functions update_cwd)
 
-    if [[ "$TERM" == "xterm-256color" ]]; then
-        export TERM=xterm-256color-italic
-    fi
+    # if [[ "$TERM" == "xterm-256color" ]]; then
+    #     export TERM=xterm-256color-italic
+    # fi
 fi
 
 # Node
