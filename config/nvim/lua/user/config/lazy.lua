@@ -12,6 +12,10 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 
 require('lazy').setup("user.plugins", {
+	checker = {
+		enabled = true,
+		notify = false,
+	},
   ui = {
     border = 'rounded',
   },
