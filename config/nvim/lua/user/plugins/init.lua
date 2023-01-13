@@ -59,14 +59,14 @@ return {
   'junegunn/vim-easy-align',
 
   -- visualize the undo tree
-  {
-    'mbbill/undotree',
-    config = function()
-      vim.g.undotree_DiffAutoOpen = 0
-      vim.g.undotree_SetFocusWhenToggle = 1
-      require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
-    end,
-  },
+  -- {
+  --   'mbbill/undotree',
+  --   config = function()
+  --     vim.g.undotree_DiffAutoOpen = 0
+  --     vim.g.undotree_SetFocusWhenToggle = 1
+  --     require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
+  --   end,
+  -- },
 
   -- show semantic file location (e.g., what function you're in)
   {
@@ -89,6 +89,7 @@ return {
   'MaxMEllon/vim-jsx-pretty',
   'vim-scripts/applescript.vim',
   'vim-scripts/Textile-for-VIM',
+	'mustache/vim-mustache-handlebars',
 
   -- native LSP
   {

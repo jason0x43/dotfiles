@@ -138,6 +138,7 @@ return {
       end,
     })
     lmap('b', '<cmd>Telescope buffers<cr>')
+    lmap('u', '<cmd>Telescope undo<cr>')
     lmap('tg', '<cmd>Telescope live_grep<cr>')
     lmap('th', '<cmd>Telescope help_tags<cr>')
     lmap('ts', '<cmd>Telescope symbols<cr>')
