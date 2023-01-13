@@ -58,7 +58,6 @@ end
 local active_palette = load_scheme()
 
 function M.apply(appearance)
-  print('applying theme')
   local g = vim.g
 
   if appearance ~= nil and vim.go.background ~= appearance then

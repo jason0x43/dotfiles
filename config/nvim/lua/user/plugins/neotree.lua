@@ -2,6 +2,10 @@
 return {
   'nvim-neo-tree/neo-tree.nvim',
 
+  keys = {
+    { '<leader>n', '<cmd>Neotree reveal toggle<cr>', desc = 'NeoTree' },
+  },
+
   branch = 'v2.x',
 
   dependencies = {
@@ -31,7 +35,5 @@ return {
         position = 'right',
       },
     })
-
-    require('user.util').lmap('n', '<cmd>Neotree reveal toggle<cr>')
   end,
 }

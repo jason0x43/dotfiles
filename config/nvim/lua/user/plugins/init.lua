@@ -2,6 +2,7 @@ return {
   -- highlight color strings
   {
     'norcalli/nvim-colorizer.lua',
+    event = 'BufEnter',
     config = function()
       require('colorizer').setup({ '*' }, {
         names = false,
@@ -13,6 +14,7 @@ return {
   -- better start/end matching
   {
     'andymass/vim-matchup',
+    event = 'BufEnter',
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       vim.g.matchup_matchparen_offscreen = { method = 'popup' }
@@ -22,6 +24,7 @@ return {
   -- preserve layout when closing buffers; used for <leader>k
   {
     'moll/vim-bbye',
+    event = 'BufEnter',
     config = function()
       local util = require('user.util')
       util.lmap('k', '<cmd>Bdelete<cr>')
@@ -30,7 +33,10 @@ return {
   },
 
   -- gc for commenting code blocks
-  'tpope/vim-commentary',
+  {
+    'tpope/vim-commentary',
+    event = 'BufEnter',
+  },
 
   -- EditorConfig
   {
@@ -47,30 +53,33 @@ return {
   },
 
   -- git utilities
-  'tpope/vim-fugitive',
+  {
+    'tpope/vim-fugitive',
+    event = 'BufEnter',
+  },
 
   -- support for repeating mapped commands
-  'tpope/vim-repeat',
+  {
+    'tpope/vim-repeat',
+    event = 'BufEnter',
+  },
 
   -- for manipulating parens and such
-  'tpope/vim-surround',
+  {
+    'tpope/vim-surround',
+    event = 'BufEnter',
+  },
 
   -- easy vertical alignment of code elements
-  'junegunn/vim-easy-align',
-
-  -- visualize the undo tree
-  -- {
-  --   'mbbill/undotree',
-  --   config = function()
-  --     vim.g.undotree_DiffAutoOpen = 0
-  --     vim.g.undotree_SetFocusWhenToggle = 1
-  --     require('user.util').lmap('u', '<cmd>UndotreeToggle<cr>')
-  --   end,
-  -- },
+  {
+    'junegunn/vim-easy-align',
+    cmd = 'EasyAlign',
+  },
 
   -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
+    event = 'BufEnter',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = function()
       require('nvim-navic').setup()
@@ -78,23 +87,33 @@ return {
   },
 
   -- filetype plugins
-  'tpope/vim-markdown',
+  {
+    'tpope/vim-markdown',
+    ft = 'markdown',
+  },
   {
     'mzlogin/vim-markdown-toc',
+    ft = 'markdown',
     init = function()
       vim.g.vmt_auto_update_on_save = 0
     end,
   },
-  'tpope/vim-classpath',
-  'MaxMEllon/vim-jsx-pretty',
+  {
+    'tpope/vim-classpath',
+    ft = 'java',
+  },
+  {
+    'MaxMEllon/vim-jsx-pretty',
+    ft = { 'javascriptreact', 'typescriptreact' },
+  },
   'vim-scripts/applescript.vim',
   'vim-scripts/Textile-for-VIM',
-	'mustache/vim-mustache-handlebars',
+  'mustache/vim-mustache-handlebars',
 
   -- native LSP
   {
     'neovim/nvim-lspconfig',
-
+    event = 'BufEnter',
     config = function()
       -- setup mason and mason-lspconfig before configuring any lsp servers
       require('mason').setup({
@@ -105,7 +124,6 @@ return {
       require('mason-lspconfig').setup()
       require('user.lsp').config()
     end,
-
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
@@ -129,6 +147,7 @@ return {
   -- better git diff views
   {
     'sindrets/diffview.nvim',
+    cmd = 'DiffviewOpen',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'kyazdani42/nvim-web-devicons',
@@ -141,6 +160,7 @@ return {
   -- better git decorations
   {
     'lewis6991/gitsigns.nvim',
+    event = 'BufEnter',
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       require('gitsigns').setup({
@@ -158,6 +178,7 @@ return {
   -- diagnostics display
   {
     'folke/trouble.nvim',
+    event = 'BufEnter',
     dependencies = 'kyazdani42/nvim-web-devicons',
     config = function()
       require('trouble').setup()

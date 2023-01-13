@@ -1,12 +1,14 @@
 return {
   'zbirenbaum/copilot-cmp',
 
+  event = 'BufEnter',
+
   dependencies = {
     'hrsh7th/nvim-cmp',
     {
       'zbirenbaum/copilot.lua',
       config = function()
-				require('copilot').setup()
+        require('copilot').setup()
       end,
     },
   },
