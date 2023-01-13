@@ -14,27 +14,22 @@ package.path = package.path
 
 local hi = theme_util.hi
 local hi_link = theme_util.hi_link
+local schemes = nil
 
-local active_palette
-
-function M.apply(appearance)
-  local g = vim.g
-
-  if appearance ~= nil and vim.go.background ~= appearance then
-    vim.go.background = appearance
-    return
-  end
-
-  g.colors_name = 'selenized'
-
+local function load_scheme()
   -- Static wezterm themes are in a more complex format -- convert the
   -- relevant theme to a flat palette structure
-  local schemes_data =
-    vim.fn.readfile(os.getenv('HOME') .. '/.config/wezterm/colors/schemes.json')
-  local schemes = vim.fn.json_decode(schemes_data)
+  if schemes == nil then
+    local schemes_data = vim.fn.readfile(
+      os.getenv('HOME') .. '/.config/wezterm/colors/schemes.json'
+    )
+    schemes = vim.fn.json_decode(schemes_data)
+  end
+
   local scheme_name = schemes[vim.go.background]
   local scheme = schemes.schemes[scheme_name]
-  local theme = {
+
+  return {
     bg_0 = scheme.background,
     bg_1 = scheme.ansi[1],
     bg_2 = scheme.brights[1],
@@ -58,9 +53,23 @@ function M.apply(appearance)
     violet = scheme.indexed['20'],
     yellow = scheme.ansi[4],
   }
+end
 
-  local palette = theme
-  active_palette = theme
+local active_palette = load_scheme()
+
+function M.apply(appearance)
+  print('applying theme')
+  local g = vim.g
+
+  if appearance ~= nil and vim.go.background ~= appearance then
+    vim.go.background = appearance
+    return
+  end
+
+  g.colors_name = 'selenized'
+
+  active_palette = load_scheme()
+  local palette = active_palette
 
   g.terminal_color_0 = palette.bg_1
   g.terminal_color_1 = palette.red
