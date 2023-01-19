@@ -43,10 +43,10 @@
 	fp = fetch --prune
 	fr = fetchreset
 	forget = rm --cached
-	g = grep
-	gi = grep --ignore-case
-	gil = grep --ignore-case --files-with-matches
-	gl = grep --files-with-matches
+	g = grep --recurse-submodules
+	gi = grep --ignore-case --recurse-submodules
+	gil = grep --ignore-case --files-with-matches --recurse-submodules
+	gl = grep --files-with-matches --recurse-submodules
 	ia = !git add $(git ls-files --modified --others --exclude-standard | fzf -m)
 	id = rev-parse HEAD
 	idb = !git symbolic-ref -q HEAD | cut -d'/' -f 3

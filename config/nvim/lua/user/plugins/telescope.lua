@@ -65,6 +65,7 @@ return {
         git_files = {
           previewer = false,
           results_title = false,
+          recurse_submodules = true,
         },
         help_tags = {
           results_title = false,
