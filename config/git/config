@@ -135,6 +135,7 @@
 
 [submodule]
 	fetchJobs = 4
+	recurse = true
 
 [stash]
 	showPatch = true
