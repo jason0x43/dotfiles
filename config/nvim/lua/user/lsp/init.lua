@@ -58,8 +58,13 @@ M.config = function()
   -- should actually be attached
   local orig_buf_attach_client = lsp.buf_attach_client
   function lsp.buf_attach_client(bufnr, client_id)
+    if vim.b.lsp_disable then
+      return
+    end
+
     local client = lsp.get_client_by_id(client_id)
-    if not client.config.should_attach or client.config.should_attach(bufnr)
+    if
+      not client.config.should_attach or client.config.should_attach(bufnr)
     then
       return orig_buf_attach_client(bufnr, client_id)
     end
