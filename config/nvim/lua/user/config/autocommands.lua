@@ -100,8 +100,19 @@ autoft('intern.json', 'jsonc')
 autoft('intern{-.}*.json', 'jsonc')
 autoft('*.textile', 'textile')
 
--- set colorscheme when the background option is set
+-- set colorscheme after TUI has loaded
+autocmd('VimEnter', '*', function()
+  local timer = vim.loop.new_timer()
+  timer:start(
+    0,
+    0,
+    vim.schedule_wrap(function()
+      vim.api.nvim_command('colorscheme wezterm')
+    end)
+  )
+end)
+
+-- set colorscheme whenever the background option is set
 autocmd('OptionSet', 'background', function()
-  vim.cmd('colorscheme wezterm')
-	require('lualine').setup({ options = { theme = 'wezterm' } })
+  vim.api.nvim_command('colorscheme wezterm')
 end)
