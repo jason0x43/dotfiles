@@ -1,10 +1,13 @@
 local lsp_util = require('user.lsp.util')
 
+local licenseKey = os.getenv('INTELEPHENSE_KEY')
+
 local M = {}
 
 M.config = {
   init_options = {
-    globalStoragePath = os.getenv('HOME') .. '/.local/share/intelephense'
+    globalStoragePath = os.getenv('HOME') .. '/.local/share/intelephense',
+    licenceKey = licenseKey,
   },
 
   on_attach = function(client)
@@ -13,7 +16,6 @@ M.config = {
       lsp_util.disable_formatting(client)
     end
   end,
-
 }
 
 return M
