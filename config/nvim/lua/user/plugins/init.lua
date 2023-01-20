@@ -119,7 +119,6 @@ return {
   -- native LSP
   {
     'neovim/nvim-lspconfig',
-    event = 'BufEnter',
     config = function()
       -- setup mason and mason-lspconfig before configuring any lsp servers
       require('mason').setup({
