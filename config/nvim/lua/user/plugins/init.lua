@@ -1,4 +1,10 @@
 return {
+	-- functions used by many plugins
+	'nvim-lua/plenary.nvim',
+
+	-- icons used by many plugins
+	'nvim-tree/nvim-web-devicons',
+
   -- highlight color strings
   {
     'norcalli/nvim-colorizer.lua',
@@ -15,7 +21,7 @@ return {
   {
     'andymass/vim-matchup',
     event = 'BufEnter',
-    dependencies = 'nvim-lua/plenary.nvim',
+    dependencies = 'plenary.nvim',
     config = function()
       vim.g.matchup_matchparen_offscreen = { method = 'popup' }
     end,
@@ -80,7 +86,7 @@ return {
   {
     'SmiteshP/nvim-navic',
     event = 'BufEnter',
-    dependencies = 'nvim-treesitter/nvim-treesitter',
+    dependencies = 'nvim-treesitter',
     config = function()
       require('nvim-navic').setup()
     end,
@@ -149,8 +155,8 @@ return {
     'sindrets/diffview.nvim',
     cmd = 'DiffviewOpen',
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'kyazdani42/nvim-web-devicons',
+      'plenary.nvim',
+      'nvim-web-devicons',
     },
     config = function()
       require('diffview').setup()
@@ -161,7 +167,7 @@ return {
   {
     'lewis6991/gitsigns.nvim',
     event = 'BufEnter',
-    dependencies = 'nvim-lua/plenary.nvim',
+    dependencies = 'plenary.nvim',
     config = function()
       require('gitsigns').setup({
         signs = {
@@ -179,7 +185,7 @@ return {
   {
     'folke/trouble.nvim',
     event = 'BufEnter',
-    dependencies = 'kyazdani42/nvim-web-devicons',
+    dependencies = 'nvim-web-devicons',
     config = function()
       require('trouble').setup()
     end,

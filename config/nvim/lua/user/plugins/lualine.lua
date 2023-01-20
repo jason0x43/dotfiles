@@ -4,8 +4,8 @@ return {
 
   dependencies = {
     'arkav/lualine-lsp-progress',
-    'kyazdani42/nvim-web-devicons',
-    'SmiteshP/nvim-navic',
+    'nvim-web-devicons',
+    'nvim-navic',
   },
 
   config = function()

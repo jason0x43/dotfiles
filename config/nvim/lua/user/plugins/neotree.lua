@@ -9,8 +9,8 @@ return {
   branch = 'v2.x',
 
   dependencies = {
-    'nvim-lua/plenary.nvim',
-    'kyazdani42/nvim-web-devicons',
+    'plenary.nvim',
+    'nvim-web-devicons',
     'MunifTanjim/nui.nvim',
   },
 

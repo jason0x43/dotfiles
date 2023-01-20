@@ -4,7 +4,7 @@ return {
   event = 'BufEnter',
 
   dependencies = {
-    'hrsh7th/nvim-cmp',
+    'nvim-cmp',
     {
       'zbirenbaum/copilot.lua',
       config = function()

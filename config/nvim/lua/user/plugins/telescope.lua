@@ -2,8 +2,8 @@ return {
   'nvim-telescope/telescope.nvim',
 
   dependencies = {
-    'nvim-lua/plenary.nvim',
-    'kyazdani42/nvim-web-devicons',
+    'plenary.nvim',
+    'nvim-web-devicons',
     'natecraddock/telescope-zf-native.nvim',
     {
       'nvim-telescope/telescope-fzf-native.nvim',
@@ -11,11 +11,11 @@ return {
     },
     {
       'nvim-telescope/telescope-symbols.nvim',
-      dependencies = 'nvim-lua/plenary.nvim',
+      dependencies = 'plenary.nvim',
     },
     {
       'nvim-telescope/telescope-file-browser.nvim',
-      dependencies = 'nvim-lua/plenary.nvim',
+      dependencies = 'plenary.nvim',
     },
     'nvim-telescope/telescope-live-grep-raw.nvim',
     'nvim-telescope/telescope-ui-select.nvim',

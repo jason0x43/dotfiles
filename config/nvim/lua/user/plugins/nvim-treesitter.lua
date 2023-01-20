@@ -2,7 +2,7 @@ return {
   'nvim-treesitter/nvim-treesitter',
 
   dependencies = {
-    'nvim-lua/plenary.nvim',
+    'plenary.nvim',
     -- provide TSHighlightCapturesUnderCursor command
     'nvim-treesitter/playground',
     -- set proper commentstring for embedded languages
