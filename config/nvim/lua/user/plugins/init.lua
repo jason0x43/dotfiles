@@ -20,7 +20,6 @@ return {
   -- better start/end matching
   {
     'andymass/vim-matchup',
-    event = 'BufEnter',
     dependencies = 'plenary.nvim',
     config = function()
       vim.g.matchup_matchparen_offscreen = { method = 'popup' }
