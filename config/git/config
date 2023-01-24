@@ -152,6 +152,9 @@
 [pull]
 	rebase = true
 
+[push]
+	recurseSubmodules = no
+
 [init]
 	defaultBranch = main
 
