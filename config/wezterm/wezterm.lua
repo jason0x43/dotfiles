@@ -541,103 +541,103 @@ if wezterm.gui then
 end
 
 -- Return the config
-return {
-	adjust_window_size_when_changing_font_size = false,
+local config = {}
+if wezterm.config_builder then
+	config = wezterm.config_builder()
+end
 
-	color_scheme = color_scheme,
+config.adjust_window_size_when_changing_font_size = false
+config.color_scheme = color_scheme
+config.color_schemes = color_schemes
+config.font_size = 13
 
-	color_schemes = color_schemes,
+-- disable ligatures
+config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
-	font_size = 13,
+config.hide_tab_bar_if_only_one_tab = true
 
-	-- disable ligatures
-	harfbuzz_features = { "calt=0", "clig=0", "liga=0" },
+config.key_tables = {
+	copy_mode = copy_mode,
 
-	hide_tab_bar_if_only_one_tab = true,
+	search_mode = search_mode,
 
-	key_tables = {
-		copy_mode = copy_mode,
-
-		search_mode = search_mode,
-
-		window_ops = {
-			{ key = "j", action = move_action("Down") },
-			{ key = "k", action = move_action("Up") },
-			{ key = "h", action = move_action("Left") },
-			{ key = "l", action = move_action("Right") },
-			{ key = "j", mods = "SHIFT", action = action.AdjustPaneSize({ "Down", 4 }) },
-			{ key = "k", mods = "SHIFT", action = action.AdjustPaneSize({ "Up", 4 }) },
-			{ key = "h", mods = "SHIFT", action = action.AdjustPaneSize({ "Left", 4 }) },
-			{ key = "l", mods = "SHIFT", action = action.AdjustPaneSize({ "Right", 4 }) },
-			{ key = "m", action = action.PaneSelect({ mode = "SwapWithActive" }) },
-			{ key = "-", action = split_action("vertical") },
-			{ key = "\\", action = split_action("horizontal") },
-			{ key = "|", action = split_action("horizontal") },
-			{ key = "Escape", action = action.PopKeyTable },
-			{ key = "c", action = copy_mode_action() },
-			{ key = "c", mods = "CTRL", action = action.PopKeyTable },
-			{ key = "q", action = action.QuickSelect },
-			{ key = "z", action = action.TogglePaneZoomState },
-			{ key = "w", action = action.CloseCurrentPane({ confirm = true }) },
-		},
-	},
-
-	keys = {
-		{ key = "j", mods = "CTRL", action = move_action("Down") },
-		{ key = "k", mods = "CTRL", action = move_action("Up") },
-		{ key = "h", mods = "CTRL", action = move_action("Left") },
-		{ key = "l", mods = "CTRL", action = move_action("Right") },
-		{ key = "t", mods = "CTRL", action = action.SpawnTab("DefaultDomain") },
-		{
-			key = "\\",
-			mods = "CMD|CTRL",
-			action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-		},
-		{
-			key = "-",
-			mods = "CMD|CTRL",
-			action = action.SplitVertical({ domain = "CurrentPaneDomain" }),
-		},
-		{ key = "LeftArrow", mods = "SHIFT", action = action.ActivateTabRelative(-1) },
-		{ key = "RightArrow", mods = "SHIFT", action = action.ActivateTabRelative(1) },
-		{ key = "LeftArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(-1) },
-		{ key = "RightArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(1) },
-		{
-			key = "s",
-			mods = "CTRL",
-			action = action.ActivateKeyTable({
-				name = "window_ops",
-				one_shot = false,
-				timeout_milliseconds = 1000,
-				until_unknown = true,
-				replace_current = true,
-			}),
-		},
-		{
-			key = "/",
-			mods = "ALT",
-			action = action.ShowLauncherArgs({ flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS" }),
-		},
-		{ key = "/", mods = "CMD", action = action.ShowDebugOverlay },
-		{
-			key = "s",
-			mods = "CMD|CTRL",
-			action = action_callback(save_win_state),
-		},
-		{ key = "<", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
-		{ key = ">", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("next") },
-	},
-
-	scrollback_lines = 20000,
-
-	term = "wezterm",
-
-	use_fancy_tab_bar = false,
-
-	window_padding = {
-		left = 4,
-		right = 4,
-		top = 4,
-		bottom = 4,
+	window_ops = {
+		{ key = "j", action = move_action("Down") },
+		{ key = "k", action = move_action("Up") },
+		{ key = "h", action = move_action("Left") },
+		{ key = "l", action = move_action("Right") },
+		{ key = "j", mods = "SHIFT", action = action.AdjustPaneSize({ "Down", 4 }) },
+		{ key = "k", mods = "SHIFT", action = action.AdjustPaneSize({ "Up", 4 }) },
+		{ key = "h", mods = "SHIFT", action = action.AdjustPaneSize({ "Left", 4 }) },
+		{ key = "l", mods = "SHIFT", action = action.AdjustPaneSize({ "Right", 4 }) },
+		{ key = "m", action = action.PaneSelect({ mode = "SwapWithActive" }) },
+		{ key = "-", action = split_action("vertical") },
+		{ key = "\\", action = split_action("horizontal") },
+		{ key = "|", action = split_action("horizontal") },
+		{ key = "Escape", action = action.PopKeyTable },
+		{ key = "c", action = copy_mode_action() },
+		{ key = "c", mods = "CTRL", action = action.PopKeyTable },
+		{ key = "q", action = action.QuickSelect },
+		{ key = "z", action = action.TogglePaneZoomState },
+		{ key = "w", action = action.CloseCurrentPane({ confirm = true }) },
 	},
 }
+
+config.keys = {
+	{ key = "j", mods = "CTRL", action = move_action("Down") },
+	{ key = "k", mods = "CTRL", action = move_action("Up") },
+	{ key = "h", mods = "CTRL", action = move_action("Left") },
+	{ key = "l", mods = "CTRL", action = move_action("Right") },
+	{ key = "t", mods = "CTRL", action = action.SpawnTab("DefaultDomain") },
+	{
+		key = "\\",
+		mods = "CMD|CTRL",
+		action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	},
+	{
+		key = "-",
+		mods = "CMD|CTRL",
+		action = action.SplitVertical({ domain = "CurrentPaneDomain" }),
+	},
+	{ key = "LeftArrow", mods = "SHIFT", action = action.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = "SHIFT", action = action.ActivateTabRelative(1) },
+	{ key = "LeftArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(-1) },
+	{ key = "RightArrow", mods = "CMD|SHIFT", action = action.MoveTabRelative(1) },
+	{
+		key = "s",
+		mods = "CTRL",
+		action = action.ActivateKeyTable({
+			name = "window_ops",
+			one_shot = false,
+			timeout_milliseconds = 1000,
+			until_unknown = true,
+			replace_current = true,
+		}),
+	},
+	{
+		key = "/",
+		mods = "ALT",
+		action = action.ShowLauncherArgs({ flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS" }),
+	},
+	{ key = "/", mods = "CMD", action = action.ShowDebugOverlay },
+	{
+		key = "s",
+		mods = "CMD|CTRL",
+		action = action_callback(save_win_state),
+	},
+	{ key = "<", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("prev") },
+	{ key = ">", mods = "CMD|SHIFT|CTRL", action = change_scheme_action("next") },
+}
+
+config.scrollback_lines = 20000
+config.term = "wezterm"
+config.use_fancy_tab_bar = false
+
+config.window_padding = {
+	left = 4,
+	right = 4,
+	top = 4,
+	bottom = 4,
+}
+
+return config
