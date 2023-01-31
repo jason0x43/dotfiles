@@ -20,6 +20,10 @@ return {
     'nvim-telescope/telescope-live-grep-raw.nvim',
     'nvim-telescope/telescope-ui-select.nvim',
     'debugloop/telescope-undo.nvim',
+    {
+      'danielfalk/smart-open.nvim',
+      dependencies = 'kkharji/sqlite.lua',
+    },
   },
 
   config = function()
@@ -119,25 +123,27 @@ return {
     telescope.load_extension('file_browser')
     telescope.load_extension('ui-select')
     telescope.load_extension('undo')
+    telescope.load_extension('smart_open')
 
     local lmap = require('user.util').lmap
     lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
     lmap('f', '<cmd>Telescope find_files<cr>')
     lmap('j', '<cmd>Telescope jumplist<cr>')
     lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
-    lmap('g', '', {
-      mode = 'n',
-      callback = function()
-        local opts = {}
-        local builtin = require('telescope.builtin')
-        local in_worktree = require('user.util').in_git_dir()
-        if in_worktree then
-          builtin.git_files(opts)
-        else
-          builtin.find_files(opts)
-        end
-      end,
-    })
+    lmap('g', '<cmd>Telescope smart_open<cr>')
+    -- lmap('g', '', {
+    --   mode = 'n',
+    --   callback = function()
+    --     local opts = {}
+    --     local builtin = require('telescope.builtin')
+    --     local in_worktree = require('user.util').in_git_dir()
+    --     if in_worktree then
+    --       builtin.git_files(opts)
+    --     else
+    --       builtin.find_files(opts)
+    --     end
+    --   end,
+    -- })
     lmap('b', '<cmd>Telescope buffers<cr>')
     lmap('u', '<cmd>Telescope undo<cr>')
     lmap('tg', '<cmd>Telescope live_grep<cr>')
