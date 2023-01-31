@@ -4,7 +4,6 @@ local lsp_util = require('user.lsp.util')
 local M = {}
 
 M.config = {
-  autostart = false,
   root_dir = lspconfig.util.root_pattern('tsconfig.json', 'jsconfig.json'),
 
   handlers = {
@@ -52,9 +51,5 @@ M.config = {
     },
   },
 }
-
-M.start = lsp_util.create_start('tsserver')
-
-lsp_util.create_autostart_autocmd('tsserver', require('user.util').ts_types)
 
 return M

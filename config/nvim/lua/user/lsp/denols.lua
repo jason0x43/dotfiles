@@ -5,7 +5,6 @@ local lspconfig = require('lspconfig')
 local lsp_util = require('user.lsp.util')
 
 M.config = {
-  autostart = false,
   root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc'),
 
   init_options = {
@@ -38,10 +37,6 @@ M.config = {
     end,
   },
 }
-
-M.start = lsp_util.create_start('denols')
-
-lsp_util.create_autostart_autocmd('denols', require('user.util').ts_types)
 
 local function score_code_action(result)
   local title = result.title
