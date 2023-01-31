@@ -1,0 +1,12 @@
+#!/bin/bash
+
+dir=$1
+
+if [[ -z $dir ]]; then
+  echo "usage: $0 <dir>"
+  exit 1
+fi
+
+mkdir $dir
+echo "layout python" > $dir/.envrc
+direnv allow $dir
