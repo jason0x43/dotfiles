@@ -10,17 +10,12 @@ M.config = {
   end,
 }
 
-local schemastore = require('user.req')('schemastore')
+local schemastore = require('schemastore')
 if schemastore then
   M.config.settings = {
     json = {
-      schemas = vim.list_extend({
-        {
-          description = 'Deno configuration file',
-          fileMatch = { 'deno*.json', 'deno*.jsonc' },
-          url = 'https://raw.githubusercontent.com/denoland/deno/main/cli/schemas/config-file.v1.json',
-        },
-      }, schemastore.json.schemas()),
+      schemas = schemastore.json.schemas(),
+      validate = { enable = true },
     },
   }
 end
