@@ -81,6 +81,7 @@ M.config = function()
     'intelephense',
     'jdtls',
     'jsonls',
+    'marksman',
     'omnisharp',
     'prismals',
     'psalm',
