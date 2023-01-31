@@ -99,6 +99,7 @@ autoft('{ts,js}config.json', 'jsonc')
 autoft('intern.json', 'jsonc')
 autoft('intern{-.}*.json', 'jsonc')
 autoft('*.textile', 'textile')
+autoft('*.{frag,vert}', 'glsl')
 
 -- set colorscheme after TUI has loaded
 autocmd('VimEnter', '*', function()
