@@ -1,5 +1,18 @@
 local M = {}
 
+local function find_file(path, test)
+  while path ~= '/' do
+    for name, type in vim.fs.dir(path) do
+      local filepath = path .. '/' .. name
+      if type == 'file' and test(filepath) then
+        return filepath
+      end
+    end
+    path = vim.fs.dirname(path)
+  end
+  return nil
+end
+
 M.config = {
   root_dir = function(filename)
     local project_root = vim.fn.system('git rev-parse --show-toplevel')
@@ -7,7 +20,7 @@ M.config = {
       return nil
     end
 
-		-- Look for eslint config files using the same logic as eslint
+    -- Look for eslint config files using the same logic as eslint
     local file_dir = vim.fs.dirname(filename)
 
     -- look for eslint config files
@@ -24,18 +37,15 @@ M.config = {
     end
 
     -- look for package.json files with eslint configs
-    local pkg_json_with_eslint = vim.fs.find(function(name)
-			if name == 'package.json' then
-				local text = vim.fn.readfile(name)
-				local parsed = vim.fn.json_decode(text)
-				return parsed.eslintConfig ~= nil
-			end
-    end, {
-      path = file_dir,
-      type = 'file',
-      upward = true,
-    })
-    if #pkg_json_with_eslint > 0 then
+    local pkg_json_with_eslint = find_file(file_dir, function(path)
+      local name = vim.fs.basename(path)
+      if name == 'package.json' then
+        local text = vim.fn.readfile(path)
+        local parsed = vim.fn.json_decode(text)
+        return parsed.eslintConfig ~= nil
+      end
+    end)
+    if pkg_json_with_eslint ~= nil then
       return project_root
     end
   end,
