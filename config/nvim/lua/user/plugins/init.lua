@@ -176,9 +176,6 @@ return {
     end,
   },
 
-  -- startup time profiling
-  'dstein64/vim-startuptime',
-
   -- diagnostics display
   {
     'folke/trouble.nvim',
