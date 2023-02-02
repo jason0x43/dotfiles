@@ -103,6 +103,9 @@ o.wildignore = o.wildignore + '*.pyc' + '*.obj' + '*.bin' + 'a.out'
 -- better diffing
 o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
 
+-- show line numbers if the window is wide enough
+o.number = vim.go.columns >= 88
+
 -- set python version for pyx commands
 if vim.fn.has('pythonx') == 1 then
   o.pyxversion = 3

@@ -123,7 +123,7 @@ autocmd({ 'BufReadPre', 'FileReadPre' }, '*', function()
   local file = vim.fn.expand('<afile>')
   local size = vim.fn.getfsize(file)
 
-	-- "large" is > 10MB
+  -- "large" is > 10MB
   if size > 10000000 then
     print('Using large file mode for ' .. file)
 
@@ -133,13 +133,18 @@ autocmd({ 'BufReadPre', 'FileReadPre' }, '*', function()
 
     -- if vim.fn.exists(':IlluminatePauseBuf') then
     --   vim.cmd('IlluminatePauseBuf')
-		-- end
+    -- end
 
-		vim.b.lsp_disable = true
+    vim.b.lsp_disable = true
     vim.wo.foldmethod = 'manual'
     vim.cmd('syntax off')
     vim.cmd('filetype off')
     vim.bo.swapfile = false
     vim.bo.undofile = false
   end
+end)
+
+-- show line numbers if the window is big enough
+autocmd('VimResized', '*', function()
+  vim.wo.number = vim.go.columns > 88
 end)
