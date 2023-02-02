@@ -41,8 +41,10 @@ M.config = {
       local name = vim.fs.basename(path)
       if name == 'package.json' then
         local text = vim.fn.readfile(path)
-        local parsed = vim.fn.json_decode(text)
-        return parsed.eslintConfig ~= nil
+        local ok, parsed = pcall(vim.fn.json_decode, text)
+        if ok then
+          return parsed.eslintConfig ~= nil
+        end
       end
     end)
     if pkg_json_with_eslint ~= nil then
