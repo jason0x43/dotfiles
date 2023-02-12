@@ -161,3 +161,11 @@ end
 
 -- Don't show hints in diagnostic lists (telescope, trouble)
 g.lsp_severity_limit = 3
+
+-- Better folding
+o.foldtext = 'v:lua.require("user.config.folding").foldtext()'
+o.foldcolumn = 'auto'
+o.fillchars:append('foldsep: ')
+o.fillchars:append('foldopen:▼')
+o.fillchars:append('foldclose:▶')
+o.fillchars:append('fold:-')
