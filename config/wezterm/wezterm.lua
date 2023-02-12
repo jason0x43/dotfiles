@@ -18,90 +18,88 @@ local function save_json(data, file)
 	f:close()
 end
 
--- Load custom schemes from a JSON file
-local function load_schemes(file)
-	local schemes = load_json(file)
-	for _, scheme in pairs(schemes.schemes) do
-		-- JSON can't use numeric keys, but the scheme `indexed` property requires
-		-- numeric keys
-		if scheme.indexed ~= nil then
-			local indexed = {}
-			for key, value in pairs(scheme.indexed) do
-				indexed[tonumber(key)] = value
-			end
-			scheme.indexed = indexed
-		end
-	end
-	return schemes
-end
-
 -- A file that the active scheme is read from and written to. This is only used
 -- if scheme_config.auto_switch is false
-local scheme_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
+local scheme_file = wezterm.home_dir .. "/.local/share/wezterm/scheme.json"
 
--- Save a flat palette JSON file
-local function load_dynamic_scheme()
-	local file = io.open(scheme_file, "r")
-	if file ~= nil then
-		local text = assert(file:read("*a"))
-		file:close()
-		return wezterm.json_parse(text)
+-- A file that the active color palette will be saved to. This file is used by
+-- other applications such as neovim.
+local palette_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"
+
+-- Save the current scheme name to a file
+local function save_scheme(name)
+	save_json({ name = name }, scheme_file)
+end
+
+-- Save the current scheme name to a file
+local function load_scheme()
+	local data = load_json(scheme_file)
+	if data ~= nil then
+		return data.name
 	end
 end
 
+
 -- Save a wezterm scheme to a flat palette JSON file
-local function save_dynamic_scheme(scheme, name)
+local function save_colors(name, scheme)
 	local bg = wezterm.color.parse(scheme.background)
 	local _, _, l, _ = bg:hsla()
+
+	local type = 'iterm2'
+	if name:find('(base16)') then
+		type = 'base16'
+	elseif name:find('(terminal.sexy)') then
+		type = 'terminal.sexy'
+	elseif name:find('(Gogh)') then
+		type = 'gogh'
+	elseif name:find('(selenized)') then
+		type = 'selenized'
+	end
 
 	-- Create the scheme data that will be written to the theme file for other
 	-- apps to use
 	local scheme_json = {
 		name = name,
 		is_dark = l < 0.5,
+		type = type,
 
-		bg_0 = scheme.background,
-		fg_0 = scheme.foreground,
+		color00 = scheme.ansi[1],
+		color01 = scheme.ansi[2],
+		color02 = scheme.ansi[3],
+		color03 = scheme.ansi[4],
+		color04 = scheme.ansi[5],
+		color05 = scheme.ansi[6],
+		color06 = scheme.ansi[7],
+		color07 = scheme.ansi[8],
 
-		bg_1 = scheme.ansi[1],
-		red = scheme.ansi[2],
-		green = scheme.ansi[3],
-		yellow = scheme.ansi[4],
-		blue = scheme.ansi[5],
-		magenta = scheme.ansi[6],
-		cyan = scheme.ansi[7],
-		dim_0 = scheme.ansi[8],
+		color08 = scheme.brights[1],
+		color09 = scheme.brights[2],
+		color10 = scheme.brights[3],
+		color11 = scheme.brights[4],
+		color12 = scheme.brights[5],
+		color13 = scheme.brights[6],
+		color14 = scheme.brights[7],
+		color15 = scheme.brights[8],
 
-		bg_2 = scheme.brights[1],
-		br_red = scheme.brights[2],
-		br_green = scheme.brights[3],
-		br_yellow = scheme.brights[4],
-		br_blue = scheme.brights[5],
-		br_magenta = scheme.brights[6],
-		br_cyan = scheme.brights[7],
-		fg_1 = scheme.brights[8],
-
-		orange = scheme.indexed[18] or scheme.ansi[2],
-		violet = scheme.indexed[20] or scheme.ansi[5],
-		br_orange = scheme.indexed[19] or scheme.brights[2],
-		br_violet = scheme.indexed[21] or scheme.brights[5],
+		bg = scheme.background,
+		fg = scheme.foreground
 	}
 
-	save_json(scheme_json, scheme_file)
-end
+	if scheme.indexed ~= nil then
+		for idx, color in pairs(scheme.indexed) do
+			scheme_json['color' .. idx] = color
+		end
+	end
 
--- Load schemes from a JSON file rather than using the TOML files implicitly
--- understood by Wezterm. These schemes can also be loaded and used by nvim and
--- other clients.
-local schemes = load_schemes(wezterm.home_dir .. "/.config/wezterm/colors/schemes.json")
-local color_schemes = schemes.schemes
+	save_json(scheme_json, palette_file)
+end
 
 -- Scheme handling options. These are local to this config, and aren't used by
 -- Wezterm itself.
 local scheme_config = {
-	light = schemes.light,
-	dark = schemes.dark,
-	default = schemes.light,
+	light = "Selenized Light (selenized)",
+	dark = "Selenized Black (selenized)",
+	default = "Selenized Light (selenized)",
 	auto_switch = true,
 }
 
@@ -248,8 +246,14 @@ function Scheme(name, window)
 		schm = config.color_schemes[name]
 	end
 
+	if not schm then
+		print('could not find scheme ' .. name)
+		return
+	end
+
 	local overrides = window:get_config_overrides() or {}
 
+	-- Add tab bar colors for schemes that don't already have them
 	if not schm.tab_bar then
 		schm.tab_bar = {
 			background = schm.brights[1],
@@ -271,12 +275,11 @@ function Scheme(name, window)
 			overrides.color_schemes = {}
 		end
 		overrides.color_schemes[name] = schm
-		print("Setting override for " .. name)
+		print("Added tab bar colors to " .. name)
 	end
 
-	if not scheme_config.auto_switch then
-		save_dynamic_scheme(schm, name)
-	end
+	save_colors(name, schm)
+	save_scheme(name)
 
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
@@ -344,28 +347,35 @@ local function change_scheme_action(dir)
 		-- Find the next or previous scheme in the list
 		local current_scheme = config.color_scheme
 		local scheme_name
-		local index
+		local index = 0
+		for i, name in ipairs(schms) do
+			if name == current_scheme then
+				index = i
+				break
+			end
+		end
+
 		if dir == "next" then
-			for i, name in ipairs(schms) do
-				if name == current_scheme then
-					index = i + 1
-					if index > #schms then
-						index = 1
-					end
-					scheme_name = schms[index]
-					break
+			while true do
+				index = index + 1
+				if index > #schms then
+					index = 1
 				end
+				scheme_name = schms[index]
+				-- if scheme_name:find('(base16)') then
+					break
+				-- end
 			end
 		else
-			for i = #schms, 1, -1 do
-				if schms[i] == current_scheme then
-					index = i - 1
-					if index < 1 then
-						index = #schms
-					end
-					scheme_name = schms[index]
-					break
+			while true do
+				index = index - 1
+				if index < 1 then
+					index = #schms
 				end
+				scheme_name = schms[index]
+				-- if scheme_name:find('(base16)') then
+					break
+				-- end
 			end
 		end
 
@@ -373,8 +383,8 @@ local function change_scheme_action(dir)
 			scheme_name = schms[1]
 		end
 
-		print('Setting scheme to "' .. scheme_name)
 		Scheme(scheme_name, window)
+		print('Set scheme to "' .. scheme_name .. '"')
 	end)
 end
 
@@ -453,7 +463,7 @@ if scheme_config.auto_switch then
 	end
 else
 	-- Check for a theme file
-	local theme = load_dynamic_scheme()
+	local theme = load_scheme()
 	if theme ~= nil then
 		color_scheme = theme.name
 	end
@@ -548,7 +558,6 @@ end
 
 config.adjust_window_size_when_changing_font_size = false
 config.color_scheme = color_scheme
-config.color_schemes = color_schemes
 config.font_size = 13
 
 -- disable ligatures
