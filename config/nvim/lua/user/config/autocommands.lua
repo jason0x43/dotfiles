@@ -10,9 +10,15 @@ local function autocmd(type, pattern, callback)
   })
 end
 
+-- make text files easier to work with
 autocmd('FileType', 'text,textile,markdown,html', function()
-  -- make text files easier to work with
   util.text_mode()
+end)
+
+-- better formatting for JavaScript
+autocmd('FileType', 'javascript', function()
+	vim.bo.formatprg = nil
+	vim.bo.formatexpr = nil
 end)
 
 autocmd('BufEnter', '*.*', function()
