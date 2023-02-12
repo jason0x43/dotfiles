@@ -1,9 +1,9 @@
 return {
-	-- functions used by many plugins
-	'nvim-lua/plenary.nvim',
+  -- functions used by many plugins
+  'nvim-lua/plenary.nvim',
 
-	-- icons used by many plugins
-	'nvim-tree/nvim-web-devicons',
+  -- icons used by many plugins
+  'nvim-tree/nvim-web-devicons',
 
   -- highlight color strings
   {
