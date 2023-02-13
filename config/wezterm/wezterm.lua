@@ -97,44 +97,43 @@ function Scheme(name, window)
 	end
 
 	print('Setting scheme to "' .. name .. '"')
-	local schm = util.get_schemes(window)[name]
-	if not schm then
+	local scheme = util.get_schemes(window)[name]
+	if not scheme then
 		print("Could not find scheme " .. name)
 		return
 	end
 
-	local overrides = window:get_config_overrides() or {}
+	local bg = wezterm.color.parse(scheme.background)
+	local bar_bg = bg:darken(0.2)
+	local dim_bg = bg:darken(0.1)
 
-	-- Add tab bar colors for schemes that don't already have them
-	if not schm.tab_bar then
-		schm.tab_bar = {
-			background = schm.brights[1],
-			active_tab = {
-				bg_color = schm.background,
-				fg_color = schm.brights[8],
-			},
-			inactive_tab = {
-				bg_color = schm.ansi[1],
-				fg_color = schm.ansi[8],
-			},
-			new_tab = {
-				bg_color = schm.brights[1],
-				fg_color = schm.brights[1],
-			},
-		}
+	local fg = wezterm.color.parse(scheme.foreground)
+	local dim_fg = fg:lighten(0.5)
 
-		if not overrides.color_schemes then
-			overrides.color_schemes = {}
-		end
-		overrides.color_schemes[name] = schm
-		print("Added tab bar colors to " .. name)
-	end
+	scheme.tab_bar = {
+		background = bar_bg,
+		active_tab = {
+			bg_color = scheme.background,
+			fg_color = scheme.foreground,
+		},
+		inactive_tab = {
+			bg_color = dim_bg,
+			fg_color = dim_fg,
+		},
+		new_tab = {
+			bg_color = bar_bg,
+			fg_color = scheme.brights[1],
+		},
+	}
 
-	active_scheme.save(name, schm)
+	active_scheme.save(name, scheme)
 
 	local appearance = util.get_appearance()
 	scheme_config.update({ [appearance] = name })
 
+	local overrides = window:get_config_overrides() or {}
+	overrides.color_schemes = overrides.color_schemes or {}
+	overrides.color_schemes[name] = scheme
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 
