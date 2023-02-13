@@ -9,7 +9,7 @@ local function load_scheme()
   return vim.fn.json_decode(colors_text)
 end
 
-local active_palette = load_scheme()
+local active_palette
 
 function M.apply(appearance)
   local g = vim.g
@@ -21,6 +21,8 @@ function M.apply(appearance)
 
   active_palette = load_scheme()
   local palette = active_palette
+
+	vim.go.background = palette.is_dark and 'dark' or 'light'
 
   g.colors_name = palette.name
 
@@ -48,6 +50,12 @@ function M.apply(appearance)
 	else
 		require('user.themes.wezterm.terminal').apply(palette)
 	end
+
+	require('lualine').setup({
+		options = {
+			theme = 'wezterm',
+		},
+	})
 end
 
 function M.active_palette()

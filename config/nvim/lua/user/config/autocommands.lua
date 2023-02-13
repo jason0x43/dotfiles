@@ -119,11 +119,6 @@ autocmd('VimEnter', '*', function()
   )
 end)
 
--- set colorscheme whenever the background option is set
-autocmd('OptionSet', 'background', function()
-  vim.api.nvim_command('colorscheme wezterm')
-end)
-
 -- improve handling of very large files
 autocmd({ 'BufReadPre', 'FileReadPre' }, '*', function()
   local file = vim.fn.expand('<afile>')

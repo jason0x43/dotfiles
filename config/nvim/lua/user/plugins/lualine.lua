@@ -9,12 +9,13 @@ return {
   },
 
   config = function()
-    local hi = require('user.util.theme').hi
     local navic = require('nvim-navic')
+    local hi = vim.api.nvim_set_hl
 
-    -- make statusline transparent so we don't get a flash before lualine renders
-    hi('StatusLine', { bg = '' })
-    hi('StatusLineNC', { bg = '' })
+    -- make statusline transparent so we don't get a flash before lualine
+    -- renders
+    hi(0, 'StatusLine', { bg = '' })
+    hi(0, 'StatusLineNC', { bg = '' })
 
     local refresh_time = 500
 

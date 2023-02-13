@@ -77,10 +77,8 @@ end
 
 -- get a color from a vim highlight group
 local function get_color(hlgroup, attr)
-  local col = vim.fn.synIDattr(
-    vim.fn.synIDtrans(vim.fn.hlID(hlgroup)),
-    attr .. '#'
-  )
+  local col =
+    vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID(hlgroup)), attr .. '#')
   if col == '' then
     return 'NONE'
   end
@@ -132,63 +130,46 @@ end
 -- define a syntax highlight group
 -- propsOrFg can either be a table containing guifg, guibg, etc., or a fg value.
 -- If propsOrFg is a table, the remaining arguments will be ignored.
-function M.hi(group, propsOrFg, bg, attr, sp)
-  if type(group) == 'table' then
-    for k, v in pairs(group) do
-      M.hi(k, v)
-    end
-  else
-    local props_list = {}
-    local props = {}
+function M.hi(group, fg, bg, sp, modifiers)
+	if type(group) ~= 'string' then
+		error('Group must be a string' .. vim.inspect(group))
+	end
+	if fg and type(fg) ~= 'string' then
+		error('fg must be a string' .. vim.inspect(fg))
+	end
+	if bg and type(bg) ~= 'string' then
+		error('bg must be a string' .. vim.inspect(bg))
+	end
+	if sp and type(sp) ~= 'string' then
+		error('sp must be a string: ' .. vim.inspect(sp))
+	end
+	if modifiers and type(modifiers) ~= 'table' then
+		error('modifiers must be a table: ' .. vim.inspect(modifiers))
+	end
 
-    if type(propsOrFg) == 'table' then
-      props = propsOrFg
-    else
-      props = {
-        guifg = propsOrFg,
-        guibg = bg,
-        gui = attr,
-        cterm = attr,
-        guisp = sp,
-      }
-    end
+	local opts = {
+		fg = fg or '',
+		bg = bg or '',
+		sp = sp or '',
+	}
+	local mods = modifiers or {}
 
-    for k, v in pairs(props) do
-      -- replace an empty value with NONE
-      local val = (v == '' or v == nil) and 'NONE' or v
+	if vim.tbl_contains(mods, 'underline') then
+		opts.underline = true
+	end
+	if vim.tbl_contains(mods, 'bold') then
+		opts.bold = true
+	end
+	if vim.tbl_contains(mods, 'undercurl') then
+		opts.undercurl = true
+	end
 
-      if k == 'sp' then
-        k = 'guisp'
-      elseif k == 'style' then
-        k = 'gui'
-      elseif k == 'fg' then
-        k = 'guifg'
-      elseif k == 'bg' then
-        k = 'guibg'
-      end
-
-      -- if gui{fg,bg,sp} don't start with a '#', prepend it
-      if
-        (k:find('gui%a') or k:find('^fg') or k:find('^bg'))
-        and v:sub(1, 1) ~= '#'
-      then
-        val = '#' .. val
-      end
-
-      table.insert(props_list, k .. '=' .. val)
-    end
-
-    if vim.tbl_isempty(props_list) then
-      error('Empty props for highlight group ' .. group)
-    end
-
-    vim.cmd('hi ' .. group .. ' ' .. table.concat(props_list, ' '))
-  end
+  vim.api.nvim_set_hl(0, group, opts)
 end
 
 -- link one syntax group to another
 function M.hi_link(group1, group2)
-  vim.cmd('hi! link ' .. group1 .. ' ' .. group2)
+	vim.api.nvim_set_hl(0, group1, { link = group2 })
 end
 
 return M
