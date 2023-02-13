@@ -10,7 +10,7 @@ setopt null_glob
 function log {
     local msg=$1
     local color=${2:-$fg_bold[green]}
-    echo "$color>>>$reset_color $fg_bold[white]$msg$reset_color"
+    echo "$color>>>$reset_color $msg"
 }
 
 # Log output
