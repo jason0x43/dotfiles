@@ -93,10 +93,10 @@
 
 [tig "color"]
 	default = default default normal
-	cursor = color7 color4 normal
+	cursor = default color8 normal
 	diff-del = color1 default normal
 	diff-add = color2 default normal
-	title-focus = color7 color4 normal
+	title-focus = color0 color4 normal
 	title-blur = color7 color8 normal
 
 [tig "bind"]
