@@ -64,7 +64,7 @@ function M.change_scheme_action(dir)
 			return (
 				(appearance == "dark" and util.is_dark(scheme.background))
 				or (appearance == "light" and not util.is_dark(scheme.background))
-			) and (name:find("(selenized)") or name:find("Catppuccin"))
+			) and (name:find("(selenized)") or name:find("(catppuccin)"))
 		end
 
 		if dir == "next" then

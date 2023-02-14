@@ -30,12 +30,10 @@ selection_fg = "none"
 selection_bg = "#cfcebe"
 
 [colors.indexed]
-16 = "#fbf3db"
-17 = "#53676d"
-18 = "#c25d1e"
-19 = "#bc5819"
-20 = "#8762c6"
-21 = "#825dc0"
+16 = "#c25d1e"
+17 = "#bc5819"
+18 = "#8762c6"
+19 = "#825dc0"
 
 [colors.tab_bar]
 background = "#cbc3ab"

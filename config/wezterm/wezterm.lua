@@ -118,25 +118,25 @@ function Scheme(name, window)
 	local fg = wezterm.color.parse(scheme.foreground)
 	local dim_fg = appearance == "light" and fg:lighten(0.5) or fg:darken(0.4)
 
-	scheme.tab_bar = {
-		background = bar_bg,
-		active_tab = {
-			bg_color = scheme.background,
-			fg_color = scheme.foreground,
-		},
-		inactive_tab = {
-			bg_color = dim_bg,
-			fg_color = dim_fg,
-		},
-		new_tab = {
-			bg_color = bar_bg,
-			fg_color = scheme.brights[1],
-		},
-	}
+	-- scheme.tab_bar = {
+	-- 	background = bar_bg,
+	-- 	active_tab = {
+	-- 		bg_color = scheme.background,
+	-- 		fg_color = scheme.foreground,
+	-- 	},
+	-- 	inactive_tab = {
+	-- 		bg_color = dim_bg,
+	-- 		fg_color = dim_fg,
+	-- 	},
+	-- 	new_tab = {
+	-- 		bg_color = bar_bg,
+	-- 		fg_color = scheme.brights[1],
+	-- 	},
+	-- }
 
-	overrides.color_schemes = overrides.color_schemes or {}
-	overrides.color_schemes[name] = scheme
-	print("Added tab bar colors to " .. name)
+	-- overrides.color_schemes = overrides.color_schemes or {}
+	-- overrides.color_schemes[name] = scheme
+	-- print("Added tab bar colors to " .. name)
 
 	local appearance = util.get_appearance()
 	scheme_config.update({ [appearance] = name })
