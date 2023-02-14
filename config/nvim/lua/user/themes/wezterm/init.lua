@@ -1,15 +1,12 @@
 local os = require('os')
 
 local M = {}
-local theme_util = require('user.util.theme')
 
-local function load_scheme()
+local function load_colors()
   local colors_text =
     vim.fn.readfile(os.getenv('HOME') .. '/.local/share/wezterm/colors.json')
   return vim.fn.json_decode(colors_text)
 end
-
-local active_palette
 
 function M.apply(appearance)
   local g = vim.g
@@ -19,36 +16,35 @@ function M.apply(appearance)
     return
   end
 
-  active_palette = load_scheme()
-  local palette = active_palette
+  local colors = load_colors()
 
-	vim.go.background = palette.is_dark and 'dark' or 'light'
+	vim.go.background = colors.is_dark and 'dark' or 'light'
 
-  g.colors_name = palette.name
+  g.colors_name = colors.name
 
-  g.terminal_color_0 = palette.color00
-  g.terminal_color_1 = palette.color01
-  g.terminal_color_2 = palette.color02
-  g.terminal_color_3 = palette.color03
-  g.terminal_color_4 = palette.color04
-  g.terminal_color_5 = palette.color05
-  g.terminal_color_6 = palette.color06
-  g.terminal_color_7 = palette.color07
-  g.terminal_color_8 = palette.color08
-  g.terminal_color_9 = palette.color09
-  g.terminal_color_10 = palette.color10
-  g.terminal_color_11 = palette.color11
-  g.terminal_color_12 = palette.color12
-  g.terminal_color_13 = palette.color13
-  g.terminal_color_14 = palette.color14
-  g.terminal_color_15 = palette.color15
+  g.terminal_color_0 = colors.color00
+  g.terminal_color_1 = colors.color01
+  g.terminal_color_2 = colors.color02
+  g.terminal_color_3 = colors.color03
+  g.terminal_color_4 = colors.color04
+  g.terminal_color_5 = colors.color05
+  g.terminal_color_6 = colors.color06
+  g.terminal_color_7 = colors.color07
+  g.terminal_color_8 = colors.color08
+  g.terminal_color_9 = colors.color09
+  g.terminal_color_10 = colors.color10
+  g.terminal_color_11 = colors.color11
+  g.terminal_color_12 = colors.color12
+  g.terminal_color_13 = colors.color13
+  g.terminal_color_14 = colors.color14
+  g.terminal_color_15 = colors.color15
 
-	if palette.type == 'selenized' then
-		require('user.themes.wezterm.selenized').apply(palette)
-	elseif palette.type == 'base16' then
-		require('user.themes.wezterm.base16').apply(palette)
-	else
-		require('user.themes.wezterm.terminal').apply(palette)
+	if colors.type == 'selenized' then
+		require('user.themes.wezterm.selenized').apply(colors.variant)
+	elseif colors.type == 'base16' then
+		require('user.themes.wezterm.base16').apply(colors)
+	elseif colors.type == 'catppuccin' then
+		require('user.themes.wezterm.catppuccin').apply(colors.variant)
 	end
 
 	require('lualine').setup({
@@ -56,10 +52,6 @@ function M.apply(appearance)
 			theme = 'wezterm',
 		},
 	})
-end
-
-function M.active_palette()
-  return active_palette
 end
 
 return M

@@ -1,0 +1,53 @@
+[metadata]
+name = 'Selenized White (selenized)'
+
+[colors]
+ansi = [
+	"#ebebeb",
+	"#d6000c",
+	"#1d9700",
+	"#c49700",
+	"#0064e4",
+	"#dd0f9d",
+	"#00ad9c",
+	"#878787"
+]
+background = "#ffffff"
+brights = [
+	"#cdcdcd",
+	"#bf0000",
+	"#008400",
+	"#af8500",
+	"#0054cf",
+	"#c7008b",
+	"#009a8a",
+	"#282828"
+]
+cursor_bg = "#d6000c"
+cursor_fg = "#ffffff"
+foreground = "#474747"
+selection_fg = "none"
+selection_bg = "#cdcdcd"
+
+[colors.indexed]
+16 = "#ffffff"
+17 = "#474747"
+18 = "#d04a00"
+19 = "#ba3700"
+20 = "#7f51d6"
+21 = "#6b40c3"
+
+[colors.tab_bar]
+background = "#cdcdcd"
+
+[colors.tab_bar.active_tab]
+bg_color = "#ffffff"
+fg_color = "#474747"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#dddddd"
+fg_color = "#474747"
+
+[colors.tab_bar.new_tab]
+bg_color = "#cdcdcd"
+fg_color = "#474747"

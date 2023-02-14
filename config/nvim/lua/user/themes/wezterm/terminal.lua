@@ -3,27 +3,27 @@ local shift = theme_util.shift
 
 local M = {}
 
-function M.apply(palette)
+function M.apply(colors)
   print('Applying terminal theme')
 
-  local bg = palette.bg
-  local fg = palette.fg
-  local color00 = palette.color00
-  local color01 = palette.color01
-  local color02 = palette.color02
-  local color03 = palette.color03
-  local color04 = palette.color04
-  local color05 = palette.color05
-  local color06 = palette.color06
-  local color07 = palette.color07
-  local color08 = palette.color08
-  local color09 = palette.color09
-  local color10 = palette.color10
-  local color11 = palette.color11
-  local color12 = palette.color12
-  local color13 = palette.color13
-  local color14 = palette.color14
-  local color15 = palette.color15
+  local bg = colors.bg
+  local fg = colors.fg
+  local color00 = colors.color00
+  local color01 = colors.color01
+  local color02 = colors.color02
+  local color03 = colors.color03
+  local color04 = colors.color04
+  local color05 = colors.color05
+  local color06 = colors.color06
+  local color07 = colors.color07
+  local color08 = colors.color08
+  local color09 = colors.color09
+  local color10 = colors.color10
+  local color11 = colors.color11
+  local color12 = colors.color12
+  local color13 = colors.color13
+  local color14 = colors.color14
+  local color15 = colors.color15
 
   local sign_col_bg = shift(bg, -0.1)
 

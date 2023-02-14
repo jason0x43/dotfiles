@@ -11,17 +11,21 @@ end
 function M.save(name, scheme)
 	wezterm.GLOBAL.active_scheme = scheme
 
-	local type = "iterm2"
+	local type = nil
+	local variant = nil
 	if name:find("(base16)") then
 		type = "base16"
-	elseif name:find("(terminal.sexy)") then
-		type = "terminal.sexy"
-	elseif name:find("(Gogh)") then
-		type = "gogh"
+		variant = name:match("(.+) %(base16%)"):lower()
 	elseif name:find("(selenized)") then
 		type = "selenized"
-	elseif name:find("(selenized)") then
-		type = "selenized"
+		variant = name:match("Selenized (.+) %(selenized%)"):lower()
+	elseif name:find("Catppuccin") then
+		type = "catppuccin"
+		variant = name:match("Catppuccin (%w+)"):lower()
+	end
+
+	if type == nil or variant == nil then
+		error("Couldn't find type or variant for " .. name)
 	end
 
 	-- Create the scheme data that will be written to the theme file for other
@@ -30,6 +34,7 @@ function M.save(name, scheme)
 		name = name,
 		is_dark = util.is_dark(scheme.background),
 		type = type,
+		variant = variant,
 
 		color00 = scheme.ansi[1],
 		color01 = scheme.ansi[2],

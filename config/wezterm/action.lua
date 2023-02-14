@@ -59,6 +59,14 @@ function M.change_scheme_action(dir)
 			end
 		end
 
+		local matches = function(name)
+			local scheme = schemes[name]
+			return (
+				(appearance == "dark" and util.is_dark(scheme.background))
+				or (appearance == "light" and not util.is_dark(scheme.background))
+			) and (name:find("(selenized)") or name:find("Catppuccin"))
+		end
+
 		if dir == "next" then
 			while true do
 				index = index + 1
@@ -66,11 +74,7 @@ function M.change_scheme_action(dir)
 					index = 1
 				end
 				scheme_name = scheme_names[index]
-				local scheme = schemes[scheme_name]
-				if
-					(appearance == "dark" and util.is_dark(scheme.background))
-					or (appearance == "light" and not util.is_dark(scheme.background))
-				then
+				if matches(scheme_name) then
 					break
 				end
 			end
@@ -81,11 +85,7 @@ function M.change_scheme_action(dir)
 					index = #scheme_names
 				end
 				scheme_name = scheme_names[index]
-				local scheme = schemes[scheme_name]
-				if
-					(appearance == "dark" and util.is_dark(scheme.background))
-					or (appearance == "light" and not util.is_dark(scheme.background))
-				then
+				if matches(scheme_name) then
 					break
 				end
 			end

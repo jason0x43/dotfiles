@@ -96,6 +96,11 @@ function Scheme(name, window)
 		window = _G.window
 	end
 
+	if not name then
+		local cfg = window:effective_config()
+		return cfg.color_scheme
+	end
+
 	print('Setting scheme to "' .. name .. '"')
 	local scheme = util.get_schemes(window)[name]
 	if not scheme then
@@ -103,12 +108,15 @@ function Scheme(name, window)
 		return
 	end
 
+	local overrides = window:get_config_overrides() or {}
+	local appearance = util.get_appearance()
+
 	local bg = wezterm.color.parse(scheme.background)
-	local bar_bg = bg:darken(0.2)
-	local dim_bg = bg:darken(0.1)
+	local bar_bg = appearance == "light" and bg:darken(0.2) or bg:lighten(0.1)
+	local dim_bg = appearance == "light" and bg:darken(0.1) or bg:lighten(0.1)
 
 	local fg = wezterm.color.parse(scheme.foreground)
-	local dim_fg = fg:lighten(0.5)
+	local dim_fg = appearance == "light" and fg:lighten(0.5) or fg:darken(0.4)
 
 	scheme.tab_bar = {
 		background = bar_bg,
@@ -126,14 +134,14 @@ function Scheme(name, window)
 		},
 	}
 
-	active_scheme.save(name, scheme)
+	overrides.color_schemes = overrides.color_schemes or {}
+	overrides.color_schemes[name] = scheme
+	print("Added tab bar colors to " .. name)
 
 	local appearance = util.get_appearance()
 	scheme_config.update({ [appearance] = name })
+	active_scheme.save(name, scheme)
 
-	local overrides = window:get_config_overrides() or {}
-	overrides.color_schemes = overrides.color_schemes or {}
-	overrides.color_schemes[name] = scheme
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 

@@ -85,9 +85,7 @@ end
 
 -- Return a list of all available scheme names
 function M.get_schemes(window)
-	---@diagnostic disable-next-line:undefined-field
 	local config = window:effective_config()
-
 	local schemes = {}
 
 	for name, scheme in pairs(wezterm.color.get_builtin_schemes()) do
