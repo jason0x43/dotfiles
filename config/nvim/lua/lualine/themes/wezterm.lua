@@ -1,17 +1,15 @@
 local shift = require('user.util.theme').shift
+local load_colors = require('user.themes.wezterm').load_colors
 
-local colors_text =
-	vim.fn.readfile(os.getenv('HOME') .. '/.local/share/wezterm/colors.json')
-local c = vim.fn.json_decode(colors_text)
-
-local bg = c['bg']
+local c = load_colors()
+local bg = c.bg_0
 local bg1 = shift(bg, -0.1)
 local bg2 = shift(bg1, -0.1)
-local blue = c['color12']
-local green = c['color10']
-local violet = c['color13']
-local red = c['color09']
-local fg = c['fg']
+local blue = c.blue
+local green = c.green
+local violet = c.violet
+local red = c.red
+local fg = c.fg_0
 local dim = shift(fg, -0.25)
 
 return {

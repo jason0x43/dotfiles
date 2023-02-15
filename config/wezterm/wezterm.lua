@@ -68,7 +68,6 @@ end)
 
 -- Reload the them in any running neovim sessions
 local function reload_neovim_theme()
-	local appearance = util.get_appearance()
 	local homebrew_base = util.homebrew_base()
 	local timeout = homebrew_base .. "/timeout"
 	local nvim = homebrew_base .. "/nvim"
@@ -82,8 +81,9 @@ local function reload_neovim_theme()
 			"--server",
 			server,
 			"--remote-expr",
-			"v:lua.require('user.themes.wezterm.').apply('" .. appearance .. "')",
+			"v:lua.require('user.themes.wezterm').apply()",
 		})
+		print('notified ' .. server)
 	end
 end
 
@@ -108,40 +108,11 @@ function Scheme(name, window)
 		return
 	end
 
-	local overrides = window:get_config_overrides() or {}
-	local appearance = util.get_appearance()
-
-	local bg = wezterm.color.parse(scheme.background)
-	local bar_bg = appearance == "light" and bg:darken(0.2) or bg:lighten(0.1)
-	local dim_bg = appearance == "light" and bg:darken(0.1) or bg:lighten(0.1)
-
-	local fg = wezterm.color.parse(scheme.foreground)
-	local dim_fg = appearance == "light" and fg:lighten(0.5) or fg:darken(0.4)
-
-	-- scheme.tab_bar = {
-	-- 	background = bar_bg,
-	-- 	active_tab = {
-	-- 		bg_color = scheme.background,
-	-- 		fg_color = scheme.foreground,
-	-- 	},
-	-- 	inactive_tab = {
-	-- 		bg_color = dim_bg,
-	-- 		fg_color = dim_fg,
-	-- 	},
-	-- 	new_tab = {
-	-- 		bg_color = bar_bg,
-	-- 		fg_color = scheme.brights[1],
-	-- 	},
-	-- }
-
-	-- overrides.color_schemes = overrides.color_schemes or {}
-	-- overrides.color_schemes[name] = scheme
-	-- print("Added tab bar colors to " .. name)
-
 	local appearance = util.get_appearance()
 	scheme_config.update({ [appearance] = name })
 	active_scheme.save(name, scheme)
 
+	local overrides = window:get_config_overrides() or {}
 	overrides.color_scheme = name
 	window:set_config_overrides(overrides)
 

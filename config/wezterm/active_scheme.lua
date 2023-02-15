@@ -35,35 +35,10 @@ function M.save(name, scheme)
 		is_dark = util.is_dark(scheme.background),
 		type = type,
 		variant = variant,
+	};
 
-		color00 = scheme.ansi[1],
-		color01 = scheme.ansi[2],
-		color02 = scheme.ansi[3],
-		color03 = scheme.ansi[4],
-		color04 = scheme.ansi[5],
-		color05 = scheme.ansi[6],
-		color06 = scheme.ansi[7],
-		color07 = scheme.ansi[8],
-
-		color08 = scheme.brights[1],
-		color09 = scheme.brights[2],
-		color10 = scheme.brights[3],
-		color11 = scheme.brights[4],
-		color12 = scheme.brights[5],
-		color13 = scheme.brights[6],
-		color14 = scheme.brights[7],
-		color15 = scheme.brights[8],
-
-		bg = scheme.background,
-		fg = scheme.foreground,
-
-		selection_bg = scheme.selection_bg,
-	}
-
-	if scheme.indexed ~= nil then
-		for idx, color in pairs(scheme.indexed) do
-			scheme_json["color" .. idx] = color
-		end
+	for k, v in pairs(scheme) do
+		scheme_json[tostring(k)] = v
 	end
 
 	local colors_file = wezterm.home_dir .. "/.local/share/wezterm/colors.json"

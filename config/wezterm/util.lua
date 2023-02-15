@@ -49,13 +49,32 @@ function M.load_json(file)
 	local f = assert(io.open(file, "r"))
 	local text = assert(f:read("*a"))
 	f:close()
-	return wezterm.json_parse(text)
+	local ok, val = pcall(wezterm.json_parse, text)
+	if not ok then
+		print('Error parsing json')
+		print(val)
+		return nil
+	end
+	return val
 end
+
+-- Deep copy a table
+local function deepcopy(tbl)
+	if type(tbl) == 'table' then
+		local copy = {}
+		for k, v in pairs(tbl) do
+			copy[tostring(k)] = deepcopy(v)
+		end
+		return copy
+	end
+	return tbl
+end
+
 
 -- Save JSON data a file
 function M.save_json(data, file)
 	local f = assert(io.open(file, "w"))
-	f:write(wezterm.json_encode(data))
+	f:write(wezterm.json_encode(deepcopy(data)))
 	f:close()
 end
 
