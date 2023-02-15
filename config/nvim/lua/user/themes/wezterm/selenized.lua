@@ -101,6 +101,13 @@ local M = {}
 
 function M.apply(variant)
 	local c = colors[variant];
+	local util = require('user.util.theme')
+
+	if util.is_dark(c.bg_0) then
+		vim.go.background = 'dark'
+	else
+		vim.go.background = 'light'
+	end
 
   local sign_col_bg = ''
   local hi = vim.api.nvim_set_hl

@@ -21,6 +21,13 @@ function M.apply(colors)
   local sign_col_bg = base01
 
   local hi = vim.api.nvim_set_hl
+	local util = require('user.util.theme')
+
+	if util.is_dark(base00) then
+		vim.go.background = 'dark'
+	else
+		vim.go.background = 'light'
+	end
 
   hi(0, 'Bold', { bold = true })
   hi(0, 'Boolean', { fg = base09 })

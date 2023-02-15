@@ -54,6 +54,13 @@ function M.lighten(hex, amount, fg)
   return hex
 end
 
+-- return true if a color is "dark"
+function M.is_dark(color)
+  local rgb = hex_to_rgb(color)
+  local luminance = (0.299 * rgb[1] + 0.587 * rgb[2] + 0.114 * rgb[3]) / 255
+  return luminance < 0.5
+end
+
 -- shift a color by a percentage
 -- the shift direction depends on whether the shift amount is positive or
 -- negative and whether the current background is light or dark
@@ -131,45 +138,45 @@ end
 -- propsOrFg can either be a table containing guifg, guibg, etc., or a fg value.
 -- If propsOrFg is a table, the remaining arguments will be ignored.
 function M.hi(group, fg, bg, sp, modifiers)
-	if type(group) ~= 'string' then
-		error('Group must be a string' .. vim.inspect(group))
-	end
-	if fg and type(fg) ~= 'string' then
-		error('fg must be a string' .. vim.inspect(fg))
-	end
-	if bg and type(bg) ~= 'string' then
-		error('bg must be a string' .. vim.inspect(bg))
-	end
-	if sp and type(sp) ~= 'string' then
-		error('sp must be a string: ' .. vim.inspect(sp))
-	end
-	if modifiers and type(modifiers) ~= 'table' then
-		error('modifiers must be a table: ' .. vim.inspect(modifiers))
-	end
+  if type(group) ~= 'string' then
+    error('Group must be a string' .. vim.inspect(group))
+  end
+  if fg and type(fg) ~= 'string' then
+    error('fg must be a string' .. vim.inspect(fg))
+  end
+  if bg and type(bg) ~= 'string' then
+    error('bg must be a string' .. vim.inspect(bg))
+  end
+  if sp and type(sp) ~= 'string' then
+    error('sp must be a string: ' .. vim.inspect(sp))
+  end
+  if modifiers and type(modifiers) ~= 'table' then
+    error('modifiers must be a table: ' .. vim.inspect(modifiers))
+  end
 
-	local opts = {
-		fg = fg or '',
-		bg = bg or '',
-		sp = sp or '',
-	}
-	local mods = modifiers or {}
+  local opts = {
+    fg = fg or '',
+    bg = bg or '',
+    sp = sp or '',
+  }
+  local mods = modifiers or {}
 
-	if vim.tbl_contains(mods, 'underline') then
-		opts.underline = true
-	end
-	if vim.tbl_contains(mods, 'bold') then
-		opts.bold = true
-	end
-	if vim.tbl_contains(mods, 'undercurl') then
-		opts.undercurl = true
-	end
+  if vim.tbl_contains(mods, 'underline') then
+    opts.underline = true
+  end
+  if vim.tbl_contains(mods, 'bold') then
+    opts.bold = true
+  end
+  if vim.tbl_contains(mods, 'undercurl') then
+    opts.undercurl = true
+  end
 
   vim.api.nvim_set_hl(0, group, opts)
 end
 
 -- link one syntax group to another
 function M.hi_link(group1, group2)
-	vim.api.nvim_set_hl(0, group1, { link = group2 })
+  vim.api.nvim_set_hl(0, group1, { link = group2 })
 end
 
 return M

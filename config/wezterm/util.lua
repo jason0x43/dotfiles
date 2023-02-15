@@ -87,15 +87,9 @@ end
 function M.get_schemes(window)
 	local config = window:effective_config()
 	local schemes = {}
-
-	for name, scheme in pairs(wezterm.color.get_builtin_schemes()) do
-		schemes[name] = scheme
-	end
-
 	for name, scheme in pairs(config.color_schemes) do
 		schemes[name] = scheme
 	end
-
 	return schemes
 end
 
