@@ -321,11 +321,15 @@ function M.apply()
   local colors = M.load_colors()
   apply_theme(colors)
 
-  require('lualine').setup({
-    options = {
-      theme = 'wezterm',
-    },
-  })
+	vim.api.nvim_exec_autocmds('ColorScheme', {})
+
+  -- require('lualine').setup({
+  --   options = {
+  --     theme = 'wezterm',
+  --   },
+  -- })
+
+  -- require('barbecue.ui').update()
 end
 
 function M.load_colors()

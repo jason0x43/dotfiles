@@ -84,7 +84,6 @@ return {
   -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
-    event = 'BufEnter',
     dependencies = 'nvim-treesitter',
     config = function()
       require('nvim-navic').setup()

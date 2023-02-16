@@ -5,11 +5,11 @@ return {
   dependencies = {
     'arkav/lualine-lsp-progress',
     'nvim-web-devicons',
-    'nvim-navic',
+    -- 'nvim-navic',
   },
 
   config = function()
-    local navic = require('nvim-navic')
+    -- local navic = require('nvim-navic')
     local hi = vim.api.nvim_set_hl
 
     -- make statusline transparent so we don't get a flash before lualine
@@ -50,10 +50,19 @@ return {
           },
         },
         lualine_c = {
+          {
+            'filetype',
+            icon_only = 1,
+            separator = '',
+            padding = { left = 0, right = 0 },
+          },
           { 'filename', path = 1, padding = { left = 1, right = 1 } },
         },
         lualine_x = {
-          { 'filetype', icon_only = 1, separator = '', padding = { left = 0 } },
+          {
+            'language_servers',
+            padding = { left = 0, right = 0 },
+          },
           {
             require('lazy.status').updates,
             cond = require('lazy.status').has_updates,
@@ -63,34 +72,20 @@ return {
           { 'progress', padding = { left = 1, right = 0 } },
         },
       },
-      winbar = {
-        lualine_c = {
-          {
-            navic.get_location,
-            cond = navic.is_available,
-            padding = { left = 1 },
-          },
-        },
-        lualine_x = {
-          {
-            'language_servers',
-            separator = '',
-            padding = { left = 1, right = 1 },
-          },
-        },
-      },
-      inactive_winbar = {
-        lualine_x = {
-          {
-            'language_servers',
-            separator = '',
-            padding = { left = 1, right = 1 },
-          },
-        },
-      },
       extensions = { 'nvim-tree', 'quickfix' },
     }
 
     require('lualine').setup(config)
+
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('lualine.colorizer', {}),
+      callback = function()
+        require('lualine').setup({
+          options = {
+            theme = 'wezterm',
+          },
+        })
+      end,
+    })
   end,
 }
