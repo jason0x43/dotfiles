@@ -340,7 +340,7 @@ if (( $+commands[bat] )); then
 
     # BAT_THEME is also used by delta, so set it here rather than in the bat
     # config file
-    export BAT_THEME=ansi
+    export BAT_THEME=wezterm
 fi
 
 # fzf (https://github.com/junegunn/fzf)
