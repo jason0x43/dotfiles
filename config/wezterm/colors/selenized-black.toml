@@ -14,7 +14,7 @@ ansi = [
 ]
 background = "#181818"
 brights = [
-  "#3b3b3b",
+  "#505050",
   "#ff5e56",
   "#83c746",
   "#efc541",
