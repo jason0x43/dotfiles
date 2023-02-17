@@ -20,6 +20,9 @@ M.config = {
       return nil
     end
 
+    -- Trim the trailing newline
+    project_root = vim.trim(project_root)
+
     -- Look for eslint config files using the same logic as eslint
     local file_dir = vim.fs.dirname(filename)
 
