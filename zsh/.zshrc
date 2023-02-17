@@ -1,11 +1,6 @@
 # Enable profiling
 # zmodload zsh/zprof
 
-# Homebrew
-# ------------------------------------------------------------------------
-# Prevent Homebrew from running an update every time a brew command is run
-export HOMEBREW_NO_AUTO_UPDATE=1
-
 # Setup fpath
 # ------------------------------------------------------------------------
 # The fpath should be initialized before trying to load plugins (with zfetch)
