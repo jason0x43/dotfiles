@@ -1,4 +1,4 @@
-/// <reference types="./phoenix.d.ts" />
+/// <reference types="./phoenix" />
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -698,7 +698,10 @@ function showHelp() {
 function toggleFillScreen(window = Window.focused()) {
   const windowId = window.hash();
   const lastPositions =
-    /** @type {{ [key: number]: Rectangle }} */ (Storage.get("lastPositions"));
+    /** @type {{ [key: number]: Rectangle }} */ (Storage.get(
+      "lastPositions",
+    )) ??
+      {};
   const windowFrame = window.frame();
   const screenFrame = getScreenFrame();
 
