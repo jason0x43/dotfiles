@@ -3,6 +3,7 @@ local load_colors = require('user.themes.wezterm').load_colors
 return {
   'utilyre/barbecue.nvim',
   name = 'barbecue',
+	enabled = false,
   version = '*',
   dependencies = {
     'SmiteshP/nvim-navic',
