@@ -27,21 +27,15 @@ M.config = {
     local file_dir = vim.fs.dirname(filename)
 
     -- look for eslint config files
-    local eslint_config = vim.fs.find(function(name)
-      return name:find('.eslintrc.', 1, true) == 1
-        or name:find('eslint.config.', 1, true) == 1
-    end, {
-      path = file_dir,
-      type = 'file',
-      upward = true,
-    })
-    if #eslint_config > 0 then
-      return project_root
-    end
-
-    -- look for package.json files with eslint configs
-    local pkg_json_with_eslint = find_file(file_dir, function(path)
+    local eslint_config = find_file(file_dir, function(path)
       local name = vim.fs.basename(path)
+      if
+        name:find('.eslintrc.', 1, true) == 1
+        or name:find('eslint.config.', 1, true) == 1
+      then
+        return true
+      end
+
       if name == 'package.json' then
         local text = vim.fn.readfile(path)
         local ok, parsed = pcall(vim.fn.json_decode, text)
@@ -50,8 +44,8 @@ M.config = {
         end
       end
     end)
-    if pkg_json_with_eslint ~= nil then
-      return project_root
+    if eslint_config ~= nil then
+      return vim.fs.dirname(eslint_config)
     end
   end,
 }
