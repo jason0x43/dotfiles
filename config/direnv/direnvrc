@@ -1,3 +1,13 @@
+# Use rtx-managed tools
+use_rtx() {
+  direnv_load rtx direnv exec
+}
+
+# Use asdf-managed tools
+use_asdf() {
+  source_env "$(asdf direnv envrc "$@")"
+}
+
 # Return the currently active version of a particular tool
 #
 # This works by looking at the full path to a given executable. If it fits a

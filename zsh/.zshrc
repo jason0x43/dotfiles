@@ -424,9 +424,6 @@ fi
 export DIRENV_LOG_FORMAT=
 eval "$(direnv hook $SHELL)"
 
-# added by travis gem
-[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
-
 # Line editor
 # ------------------------------------------------------------------------
 
@@ -434,12 +431,6 @@ eval "$(direnv hook $SHELL)"
 bindkey '^f' vi-forward-word
 bindkey '^b' vi-forward-blank-word
 bindkey '^e' vi-end-of-line
-
-# ASDF
-# --------------------------------------------------------------------------
-if [[ -d "$XDG_CONFIG_HOME/asdf-direnv/zshrc" ]]; then
-    source "$XDG_CONFIG_HOME/asdf-direnv/zshrc"
-fi
 
 # Bun
 # --------------------------------------------------------------------------
@@ -497,5 +488,3 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
-
-# vim:shiftwidth=4:tabstop=4:expandtab
