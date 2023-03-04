@@ -545,11 +545,6 @@ function dotfiles-node {
             };
         }; then
             local npm=$(which npm)
-
-            if [[ $(which node) =~ linuxbrew ]]; then
-                npm=sudo --preserve-env=PATH -u brew $npm
-            fi
-
             $npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
             logSub "Installed $latestPkg"
         fi
