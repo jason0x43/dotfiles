@@ -616,7 +616,7 @@ function padScreenFrame(frame) {
 }
 
 /**
- * Resize SE-corner by value
+ * Resize by value, maintaining center
  *
  * @param {{ width?: number, height?: number }} increment
  * @param {Window} [window]
@@ -627,15 +627,21 @@ function resize(increment, window = Window.focused()) {
 
   if (increment.width) {
     const maxWidth = screenFrame.width - (windowFrame.x - screenFrame.x);
-    windowFrame.width = Math.min(windowFrame.width + increment.width, maxWidth);
+    const oldWidth = windowFrame.width;
+    const newWidth = Math.min(windowFrame.width + increment.width, maxWidth);
+    windowFrame.width = newWidth;
+    windowFrame.x -= (newWidth - oldWidth) / 2;
   }
 
   if (increment.height) {
     const maxHeight = screenFrame.height - (windowFrame.y - screenFrame.y);
-    windowFrame.height = Math.min(
+    const oldHeight = windowFrame.height;
+    const newHeight = Math.min(
       windowFrame.height + increment.height,
       maxHeight,
     );
+    windowFrame.height = newHeight;
+    windowFrame.y -= (newHeight - oldHeight) / 2;
   }
 
   window.setFrame(windowFrame);
