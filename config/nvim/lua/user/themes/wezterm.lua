@@ -98,6 +98,30 @@ local palettes = {
     br_orange = '#bc5819',
     br_violet = '#825dc0',
   },
+  cterm = {
+    bg_0 = nil,
+    fg_0 = nil,
+    bg_1 = 0,
+    red = 1,
+    green = 2,
+    yellow = 3,
+    blue = 4,
+    magenta = 5,
+    cyan = 6,
+    dim_0 = 7,
+    bg_2 = 8,
+    br_red = 9,
+    br_green = 10,
+    br_yellow = 11,
+    br_blue = 12,
+    br_magenta = 13,
+    br_cyan = 14,
+    fg_1 = 15,
+    orange = 16,
+    br_orange = 17,
+    violet = 18,
+    br_violet = 19,
+  },
 }
 
 -- Convert a Wezterm color scheme to the Selenized format.
@@ -131,25 +155,27 @@ local function to_selenized(wezterm_colors)
   }
 end
 
--- A convenience function for creating hilight groups
+-- A convenience function for setting highlight groups
 local function hi(group, options)
-  vim.api.nvim_set_hl(0, group, options)
+  local opts = {}
+  for k, v in pairs(options) do
+    if k == 'fg' or k == 'bg' then
+      opts[k] = v
+      opts['cterm' .. k] = v
+    else
+      opts[k] = v
+    end
+  end
+  vim.api.nvim_set_hl(0, group, opts)
 end
 
+-- A convenience function for linking highlight groups
 local function hilink(group, other_group)
-  hi(group, { link = other_group })
+  vim.api.nvim_set_hl(0, group, { link = other_group })
 end
 
 -- Apply a theme in the Selenized format
 local function apply_theme(c)
-  local util = require('user.util.theme')
-
-  if util.is_dark(c.bg_0) then
-    vim.go.background = 'dark'
-  else
-    vim.go.background = 'light'
-  end
-
   local sign_col_bg = ''
 
   hilink('Boolean', 'Constant')
@@ -319,28 +345,35 @@ local M = {}
 
 function M.apply()
   local colors = M.load_colors()
+
+  if vim.go.termguicolors then
+    local util = require('user.util.theme')
+
+    if util.is_dark(colors.bg_0) then
+      vim.go.background = 'dark'
+    else
+      vim.go.background = 'light'
+    end
+  end
+
   apply_theme(colors)
 
-	vim.api.nvim_exec_autocmds('ColorScheme', {})
-
-  -- require('lualine').setup({
-  --   options = {
-  --     theme = 'wezterm',
-  --   },
-  -- })
-
-  -- require('barbecue.ui').update()
+  vim.api.nvim_exec_autocmds('ColorScheme', {})
 end
 
 function M.load_colors()
-  local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
-  local ok, colors_text = pcall(vim.fn.readfile, colors_file)
+  if vim.go.termguicolors then
+    local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
+    local ok, colors_text = pcall(vim.fn.readfile, colors_file)
 
-  if not ok then
-    return palettes.white
+    if not ok then
+      return palettes.white
+    else
+      local scheme = vim.fn.json_decode(colors_text)
+      return to_selenized(scheme)
+    end
   else
-    local scheme = vim.fn.json_decode(colors_text)
-    return to_selenized(scheme)
+    return palettes.cterm
   end
 end
 

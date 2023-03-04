@@ -9,6 +9,7 @@ return {
   {
     'norcalli/nvim-colorizer.lua',
     event = 'BufEnter',
+    cond = vim.go.termguicolors,
     config = function()
       require('colorizer').setup({ '*' }, {
         names = false,

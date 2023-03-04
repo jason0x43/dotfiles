@@ -91,7 +91,11 @@ o.showmode = false
 o.mouse = 'a'
 
 -- enable truecolor mode
-o.termguicolors = true
+if vim.fn.getenv('SSH_CLIENT') ~= nil then
+	o.termguicolors = false
+else
+	o.termguicolors = true
+end
 
 -- show markers for long lines
 o.listchars.precedes = '^'
