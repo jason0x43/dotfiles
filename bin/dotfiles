@@ -4,6 +4,10 @@ autoload colors; colors
 
 source $HOME/.dotfiles/zsh/common.zsh
 
+if [ -d $HOMEBREW_BASE ]; then
+    export PATH=$HOMEBREW_BASE/bin:$PATH
+fi
+
 setopt null_glob
 
 # Log output
@@ -244,14 +248,6 @@ function dotfiles-launchd {
 
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
-    if [[ $OSTYPE == linux* ]]; then
-        local base_group=$(stat -c '%G' $HOMEBREW_BASE)
-        if [[ $base_group != 'brew' ]]; then
-            err "$HOMEBREW_BASE is not owned by brew group"
-            return
-        fi
-    fi
-
     log "Updating brew..."
 
     if [[ $OSTYPE == linux* ]]; then
@@ -278,6 +274,14 @@ function dotfiles-brew {
         fi
 
         rehash
+    fi
+
+    if [[ $OSTYPE == linux* ]]; then
+        local base_group=$(stat -c '%G' $HOMEBREW_BASE)
+        if [[ $base_group != 'brew' ]]; then
+            err "$HOMEBREW_BASE is not owned by brew group"
+            return
+        fi
     fi
 
     logSub "Updating brew package list..."

@@ -16,14 +16,18 @@ export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
 export ZCOMPDIR=$ZCACHEDIR/completions
 
-if [[ -d /home/linuxbrew ]]; then
-    export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
-elif [[ -d $HOME/.linuxbrew ]]; then
-    export HOMEBREW_BASE=$HOME/.linuxbrew
-elif [[ -d /opt/homebrew ]]; then
-    export HOMEBREW_BASE=/opt/homebrew
+if [[ $OSTYPE == linux* ]]; then
+    if [[ -d $HOME/.linuxbrew ]]; then
+        export HOMEBREW_BASE=$HOME/.linuxbrew
+    else
+        export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
+    fi
 else
-    export HOMEBREW_BASE=/usr/local
+     if [[ -d /opt/homebrew ]]; then
+         export HOMEBREW_BASE=/opt/homebrew
+     else
+         export HOMEBREW_BASE=/usr/local
+     fi
 fi
 
 # This must be set for asdf-direnv to work properly. The _load_asdf_utils
