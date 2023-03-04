@@ -155,20 +155,6 @@ local function to_selenized(wezterm_colors)
   }
 end
 
--- A convenience function for setting highlight groups
-local function hi(group, options)
-  local opts = {}
-  for k, v in pairs(options) do
-    if k == 'fg' or k == 'bg' then
-      opts[k] = v
-      opts['cterm' .. k] = v
-    else
-      opts[k] = v
-    end
-  end
-  vim.api.nvim_set_hl(0, group, opts)
-end
-
 -- A convenience function for linking highlight groups
 local function hilink(group, other_group)
   vim.api.nvim_set_hl(0, group, { link = other_group })
@@ -176,6 +162,26 @@ end
 
 -- Apply a theme in the Selenized format
 local function apply_theme(c)
+  -- A convenience function for setting highlight groups
+  local hi = nil
+  if vim.go.termguicolors then
+    hi = function(group, options)
+      vim.api.nvim_set_hl(0, group, options)
+    end
+  else
+    hi = function(group, options)
+      local opts = {}
+      for k, v in pairs(options) do
+        if k == 'fg' or k == 'bg' then
+          opts['cterm' .. k] = v
+        else
+          opts[k] = v
+        end
+      end
+      vim.api.nvim_set_hl(0, group, opts)
+    end
+  end
+
   local sign_col_bg = ''
 
   hilink('Boolean', 'Constant')

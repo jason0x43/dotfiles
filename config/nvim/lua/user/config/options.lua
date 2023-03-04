@@ -91,7 +91,7 @@ o.showmode = false
 o.mouse = 'a'
 
 -- enable truecolor mode
-if vim.fn.getenv('SSH_CLIENT') ~= nil then
+if os.getenv('SSH_CLIENT') ~= nil then
 	o.termguicolors = false
 else
 	o.termguicolors = true
