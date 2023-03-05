@@ -22,8 +22,12 @@ end
 --     buffer  - a buffer number, or true for buffer 0
 --     mode    - a mode; overrides the mode arg
 local map_in_mode = function(mode, key, cmd, opts)
-  local options = { noremap = true }
-  local buf
+  local options = opts and vim.deepcopy(opts) or {}
+
+  -- use noremap by default
+  if options.noremap == nil then
+    options.noremap = true
+  end
 
   -- <plug> mappings won't work with noremap
   local cmd_lower = cmd:lower()
@@ -32,31 +36,20 @@ local map_in_mode = function(mode, key, cmd, opts)
   end
 
   -- pull buffer out of opts if specified
-  if opts and opts.buffer then
-    buf = opts.buffer == true and 0 or opts.buffer
-    opts.buffer = nil
-  end
+  local buf = options.buffer == true and 0 or options.buffer
+  options.buffer = nil
 
   -- pull mode out of opts if specified
-  if opts and opts.mode then
-    mode = opts.mode
-    opts.mode = nil
-  end
-
-  -- add any remaining opts to options
-  if opts then
-    options = vim.tbl_extend('force', options, opts)
-  end
+  mode = options.mode or mode
+  options.mode = nil
 
   -- get a referenced to a key mapper function; what is used depends on whether
   -- or not the map is being set for a specific buffer
-  local set_keymap
+  local set_keymap = vim.api.nvim_set_keymap
   if buf then
     set_keymap = function(_mode, _key, _cmd, _options)
       vim.api.nvim_buf_set_keymap(buf, _mode, _key, _cmd, _options)
     end
-  else
-    set_keymap = vim.api.nvim_set_keymap
   end
 
   -- create a mapping for every mode in the mode string
