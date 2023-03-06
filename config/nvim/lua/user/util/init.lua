@@ -36,18 +36,6 @@ function M.cmd(name, argsOrCmd, cmd)
   end
 end
 
--- create a buffer-local vim command
-function M.bufcmd(name, argsOrCmd, cmd)
-  if not cmd then
-    cmd = argsOrCmd
-    argsOrCmd = '-buffer'
-  else
-    argsOrCmd = '-buffer ' .. argsOrCmd
-  end
-
-  M.cmd(name, argsOrCmd, cmd)
-end
-
 -- settings for text files
 function M.text_mode()
   vim.wo.wrap = true

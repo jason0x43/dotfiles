@@ -1,5 +1,4 @@
 local modbase = ...
-local util = require('user.util')
 local lspconfig = require('lspconfig')
 
 -- Give LspInfo window a border
@@ -147,7 +146,12 @@ M.on_attach = function(client, bufnr)
   end
 
   if caps.documentFormattingProvider then
-    util.bufcmd('Format', 'lua require("user.lsp").format_sync()')
+    vim.api.nvim_buf_create_user_command(
+			0,
+      'Format',
+      'lua require("user.lsp").format_sync()',
+			{}
+    )
     vim.keymap.set('n', '<leader>F', '<cmd>Format<cr>', opts)
     -- vim.cmd(
     --   'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'

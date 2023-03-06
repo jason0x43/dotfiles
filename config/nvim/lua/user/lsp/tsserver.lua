@@ -35,7 +35,12 @@ M.config = {
       lsp_util.disable_formatting(client)
     end
 
-    require('user.util').bufcmd('OrganizeImports', 'TsserverOrganizeImports')
+    vim.api.nvim_buf_create_user_command(
+      0,
+      'OrganizeImports',
+      'TsserverOrganizeImports',
+      {}
+    )
   end,
 
   commands = {

@@ -2,7 +2,12 @@ local M = {}
 
 M.config = {
   on_attach = function()
-    require('user.util').bufcmd('OrganizeImports', 'PyrightOrganizeImports')
+    vim.api.nvim_buf_create_user_command(
+      0,
+      'OrganizeImports',
+      'PyrightOrganizeImports',
+      {}
+    )
   end,
 
   handlers = {
