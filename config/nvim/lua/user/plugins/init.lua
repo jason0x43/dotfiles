@@ -32,9 +32,8 @@ return {
     'moll/vim-bbye',
     event = 'BufEnter',
     config = function()
-      local util = require('user.util')
-      util.lmap('k', '<cmd>Bdelete<cr>')
-      util.lmap('K', '<cmd>Bdelete!<cr>')
+      vim.keymap.set('n', '<leader>k', '<cmd>Bdelete<cr>')
+      vim.keymap.set('n', '<leader>K', '<cmd>Bdelete!<cr>')
     end,
   },
 

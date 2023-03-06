@@ -12,81 +12,6 @@ function M.yank(text)
   end
 end
 
--- map a key in a particular mode
---   mode - one or more mode characters
---   key  - the key to map
---   cmd  - the command to run for the key
---   opts - mapping options
---     noremap - if true, use a non-remappable mapping
---     silent  - if true, set the silent option
---     buffer  - a buffer number, or true for buffer 0
---     mode    - a mode; overrides the mode arg
-local map_in_mode = function(mode, key, cmd, opts)
-  local options = opts and vim.deepcopy(opts) or {}
-
-  -- use noremap by default
-  if options.noremap == nil then
-    options.noremap = true
-  end
-
-  -- <plug> mappings won't work with noremap
-  local cmd_lower = cmd:lower()
-  if cmd_lower:find('<plug>') then
-    options.noremap = nil
-  end
-
-  -- pull buffer out of opts if specified
-  local buf = options.buffer == true and 0 or options.buffer
-  options.buffer = nil
-
-  -- pull mode out of opts if specified
-  mode = options.mode or mode
-  options.mode = nil
-
-  -- get a referenced to a key mapper function; what is used depends on whether
-  -- or not the map is being set for a specific buffer
-  local set_keymap = vim.api.nvim_set_keymap
-  if buf then
-    set_keymap = function(_mode, _key, _cmd, _options)
-      vim.api.nvim_buf_set_keymap(buf, _mode, _key, _cmd, _options)
-    end
-  end
-
-  -- create a mapping for every mode in the mode string
-  if mode == '' then
-    set_keymap(mode, key, cmd, options)
-  else
-    mode:gsub('.', function(m)
-      set_keymap(m, key, cmd, options)
-    end)
-  end
-end
-
--- map a key in all modes
-function M.map(key, cmd, opts)
-  map_in_mode('', key, cmd, opts)
-end
-
--- map a key in normal mode using the leader key
-function M.lmap(key, cmd, opts)
-  map_in_mode('n', '<leader>' .. key, cmd, opts)
-end
-
--- map a key in insert mode using the leader key
-function M.imap(key, cmd, opts)
-  map_in_mode('i', key, cmd, opts)
-end
-
--- map a key in s mode using the leader key
-function M.smap(key, cmd, opts)
-  map_in_mode('s', key, cmd, opts)
-end
-
--- map a key in insert mode using the leader key
-function M.nmap(key, cmd, opts)
-  map_in_mode('n', key, cmd, opts)
-end
-
 -- create an augroup from a name and list of commands
 -- commands are of the form
 --   { group, definition }
@@ -130,10 +55,10 @@ function M.text_mode()
   vim.wo.list = false
   vim.wo.signcolumn = 'no'
 
-  M.map('k', 'gk', { buffer = true })
-  M.map('j', 'gj', { buffer = true })
-  M.map('$', 'g$', { buffer = true })
-  M.map('^', 'g^', { buffer = true })
+	vim.keymap.set('', 'k', 'gk', { buffer = 0 })
+  vim.keymap.set('', 'j', 'gj', { buffer = 0 })
+  vim.keymap.set('', '$', 'g$', { buffer = 0 })
+  vim.keymap.set('', '^', 'g^', { buffer = 0 })
 end
 
 -- set colorcolumn to show the current textwidth

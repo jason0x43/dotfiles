@@ -56,13 +56,13 @@ end)
 
 -- close qf panes and help tabs with 'q'
 autocmd('FileType', 'qf,fugitiveblame,lspinfo,startuptime', function()
-  util.map('q', '<cmd>bd<CR>')
+  vim.keymap.set('', 'q', '<cmd>bd<CR>')
 end)
 autocmd('FileType', 'help', function()
-  util.map('q', '<cmd>tabclose<CR>')
+  vim.keymap.set('', 'q', '<cmd>tabclose<CR>')
 end)
 autocmd('BufEnter', 'output:///info', function()
-  util.map('q', '<cmd>bd<CR>')
+  vim.keymap.set('', 'q', '<cmd>bd<CR>')
 end)
 
 -- auto-set quickfix height

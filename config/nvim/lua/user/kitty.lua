@@ -1,10 +1,9 @@
 -- Handle navigating between various splits (vim, kitty, tmux)
 
-local util = require('user.util')
-util.nmap('<c-h>', '<cmd>lua require("user.kitty").kittyNav("h")<cr>')
-util.nmap('<c-j>', '<cmd>lua require("user.kitty").kittyNav("j")<cr>')
-util.nmap('<c-k>', '<cmd>lua require("user.kitty").kittyNav("k")<cr>')
-util.nmap('<c-l>', '<cmd>lua require("user.kitty").kittyNav("l")<cr>')
+vim.keymap.set('n', '<c-h>', '<cmd>lua require("user.kitty").kittyNav("h")<cr>')
+vim.keymap.set('n', '<c-j>', '<cmd>lua require("user.kitty").kittyNav("j")<cr>')
+vim.keymap.set('n', '<c-k>', '<cmd>lua require("user.kitty").kittyNav("k")<cr>')
+vim.keymap.set('n', '<c-l>', '<cmd>lua require("user.kitty").kittyNav("l")<cr>')
 
 local dirs = {
   h = "left",

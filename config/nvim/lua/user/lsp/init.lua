@@ -126,35 +126,41 @@ M.on_attach = function(client, bufnr)
   local caps = client.server_capabilities
 
   if caps.codeActionProvider then
-    util.lmap('a', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+    vim.keymap.set(
+      'n',
+      '<leader>a',
+      '<cmd>lua vim.lsp.buf.code_action()<cr>',
+      opts
+    )
   end
 
   if caps.definitionProvider then
-    util.nmap('<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
 
   if caps.hoverProvider then
-    util.map('K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
   end
 
   if caps.renameProvider then
-    util.lmap('r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   end
 
   if caps.documentFormattingProvider then
     util.bufcmd('Format', 'lua require("user.lsp").format_sync()')
-    util.lmap('F', '<cmd>Format<cr>', opts)
+    vim.keymap.set('n', '<leader>F', '<cmd>Format<cr>', opts)
     -- vim.cmd(
     --   'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'
     -- )
   end
 
   -- if not packer_plugins['trouble.nvim'] then
-  --   util.lmap('e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+  --   vim.keymap.set('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
   -- end
 
-  util.lmap(
-    'd',
+  vim.keymap.set(
+    'n',
+    '<leader>d',
     '<cmd>lua require("user.lsp").show_position_diagnostics()<cr>',
     opts
   )

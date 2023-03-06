@@ -125,13 +125,16 @@ return {
     telescope.load_extension('undo')
     telescope.load_extension('smart_open')
 
-    local lmap = require('user.util').lmap
-    lmap('e', '<cmd>Telescope diagnostics bufnr=0<cr>')
-    lmap('f', '<cmd>Telescope find_files<cr>')
-    lmap('j', '<cmd>Telescope jumplist<cr>')
-    lmap('s', '<cmd>Telescope current_buffer_fuzzy_find<cr>')
-    lmap('g', '<cmd>Telescope smart_open<cr>')
-    -- lmap('g', '', {
+    vim.keymap.set('n', '<leader>e', '<cmd>Telescope diagnostics bufnr=0<cr>')
+    vim.keymap.set('n', '<leader>f', '<cmd>Telescope find_files<cr>')
+    vim.keymap.set('n', '<leader>j', '<cmd>Telescope jumplist<cr>')
+    vim.keymap.set(
+      'n',
+      '<leader>s',
+      '<cmd>Telescope current_buffer_fuzzy_find<cr>'
+    )
+    vim.keymap.set('n', '<leader>g', '<cmd>Telescope smart_open<cr>')
+    -- vim.keymap.set('n', '<leader>g', '', {
     --   mode = 'n',
     --   callback = function()
     --     local opts = {}
@@ -144,13 +147,13 @@ return {
     --     end
     --   end,
     -- })
-    lmap('b', '<cmd>Telescope buffers<cr>')
-    lmap('u', '<cmd>Telescope undo<cr>')
-    lmap('tg', '<cmd>Telescope live_grep<cr>')
-    lmap('th', '<cmd>Telescope help_tags<cr>')
-    lmap('ts', '<cmd>Telescope symbols<cr>')
-    lmap('lr', '<cmd>Telescope lsp_references<cr>')
-    lmap('ls', '<cmd>Telescope lsp_document_symbols<cr>')
-    lmap('ld', '<cmd>Telescope diagnostics<cr>')
+    vim.keymap.set('n', '<leader>b', '<cmd>Telescope buffers<cr>')
+    vim.keymap.set('n', '<leader>u', '<cmd>Telescope undo<cr>')
+    vim.keymap.set('n', '<leader>tg', '<cmd>Telescope live_grep<cr>')
+    vim.keymap.set('n', '<leader>th', '<cmd>Telescope help_tags<cr>')
+    vim.keymap.set('n', '<leader>ts', '<cmd>Telescope symbols<cr>')
+    vim.keymap.set('n', '<leader>lr', '<cmd>Telescope lsp_references<cr>')
+    vim.keymap.set('n', '<leader>ls', '<cmd>Telescope lsp_document_symbols<cr>')
+    vim.keymap.set('n', '<leader>ld', '<cmd>Telescope diagnostics<cr>')
   end,
 }
