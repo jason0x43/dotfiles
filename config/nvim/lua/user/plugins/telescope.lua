@@ -123,11 +123,6 @@ return {
     vim.keymap.set('n', '<leader>e', '<cmd>Telescope diagnostics bufnr=0<cr>')
     vim.keymap.set('n', '<leader>f', '<cmd>Telescope find_files<cr>')
     vim.keymap.set('n', '<leader>j', '<cmd>Telescope jumplist<cr>')
-    vim.keymap.set(
-      'n',
-      '<leader>s',
-      '<cmd>Telescope current_buffer_fuzzy_find<cr>'
-    )
     vim.keymap.set('n', '<leader>g', function()
       local opts = {}
       local builtin = require('telescope.builtin')
