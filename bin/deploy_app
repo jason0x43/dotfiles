@@ -1,0 +1,88 @@
+#!/bin/sh
+
+# Deploy a Docker-based web app to a server that manages a set of containers
+# using docker-compose.
+#
+# The service being deployed must already have been configured in the server's
+# compose file.
+
+set -e
+
+image=$(basename $PWD)
+
+service=$1
+if [[ -z $service ]]; then
+  service=$image
+fi
+
+deploy_host=$DEPLOY_HOST
+if [[ -z $deploy_host ]]; then
+  deploy_host="localhost"
+fi
+
+services_path=$SERVICES_PATH
+if [[ -z $services_path ]]; then
+  services_path="services"
+fi
+
+read -p "Deploy $image to $deploy_host:$services_path as $service [Y/n]? " answer
+if [[ $answer == "N" || $answer == "n" ]]; then
+  exit 0
+fi
+
+echo "Verifying services path..."
+if [[ $deploy_host == "localhost" ]]; then
+  deploy_path=$HOME/$services_path
+  if [[ ! -d $deploy_path ]]; then
+    echo "Deploy path $deploy_path doesn't exist"
+    exit 1
+  fi
+else
+  deploy_path=$deploy_host:$services_path
+  if ! ssh $deploy_host "[ -d $services_path ]"; then
+    echo "Deploy path $services_path doesn't exist on $deploy_host"
+    exit 1
+  fi
+fi
+
+echo "Verifying service name..."
+if [[ $deploy_host == "localhost" ]]; then
+  services=($(docker compose --project-directory $services_path config --services))
+else
+  services=($(ssh $deploy_host "docker compose --project-directory $services_path config --services"))
+fi
+found=0
+for s in "${services[@]}"; do
+  if [[ $s == $service ]]; then
+    found=1
+    break
+  fi
+done
+if [[ $found == 0 ]]; then
+  echo "Service $service does not exist in server compose file"
+  exit 1
+fi
+
+echo "Copying source..."
+args="-av \
+  --delete \
+  --delete-excluded \
+  --progress"
+if [[ -f .dockerignore ]]; then
+  args="$args \
+    --exclude-from .dockerignore"
+elif [[ -f .gitignore ]]; then
+  args="$args \
+    --exclude-from .gitignore"
+fi
+rsync $args \
+  . $deploy_path/build/$image
+
+echo ">>> Starting service..."
+if [[ $deploy_host == "localhost" ]]; then
+  docker compose --project-directory $services_path up -d --build $service
+else
+  ssh $deploy_host "docker compose --project-directory $services_path up -d --build $service"
+fi
+
+echo "Done"
