@@ -138,12 +138,12 @@ return {
 
   -- highlight current word
   {
-    'RRethy/vim-illuminate',
-    -- disabled because it conflicts with matchup's highlighting for
-    -- function/end and if/end pairs
-    disable = true,
-    init = function()
-      vim.g.Illuminate_highlightPriority = -10
+    'tzachar/local-highlight.nvim',
+    config = function()
+      require('local-highlight').setup({
+        cw_hlgroup = 'LocalHighlight',
+      })
+      vim.api.nvim_set_hl(0, 'LocalHighlight', { link = 'CursorLine' })
     end,
   },
 

@@ -113,8 +113,6 @@ end
 M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
-  require('illuminate').on_attach(client)
-
   -- navic can only attach to one client per buffer, so don't attach to clients
   -- that don't supply useful info
   if client.server_capabilities.documentSymbolProvider then
