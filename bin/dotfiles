@@ -296,15 +296,10 @@ function dotfiles-brew {
         'fd'          # file finder
         'fzf'         # fuzzy finder
         'git'         # update from system stock git
-        'git-delta'   # prettier git diffs
-        'jq'          # command line JSON processor
         'pdm'         # python package manager
-        'python@3.9'  # default python
+        'python'      # default python
         'ripgrep'     # better grep
-        'starship'    # prompt
-        'stylua'      # lua formatter
         'tig'         # terminal git ui
-        'tmux'        # terminal multiplexer
     )
 
     brew_casks=""
