@@ -38,7 +38,7 @@ M.config = function()
 
   lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
     lsp.handlers['textDocument/publishDiagnostics'],
-    { virtual_text = false }
+    { virtual_text = true }
   )
 
   lsp.handlers['textDocument/hover'] =
