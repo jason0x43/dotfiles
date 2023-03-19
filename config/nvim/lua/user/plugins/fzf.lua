@@ -11,6 +11,9 @@ return {
     require('fzf-lua').setup({
       winopts = {
         width = 0.85,
+        preview = {
+          layout = 'vertical',
+        },
       },
 
       helptags = {
