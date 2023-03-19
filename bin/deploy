@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+
+# Deploy a Docker-based web app to a server that manages a set of containers
+# using docker-compose.
+#
+# The service being deployed must already have been configured in the server's
+# compose file.
+
+import asyncio
+from itertools import cycle
+from os import getenv
+from pathlib import Path
+import sys
+from sys import argv, exit
+from typing import Coroutine, Any
+
+
+async def spin(msg):
+    """Create an async spinner"""
+
+    write, flush = sys.stdout.write, sys.stdout.flush
+    status = ""
+    for char in cycle("⠦⠖⠲⠴"):
+        status = f"{char} {msg}"
+        write(status)
+        flush()
+        write("\x08" * len(status))
+        try:
+            await asyncio.sleep(0.2)
+        except asyncio.CancelledError:
+            break
+    write(" " * len(status) + "\x08" * len(status))
+
+
+def success(msg: str) -> None:
+    """Show a task success message"""
+    print(f"✔️ {msg}")
+
+
+def fail(msg: str) -> None:
+    """Show a task failure message"""
+    print(f"✘ {msg}")
+
+
+async def run_task(
+    msg: str, coro: Coroutine[Any, Any, tuple[int | None, str]]
+) -> None:
+    """Run a task, showing a message and spinner while active"""
+
+    spinner = asyncio.create_task(spin(f"{msg}..."))
+    code, stdout = await coro
+    spinner.cancel()
+    await spinner
+    if code == 0:
+        success(msg)
+    else:
+        fail(f"{msg}...")
+        print(stdout)
+        exit(1)
+
+
+async def run(cmd: list[str]) -> tuple[int | None, str]:
+    """Run an async shell command"""
+
+    proc = await asyncio.create_subprocess_shell(
+        " ".join(cmd),
+        stderr=asyncio.subprocess.STDOUT,
+        stdout=asyncio.subprocess.PIPE,
+    )
+    stdout, _ = await proc.communicate()
+    return proc.returncode, stdout.decode()
+
+
+class Context:
+    image: str
+    service: str
+    deploy_host: str
+    deploy_path: str
+    services_path: str
+
+    def __init__(self, service: str | None):
+        self.image = Path.cwd().name
+        self.service = service if service else self.image
+        self.deploy_host = getenv("DEPLOY_HOST", "localhost")
+        self.services_path = getenv("SERVICES_PATH", "services")
+        if self.deploy_host == "localhost":
+            self.deploy_path = str(Path.home().joinpath(self.services_path))
+        else:
+            self.deploy_path = f"{self.deploy_host}:{self.services_path}"
+
+
+async def verify_service_path(ctx: Context) -> tuple[int | None, str]:
+    """Verify that a service build path exists"""
+
+    if ctx.deploy_host == "localhost":
+        if not Path(ctx.deploy_path).exists():
+            return 1, f"Deploy path {ctx.deploy_path} doesn't exist"
+    else:
+        code, _ = await run(
+            ["ssh", ctx.deploy_host, f"[ -d {ctx.services_path} ]"]
+        )
+        if code != 0:
+            return code, f"Deploy path {ctx.deploy_path} doesn't exist"
+    return 0, ""
+
+
+async def verify_service_name(ctx: Context) -> tuple[int | None, str]:
+    """Verify that a service is defined in the docker compose file"""
+
+    cmd = [
+        "docker",
+        "compose",
+        "--project-directory",
+        ctx.services_path,
+        "config",
+        "--services",
+    ]
+
+    if ctx.deploy_host == "localhost":
+        code, stdout = await run(cmd)
+    else:
+        code, stdout = await run(["ssh", ctx.deploy_host] + cmd)
+
+    if code != 0:
+        return code, stdout
+
+    services = stdout.split()
+
+    if not ctx.service in services:
+        return (
+            1,
+            f"Service '{ctx.service}' does not exist in server compose file",
+        )
+
+    return 0, ""
+
+
+async def copy_source(ctx: Context) -> tuple[int | None, str]:
+    """Copy source files to the service build path"""
+
+    args = ["-av", "--delete", "--delete-excluded", "--progress"]
+
+    if Path(".dockerignore").exists():
+        args += ["--exclude-from", ".dockerignore"]
+    elif Path(".gitignore").exists():
+        args += ["--exclude-from", ".gitignore"]
+
+    return await run(
+        ["rsync"] + args + [".", f"{ctx.deploy_path}/build/{ctx.image}"],
+    )
+
+
+async def start_service(ctx: Context) -> tuple[int | None, str]:
+    """Build and start the service"""
+
+    cmd = [
+        "docker",
+        "compose",
+        "--project-directory",
+        ctx.services_path,
+        "up",
+        "-d",
+        "--build",
+        ctx.service,
+    ]
+
+    if ctx.deploy_host == "localhost":
+        code, stdout = await run(cmd)
+    else:
+        code, stdout = await run(["ssh", ctx.deploy_host] + cmd)
+    pass
+
+    return code, stdout
+
+
+async def main() -> None:
+    service = argv[1] if len(argv) > 1 else None
+    ctx = Context(service)
+
+    answer = input(
+        f"Deploy {ctx.image} to {ctx.deploy_path} as {ctx.service} [Y/n]? "
+    )
+    if answer == "N" or answer == "n":
+        exit(0)
+
+    await run_task("Verifying services path", verify_service_path(ctx))
+    await run_task("Verifying service name", verify_service_name(ctx))
+    await run_task("Copying source", copy_source(ctx))
+    await run_task("Starting service", start_service(ctx))
+
+    print("Done")
+
+
+asyncio.run(main())
