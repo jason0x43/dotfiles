@@ -43,5 +43,6 @@ return {
     vim.keymap.set('n', '<leader>lr', '<cmd>FzfLua lsp_references<cr>')
     vim.keymap.set('n', '<leader>ls', '<cmd>FzfLua lsp_document_symbols<cr>')
     vim.keymap.set('n', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>')
+    vim.keymap.set('n', '<leader>a', '<cmd>FzfLua lsp_code_actions<cr>')
   end,
 }

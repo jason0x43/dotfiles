@@ -122,15 +122,6 @@ M.on_attach = function(client, bufnr)
   -- perform general setup
   local caps = client.server_capabilities
 
-  if caps.codeActionProvider then
-    vim.keymap.set(
-      'n',
-      '<leader>a',
-      '<cmd>lua vim.lsp.buf.code_action()<cr>',
-      opts
-    )
-  end
-
   if caps.definitionProvider then
     vim.keymap.set('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   end
