@@ -6,11 +6,25 @@ return {
   },
 
   config = function()
+    local actions = require('fzf-lua.actions')
+
     require('fzf-lua').setup({
-			winopts = {
-				width = 0.85
-			}
-		})
+      winopts = {
+        width = 0.85,
+      },
+
+      helptags = {
+        actions = {
+          ['default'] = actions.help_tab,
+        },
+      },
+
+      manpages = {
+        actions = {
+          ['default'] = actions.man_tab,
+        },
+      },
+    })
 
     vim.keymap.set('n', '<leader>e', '<cmd>FzfLua diagnostics_document<cr>')
     vim.keymap.set('n', '<leader>f', '<cmd>FzfLua files<cr>')
