@@ -25,7 +25,7 @@ return {
     end)
     vim.keymap.set('n', '<leader>b', '<cmd>FzfLua buffers<cr>')
     vim.keymap.set('n', '<leader>tg', '<cmd>FzfLua live_grep_native<cr>')
-    vim.keymap.set('n', '<leader>th', '<cmd>FzfLua help<cr>')
+    vim.keymap.set('n', '<leader>th', '<cmd>FzfLua help_tags<cr>')
     vim.keymap.set('n', '<leader>lr', '<cmd>FzfLua lsp_references<cr>')
     vim.keymap.set('n', '<leader>ls', '<cmd>FzfLua lsp_document_symbols<cr>')
     vim.keymap.set('n', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>')
