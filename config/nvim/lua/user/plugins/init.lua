@@ -113,6 +113,7 @@ return {
   'vim-scripts/applescript.vim',
   'vim-scripts/Textile-for-VIM',
   'mustache/vim-mustache-handlebars',
+  'jwalton512/vim-blade',
 
   -- native LSP
   {
@@ -184,9 +185,6 @@ return {
       require('trouble').setup()
     end,
   },
-
-  -- Laravel Blade template support
-  'jwalton512/vim-blade',
 
   -- Autosave files
   {
