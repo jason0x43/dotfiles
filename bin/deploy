@@ -26,7 +26,7 @@ async def spin(msg):
     write, flush = sys.stdout.write, sys.stdout.flush
     status = ""
     for char in cycle("⠋⠙⠸⠴⠦⠇"):
-        status = f"{YELLOW}{char}{RESET} {msg}..."
+        status = f"{YELLOW}{char}{RESET} {msg}"
         write(status)
         flush()
         write("\x08" * len(status))
@@ -39,12 +39,12 @@ async def spin(msg):
 
 def success(msg: str) -> None:
     """Show a task success message"""
-    print(f"{GREEN}✓{RESET} {msg}...")
+    print(f"{GREEN}✓{RESET} {msg}")
 
 
 def fail(msg: str) -> None:
     """Show a task failure message"""
-    print(f"{RED}X{RESET} {msg}...")
+    print(f"{RED}X{RESET} {msg}")
 
 
 async def run_task(
@@ -57,9 +57,9 @@ async def run_task(
     spinner.cancel()
     await spinner
     if code == 0:
-        success(msg)
+        success(f"{msg}...")
     else:
-        fail(msg)
+        fail(f"{msg}...")
         print(stdout)
         exit(1)
 
@@ -182,17 +182,10 @@ async def main() -> None:
     service = argv[1] if len(argv) > 1 else None
     ctx = Context(service)
 
-    answer = input(
-        f"Deploy {ctx.image} to {ctx.deploy_path} as {ctx.service} [Y/n]? "
-    )
-    if answer == "N" or answer == "n":
-        exit(0)
-
-    await run_task("Verifying services path", verify_service_path(ctx))
-    await run_task("Verifying service name", verify_service_name(ctx))
-    await run_task("Copying source", copy_source(ctx))
-    await run_task("Starting service", start_service(ctx))
-
+    await run_task(f"Validating deployment path '{ctx.deploy_path}'", verify_service_path(ctx))
+    await run_task(f"Validating service name '{ctx.service}'", verify_service_name(ctx))
+    await run_task(f"Copying source to {ctx.deploy_path}", copy_source(ctx))
+    await run_task(f"Starting {ctx.service}", start_service(ctx))
     print("Done")
 
 
