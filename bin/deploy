@@ -14,14 +14,19 @@ import sys
 from sys import argv, exit
 from typing import Coroutine, Any
 
+YELLOW = '\033[93m'
+GREEN = '\033[92m'
+RED = '\033[91m'
+RESET = '\033[0m'
+
 
 async def spin(msg):
     """Create an async spinner"""
 
     write, flush = sys.stdout.write, sys.stdout.flush
     status = ""
-    for char in cycle("⠦⠖⠲⠴"):
-        status = f"{char} {msg}"
+    for char in cycle("⠋⠙⠸⠴⠦⠇"):
+        status = f"{YELLOW}{char}{RESET} {msg}..."
         write(status)
         flush()
         write("\x08" * len(status))
@@ -34,12 +39,12 @@ async def spin(msg):
 
 def success(msg: str) -> None:
     """Show a task success message"""
-    print(f"✔️ {msg}")
+    print(f"{GREEN}✓{RESET} {msg}...")
 
 
 def fail(msg: str) -> None:
     """Show a task failure message"""
-    print(f"✘ {msg}")
+    print(f"{RED}X{RESET} {msg}...")
 
 
 async def run_task(
@@ -54,7 +59,7 @@ async def run_task(
     if code == 0:
         success(msg)
     else:
-        fail(f"{msg}...")
+        fail(msg)
         print(stdout)
         exit(1)
 
