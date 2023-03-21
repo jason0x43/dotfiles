@@ -9,6 +9,8 @@ return {
     local actions = require('fzf-lua.actions')
 
     require('fzf-lua').setup({
+      'fzf-native',
+
       winopts = {
         width = 0.85,
         preview = {
@@ -25,6 +27,14 @@ return {
       manpages = {
         actions = {
           ['default'] = actions.man_tab,
+        },
+      },
+
+      previewers = {
+        bat = {
+          cmd = 'bat',
+          -- delete all args so it uses external config
+          args = '',
         },
       },
     })
