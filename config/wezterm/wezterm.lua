@@ -177,6 +177,14 @@ if wezterm.gui then
 				wez_action.CopyMode("Close"),
 			}),
 		},
+		{
+			key = "q",
+			mods = "NONE",
+			action = wez_action.Multiple({
+				wez_action.CopyMode("ClearPattern"),
+				wez_action.CopyMode("Close"),
+			}),
+		},
 	}
 
 	copy_mode = wezterm.gui.default_key_tables().copy_mode
