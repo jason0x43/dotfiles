@@ -4,34 +4,40 @@
 <plist version="1.0">
   <dict>
     <!--
-        This theme uses colors from the currently active terminal palette.
-        Colors are specified as #RRGGBBAA values, where RR is a palette index.
-        -->
+    This theme uses colors from the currently active terminal palette.
+    Colors are specified as #RRGGBBAA values, where RR is a palette index.
+    -->
     <key>author</key>
     <string>Jason Cheatham</string>
     <key>name</key>
-    <string>Selenized</string>
+    <string>Wezterm</string>
+    <key>colorSpaceName</key>
+    <string>sRGB</string>
     <key>settings</key>
     <array>
       <dict>
         <key>settings</key>
         <dict>
+          <!-- #00000001 is the terminal default -->
+          <key>foreground</key>
+          <string>#00000001</string>
           <key>background</key>
-          <string>#00000000</string>
+          <string>#00000001</string>
+
           <key>caret</key>
           <string>#07000000</string>
-          <key>foreground</key>
-          <string>#0f000000</string>
           <key>invisibles</key>
           <string>#08000000</string>
           <key>lineHighlight</key>
           <string>#00000000</string>
           <key>selection</key>
           <string>#0b000000</string>
+
+          <!-- set gutter colors to prevent bat's defaults from being used -->
           <key>gutter</key>
-          <string>#0a000000</string>
+          <string>#00000001</string>
           <key>gutterForeground</key>
-          <string>#08000000</string>
+          <string>#00000001</string>
         </dict>
       </dict>
       <dict>
