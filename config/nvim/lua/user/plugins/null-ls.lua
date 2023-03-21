@@ -74,8 +74,8 @@ return {
     local config = {
       sources = {},
       on_attach = function(client, bufnr)
-				return require('user.lsp').on_attach(client, bufnr)
-			end
+        return require('user.lsp').on_attach(client, bufnr)
+      end,
     }
 
     if vim.fn.executable('black') ~= 0 then

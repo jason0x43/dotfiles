@@ -23,6 +23,10 @@ return {
         },
       },
 
+      buffers = {
+        no_header = true,
+      },
+
       helptags = {
         actions = {
           ['default'] = actions.help_tab,

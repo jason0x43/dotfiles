@@ -1,13 +1,12 @@
-local lsp_util = require('user.lsp.util')
 local M = {}
 
 M.config = {
   filetypes = { 'html', 'svg', 'xml' },
 
-  on_attach = function(client)
-    -- disable formatting for html; we'll use prettier instead
-    lsp_util.disable_formatting(client)
-  end,
+  init_options = {
+		-- disable formatting for html; we'll use prettier instead
+    provideFormatter = false,
+  },
 }
 
 return M

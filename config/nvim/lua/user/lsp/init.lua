@@ -55,58 +55,6 @@ M.config = function()
     end
     origTextDocDef(err, result, ctx, config)
   end
-
-  -- wrap lsp.buf_attach_client to allow clients to determine whether they
-  -- should actually be attached
-  local orig_buf_attach_client = lsp.buf_attach_client
-  function lsp.buf_attach_client(bufnr, client_id)
-    if vim.b.lsp_disable then
-      return
-    end
-
-    local client = lsp.get_client_by_id(client_id)
-    if
-      not client.config.should_attach or client.config.should_attach(bufnr)
-    then
-      return orig_buf_attach_client(bufnr, client_id)
-    end
-  end
-
-  local servers = {
-    'clangd',
-    'cssls',
-    'denols',
-    'dockerls',
-    'gopls',
-    'groovyls',
-    'html',
-    'intelephense',
-    'jdtls',
-    'jsonls',
-    'lua_ls',
-    'marksman',
-    'omnisharp',
-    'prismals',
-    'psalm',
-    'pyright',
-    'rust_analyzer',
-    'solargraph',
-    'sourcekit',
-    'svelte',
-    'taplo',
-    'tsserver',
-    'vimls',
-    'yamlls',
-  }
-
-  if os.getenv('NVIM_ESLINT') ~= '0' then
-    table.insert(servers, 'eslint')
-  end
-
-  for _, server in ipairs(servers) do
-    local config = M.get_lsp_config(server)
-    lspconfig[server].setup(config)
-  end
 end
 
 -- configure a client when it's attached to a buffer

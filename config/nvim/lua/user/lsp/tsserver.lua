@@ -1,10 +1,10 @@
-local lspconfig = require('lspconfig')
-local lsp_util = require('user.lsp.util')
-
 local M = {}
 
 M.config = {
-  root_dir = lspconfig.util.root_pattern('tsconfig.json', 'jsconfig.json'),
+	init_options = {
+		-- disable formatting in favor of prettier
+		provideFormatter = false
+	},
 
   handlers = {
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
@@ -29,32 +29,19 @@ M.config = {
     end,
   },
 
-  on_attach = function(client)
-    if vim.fn.executable('prettier') then
-      -- disable formatting; we'll use prettier instead
-      lsp_util.disable_formatting(client)
-    end
-
+  on_attach = function()
     vim.api.nvim_buf_create_user_command(
       0,
       'OrganizeImports',
-      'TsserverOrganizeImports',
-      {}
-    )
-  end,
-
-  commands = {
-    TsserverOrganizeImports = {
-      function()
-        local bufnr = vim.api.nvim_get_current_buf()
+			function()
         vim.lsp.buf.execute_command({
           command = '_typescript.organizeImports',
-          arguments = { vim.api.nvim_buf_get_name(bufnr) },
+          arguments = { vim.api.nvim_buf_get_name(0) },
         })
-      end,
-      description = 'Organize imports',
-    },
-  },
+			end,
+			{}
+    )
+  end,
 }
 
 return M

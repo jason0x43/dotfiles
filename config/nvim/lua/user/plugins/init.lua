@@ -119,19 +119,8 @@ return {
   {
     'neovim/nvim-lspconfig',
     config = function()
-      -- setup mason and mason-lspconfig before configuring any lsp servers
-      require('mason').setup({
-        ui = {
-          border = 'rounded',
-        },
-      })
-      require('mason-lspconfig').setup()
       require('user.lsp').config()
     end,
-    dependencies = {
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-    },
   },
 
   -- JSON schemas
@@ -198,4 +187,7 @@ return {
       })
     end,
   },
+
+	-- Better UI
+	'stevearc/dressing.nvim'
 }
