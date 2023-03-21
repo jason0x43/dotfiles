@@ -348,7 +348,7 @@ if (( $+commands[fzf] )); then
     export ESCDELAY=10
 
     # Use -1 for the bg color to specify 'none'
-    export FZF_DEFAULT_OPTS='--color=bg:-1,fg:7,bg+:-1,fg+:-1,hl:5,hl+:5,marker:18,gutter:-1,spinner:14,info:14'
+    export FZF_DEFAULT_OPTS='--color=bg:-1,fg:-1,bg+:0,fg+:-1,hl:5,hl+:5,marker:18,gutter:-1,spinner:14,info:14'
 
     if [[ -d $FZF_PATH/shell ]]; then
         source $FZF_PATH/shell/completion.zsh
