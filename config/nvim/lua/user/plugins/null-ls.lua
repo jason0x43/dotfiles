@@ -71,24 +71,19 @@ return {
     }
 
     -- run null_ls.config to make null-ls available through lspconfig
-    local config = {
-      sources = {},
-      on_attach = function(client, bufnr)
-        return require('user.lsp').on_attach(client, bufnr)
-      end,
-    }
+    local sources = {}
 
     if vim.fn.executable('black') ~= 0 then
-      table.insert(config.sources, null_ls.builtins.formatting.black)
+      table.insert(sources, null_ls.builtins.formatting.black)
     end
 
     if vim.fn.executable('swiftformat') ~= 0 then
-      table.insert(config.sources, null_ls.builtins.formatting.swiftformat)
+      table.insert(sources, null_ls.builtins.formatting.swiftformat)
     end
 
     if vim.fn.executable('prettier') ~= 0 then
       table.insert(
-        config.sources,
+        sources,
         null_ls.builtins.formatting.prettier.with({
           filetypes = vim.list_extend(
             { 'php' },
@@ -100,7 +95,7 @@ return {
 
     if vim.fn.executable('stylua') ~= 0 then
       table.insert(
-        config.sources,
+        sources,
         null_ls.builtins.formatting.stylua.with({
           args = {
             '--stdin-filepath',
@@ -113,25 +108,15 @@ return {
     end
 
     if vim.fn.executable('htmlhint') ~= 0 then
-      table.insert(config.sources, htmlhint_source)
+      table.insert(sources, htmlhint_source)
     end
 
     if vim.fn.executable('tidy') ~= 0 then
-      table.insert(config.sources, tidy_xml_source)
+      table.insert(sources, tidy_xml_source)
     end
 
-    -- if vim.fn.executable('xmllint') ~= 0 then
-    --   table.insert(
-    --     config.sources,
-    --     null_ls.builtins.formatting.xmllint.with({
-    --       filetypes = vim.list_extend(
-    --         { 'svg' },
-    --         null_ls.builtins.formatting.xmllint.filetypes
-    --       ),
-    --     })
-    --   )
-    -- end
-
-    null_ls.setup(config)
+    null_ls.setup({
+			sources = sources
+		})
   end,
 }
