@@ -11,6 +11,10 @@ return {
     require('fzf-lua').setup({
       'fzf-native',
 
+      fzf_opts = {
+        ['--info'] = 'hidden',
+      },
+
       winopts = {
         width = 0.85,
         preview = {
@@ -28,6 +32,12 @@ return {
         actions = {
           ['default'] = actions.man_tab,
         },
+      },
+
+      grep = {
+        rg_opts = '--column --line-number --no-heading --color=always '
+          .. '--hidden --smart-case --max-columns=4096',
+        no_header = true,
       },
 
       previewers = {
