@@ -116,7 +116,7 @@ return {
     end
 
     null_ls.setup({
-			sources = sources
-		})
+      sources = sources,
+    })
   end,
 }

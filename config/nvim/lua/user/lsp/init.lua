@@ -86,18 +86,11 @@ M.on_attach = function(client, bufnr)
     vim.api.nvim_buf_create_user_command(
 			0,
       'Format',
-      'lua require("user.lsp").format_sync()',
+      'lua require("user.lsp").format()',
 			{}
     )
     vim.keymap.set('n', '<leader>F', '<cmd>Format<cr>', opts)
-    -- vim.cmd(
-    --   'autocmd BufWritePre <buffer> lua require("user.lsp").autoformat_sync()'
-    -- )
   end
-
-  -- if not packer_plugins['trouble.nvim'] then
-  --   vim.keymap.set('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
-  -- end
 
   vim.keymap.set(
     'n',
@@ -107,10 +100,9 @@ M.on_attach = function(client, bufnr)
   )
 end
 
--- auto-format the current buffer, but exclude certain cases
-M.autoformat_sync = function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local name = vim.api.nvim_buf_get_name(bufnr)
+-- format the current buffer, but exclude certain cases
+M.format = function()
+  local name = vim.api.nvim_buf_get_name(0)
 
   -- don't autoformat ignored code
   local response = vim.fn.system({ 'git', 'is-ignored', name })
@@ -127,45 +119,7 @@ M.autoformat_sync = function()
     return
   end
 
-  M.format_sync()
-end
-
--- format the current buffer, handling the case where multiple formatters are
--- present
-M.format_sync = function()
-  local clients = vim.tbl_values(vim.lsp.buf_get_clients())
-  local formatters = vim.tbl_filter(function(client)
-    return client.server_capabilities.documentFormattingProvider
-  end, clients)
-
-  local formatter
-  if #formatters == 0 then
-    return
-  end
-
-  -- if there are multiple formatters, use the one that's not null-ls
-  if #formatters > 1 then
-    local non_null_ls = vim.tbl_filter(function(client)
-      return client.name ~= 'null-ls'
-    end, formatters)
-    formatter = non_null_ls[1]
-  else
-    formatter = formatters[1]
-  end
-
-  local params = vim.lsp.util.make_formatting_params(nil)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local result, err =
-    formatter.request_sync('textDocument/formatting', params, 5000, bufnr)
-  if result and result.result then
-    vim.lsp.util.apply_text_edits(
-      result.result,
-      bufnr,
-      formatter.offset_encoding
-    )
-  elseif err then
-    vim.notify('vim.lsp.buf.formatting_sync: ' .. err, vim.log.levels.WARN)
-  end
+	vim.lsp.buf.format()
 end
 
 -- style the line diagnostics popup
