@@ -19,6 +19,7 @@ return {
         width = 0.85,
         preview = {
           layout = 'vertical',
+          border = 'border-top',
         },
       },
 
