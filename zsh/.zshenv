@@ -110,6 +110,7 @@ fi
 export TMUX_PLUGIN_MANAGER_PATH="$XDG_DATA_HOME/tmux/tmux-plugins"
 
 # pkg-config
+# --------------------------------------------------------------------------
 typeset -U pkg_config_path
 
 if [[ -d $HOMEBREW_BASE/opt/openssl ]]; then
@@ -127,6 +128,20 @@ if [[ -d $HOMEBREW_BASE/opt/icu4c ]]; then
 fi
 
 export PKG_CONFIG_PATH=$(print -R ${(j|:|)pkg_config_path})
+
+# Path
+# ----------------------------------------------------------------------------
+
+# Use Bootsnap to speed up repeated brew calls
+if [[ -d $HOMEBREW_BASE ]]; then
+	export HOMEBREW_BOOTSNAP=1
+
+	path=(
+		$HOMEBREW_BASE/bin
+		$HOMEBREW_BASE/sbin
+		$path
+	)
+fi
 
 # LLVM
 # Put LLVM at the end of the path to avoid overriding Xcode's LLVM in projects
@@ -174,15 +189,15 @@ if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
 	# will eventually be overridden with things in $HOMEBREW_BASE/bin
 	# https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
 	path=(
-		$path
 		$HOMEBREW_BASE/opt/python3/libexec/bin
+		$path
 	)
 fi
 
 if [[ -d $HOME/.poetry/bin ]]; then
 	path=(
-		$path
 		$HOME/.poetry/bin
+		$path
 	)
 fi
 
@@ -229,8 +244,8 @@ fi
 # Deno
 if [[ -d $HOME/.deno/bin ]]; then
 	path=(
-		$path
 		$HOME/.deno/bin
+		$path
 	)
 fi
 
@@ -238,23 +253,19 @@ fi
 if [[ -d $HOME/.bun/bin ]]; then
     export BUN_INSTALL="$HOME/.bun"
 	path=(
-		$path
 		$BUN_INSTALL/bin
-	)
-fi
-
-# Homebrew
-# ----------------------------------------------------------------------------
-# Use Bootsnap to speed up repeated brew calls
-if [[ -d $HOMEBREW_BASE ]]; then
-	export HOMEBREW_BOOTSNAP=1
-
-	path=(
-		$HOMEBREW_BASE/bin
-		$HOMEBREW_BASE/sbin
 		$path
 	)
 fi
+
+# rtx
+if [[ -d $HOME/.local/share/rtx/bin ]]; then
+	path=(
+		$HOME/.local/share/rtx/bin
+		$path
+	)
+fi
+
 
 # Add user dirs to path
 # --------------------------------------------------------------------------

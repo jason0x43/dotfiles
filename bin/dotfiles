@@ -430,6 +430,32 @@ function dotfiles-bun {
     fi
 }
 
+# Install or update rtx
+function dotfiles-rtx {
+    log "Updating rtx..."
+
+    local out=""
+    local version=""
+
+    if (( ! $+commands[rtx] )); then
+        logSub "Installing..."
+        out=$(curl -fsSL curl https://rtx.pub/install.sh | sh)
+        if (( $? )); then
+            err "Error installing rtx"
+            err $out
+        fi
+        rehash
+    else
+        out=$(rtx self-update)
+        if [[ ! $out =~ "is already up to date" ]]; then
+            version=$(rtx --version | awk '{print $1}')
+            logSub "Installed version $version"
+        fi
+    fi
+
+    rtx complete --shell zsh >! $ZDATADIR/functions/_rtx
+}
+
 # Install or update rust
 function dotfiles-rust {
     if (( ! $+commands[rustup] )); then
@@ -673,8 +699,8 @@ else
     dotfiles-asdf
     dotfiles-deno
     dotfiles-bun
+    dotfiles-rtx
     dotfiles-rust
-
     dotfiles-zsh
     dotfiles-python
     dotfiles-node
