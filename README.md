@@ -4,11 +4,13 @@ Dotfiles! Err...yay!
 
 ## Environment
 
-I spend most of my time in [zsh](http://zsh.sourceforge.net),
-[tmux](http://tmux.sourceforge.net), and
-[kitty](https://sw.kovidgoyal.net/kitty/), and [neovim](http://neovim.io) is my
-editor of choice. I use a number of vim plugins, managed by
-[packer](https://github.com/wbthomason/packer.nvim).
+I spend most of my time in the terminal.
+
+Terminal: [wezterm](https://wezfurlong.org/wezterm/)
+Shell: [zsh](http://zsh.sourceforge.net),
+Editor: [neovim](http://neovim.io)
+
+I use a number of vim plugins, managed by [lazy](https://github.com/folke/lazy.nvim).
 
 ## Paths
 
