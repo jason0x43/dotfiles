@@ -1,6 +1,4 @@
-local M = {}
-
-M.config = {
+local config = {
   filetypes = { 'json', 'jsonc' },
 
 	init_options = {
@@ -11,7 +9,7 @@ M.config = {
 
 local schemastore = require('schemastore')
 if schemastore then
-  M.config.settings = {
+  config.settings = {
     json = {
       schemas = schemastore.json.schemas(),
       validate = { enable = true },
@@ -19,4 +17,4 @@ if schemastore then
   }
 end
 
-return M
+return { config = config }

@@ -61,14 +61,14 @@ end
 M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
-  -- navic can only attach to one client per buffer, so don't attach to clients
-  -- that don't supply useful info
-  if client.server_capabilities.documentSymbolProvider then
-    require('nvim-navic').attach(client, bufnr)
-  end
-
   -- perform general setup
   local caps = client.server_capabilities
+
+  -- navic can only attach to one client per buffer, so don't attach to clients
+  -- that don't supply useful info
+  if caps.documentSymbolProvider then
+    require('nvim-navic').attach(client, bufnr)
+  end
 
   if caps.definitionProvider then
     vim.keymap.set('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
