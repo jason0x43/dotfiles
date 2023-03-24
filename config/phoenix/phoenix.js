@@ -335,7 +335,7 @@ function fill(area, options = {}) {
     case LEFT:
     case RIGHT:
       bounds.height = screenFrame.height;
-      bounds.width = width - PADDING;
+      bounds.width = width;
       break;
     case CENTER:
       bounds.height = screenFrame.height;
