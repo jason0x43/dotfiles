@@ -1,5 +1,4 @@
 local modbase = ...
-local lspconfig = require('lspconfig')
 
 -- Give LspInfo window a border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
@@ -16,7 +15,7 @@ end
 
 local M = {}
 
-M.config = function()
+function M.config()
   -- UI
   vim.fn.sign_define(
     'DiagnosticSignError',
@@ -35,21 +34,24 @@ M.config = function()
     { text = '', texthl = 'DiagnosticSignHint' }
   )
 
-  local lsp = vim.lsp
-
-  lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
-    lsp.handlers['textDocument/publishDiagnostics'],
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+    vim.lsp.handlers['textDocument/publishDiagnostics'],
     { virtual_text = true }
   )
 
-  lsp.handlers['textDocument/hover'] =
-    lsp.with(lsp.handlers.hover, { border = 'rounded' })
+  vim.lsp.handlers['textDocument/hover'] =
+    vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 
-  lsp.handlers['textDocument/signatureHelp'] =
-    lsp.with(lsp.handlers.signature_help, { border = 'rounded' })
+  vim.lsp.handlers['textDocument/signatureHelp'] =
+    vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
 
   local origTextDocDef = vim.lsp.handlers['textDocument/definition']
-  lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
+  vim.lsp.handlers['textDocument/definition'] = function(
+    err,
+    result,
+    ctx,
+    config
+  )
     -- If tsserver returns multiple results, only keep the first one
     if result ~= nil and #result > 1 then
       result = { result[1] }
@@ -59,50 +61,49 @@ M.config = function()
 end
 
 -- configure a client when it's attached to a buffer
-M.on_attach = function(client, bufnr)
+function M.on_attach(client, bufnr)
   local opts = { buffer = bufnr }
-
-  -- perform general setup
-  local caps = client.server_capabilities
 
   -- navic can only attach to one client per buffer, so don't attach to clients
   -- that don't supply useful info
-  if caps.documentSymbolProvider then
+  if client.server_capabilities.documentSymbolProvider then
     require('nvim-navic').attach(client, bufnr)
   end
 
-  if caps.definitionProvider then
-    vim.keymap.set('n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+  if client.server_capabilities.definitionProvider then
+    vim.keymap.set('n', '<C-]>', function()
+      vim.lsp.buf.definition()
+    end, opts)
   end
 
-  if caps.hoverProvider then
-    vim.keymap.set('', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+  if client.server_capabilities.hoverProvider then
+    vim.keymap.set('', 'K', function()
+      vim.lsp.buf.hover()
+    end, opts)
   end
 
-  if caps.renameProvider then
-    vim.keymap.set('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+  if client.server_capabilities.renameProvider then
+    vim.keymap.set('n', '<leader>r', function()
+      vim.lsp.buf.rename()
+    end, opts)
   end
 
-  if caps.documentFormattingProvider then
-    vim.api.nvim_buf_create_user_command(
-			0,
-      'Format',
-      'lua require("user.lsp").format()',
-			{}
-    )
-    vim.keymap.set('n', '<leader>F', '<cmd>Format<cr>', opts)
+  if client.server_capabilities.documentFormattingProvider then
+    vim.api.nvim_buf_create_user_command(0, 'Format', function()
+      require('user.lsp').format()
+    end, {})
+    vim.keymap.set('n', '<leader>F', function()
+      require('user.lsp').format()
+    end, opts)
   end
 
-  vim.keymap.set(
-    'n',
-    '<leader>d',
-    '<cmd>lua require("user.lsp").show_position_diagnostics()<cr>',
-    opts
-  )
+  vim.keymap.set('n', '<leader>d', function()
+    require('user.lsp').show_position_diagnostics()
+  end, opts)
 end
 
 -- format the current buffer, but exclude certain cases
-M.format = function()
+function M.format()
   local name = vim.api.nvim_buf_get_name(0)
 
   -- don't autoformat ignored code
@@ -120,11 +121,11 @@ M.format = function()
     return
   end
 
-	vim.lsp.buf.format()
+  vim.lsp.buf.format()
 end
 
 -- style the line diagnostics popup
-M.show_position_diagnostics = function()
+function M.show_position_diagnostics()
   vim.diagnostic.open_float(0, {
     scope = 'cursor',
     border = 'rounded',
@@ -135,7 +136,7 @@ M.show_position_diagnostics = function()
 end
 
 -- setup a server
-M.get_lsp_config = function(server)
+function M.get_lsp_config(server)
   -- default config for all servers
   local config = {}
 
