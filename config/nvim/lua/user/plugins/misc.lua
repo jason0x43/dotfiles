@@ -1,10 +1,4 @@
 return {
-  -- functions used by many plugins
-  'nvim-lua/plenary.nvim',
-
-  -- icons used by many plugins
-  'nvim-tree/nvim-web-devicons',
-
   -- highlight color strings
   {
     'norcalli/nvim-colorizer.lua',
@@ -188,6 +182,26 @@ return {
     end,
   },
 
-	-- Better UI
-	'stevearc/dressing.nvim'
+  -- Better UI
+  'stevearc/dressing.nvim',
+
+  -- Auto-set indentation
+  {
+    'tpope/vim-sleuth',
+
+    config = function()
+      -- Disable sleuth for markdown files as it slows the load time
+      -- significantly
+      vim.g.sleuth_markdown_heuristics = 0
+    end,
+  },
+
+  -- tig in a float
+  {
+    dir = '/Users/jason/.config/nvim/lua/tig-lua',
+
+    config = function()
+      require('tig-lua').setup()
+    end,
+  },
 }
