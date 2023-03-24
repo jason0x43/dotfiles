@@ -15,7 +15,7 @@ end
 
 local M = {}
 
-function M.config()
+M.config = function()
   -- UI
   vim.fn.sign_define(
     'DiagnosticSignError',
@@ -61,7 +61,7 @@ function M.config()
 end
 
 -- configure a client when it's attached to a buffer
-function M.on_attach(client, bufnr)
+M.on_attach = function(client, bufnr)
   local opts = { buffer = bufnr }
 
   -- navic can only attach to one client per buffer, so don't attach to clients
@@ -103,7 +103,7 @@ function M.on_attach(client, bufnr)
 end
 
 -- format the current buffer, but exclude certain cases
-function M.format()
+M.format = function()
   local name = vim.api.nvim_buf_get_name(0)
 
   -- don't autoformat ignored code
@@ -125,7 +125,7 @@ function M.format()
 end
 
 -- style the line diagnostics popup
-function M.show_position_diagnostics()
+M.show_position_diagnostics = function()
   vim.diagnostic.open_float(0, {
     scope = 'cursor',
     border = 'rounded',
@@ -136,7 +136,7 @@ function M.show_position_diagnostics()
 end
 
 -- setup a server
-function M.get_lsp_config(server)
+M.get_lsp_config = function(server)
   -- default config for all servers
   local config = {}
 
