@@ -1,18 +1,16 @@
 return {
-  config = {
-    settings = {
-      css = {
-        validate = true,
-        lint = {
-          unknownAtRules = 'ignore',
-        },
+  settings = {
+    css = {
+      validate = true,
+      lint = {
+        unknownAtRules = 'ignore',
       },
-      less = {
-        validate = true,
-      },
-      scss = {
-        validate = true,
-      },
+    },
+    less = {
+      validate = true,
+    },
+    scss = {
+      validate = true,
     },
   },
 }

@@ -17,4 +17,4 @@ if schemastore then
   }
 end
 
-return { config = config }
+return config

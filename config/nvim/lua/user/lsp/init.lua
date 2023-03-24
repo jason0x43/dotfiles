@@ -3,14 +3,52 @@ local modbase = ...
 -- Give LspInfo window a border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
 
--- load the config for a given client, if it exists
-local function load_client_config(server_name)
-  local status, client_config =
-    pcall(require, modbase .. '.servers.' .. server_name)
-  if not status or type(client_config) ~= 'table' then
-    return {}
+-- configure a client when it's attached to a buffer
+local function create_on_attach(server_on_attach)
+  return function(client, bufnr)
+    if server_on_attach then
+      server_on_attach(client, bufnr)
+    end
+
+    local opts = { buffer = bufnr }
+
+    -- navic can only attach to one client per buffer, so don't attach to clients
+    -- that don't supply useful info
+    if client.server_capabilities.documentSymbolProvider then
+      require('nvim-navic').attach(client, bufnr)
+    end
+
+    if client.server_capabilities.definitionProvider then
+      vim.keymap.set('n', '<C-]>', function()
+        vim.lsp.buf.definition()
+      end, opts)
+    end
+
+    if client.server_capabilities.hoverProvider then
+      vim.keymap.set('', 'K', function()
+        vim.lsp.buf.hover()
+      end, opts)
+    end
+
+    if client.server_capabilities.renameProvider then
+      vim.keymap.set('n', '<leader>r', function()
+        vim.lsp.buf.rename()
+      end, opts)
+    end
+
+    if client.server_capabilities.documentFormattingProvider then
+      vim.api.nvim_buf_create_user_command(0, 'Format', function()
+        require('user.lsp').format()
+      end, {})
+      vim.keymap.set('n', '<leader>F', function()
+        require('user.lsp').format()
+      end, opts)
+    end
+
+    vim.keymap.set('n', '<leader>d', function()
+      require('user.lsp').show_position_diagnostics()
+    end, opts)
   end
-  return client_config
 end
 
 local M = {}
@@ -60,48 +98,6 @@ M.config = function()
   end
 end
 
--- configure a client when it's attached to a buffer
-M.on_attach = function(client, bufnr)
-  local opts = { buffer = bufnr }
-
-  -- navic can only attach to one client per buffer, so don't attach to clients
-  -- that don't supply useful info
-  if client.server_capabilities.documentSymbolProvider then
-    require('nvim-navic').attach(client, bufnr)
-  end
-
-  if client.server_capabilities.definitionProvider then
-    vim.keymap.set('n', '<C-]>', function()
-      vim.lsp.buf.definition()
-    end, opts)
-  end
-
-  if client.server_capabilities.hoverProvider then
-    vim.keymap.set('', 'K', function()
-      vim.lsp.buf.hover()
-    end, opts)
-  end
-
-  if client.server_capabilities.renameProvider then
-    vim.keymap.set('n', '<leader>r', function()
-      vim.lsp.buf.rename()
-    end, opts)
-  end
-
-  if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_buf_create_user_command(0, 'Format', function()
-      require('user.lsp').format()
-    end, {})
-    vim.keymap.set('n', '<leader>F', function()
-      require('user.lsp').format()
-    end, opts)
-  end
-
-  vim.keymap.set('n', '<leader>d', function()
-    require('user.lsp').show_position_diagnostics()
-  end, opts)
-end
-
 -- format the current buffer, but exclude certain cases
 M.format = function()
   local name = vim.api.nvim_buf_get_name(0)
@@ -136,31 +132,19 @@ M.show_position_diagnostics = function()
 end
 
 -- setup a server
-M.get_lsp_config = function(server)
-  -- default config for all servers
-  local config = {}
-
-  -- add server-specific config if applicable
-  local client_config = load_client_config(server)
-  if client_config.config then
-    config = vim.tbl_deep_extend('force', config, client_config.config)
+M.setup = function(server_name)
+  local status, config = pcall(require, modbase .. '.servers.' .. server_name)
+  if not status or type(config) ~= 'table' then
+    config = {}
   end
 
-  if config.on_attach then
-    local config_on_attach = config.on_attach
-    config.on_attach = function(client, bufnr)
-      config_on_attach(client, bufnr)
-      M.on_attach(client, bufnr)
-    end
-  else
-    config.on_attach = M.on_attach
-  end
+  config.on_attach = create_on_attach(config.on_attach)
 
   -- add cmp capabilities
   local cmp = require('cmp_nvim_lsp')
   config.capabilities = cmp.default_capabilities()
 
-  return config
+	require("lspconfig")[server_name].setup(config)
 end
 
 return M

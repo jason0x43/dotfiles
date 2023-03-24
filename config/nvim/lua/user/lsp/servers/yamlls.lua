@@ -1,9 +1,7 @@
 return {
-  config = {
-    settings = {
-      yaml = {
-        keyOrdering = false,
-      },
+  settings = {
+    yaml = {
+      keyOrdering = false,
     },
   },
 }
