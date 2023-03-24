@@ -6,7 +6,8 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 
 -- load the config for a given client, if it exists
 local function load_client_config(server_name)
-  local status, client_config = pcall(require, modbase .. '.' .. server_name)
+  local status, client_config =
+    pcall(require, modbase .. '.servers.' .. server_name)
   if not status or type(client_config) ~= 'table' then
     return {}
   end
