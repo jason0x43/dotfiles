@@ -308,10 +308,6 @@ function fill(area, options = {}) {
   const isLargeScreen = screenFrame.width > 2000;
   const frame = window.frame();
 
-  if (isLargeScreen) {
-    screenFrame = addIconSpace(screenFrame);
-  }
-
   if (portion) {
     width = screenFrame.width * portion;
   } else if (widthMinus) {
