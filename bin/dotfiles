@@ -302,10 +302,9 @@ function dotfiles-brew {
         'tig'         # terminal git ui
     )
 
-    brew_casks=""
-
     if [[ $OSTYPE == darwin* ]]; then
-        brew_casks=(
+        brew_packages=(
+            $brew_packages
             'font-jetbrains-mono-nerd-font'
             'phoenix'
             '1password-cli'
@@ -319,25 +318,16 @@ function dotfiles-brew {
 
     local need_rehash=0
 
-    local installed_packages=($(brew ls --versions $brew_packages | awk '{ print $1 }'))
+    local installed_packages=($(brew ls --versions | awk '{ print $1 }' | cut -d'@' -f1))
     for pkg in $brew_packages; do
-        if ((! $installed_packages[(Ie)$pkg])); then
+        # some packages include tap names, and python packages include versions
+        local name=$(echo $pkg | awk -F '/' '{print $NF}' | cut -d'@' -f1)
+        if ((! $installed_packages[(Ie)$name])); then
             logSub "Installing $pkg..."
             brew install $pkg
             need_rehash=1
         fi
     done
-
-    if [[ $OSTYPE == darwin* ]]; then
-        local installed_casks=($(brew ls --versions --cask $brew_casks | awk '{ print $1 }'))
-        for pkg in $brew_casks; do
-            if ((! $installed_casks[(Ie)$pkg])); then
-                logSub "Installing $pkg..."
-                brew install $pkg
-                need_rehash=1
-            fi
-        done
-    fi
 
     if (( $need_rehash )); then
         # Let the shell know about any newly installed packages
