@@ -418,11 +418,9 @@ if [[ ! -d $XDG_CACHE_HOME/tmux ]]; then
     mkdir $XDG_CACHE_HOME/tmux
 fi
 
-# direnv
+# rtx
 # ------------------------------------------------------------------------
-# silence direnv's output; run `direnv status` to check
-export DIRENV_LOG_FORMAT=
-eval "$(direnv hook $SHELL)"
+eval "$(rtx activate zsh)"
 
 # Line editor
 # ------------------------------------------------------------------------
