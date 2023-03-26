@@ -30,3 +30,6 @@ __pycache__/
 # direnv config files
 .envrc
 .direnv/
+
+# rtx config files
+.rtx.toml
