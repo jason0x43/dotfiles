@@ -50,7 +50,6 @@
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # =========================[ Line #1 ]=========================
     # os_icon               # os identifier
-    # arch                  # different architecture indicator
     context                 # user@hostname
     dir                     # current directory
     vcs                     # git status
@@ -107,10 +106,10 @@
     gcloud                  # google cloud cli account and project (https://cloud.google.com/)
     google_app_cred         # google application credentials (https://cloud.google.com/docs/authentication/production)
     toolbox                 # toolbox name (https://github.com/containers/toolbox)
-    # context               # user@hostname
     nordvpn                 # nordvpn connection status, linux only (https://nordvpn.com/)
     ranger                  # ranger shell (https://github.com/ranger/ranger)
     nnn                     # nnn shell (https://github.com/jarun/nnn)
+    lf                      # lf shell (https://github.com/gokcehan/lf)
     xplr                    # xplr shell (https://github.com/sayanarijit/xplr)
     vim_shell               # vim shell indicator (:sh)
     midnight_commander      # midnight commander shell (https://midnight-commander.org/)
@@ -124,7 +123,6 @@
     timewarrior             # timewarrior tracking status (https://timewarrior.net/)
     taskwarrior             # taskwarrior task count (https://taskwarrior.org/)
     # cpu_arch              # CPU architecture
-    # time                  # current time
     # =========================[ Line #2 ]=========================
     newline                 # \n
     # ip                    # ip address and bandwidth usage for a specified network interface
@@ -246,7 +244,30 @@
   # Set to true to display anchor directory segments in bold.
   typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=true
   # Don't shorten directories that contain any of these files. They are anchors.
-  local anchor_files=()
+  local anchor_files=(
+    .bzr
+    .citc
+    .git
+    .hg
+    .node-version
+    .python-version
+    .go-version
+    .ruby-version
+    .lua-version
+    .java-version
+    .perl-version
+    .php-version
+    .tool-version
+    .shorten_folder_marker
+    .svn
+    .terraform
+    CVS
+    Cargo.toml
+    composer.json
+    go.mod
+    package.json
+    stack.yaml
+  )
   typeset -g POWERLEVEL9K_SHORTEN_FOLDER_MARKER="(${(j:|:)anchor_files})"
   # If set to "first" ("last"), remove everything before the first (last) subdirectory that contains
   # files matching $POWERLEVEL9K_SHORTEN_FOLDER_MARKER. For example, when the current directory is
@@ -484,7 +505,7 @@
   typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=-1
 
   # Icon color.
-  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=2
+  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=$GREEN
   typeset -g POWERLEVEL9K_VCS_LOADING_VISUAL_IDENTIFIER_COLOR=
   # Custom icon.
   typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_EXPANSION
@@ -726,6 +747,12 @@
   typeset -g POWERLEVEL9K_NNN_FOREGROUND=$YELLOW
   # Custom icon.
   # typeset -g POWERLEVEL9K_NNN_VISUAL_IDENTIFIER_EXPANSION='⭐'
+
+  ######################[ lf: lf shell (https://github.com/gokcehan/lf) ]#######################
+  # lf shell color.
+  typeset -g POWERLEVEL9K_LF_FOREGROUND=3
+  # Custom icon.
+  # typeset -g POWERLEVEL9K_LF_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   ##################[ xplr: xplr shell (https://github.com/sayanarijit/xplr) ]##################
   # xplr shell color.
@@ -1186,7 +1213,7 @@
   #############[ kubecontext: current kubernetes context (https://kubernetes.io/) ]#############
   # Show kubecontext only when the command you are typing invokes one of these tools.
   # Tip: Remove the next line to always show kubecontext.
-  typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
+  typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold|kubent|kubecolor'
 
   # Kubernetes context classes for the purpose of using different colors, icons and expansions with
   # different contexts.
@@ -1484,7 +1511,7 @@
   typeset -g POWERLEVEL9K_VPN_IP_CONTENT_EXPANSION=
   # Regular expression for the VPN network interface. Run `ifconfig` or `ip -4 a show` while on VPN
   # to see the name of the interface.
-  typeset -g POWERLEVEL9K_VPN_IP_INTERFACE='(gpd|wg|(.*tun)|tailscale)[0-9]*'
+  typeset -g POWERLEVEL9K_VPN_IP_INTERFACE='(gpd|wg|(.*tun)|tailscale)[0-9]*|(zt.*)'
   # If set to true, show one segment per matching network interface. If set to false, show only
   # one segment corresponding to the first matching network interface.
   # Tip: If you set it to true, you'll probably want to unset POWERLEVEL9K_VPN_IP_CONTENT_EXPANSION.
@@ -1568,7 +1595,7 @@
   # commands will contain the start times of their commands as opposed to the default
   # behavior where they contain the end times of their preceding commands.
   typeset -g POWERLEVEL9K_TIME_UPDATE_ON_COMMAND=false
-  # Custom icon.
+  # No icon
   typeset -g POWERLEVEL9K_TIME_VISUAL_IDENTIFIER_EXPANSION
   # Custom prefix.
   # typeset -g POWERLEVEL9K_TIME_PREFIX='%fat '
@@ -1629,6 +1656,7 @@
   typeset -g POWERLEVEL9K_RTX_PYTHON_FOREGROUND=$BLUE
   typeset -g POWERLEVEL9K_RTX_GOLANG_FOREGROUND=$YELLOW
   typeset -g POWERLEVEL9K_RTX_NODE_FOREGROUND=$GREEN
+  typeset -g POWERLEVEL9K_RTX_NODE_VISUAL_IDENTIFIER_EXPANSION=''
   typeset -g POWERLEVEL9K_RTX_RUST_FOREGROUND=$RED
   typeset -g POWERLEVEL9K_RTX_DOTNET_CORE_FOREGROUND=$BLUE
   typeset -g POWERLEVEL9K_RTX_FLUTTER_FOREGROUND=$MAGENTA
