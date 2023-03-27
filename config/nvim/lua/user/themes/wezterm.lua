@@ -184,10 +184,10 @@ local function apply_theme(c)
 
   local sign_col_bg = ''
 
-	local error = c.red
-	local hint = c.dim_0
-	local info = c.br_blue
-	local warn = c.orange
+  local error = c.red
+  local hint = c.dim_0
+  local info = c.br_blue
+  local warn = c.orange
 
   hilink('Boolean', 'Constant')
   hilink('Character', 'Constant')
@@ -353,6 +353,15 @@ local function apply_theme(c)
   hilink('LspDiagnosticsSignInformation', 'DiagnosticSignInfo')
   hilink('LspDiagnosticsSignWarning', 'DiagnosticSignWarn')
   hilink('LspDiagnosticsSignError', 'DiagnosticSignError')
+
+  hilink('NotifyDEBUGTitle', 'DiagnosticHint')
+  hilink('NotifyDEBUGIcon', 'DiagnosticHint')
+  hilink('NotifyINFOTitle', 'DiagnosticInfo')
+  hilink('NotifyINFOIcon', 'DiagnosticInfo')
+  hilink('NotifyWARNTitle', 'DiagnosticWarn')
+  hilink('NotifyWARNIcon', 'DiagnosticWarn')
+  hilink('NotifyERRORTitle', 'DiagnosticError')
+  hilink('NotifyERRORIcon', 'DiagnosticError')
 
   hilink('NeoTreeFloatBorder', 'Normal')
 end

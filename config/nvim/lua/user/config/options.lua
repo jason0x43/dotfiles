@@ -81,7 +81,6 @@ o.wrap = false
 o.wildignorecase = true
 
 -- update the UI more frequently, but skip some redraws
-o.lazyredraw = true
 o.updatetime = 500
 
 -- don't show the mode on the last line
