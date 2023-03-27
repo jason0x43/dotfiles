@@ -3,8 +3,10 @@ local modbase = ...
 -- Give LspInfo window a border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
 
+local M = {}
+
 -- configure a client when it's attached to a buffer
-local function create_on_attach(server_on_attach)
+M.create_on_attach = function(server_on_attach)
   return function(client, bufnr)
     if server_on_attach then
       server_on_attach(client, bufnr)
@@ -50,8 +52,6 @@ local function create_on_attach(server_on_attach)
     end, opts)
   end
 end
-
-local M = {}
 
 M.config = function()
   -- UI
@@ -138,7 +138,7 @@ M.setup = function(server_name)
     config = {}
   end
 
-  config.on_attach = create_on_attach(config.on_attach)
+  config.on_attach = M.create_on_attach(config.on_attach)
 
   -- add cmp capabilities
   local cmp = require('cmp_nvim_lsp')

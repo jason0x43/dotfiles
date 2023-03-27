@@ -134,6 +134,10 @@ return {
 
       null_ls.setup({
         sources = sources,
+        on_attach = function(client)
+          local oa = require('user.lsp').create_on_attach()
+          oa(client)
+        end,
       })
     end,
   },

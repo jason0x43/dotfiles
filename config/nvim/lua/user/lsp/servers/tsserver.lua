@@ -1,9 +1,4 @@
 return {
-  init_options = {
-    -- disable formatting in favor of prettier
-    provideFormatter = false,
-  },
-
   handlers = {
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
       result.diagnostics = vim.tbl_filter(function(diag)
@@ -27,7 +22,10 @@ return {
     end,
   },
 
-  on_attach = function()
+  on_attach = function(client)
+    -- disable formatting in favor of null_ls
+    client.server_capabilities.documentFormattingProvider = false
+
     vim.api.nvim_buf_create_user_command(0, 'OrganizeImports', function()
       vim.lsp.buf.execute_command({
         command = '_typescript.organizeImports',
