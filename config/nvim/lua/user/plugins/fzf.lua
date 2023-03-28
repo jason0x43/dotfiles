@@ -54,10 +54,13 @@ return {
       },
     })
 
-    vim.keymap.set('n', '<leader>e', '<cmd>FzfLua diagnostics_document<cr>')
-    vim.keymap.set('n', '<leader>f', '<cmd>FzfLua files<cr>')
-    vim.keymap.set('n', '<leader>j', '<cmd>FzfLua jumps<cr>')
-    vim.keymap.set('n', '<leader>g', function()
+    vim.keymap.set('n', '<leader>e', function()
+      require('fzf-lua').diagnostics_document()
+    end)
+    vim.keymap.set('n', '<leader>j', function()
+      require('fzf-lua').jumps()
+    end)
+    vim.keymap.set('n', '<leader>f', function()
       local in_worktree = require('user.util').in_git_dir()
       if in_worktree then
         require('fzf-lua').git_files()
@@ -65,12 +68,26 @@ return {
         require('fzf-lua').files()
       end
     end)
-    vim.keymap.set('n', '<leader>b', '<cmd>FzfLua buffers<cr>')
-    vim.keymap.set('n', '<leader>tg', '<cmd>FzfLua live_grep_native<cr>')
-    vim.keymap.set('n', '<leader>th', '<cmd>FzfLua help_tags<cr>')
-    vim.keymap.set('n', '<leader>lr', '<cmd>FzfLua lsp_references<cr>')
-    vim.keymap.set('n', '<leader>ls', '<cmd>FzfLua lsp_document_symbols<cr>')
-    vim.keymap.set('n', '<leader>ld', '<cmd>FzfLua diagnostics_document<cr>')
-    vim.keymap.set('n', '<leader>a', '<cmd>FzfLua lsp_code_actions<cr>')
+    vim.keymap.set('n', '<leader>g', function()
+      require('fzf-lua').live_grep_glob({
+        git_icons = false,
+        file_icons = false,
+      })
+    end)
+    vim.keymap.set('n', '<leader>b', function()
+      require('fzf-lua').buffers()
+    end)
+    vim.keymap.set('n', '<leader>th', function()
+      require('fzf-lua').help_tags()
+    end)
+    vim.keymap.set('n', '<leader>lr', function()
+      require('fzf-lua').lsp_references()
+    end)
+    vim.keymap.set('n', '<leader>ls', function()
+      require('fzf-lua').lsp_document_symbols()
+    end)
+    vim.keymap.set('n', '<leader>a', function()
+      require('fzf-lua').lsp_code_actions()
+    end)
   end,
 }
