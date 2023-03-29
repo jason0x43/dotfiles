@@ -10,6 +10,12 @@ local function autocmd(type, pattern, callback)
   })
 end
 
+-- open files in readonly if they're already open instead of printing a huge
+-- warning message
+autocmd('SwapExists', '*', function()
+	vim.v.swapchoice = 'o'
+end)
+
 -- make text files easier to work with
 autocmd('FileType', 'text,textile,markdown,html', function()
   util.text_mode()
