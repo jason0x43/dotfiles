@@ -6,7 +6,7 @@ vim.keymap.set('n', '#', function()
   if vim.wo.cursorline and vim.wo.cursorcolumn then
     vim.wo.cursorline = false
     vim.wo.cursorcolumn = false
-  elseif vim.go.cursorline then
+  elseif vim.wo.cursorline then
     vim.wo.cursorcolumn = true
   else
     vim.wo.cursorline = true
