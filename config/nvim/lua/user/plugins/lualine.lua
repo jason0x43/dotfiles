@@ -4,12 +4,21 @@ return {
 
   dependencies = {
     'arkav/lualine-lsp-progress',
-    'nvim-web-devicons',
-    -- 'nvim-navic',
+    'nvim-tree/nvim-web-devicons',
   },
 
-  config = function()
-    -- local navic = require('nvim-navic')
+  opts = function()
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('lualine.colorizer', {}),
+      callback = function()
+        require('lualine').setup({
+          options = {
+            theme = 'wezterm',
+          },
+        })
+      end,
+    })
+
     local hi = vim.api.nvim_set_hl
 
     -- make statusline transparent so we don't get a flash before lualine
@@ -19,7 +28,7 @@ return {
 
     local refresh_time = 500
 
-    local config = {
+    return {
       options = {
         theme = 'wezterm',
         section_separators = { left = ' ', right = ' ' },
@@ -74,18 +83,5 @@ return {
       },
       extensions = { 'nvim-tree', 'quickfix' },
     }
-
-    require('lualine').setup(config)
-
-    vim.api.nvim_create_autocmd('ColorScheme', {
-      group = vim.api.nvim_create_augroup('lualine.colorizer', {}),
-      callback = function()
-        require('lualine').setup({
-          options = {
-            theme = 'wezterm',
-          },
-        })
-      end,
-    })
   end,
 }

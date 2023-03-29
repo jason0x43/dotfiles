@@ -1,4 +1,12 @@
 return {
+  -- native LSP
+  {
+    'neovim/nvim-lspconfig',
+    config = function()
+      require('user.lsp').config()
+    end,
+  },
+
   -- Helpers for editing neovim lua; must be setup before lspconfig
   {
     'folke/neodev.nvim',
@@ -169,5 +177,13 @@ return {
         end,
       })
     end,
+  },
+
+  -- diagnostics display
+  {
+    'folke/trouble.nvim',
+    event = 'BufEnter',
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    config = true,
   },
 }

@@ -68,7 +68,7 @@ function M.print_syn_group()
   local buf = vim.api.nvim_get_current_buf()
   local ts_hl = require('vim.treesitter.highlighter')
   if ts_hl.active[buf] then
-    vim.cmd('TSHighlightCapturesUnderCursor')
+    vim.cmd('TSCaptureUnderCursor')
   else
     local ls = vim.fn.synID(vim.fn.line('.'), vim.fn.col('.'), 1)
     if ls ~= 0 then

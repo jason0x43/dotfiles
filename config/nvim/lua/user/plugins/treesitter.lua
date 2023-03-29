@@ -3,7 +3,7 @@ return {
 
   dependencies = {
     'nvim-lua/plenary.nvim',
-    -- provide TSHighlightCapturesUnderCursor command
+    -- provide TSCaptureUnderCursor command
     'nvim-treesitter/playground',
     -- set proper commentstring for embedded languages
     'JoosepAlviste/nvim-ts-context-commentstring',

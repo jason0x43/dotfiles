@@ -13,13 +13,13 @@ return {
       'saadparwaiz1/cmp_luasnip',
     },
 
-    config = function()
+    opts = function()
       vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
 
       local cmp = require('cmp')
       local luasnip = require('luasnip')
 
-      cmp.setup({
+      return {
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -61,28 +61,24 @@ return {
           { name = 'buffer' },
         },
         preselect = 'none',
-      })
+      }
     end,
   },
 
   {
     'zbirenbaum/copilot.lua',
-    config = function()
-      require('copilot').setup({
-        suggestion = {
-          enabled = false,
-          auto_trigger = true,
-        },
-        panel = { enabled = false },
-      })
-    end,
+    opts = {
+      suggestion = {
+        enabled = false,
+        auto_trigger = true,
+      },
+      panel = { enabled = false },
+    },
   },
 
   {
     'zbirenbaum/copilot-cmp',
     event = 'BufEnter',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
+    config = true,
   },
 }
