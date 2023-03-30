@@ -2,7 +2,7 @@ return {
   -- better start/end matching
   {
     'andymass/vim-matchup',
-    dependencies = 'plenary.nvim',
+    dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       vim.g.matchup_matchparen_offscreen = { method = 'popup' }
     end,
@@ -11,7 +11,6 @@ return {
   -- preserve layout when closing buffers; used for <leader>k
   {
     'famiu/bufdelete.nvim',
-    event = 'BufEnter',
     config = function()
       vim.keymap.set('n', '<leader>k', function()
 				require('bufdelete').bufdelete(0)
@@ -23,34 +22,16 @@ return {
   },
 
   -- gc for commenting code blocks
-  {
-    'tpope/vim-commentary',
-    event = 'BufEnter',
-  },
+	'tpope/vim-commentary',
 
   -- git utilities
-  {
-    'tpope/vim-fugitive',
-    event = 'BufEnter',
-  },
+	'tpope/vim-fugitive',
 
   -- support for repeating mapped commands
-  {
-    'tpope/vim-repeat',
-    event = 'BufEnter',
-  },
+	'tpope/vim-repeat',
 
   -- for manipulating parens and such
-  {
-    'tpope/vim-surround',
-    event = 'BufEnter',
-  },
-
-  -- easy vertical alignment of code elements
-  {
-    'junegunn/vim-easy-align',
-    cmd = 'EasyAlign',
-  },
+	'tpope/vim-surround',
 
   -- show semantic file location (e.g., what function you're in)
   {
@@ -67,8 +48,8 @@ return {
     'sindrets/diffview.nvim',
     cmd = 'DiffviewOpen',
     dependencies = {
-      'plenary.nvim',
-      'nvim-web-devicons',
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
     },
     config = true,
   },
@@ -76,8 +57,7 @@ return {
   -- better git decorations
   {
     'lewis6991/gitsigns.nvim',
-    event = 'BufEnter',
-    dependencies = 'plenary.nvim',
+    dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       require('gitsigns').setup({
         signs = {
