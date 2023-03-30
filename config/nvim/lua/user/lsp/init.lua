@@ -122,7 +122,7 @@ end
 
 -- style the line diagnostics popup
 M.show_position_diagnostics = function()
-  vim.diagnostic.open_float(0, {
+  vim.diagnostic.open_float({
     scope = 'cursor',
     border = 'rounded',
     max_width = 80,
