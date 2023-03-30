@@ -371,6 +371,8 @@ local M = {}
 function M.apply()
   local colors = M.load_colors()
 
+  vim.g.colors_name = 'wezterm'
+
   if vim.go.termguicolors then
     local util = require('user.util.theme')
 

@@ -119,20 +119,6 @@ autoft('intern{-.}*.json', 'jsonc')
 autoft('*.textile', 'textile')
 autoft('*.{frag,vert}', 'glsl')
 
--- set colorscheme after TUI has loaded
-autocmd('VimEnter', '*', function()
-  local timer = vim.loop.new_timer()
-  if timer then
-    timer:start(
-      0,
-      0,
-      vim.schedule_wrap(function()
-        vim.api.nvim_command('colorscheme wezterm')
-      end)
-    )
-  end
-end)
-
 -- improve handling of very large files
 autocmd({ 'BufReadPre', 'FileReadPre' }, '*', function()
   local file = vim.fn.expand('<afile>')
