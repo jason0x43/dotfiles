@@ -37,12 +37,12 @@ return {
       if name == 'package.json' then
         local text = vim.fn.readfile(path)
         local ok, parsed = pcall(vim.fn.json_decode, text)
-        if ok then
+        if ok and parsed then
           return parsed.eslintConfig ~= nil
         end
       end
     end)
-    if eslint_config ~= nil then
+    if eslint_config then
       return vim.fs.dirname(eslint_config)
     end
   end,
