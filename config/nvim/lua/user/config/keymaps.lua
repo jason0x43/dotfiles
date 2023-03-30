@@ -22,13 +22,17 @@ vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>')
 vim.keymap.set('n', '<leader>Q', '<cmd>qall!<cr>')
 
 -- close a window
-vim.keymap.set('n', '<leader>c', '<cmd>close<cr>')
+vim.keymap.set('n', '<leader>c', function()
+  vim.api.nvim_win_close(0, false)
+end)
 
 -- show the syntax highlight state of the character under the cursor
 vim.keymap.set('n', '<leader>hl', require('user.util').print_syn_group)
 
 -- space to clear search highlights
-vim.keymap.set('', '<space>', '<cmd>noh<cr>')
+vim.keymap.set('', '<space>', function()
+  vim.go.hlsearch = false
+end)
 
 -- yank to and paste from system clipboard
 vim.keymap.set({ 'n', 'v', 'o' }, '<leader>y', function()

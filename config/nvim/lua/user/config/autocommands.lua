@@ -13,7 +13,7 @@ end
 -- open files in readonly if they're already open instead of printing a huge
 -- warning message
 autocmd('SwapExists', '*', function()
-	vim.v.swapchoice = 'o'
+  vim.v.swapchoice = 'o'
 end)
 
 -- make text files easier to work with
@@ -23,8 +23,8 @@ end)
 
 -- better formatting for JavaScript
 autocmd('FileType', 'javascript', function()
-	vim.bo.formatprg = nil
-	vim.bo.formatexpr = nil
+  vim.bo.formatprg = nil
+  vim.bo.formatexpr = nil
 end)
 
 autocmd('BufEnter', '*.*', function()
@@ -62,13 +62,19 @@ end)
 
 -- close qf panes and help tabs with 'q'
 autocmd('FileType', 'qf,fugitiveblame,lspinfo,startuptime', function()
-  vim.keymap.set('', 'q', '<cmd>bd<CR>')
+  vim.keymap.set('', 'q', function()
+    vim.api.nvim_buf_delete(0, {})
+  end)
 end)
 autocmd('FileType', 'help', function()
-  vim.keymap.set('', 'q', '<cmd>tabclose<CR>')
+  vim.keymap.set('', 'q', function()
+    vim.api.nvim_win_close(0, false)
+  end)
 end)
 autocmd('BufEnter', 'output:///info', function()
-  vim.keymap.set('', 'q', '<cmd>bd<CR>')
+  vim.keymap.set('', 'q', function()
+    vim.api.nvim_buf_delete(0, {})
+  end)
 end)
 
 -- auto-set quickfix height
@@ -116,13 +122,15 @@ autoft('*.{frag,vert}', 'glsl')
 -- set colorscheme after TUI has loaded
 autocmd('VimEnter', '*', function()
   local timer = vim.loop.new_timer()
-  timer:start(
-    0,
-    0,
-    vim.schedule_wrap(function()
-      vim.api.nvim_command('colorscheme wezterm')
-    end)
-  )
+  if timer then
+    timer:start(
+      0,
+      0,
+      vim.schedule_wrap(function()
+        vim.api.nvim_command('colorscheme wezterm')
+      end)
+    )
+  end
 end)
 
 -- improve handling of very large files

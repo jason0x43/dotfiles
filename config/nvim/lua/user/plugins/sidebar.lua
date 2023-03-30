@@ -4,7 +4,17 @@ return {
     'nvim-neo-tree/neo-tree.nvim',
 
     keys = {
-      { '<leader>n', '<cmd>Neotree reveal toggle<cr>', desc = 'NeoTree' },
+      {
+        '<leader>n',
+        function()
+          require('neo-tree').reveal_current_file(
+            'filesystem',
+            true,
+            '<bang>' == '!'
+          )
+        end,
+        desc = 'NeoTree',
+      },
     },
 
     branch = 'v2.x',
