@@ -42,7 +42,6 @@
   "vim-blade": { "branch": "master", "commit": "9534101808cc320eef003129a40cab04b026a20c" },
   "vim-classpath": { "branch": "master", "commit": "88a7e8a62d4603e79787cb381fc5cac562c29bb0" },
   "vim-commentary": { "branch": "master", "commit": "e87cd90dc09c2a203e13af9704bd0ef79303d755" },
-  "vim-easy-align": { "branch": "master", "commit": "12dd6316974f71ce333e360c0260b4e1f81169c3" },
   "vim-fugitive": { "branch": "master", "commit": "9acbad1335ee6f30a8497733dcb2373c4550c8a2" },
   "vim-jsx-pretty": { "branch": "master", "commit": "6989f1663cc03d7da72b5ef1c03f87e6ddb70b41" },
   "vim-markdown": { "branch": "master", "commit": "feadbc81e27f277187c29957ec6114f1e95f2162" },
