@@ -141,10 +141,15 @@ M.setup = function(server_name)
   config.on_attach = M.create_on_attach(config.on_attach)
 
   -- add cmp capabilities
-  local cmp = require('cmp_nvim_lsp')
-  config.capabilities = cmp.default_capabilities()
+  local cmp_caps = require('cmp_nvim_lsp').default_capabilities()
+  if config.capabilities then
+    config.capabilities =
+      vim.tbl_deep_extend('keep', config.capabilities, cmp_caps)
+  else
+    config.capabilities = cmp_caps
+  end
 
-	require("lspconfig")[server_name].setup(config)
+  require('lspconfig')[server_name].setup(config)
 end
 
 return M
