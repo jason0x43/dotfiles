@@ -1675,11 +1675,9 @@
     local plugin
     for plugin in ${(k)plugins}; do
       local parts=("${(@s/ /)plugin}")
-      local upper=${(U)parts[1]}
+      local tool=${(U)parts[1]}
       local version=${parts[2]}
-
-      _p9k_get_icon prompt_rtx_$upper ${upper}_ICON $plugin
-      _p9k_prompt_segment prompt_rtx_$upper green $_p9k_color1 $'\1'$_p9k__ret 0 '' ${version//\%/%%}
+      p10k segment -r -i "${tool}_ICON" -s $tool -t "$version"
     done
   }
 
