@@ -8,11 +8,11 @@ local M = {}
 local context_lines = 3
 
 ---@alias UndoTreeEntry
----|  { seq: number, time: number, save?: number }
+---|  { seq: number, time: number, save?: number, curhead?: boolean }
 ---@alias UndoTree
 ---|  { seq_cur: number, entries: UndoTreeEntry[] }
 ---@alias UndoListEntry
----|  { seq: number, alt: number, first: boolean, time: number }
+---|  { seq: number, alt: number, is_first: boolean, is_next: boolean, time: number }
 ---@alias UndoList
 ---|  UndoListEntry[]
 
@@ -27,7 +27,8 @@ local function _build_tree(entries, level)
     undolist[#undolist + 1] = {
       seq = entries[i].seq,
       alt = level,
-      first = i == #entries,
+      is_first = i == #entries,
+      is_next = entries[i].curhead ~= nil,
       time = entries[i].time,
     }
 
@@ -217,8 +218,8 @@ local function render_undo_entry(undo, seq_cur)
   -- state #1
   local prefix = ''
   if undo.alt > 0 then
-    prefix = string.rep(' │ ', undo.alt)
-    if undo.first then
+    prefix = ' │ ' .. string.rep('│ ', undo.alt - 1)
+    if undo.is_first then
       prefix = prefix .. '┌╴'
     else
       prefix = prefix .. '├╴'
@@ -232,7 +233,7 @@ local function render_undo_entry(undo, seq_cur)
     seq = utils.ansi_codes.yellow(
       utils.ansi_codes.bold(string.format('>%d<', undo.seq))
     )
-  elseif undo.seq == seq_cur + 1 then
+  elseif undo.is_next then
     seq = utils.ansi_codes.green(
       utils.ansi_codes.bold(string.format('{%d}', undo.seq))
     )
