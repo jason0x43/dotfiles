@@ -354,6 +354,7 @@ local function apply_theme(c)
   hilink('LspDiagnosticsSignWarning', 'DiagnosticSignWarn')
   hilink('LspDiagnosticsSignError', 'DiagnosticSignError')
 
+  hi('NotifyBackground', { bg = c.bg_0 })
   hilink('NotifyDEBUGTitle', 'DiagnosticHint')
   hilink('NotifyDEBUGIcon', 'DiagnosticHint')
   hilink('NotifyINFOTitle', 'DiagnosticInfo')
