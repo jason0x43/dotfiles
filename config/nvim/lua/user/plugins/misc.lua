@@ -98,4 +98,17 @@ return {
     main = 'tig-nvim',
     config = true,
   },
+
+  -- undotree
+  {
+    dir = '/Users/jason/.config/nvim/lua/undotree-nvim',
+    main = 'undotree-nvim',
+    config = true,
+    opts = function()
+      vim.keymap.set('n', '<leader>u', function()
+        require('undotree-nvim').undotree()
+      end)
+      return {}
+    end,
+  },
 }
