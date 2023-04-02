@@ -13,25 +13,25 @@ return {
     'famiu/bufdelete.nvim',
     config = function()
       vim.keymap.set('n', '<leader>k', function()
-				require('bufdelete').bufdelete(0)
-			end)
+        require('bufdelete').bufdelete(0)
+      end)
       vim.keymap.set('n', '<leader>K', function()
-				require('bufdelete').bufdelete(0, true)
-			end)
+        require('bufdelete').bufdelete(0, true)
+      end)
     end,
   },
 
   -- gc for commenting code blocks
-	'tpope/vim-commentary',
+  'tpope/vim-commentary',
 
   -- git utilities
-	'tpope/vim-fugitive',
+  'tpope/vim-fugitive',
 
   -- support for repeating mapped commands
-	'tpope/vim-repeat',
+  'tpope/vim-repeat',
 
   -- for manipulating parens and such
-	'tpope/vim-surround',
+  'tpope/vim-surround',
 
   -- show semantic file location (e.g., what function you're in)
   {
