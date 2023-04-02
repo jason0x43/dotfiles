@@ -94,8 +94,8 @@ return {
 
   -- tig in a float
   {
-    dir = '/Users/jason/.config/nvim/lua/tig-lua',
-		main = 'tig-lua',
-    config = true
+    dir = '/Users/jason/.config/nvim/lua/tig-nvim',
+    main = 'tig-nvim',
+    config = true,
   },
 }
