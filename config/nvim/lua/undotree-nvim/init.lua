@@ -194,7 +194,7 @@ end
 
 M.undotree = function()
   local ut = vim.fn.undotree()
-  if #ut.entries == 1 then
+  if #ut.entries <= 1 then
     vim.notify('No undo history', vim.log.levels.WARN)
     return
   end
