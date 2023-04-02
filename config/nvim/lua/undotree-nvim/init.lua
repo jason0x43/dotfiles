@@ -1,5 +1,7 @@
 -- This code is based on telescope-undo
 
+local utils = require('fzf-lua.utils')
+
 local M = {}
 
 -- how many lines of context to show around each diff
@@ -21,9 +23,9 @@ local function _build_tree(entries, level)
       or {}
     local buffer_before = table.concat(buffer_before_lines, '\n')
 
-		-- add a diff file header for this hunk for delta
-		local filename = vim.fn.expand('%')
-		local diff = '--- ' .. filename .. '\n+++ ' .. filename .. '\n'
+    -- add a diff file header for this hunk for delta
+    local filename = vim.fn.expand('%')
+    local diff = '--- ' .. filename .. '\n+++ ' .. filename .. '\n'
 
     local on_hunk_callback = function(start_a, count_a, start_b, count_b)
       -- add a diff location header for this hunk for delta
@@ -80,7 +82,7 @@ local function _build_tree(entries, level)
     })
 
     -- if the entry has an alt branch, generate undo items for that and add it
-		-- to the undolist
+    -- to the undolist
     if entries[i].alt ~= nil then
       local alt_undolist = _build_tree(entries[i].alt, level + 1)
       for _, elem in pairs(alt_undolist) do
@@ -92,10 +94,7 @@ local function _build_tree(entries, level)
   return undolist
 end
 
-local function build_tree()
-  -- get all diffs
-  local ut = vim.fn.undotree()
-
+local function build_tree(ut)
   -- save the cursor position -- it will need to be restored after building the
   -- tree, which changes the buffer while creating diffs
   local cursor = vim.api.nvim_win_get_cursor(0)
@@ -152,7 +151,7 @@ local function time_ago(time)
   return time_value(years, 'year')
 end
 
-local function render_undo_entry(undo)
+local function render_undo_entry(undo, seq_cur)
   -- the following prefix should work out to this graph structure:
   -- state #1
   -- └─state #2
@@ -166,7 +165,7 @@ local function render_undo_entry(undo)
   -- └─state #10
   local prefix = ''
   if undo.alt > 0 then
-    prefix = string.rep('│ ', undo.alt - 1)
+    prefix = string.rep('│ ', undo.alt)
     if undo.first then
       local corner = '┌'
       prefix = prefix .. corner .. '╴'
@@ -175,38 +174,59 @@ local function render_undo_entry(undo)
     end
   end
 
-  return undo.seq .. ':' .. prefix .. undo.seq .. ' ' .. time_ago(undo.time)
+  local seq
+  if undo.seq == seq_cur then
+    seq = utils.ansi_codes.red(utils.ansi_codes.bold(tostring(undo.seq)))
+  else
+    seq = utils.ansi_codes.white(utils.ansi_codes.italic(tostring(undo.seq)))
+  end
+
+  local time = utils.ansi_codes.blue(time_ago(undo.time))
+
+  local line = undo.seq .. ':' .. prefix .. seq .. ' ' .. time
+
+  if undo.seq == seq_cur then
+    line = utils.ansi_codes.yellow(utils.ansi_codes.bold(line))
+  end
+
+  return line
 end
 
 M.undotree = function()
-  local tree = build_tree()
+  local ut = vim.fn.undotree()
+  if #ut.entries == 1 then
+    vim.notify('No undo history', vim.log.levels.WARN)
+    return
+  end
+
+  local tree = build_tree(ut)
   local lines = {}
   local entries = {}
 
   for _, entry in pairs(tree) do
-    lines[#lines + 1] = render_undo_entry(entry)
+    lines[#lines + 1] = render_undo_entry(entry, ut.seq_cur)
     entries[tostring(entry.seq)] = entry
   end
 
   require('fzf-lua').fzf_exec(lines, {
-		actions = {
-			['default'] = function(selected)
-				local item = selected[1]
-				local seq = item:match('^(%d+)')
-				vim.cmd('silent undo ' .. seq)
-			end
-		},
+    actions = {
+      ['default'] = function(selected)
+        local item = selected[1]
+        local seq = item:match('^(%d+)')
+        vim.cmd('silent undo ' .. seq)
+      end,
+    },
     fzf_opts = {
       ['--phony'] = '',
       ['--delimiter'] = ':',
       ['--with-nth'] = '2',
-      ['--preview-window'] = 'nohidden,down,50%',
+      ['--preview-window'] = 'nohidden,right,75%,border-left',
       ['--preview'] = require('fzf-lua').shell.action(function(items)
         local contents = {}
         vim.tbl_map(function(item)
           local seq = item:match('^(%d+)')
           local diff = entries[seq].diff
-          local hldiff = vim.fn.system('delta --color-only', diff)
+          local hldiff = vim.fn.system('delta --diff-highlight', diff)
           table.insert(contents, hldiff)
         end, items)
         return contents
@@ -216,11 +236,11 @@ M.undotree = function()
 end
 
 M.setup = function()
-	local ok, _ = pcall(require, "fzf-lua")
-	if not ok then
-		vim.notify("undotree-nvim requires fzf-lua", vim.log.levels.WARN)
-		return
-	end
+  local ok, _ = pcall(require, 'fzf-lua')
+  if not ok then
+    vim.notify('undotree-nvim requires fzf-lua', vim.log.levels.WARN)
+    return
+  end
 end
 
 return M
