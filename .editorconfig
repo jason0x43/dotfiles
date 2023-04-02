@@ -1,7 +1,7 @@
 root = false
 
 [*.lua]
-indent_style = tab
+indent_style = space
 indent_size = 2
 max_line_length = 80
 
