@@ -95,14 +95,16 @@ return {
   -- tig in a float
   {
     dir = '/Users/jason/.config/nvim/lua/tig-nvim',
+    cond = vim.fn.executable('tig') == 1,
     main = 'tig-nvim',
     config = true,
   },
 
-  -- undotree
+  -- fzf-based undotree
   {
     dir = '/Users/jason/.config/nvim/lua/undotree-nvim',
     main = 'undotree-nvim',
+    depends = 'ibhagwan/fzf-lua',
     config = true,
     opts = function()
       vim.keymap.set('n', '<leader>u', function()
@@ -111,4 +113,6 @@ return {
       return {}
     end,
   },
+
+  'mbbill/undotree',
 }
