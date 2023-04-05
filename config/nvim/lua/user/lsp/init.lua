@@ -72,11 +72,6 @@ M.config = function()
     { text = '', texthl = 'DiagnosticSignHint' }
   )
 
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-    vim.lsp.handlers['textDocument/publishDiagnostics'],
-    { virtual_text = true }
-  )
-
   vim.lsp.handlers['textDocument/hover'] =
     vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 

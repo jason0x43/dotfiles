@@ -186,4 +186,16 @@ return {
     dependencies = 'nvim-tree/nvim-web-devicons',
     config = true,
   },
+
+  -- virtual text diagnostics
+  {
+    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+    config = true,
+    opts = function()
+      vim.diagnostic.config({
+        virtual_text = false,
+      })
+      return {}
+    end,
+  },
 }
