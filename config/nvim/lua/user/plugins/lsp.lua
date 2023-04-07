@@ -195,6 +195,7 @@ return {
       vim.diagnostic.config({
         virtual_text = false,
       })
+      vim.keymap.set('n', '<leader>l', require('lsp_lines').toggle)
       return {}
     end,
   },
