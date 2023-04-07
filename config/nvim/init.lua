@@ -1,3 +1,5 @@
+vim.loader.enable()
+
 require('user.config.options')
 require('user.config.filetypes')
 require('user.config.lazy')
