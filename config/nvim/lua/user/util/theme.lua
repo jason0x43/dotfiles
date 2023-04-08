@@ -66,15 +66,6 @@ function M.lighten(hex, amount, fg)
   return hex
 end
 
--- return true if a color is "dark"
----@param color string
----@return boolean
-function M.is_dark(color)
-  local rgb = hex_to_rgb(color)
-  local luminance = (0.299 * rgb[1] + 0.587 * rgb[2] + 0.114 * rgb[3]) / 255
-  return luminance < 0.5
-end
-
 -- shift a color by a percentage
 -- the shift direction depends on whether the shift amount is positive or
 -- negative and whether the current background is light or dark
@@ -99,64 +90,13 @@ function M.shift(hex, amount)
   return shifter(hex, amount)
 end
 
--- get a color from a vim highlight group
----@param hlgroup string
----@param attr string
----@return string
-local function get_color(hlgroup, attr)
-  local col =
-    vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID(hlgroup)), attr .. '#')
-  if col == '' then
-    return 'NONE'
-  end
-  return col
-end
-
--- return a function for retrieving named colors
----@return function(name: string, shift_amt: number?): string
-function M.get_colors()
-  local semantic = {
-    error = get_color('LspDiagnosticsDefaultError', 'fg'),
-    warning = get_color('LspDiagnosticsDefaultWarning', 'fg'),
-    hint = get_color('LspDiagnosticsDefaultHint', 'fg'),
-    info = get_color('LspDiagnosticsDefaultInformation', 'fg'),
-    bg = get_color('Search', 'fg'),
-    bg_status = M.darken(get_color('LineNr', 'bg'), 0.025),
-    fg = get_color('Normal', 'fg'),
-    fg_status = get_color('Normal', 'bg'),
-    bg_sign = get_color('SignColumn', 'bg'),
-    fg_sign = get_color('SignColumn', 'fg'),
-    comment = get_color('Comment', 'fg'),
-    selection = get_color('LineNr', 'bg'),
-  }
-
-  local named = {
-    dark_gray = get_color('Visual', 'bg'),
-    green = get_color('DiffAdd', 'fg'),
-    blue = get_color('Question', 'fg'),
-    purple = get_color('Keyword', 'fg'),
-    red = semantic.error,
-  }
-
-  local colors = vim.tbl_extend('force', semantic, named)
-
-  ---@param name string
-  ---@param shift_amt number?
-  ---@return string
-  return function(name, shift_amt)
-    assert(colors[name] ~= nil, 'Accessed nil color "' .. name .. '"')
-    local color = colors[name]
-    if shift_amt ~= nil then
-      return M.shift(color, shift_amt)
-    end
-    return color
-  end
-end
-
--- apply any theme customizations
----@return nil
-function M.update_theme()
-  vim.cmd('colorscheme base16')
+-- return true if a color is "dark"
+---@param color string
+---@return boolean
+function M.is_dark(color)
+  local rgb = hex_to_rgb(color)
+  local luminance = (0.299 * rgb[1] + 0.587 * rgb[2] + 0.114 * rgb[3]) / 255
+  return luminance < 0.5
 end
 
 return M
