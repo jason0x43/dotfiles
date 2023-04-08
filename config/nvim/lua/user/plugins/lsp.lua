@@ -142,9 +142,10 @@ return {
 
       null_ls.setup({
         sources = sources,
-        on_attach = function(client)
+        on_attach = function(client, bufnr)
+          print('null_ls attaching with buf ' .. vim.inspect(bufnr))
           local oa = require('user.lsp').create_on_attach()
-          oa(client)
+          oa(client, bufnr)
         end,
       })
     end,
@@ -198,5 +199,23 @@ return {
       vim.keymap.set('n', '<leader>l', require('lsp_lines').toggle)
       return {}
     end,
+  },
+
+  -- copilot integration
+  {
+    'zbirenbaum/copilot.lua',
+    opts = {
+      event = 'InsertEnter',
+      suggestion = {
+        enabled = false,
+        auto_trigger = true,
+      },
+      panel = { enabled = false },
+      filetypes = {
+        ['*'] = function()
+          return not require('user.util').is_large_file(0)
+        end
+      }
+    },
   },
 }

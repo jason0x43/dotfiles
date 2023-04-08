@@ -4,7 +4,7 @@ local M = {}
 -- https://sunaku.github.io/tmux-yank-osc52.html
 ---@param text string
 ---@return nil
-function M.yank(text)
+M.yank = function(text)
   local escape = vim.fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
     vim.cmd('echoerr ' .. escape)
@@ -15,7 +15,7 @@ end
 
 -- settings for text files
 ---@return nil
-function M.text_mode()
+M.text_mode = function()
   vim.wo.wrap = true
   vim.wo.linebreak = true
   vim.wo.list = false
@@ -29,7 +29,7 @@ end
 
 -- set colorcolumn to show the current textwidth
 ---@return nil
-function M.show_view_width()
+M.show_view_width = function()
   local filetype = vim.bo.filetype
   local tw = vim.bo.textwidth
 
@@ -45,7 +45,7 @@ end
 ---@param minheight number
 ---@param maxheight number
 ---@return nil
-function M.adjust_window_height(minheight, maxheight)
+M.adjust_window_height = function(minheight, maxheight)
   local line = vim.fn.line('$')
   local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
   vim.cmd(val .. 'wincmd _')
@@ -53,7 +53,7 @@ end
 
 -- restore the cursor position in a file
 ---@return nil
-function M.restore_cursor()
+M.restore_cursor = function()
   local filetype = vim.bo.filetype
   local buftype = vim.bo.buftype
 
@@ -73,7 +73,7 @@ end
 
 -- print the syntax highlight information at the current location
 ---@return nil
-function M.print_syn_group()
+M.print_syn_group = function()
   local buf = vim.api.nvim_get_current_buf()
   local ts_hl = require('vim.treesitter.highlighter')
   if ts_hl.active[buf] then
@@ -94,9 +94,30 @@ end
 
 -- return true if the cwd is in a git work tree
 ---@return boolean
-function M.in_git_dir()
+M.in_git_dir = function()
   vim.fn.system({ 'git', 'rev-parse', '--is-inside-work-tree' })
   return vim.v.shell_error == 0
+end
+
+-- return true if the given buffer should enable "large file" mode
+---@param buf number?
+---@return boolean
+M.is_large_file = function(buf)
+  buf = buf or 0
+  local ok1, is_large = pcall(vim.api.nvim_buf_get_var, buf, 'large_file')
+  if ok1 then
+    -- set a buffer variable so we don't have to re-stat the file if this is
+    -- called again
+    vim.api.nvim_buf_set_var(buf, 'large_file', is_large)
+    return is_large
+  end
+
+  local ok2, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+  if ok2 and stats and stats.size > 1000000 then
+    return true
+  end
+
+  return false
 end
 
 return M

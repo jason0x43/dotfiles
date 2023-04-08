@@ -120,28 +120,12 @@ autoft('*.textile', 'textile')
 autoft('*.{frag,vert}', 'glsl')
 
 -- improve handling of very large files
-autocmd({ 'BufReadPre', 'FileReadPre' }, '*', function()
-  local file = vim.fn.expand('<afile>')
-  local size = vim.fn.getfsize(file)
-
-  -- "large" is > 10MB
-  if size > 10000000 then
-    print('Using large file mode for ' .. file)
-
-    if vim.fn.exists(':TSBufDisable') then
-      vim.cmd('TSBufDisable highlight indent illuminate matchup')
-    end
-
-    -- if vim.fn.exists(':IlluminatePauseBuf') then
-    --   vim.cmd('IlluminatePauseBuf')
-    -- end
-
-    vim.b.lsp_disable = true
-    vim.wo.foldmethod = 'manual'
-    vim.cmd('syntax off')
-    vim.cmd('filetype off')
+autocmd({ 'BufReadPost', 'FileReadPost' }, '*', function()
+  if require('user.util').is_large_file() then
+    vim.bo.filetype = nil
     vim.bo.swapfile = false
     vim.bo.undofile = false
+    vim.wo.foldmethod = 'manual'
   end
 end)
 

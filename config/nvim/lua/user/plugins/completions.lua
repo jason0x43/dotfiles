@@ -64,18 +64,8 @@ return {
   },
 
   {
-    'zbirenbaum/copilot.lua',
-    opts = {
-      suggestion = {
-        enabled = false,
-        auto_trigger = true,
-      },
-      panel = { enabled = false },
-    },
-  },
-
-  {
     'zbirenbaum/copilot-cmp',
     config = true,
+    dependencies = 'zbirenbaum/copilot.lua'
   },
 }

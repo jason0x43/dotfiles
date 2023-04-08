@@ -5,12 +5,18 @@ require('lspconfig.ui.windows').default_options.border = 'rounded'
 
 local M = {}
 
+---@alias AttachFunction function(client: table, bufnr: number): nil
+
 -- configure a client when it's attached to a buffer
----@param server_on_attach function(client: table, bufnr: number): nil
+---@param server_on_attach AttachFunction?
 M.create_on_attach = function(server_on_attach)
   ---@param client table
   ---@param bufnr number
   return function(client, bufnr)
+    if require('user.util').is_large_file(bufnr) then
+      return
+    end
+
     if server_on_attach then
       server_on_attach(client, bufnr)
     end
