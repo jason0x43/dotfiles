@@ -1,6 +1,12 @@
 local os = require('os')
 
+---@alias Palette
+---| { bg_0: string, bg_1: string, bg_2: string, dim_0: string, fg_0: string, fg_1: string, red: string, green: string, yellow: string, blue: string, magenta: string, cyan: string, br_red: string, br_green: string, br_yellow: string, br_blue: string, br_magenta: string, br_cyan: string, orange: string, br_orange: string, violet: string, br_violet: string }
+---@alias CtermPalette
+---| { bg_0: number | nil, bg_1: number | nil, bg_2: number | nil, dim_0: number | nil, fg_0: number | nil, fg_1: number | nil, red: number | nil, green: number | nil, yellow: number | nil, blue: number | nil, magenta: number | nil, cyan: number | nil, br_red: number | nil, br_green: number | nil, br_yellow: number | nil, br_blue: number | nil, br_magenta: number | nil, br_cyan: number | nil, orange: number | nil, br_orange: number | nil, violet: number | nil, br_violet: number | nil }
+
 -- Default color palettes in the Selenized format
+---@type { [string]: Palette }
 local palettes = {
   black = {
     bg_0 = '#181818',
@@ -98,7 +104,9 @@ local palettes = {
     br_orange = '#bc5819',
     br_violet = '#825dc0',
   },
-  cterm = {
+}
+
+local cterm_palette = {
     bg_0 = nil,
     fg_0 = nil,
     bg_1 = 0,
@@ -121,13 +129,14 @@ local palettes = {
     br_orange = 17,
     violet = 18,
     br_violet = 19,
-  },
 }
 
 -- Convert a Wezterm color scheme to the Selenized format.
 --
 -- This function assumes a scheme that follows standard XTerm conventions, with
 -- 2 extra dark + bright colors in the 16-19 indexes
+---@param wezterm_colors table
+---@return Palette
 local function to_selenized(wezterm_colors)
   return {
     bg_0 = wezterm_colors.background,
@@ -156,19 +165,26 @@ local function to_selenized(wezterm_colors)
 end
 
 -- A convenience function for linking highlight groups
+---@param group string
+---@param other_group string
 local function hilink(group, other_group)
   vim.api.nvim_set_hl(0, group, { link = other_group })
 end
 
 -- Apply a theme in the Selenized format
+---@param c Palette | CtermPalette
 local function apply_theme(c)
   -- A convenience function for setting highlight groups
   local hi = nil
   if vim.go.termguicolors then
+    ---@param group string
+    ---@param options table
     hi = function(group, options)
       vim.api.nvim_set_hl(0, group, options)
     end
   else
+    ---@param group string
+    ---@param options table
     hi = function(group, options)
       local opts = {}
       for k, v in pairs(options) do
@@ -369,15 +385,15 @@ end
 
 local M = {}
 
+---@return nil
 function M.apply()
   local colors = M.load_colors()
 
   vim.g.colors_name = 'wezterm'
 
   if vim.go.termguicolors then
-    local util = require('user.util.theme')
-
-    if util.is_dark(colors.bg_0) then
+    ---@cast colors Palette
+    if require('user.util.theme').is_dark(colors.bg_0) then
       vim.go.background = 'dark'
     else
       vim.go.background = 'light'
@@ -389,6 +405,7 @@ function M.apply()
   vim.api.nvim_exec_autocmds('ColorScheme', {})
 end
 
+---@return Palette | CtermPalette
 function M.load_colors()
   if vim.go.termguicolors then
     local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
@@ -398,10 +415,11 @@ function M.load_colors()
       return palettes.white
     else
       local scheme = vim.fn.json_decode(colors_text)
+      ---@cast scheme table
       return to_selenized(scheme)
     end
   else
-    return palettes.cterm
+    return cterm_palette
   end
 end
 

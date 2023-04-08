@@ -1,5 +1,7 @@
 local M = {}
 
+---@param dir 'k' | 'j' | 'h' | 'l'
+---@return number | string
 M.go_dir = function(dir)
   local curr_win = vim.fn.winnr()
   vim.api.nvim_command("wincmd " .. dir)

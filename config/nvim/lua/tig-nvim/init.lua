@@ -1,5 +1,7 @@
 local M = {}
 
+---@param cmd string
+---@return nil
 local function open_win(cmd)
   -- Get the current UI
   local ui = vim.api.nvim_list_uis()[1]

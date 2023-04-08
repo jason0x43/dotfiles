@@ -2,6 +2,8 @@ local M = {}
 
 -- yank to terminal
 -- https://sunaku.github.io/tmux-yank-osc52.html
+---@param text string
+---@return nil
 function M.yank(text)
   local escape = vim.fn.system('term_copy', text)
   if vim.v.shell_error == 1 then
@@ -12,6 +14,7 @@ function M.yank(text)
 end
 
 -- settings for text files
+---@return nil
 function M.text_mode()
   vim.wo.wrap = true
   vim.wo.linebreak = true
@@ -25,6 +28,7 @@ function M.text_mode()
 end
 
 -- set colorcolumn to show the current textwidth
+---@return nil
 function M.show_view_width()
   local filetype = vim.bo.filetype
   local tw = vim.bo.textwidth
@@ -38,6 +42,9 @@ function M.show_view_width()
 end
 
 -- set window height within a min/max range
+---@param minheight number
+---@param maxheight number
+---@return nil
 function M.adjust_window_height(minheight, maxheight)
   local line = vim.fn.line('$')
   local val = vim.fn.max({ vim.fn.min({ line, maxheight }), minheight })
@@ -45,6 +52,7 @@ function M.adjust_window_height(minheight, maxheight)
 end
 
 -- restore the cursor position in a file
+---@return nil
 function M.restore_cursor()
   local filetype = vim.bo.filetype
   local buftype = vim.bo.buftype
@@ -64,6 +72,7 @@ function M.restore_cursor()
 end
 
 -- print the syntax highlight information at the current location
+---@return nil
 function M.print_syn_group()
   local buf = vim.api.nvim_get_current_buf()
   local ts_hl = require('vim.treesitter.highlighter')
@@ -84,6 +93,7 @@ function M.print_syn_group()
 end
 
 -- return true if the cwd is in a git work tree
+---@return boolean
 function M.in_git_dir()
   vim.fn.system({ 'git', 'rev-parse', '--is-inside-work-tree' })
   return vim.v.shell_error == 0
