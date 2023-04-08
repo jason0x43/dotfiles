@@ -83,7 +83,7 @@ return {
         bat = {
           cmd = 'bat',
           -- delete all args so it uses external config
-          args = '',
+          args = '--force-colorization',
         },
       },
     }
