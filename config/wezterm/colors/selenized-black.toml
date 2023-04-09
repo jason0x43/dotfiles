@@ -36,16 +36,16 @@ selection_fg = "none"
 19 = "#b891f5"
 
 [colors.tab_bar]
-background = "#3b3b3b"
+background = "#2b2b2b"
 
 [colors.tab_bar.active_tab]
 bg_color = "#181818"
 fg_color = "#dedede"
 
 [colors.tab_bar.inactive_tab]
-bg_color = "#252525"
+bg_color = "#2b2b2b"
 fg_color = "#777777"
 
 [colors.tab_bar.new_tab]
-bg_color = "#3b3b3b"
-fg_color = "#3b3b3b"
+bg_color = "#2b2b2b"
+fg_color = "#2b2b2b"
