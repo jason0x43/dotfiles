@@ -14,17 +14,24 @@ return {
   -- Better UI
   'stevearc/dressing.nvim',
 
-	-- Popup notifications
-	{
-		'rcarriga/nvim-notify',
+  -- Popup notifications
+  {
+    'rcarriga/nvim-notify',
 
-		opts = function()
-			vim.notify = require('notify')
-			return {
-				timeout = 1000
-			}
-		end
-	},
+    opts = function()
+      vim.notify = require('notify')
+      if vim.go.termguicolors then
+        return {
+          timeout = 1000,
+        }
+      end
+
+      return {
+        timeout = 3000,
+        stages = 'static',
+      }
+    end,
+  },
 
   -- highlight current word
   {
@@ -36,5 +43,4 @@ return {
       }
     end,
   },
-
 }
