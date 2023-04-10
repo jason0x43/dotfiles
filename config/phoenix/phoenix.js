@@ -203,14 +203,14 @@ function getWindowsInSpace(appName, space) {
 /**
  * Layout a browser and terminal in a screen for development
  */
-function autoLayout() {
+async function autoLayout() {
 	const space = Space.active();
 	if (space.isFullScreen()) {
 		Phoenix.log("Skipping layout because app is full screen");
 		return;
 	}
 
-	if (isStageManagerEnabled()) {
+	if (await isStageManagerEnabled()) {
 		Phoenix.log("Skipping layout because Stage Manager is enabled");
 		return;
 	}
