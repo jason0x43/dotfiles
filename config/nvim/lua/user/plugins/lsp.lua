@@ -143,7 +143,6 @@ return {
       null_ls.setup({
         sources = sources,
         on_attach = function(client, bufnr)
-          print('null_ls attaching with buf ' .. vim.inspect(bufnr))
           local oa = require('user.lsp').create_on_attach()
           oa(client, bufnr)
         end,
@@ -214,8 +213,20 @@ return {
       filetypes = {
         ['*'] = function()
           return not require('user.util').is_large_file(0)
-        end
-      }
+        end,
+      },
+    },
+  },
+
+  {
+    'SmiteshP/nvim-navbuddy',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'SmiteshP/nvim-navic',
+      'MunifTanjim/nui.nvim',
+    },
+    opts = {
+      lsp = { auto_attach = true },
     },
   },
 }
