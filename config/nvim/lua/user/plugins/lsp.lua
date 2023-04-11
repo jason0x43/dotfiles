@@ -225,8 +225,11 @@ return {
       'SmiteshP/nvim-navic',
       'MunifTanjim/nui.nvim',
     },
-    opts = {
-      lsp = { auto_attach = true },
-    },
+    opts = function()
+      vim.keymap.set('n', '<leader>n', require('nvim-navbuddy').open)
+      return {
+        lsp = { auto_attach = true },
+      }
+    end,
   },
 }

@@ -107,28 +107,28 @@ local palettes = {
 }
 
 local cterm_palette = {
-    bg_0 = nil,
-    fg_0 = nil,
-    bg_1 = 0,
-    red = 1,
-    green = 2,
-    yellow = 3,
-    blue = 4,
-    magenta = 5,
-    cyan = 6,
-    dim_0 = 7,
-    bg_2 = 8,
-    br_red = 9,
-    br_green = 10,
-    br_yellow = 11,
-    br_blue = 12,
-    br_magenta = 13,
-    br_cyan = 14,
-    fg_1 = 15,
-    orange = 16,
-    br_orange = 17,
-    violet = 18,
-    br_violet = 19,
+  bg_0 = nil,
+  fg_0 = nil,
+  bg_1 = 0,
+  red = 1,
+  green = 2,
+  yellow = 3,
+  blue = 4,
+  magenta = 5,
+  cyan = 6,
+  dim_0 = 7,
+  bg_2 = 8,
+  br_red = 9,
+  br_green = 10,
+  br_yellow = 11,
+  br_blue = 12,
+  br_magenta = 13,
+  br_cyan = 14,
+  fg_1 = 15,
+  orange = 16,
+  br_orange = 17,
+  violet = 18,
+  br_violet = 19,
 }
 
 -- Convert a Wezterm color scheme to the Selenized format.
@@ -381,6 +381,23 @@ local function apply_theme(c)
   hilink('NotifyERRORIcon', 'DiagnosticError')
 
   hilink('NeoTreeFloatBorder', 'Normal')
+
+  hilink('NavbuddyArray', 'Identifier')
+  hilink('NavbuddyBoolean', 'Boolean')
+  hilink('NavbuddyClass', 'Type')
+  hilink('NavbuddyConstant', 'Constant')
+  hilink('NavbuddyConstructor', 'Function')
+  hilink('NavbuddyFile', 'Special')
+  hilink('NavbuddyFunction', 'Function')
+  hilink('NavbuddyInterface', 'Type')
+  hilink('NavbuddyMethod', 'Function')
+  hilink('NavbuddyNull', 'Special')
+  hilink('NavbuddyNumber', 'Number')
+  hilink('NavbuddyObject', 'Identifier')
+  hilink('NavbuddyOperator', 'Operator')
+  hilink('NavbuddyString', 'String')
+  hilink('NavbuddyStruct', 'Structure')
+  hilink('NavbuddyVariable', '@variable')
 end
 
 local M = {}

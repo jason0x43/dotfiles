@@ -27,7 +27,7 @@ return {
     vim.keymap.set('n', '<leader>b', function()
       require('fzf-lua').buffers()
     end)
-    vim.keymap.set('n', '<leader>th', function()
+    vim.keymap.set('n', '<leader>h', function()
       require('fzf-lua').help_tags()
     end)
     vim.keymap.set('n', '<leader>lr', function()
@@ -36,7 +36,7 @@ return {
     vim.keymap.set('n', '<leader>ls', function()
       require('fzf-lua').lsp_document_symbols()
     end)
-    vim.keymap.set('n', '<leader>a', function()
+    vim.keymap.set('n', '<leader>la', function()
       require('fzf-lua').lsp_code_actions()
     end)
 
