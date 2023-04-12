@@ -26,9 +26,6 @@ vim.keymap.set('n', '<leader>c', function()
   vim.api.nvim_win_close(0, false)
 end)
 
--- show the syntax highlight state of the character under the cursor
-vim.keymap.set('n', '<leader>hl', require('user.util').print_syn_group)
-
 -- space to clear search highlights
 vim.keymap.set('', '<space>', function()
   vim.go.hlsearch = false

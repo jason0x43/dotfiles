@@ -48,25 +48,4 @@ return {
       }
     end,
   },
-
-  -- symbol browser
-  {
-    'stevearc/aerial.nvim',
-
-    opts = function()
-      vim.keymap.set('n', '<leader>s', function()
-        require('aerial').toggle({ focus = true })
-      end)
-
-      vim.api.nvim_set_hl(0, 'AerialLine', { link = 'CursorLine' })
-
-      return {
-        close_on_select = true,
-        layout = {
-          max_width = 0.3,
-          width = 30,
-        },
-      }
-    end,
-  },
 }
