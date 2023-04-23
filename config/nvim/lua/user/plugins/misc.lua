@@ -27,9 +27,6 @@ return {
   -- git utilities
   'tpope/vim-fugitive',
 
-  -- support for repeating mapped commands
-  'tpope/vim-repeat',
-
   -- for manipulating parens and such
   'tpope/vim-surround',
 
