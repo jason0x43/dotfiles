@@ -33,3 +33,6 @@ __pycache__/
 
 # rtx config files
 .rtx.toml
+ 
+# watchman config files
+.watchmanconfig
