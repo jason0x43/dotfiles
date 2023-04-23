@@ -7,6 +7,18 @@ return {
     end,
   },
 
+  -- LSP settings manager
+  {
+    'folke/neoconf.nvim',
+
+    -- ensure this loads before lsp
+    priority = 100,
+
+    config = function()
+      require('neoconf').setup({})
+    end,
+  },
+
   -- Helpers for editing neovim lua; must be setup before lspconfig
   {
     'folke/neodev.nvim',
@@ -191,6 +203,7 @@ return {
   {
     'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
     config = true,
+    enabled = false,
     opts = function()
       vim.diagnostic.config({
         virtual_text = false,

@@ -1,0 +1,9 @@
+{
+	"lspconfig": {
+		"lua_ls": {
+			"Lua.workspace.library": [
+				"~/.config/nvim/lua/user/types/wezterm"
+			]
+		}
+	}
+}
