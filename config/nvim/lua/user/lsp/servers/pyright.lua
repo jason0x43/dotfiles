@@ -1,13 +1,4 @@
 return {
-  on_attach = function()
-    -- vim.api.nvim_buf_create_user_command(
-    --   0,
-    --   'OrganizeImports',
-    --   'PyrightOrganizeImports',
-    --   {}
-    -- )
-  end,
-
   handlers = {
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
       result.diagnostics = vim.tbl_filter(function(diag)

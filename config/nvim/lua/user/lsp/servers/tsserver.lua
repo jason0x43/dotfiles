@@ -25,12 +25,5 @@ return {
   on_attach = function(client)
     -- disable formatting in favor of null_ls
     client.server_capabilities.documentFormattingProvider = false
-
-    vim.api.nvim_buf_create_user_command(0, 'OrganizeImports', function()
-      vim.lsp.buf.execute_command({
-        command = '_typescript.organizeImports',
-        arguments = { vim.api.nvim_buf_get_name(0) },
-      })
-    end, {})
   end,
 }

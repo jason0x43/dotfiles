@@ -3,6 +3,78 @@ local modbase = ...
 -- Give LspInfo window a border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
 
+---@param bufnr integer
+---@param method string
+local function lsp_method_supported(bufnr, method)
+  ---@type lsp.Client[]
+  local active_clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+
+  for _, active_client in pairs(active_clients) do
+    if active_client.supports_method(method) then
+      return true
+    end
+  end
+end
+
+---Adapted from M.code_actions() in $VIMRUNTIME/lua/vim/buf.lua
+---@param bufnr integer
+local function organize_imports(bufnr)
+  if not lsp_method_supported(bufnr, 'textDocument/codeAction') then
+    return
+  end
+
+  local params = vim.lsp.util.make_range_params()
+  params.context = {
+    diagnostics = {},
+    only = { 'source.organizeImports', 'source.removeUnusedImports' },
+  }
+
+  local results =
+    vim.lsp.buf_request_sync(bufnr, 'textDocument/codeAction', params)
+  if results == nil then
+    return
+  end
+
+  for client_id, result in pairs(results) do
+    local client = vim.lsp.get_client_by_id(client_id)
+
+    for _, action in pairs(result.result or {}) do
+      if
+        action.kind:find('source.organizeImports')
+        or action.kind:find('source.removeUnusedImports')
+      then
+        if action.edit then
+          vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
+        end
+
+        if action.command then
+          local command = type(action.command) == 'table' and action.command
+            or action
+          local fn = client.commands[command.command]
+            or vim.lsp.commands[command.command]
+
+          if fn then
+            fn(command, {
+              client_id = client.id,
+              bufnr = bufnr,
+              method = 'textDocument/codeAction',
+              params = vim.deepcopy(params),
+            })
+          else
+            -- Not using command directly to exclude extra properties,
+            -- see https://github.com/python-lsp/python-lsp-server/issues/146
+            client.request_sync('workspace/executeCommand', {
+              command = command.command,
+              arguments = command.arguments,
+              workDoneToken = command.workDoneToken,
+            }, nil, bufnr)
+          end
+        end
+      end
+    end
+  end
+end
+
 local M = {}
 
 ---@alias AttachFunction function(client: table, bufnr: number): nil
@@ -11,7 +83,7 @@ local M = {}
 ---@param server_on_attach AttachFunction?
 M.create_on_attach = function(server_on_attach)
   ---@param client table
-  ---@param bufnr number
+  ---@param bufnr integer
   return function(client, bufnr)
     if require('user.util').is_large_file(bufnr) then
       return
@@ -57,9 +129,14 @@ M.create_on_attach = function(server_on_attach)
       vim.api.nvim_buf_create_user_command(0, 'Format', function()
         vim.lsp.buf.format()
       end, {})
+
       vim.keymap.set('n', '<leader>F', function()
         vim.lsp.buf.format()
       end, opts)
+
+      vim.api.nvim_buf_create_user_command(0, 'OrganizeImports', function()
+        organize_imports(0)
+      end, {})
     end
 
     -- keymap to show error diagnostic popup
