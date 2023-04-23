@@ -15,6 +15,10 @@ return {
       workspace = {
         checkThirdParty = false,
       },
+
+      runtime = {
+        pathStrict = true
+      }
     },
   },
 }
