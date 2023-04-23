@@ -113,10 +113,12 @@ function Title(title)
   ---@diagnostic disable-next-line:undefined-field
   local gui_window = _G.window
   local window = wezterm.mux.get_window(gui_window:window_id())
-  for _, tab_info in ipairs(window:tabs_with_info()) do
-    if tab_info.is_active then
-      tab_info.tab:set_title(title)
-      break
+  if window then
+    for _, tab_info in ipairs(window:tabs_with_info()) do
+      if tab_info.is_active then
+        tab_info.tab:set_title(title)
+        break
+      end
     end
   end
 end
