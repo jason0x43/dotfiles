@@ -101,7 +101,7 @@ return {
   {
     dir = '/Users/jason/.config/nvim/lua/undotree-nvim',
     main = 'undotree-nvim',
-    depends = 'ibhagwan/fzf-lua',
+    dependencies = 'ibhagwan/fzf-lua',
     config = true,
     opts = function()
       vim.keymap.set('n', '<leader>u', function()
