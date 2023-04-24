@@ -7,28 +7,32 @@ return {
     end,
   },
 
-  -- LSP settings manager
+  -- LSP settings manager; must be setup **before** any language servers are
+  -- configured
   {
     'folke/neoconf.nvim',
-
-    -- ensure this loads before lsp
+    config = true,
     priority = 100,
-
-    config = function()
-      require('neoconf').setup({})
-    end,
   },
 
-  -- Helpers for editing neovim lua; must be setup before lspconfig
+  -- helpers for editing neovim lua; must be setup **before** any language
+  -- servers are configured
   {
     'folke/neodev.nvim',
-
-    -- ensure this loads before lsp
     priority = 100,
+    config = true,
+  },
 
-    config = function()
-      require('neodev').setup({})
-    end,
+  -- language server installer; must be setup before null-ls to ensure
+  -- mason-managed tools are available in the path
+  {
+    'williamboman/mason.nvim',
+    priority = 100,
+    opts = {
+      ui = {
+        border = 'rounded',
+      },
+    },
   },
 
   -- basic language server support
@@ -37,10 +41,8 @@ return {
   -- custom language servers
   {
     'jose-elias-alvarez/null-ls.nvim',
-
     dependencies = 'nvim-lua/plenary.nvim',
-
-    config = function()
+    opts = function()
       local null_ls = require('null-ls')
       local helpers = require('null-ls.helpers')
 
@@ -152,32 +154,19 @@ return {
         table.insert(sources, tidy_xml_source)
       end
 
-      null_ls.setup({
+      return {
         sources = sources,
         on_attach = function(client, bufnr)
           local oa = require('user.lsp').create_on_attach()
           oa(client, bufnr)
         end,
-      })
-    end,
-  },
-
-  -- language server installer
-  {
-    'williamboman/mason.nvim',
-    config = function()
-      require('mason').setup({
-        ui = {
-          border = 'rounded',
-        },
-      })
+      }
     end,
   },
 
   -- language server manager
   {
     'williamboman/mason-lspconfig.nvim',
-
     config = function()
       require('mason-lspconfig').setup()
       require('user.lsp').config()
