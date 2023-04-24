@@ -33,7 +33,7 @@ return {
   -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
-    dependencies = 'nvim-treesitter',
+    dependencies = 'nvim-treesitter/nvim-treesitter',
     config = true,
   },
 
