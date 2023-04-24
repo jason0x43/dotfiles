@@ -77,12 +77,12 @@ end
 
 local M = {}
 
----@alias AttachFunction function(client: table, bufnr: number): nil
+---@alias AttachFunction fun(client: lsp.Client, bufnr: integer): nil
 
 -- configure a client when it's attached to a buffer
 ---@param server_on_attach AttachFunction?
 M.create_on_attach = function(server_on_attach)
-  ---@param client table
+  ---@param client lsp.Client
   ---@param bufnr integer
   return function(client, bufnr)
     if require('user.util').is_large_file(bufnr) then
