@@ -6,18 +6,18 @@
 # The service being deployed must already have been configured in the server's
 # compose file.
 
+import argparse
 import asyncio
+import sys
 from itertools import cycle
 from os import getenv
 from pathlib import Path
-import sys
-from sys import argv, exit
-from typing import Coroutine, Any
+from typing import Any, Coroutine
 
-YELLOW = '\033[93m'
-GREEN = '\033[92m'
-RED = '\033[91m'
-RESET = '\033[0m'
+YELLOW = "\033[93m"
+GREEN = "\033[92m"
+RED = "\033[91m"
+RESET = "\033[0m"
 
 
 async def spin(msg):
@@ -85,7 +85,7 @@ class Context:
 
     def __init__(self, service: str | None):
         self.image = Path.cwd().name
-        self.service = service if service else self.image
+        self.service = service or self.image
         self.deploy_host = getenv("DEPLOY_HOST", "localhost")
         self.services_path = getenv("SERVICES_PATH", "services")
         if self.deploy_host == "localhost":
@@ -93,9 +93,15 @@ class Context:
         else:
             self.deploy_path = f"{self.deploy_host}:{self.services_path}"
 
+    @property
+    def deploy_source_path(self):
+        return f"{self.deploy_path}/build/{self.image}"
+
 
 async def verify_service_path(ctx: Context) -> tuple[int | None, str]:
-    """Verify that a service build path exists"""
+    """
+    Verify that the path hosting the services exists on the deployment server.
+    """
 
     if ctx.deploy_host == "localhost":
         if not Path(ctx.deploy_path).exists():
@@ -131,7 +137,7 @@ async def verify_service_name(ctx: Context) -> tuple[int | None, str]:
 
     services = stdout.split()
 
-    if not ctx.service in services:
+    if ctx.service not in services:
         return (
             1,
             f"Service '{ctx.service}' does not exist in server compose file",
@@ -151,7 +157,7 @@ async def copy_source(ctx: Context) -> tuple[int | None, str]:
         args += ["--exclude-from", ".gitignore"]
 
     return await run(
-        ["rsync"] + args + [".", f"{ctx.deploy_path}/build/{ctx.image}"],
+        ["rsync"] + args + [".", ctx.deploy_source_path],
     )
 
 
@@ -179,12 +185,24 @@ async def start_service(ctx: Context) -> tuple[int | None, str]:
 
 
 async def main() -> None:
-    service = argv[1] if len(argv) > 1 else None
-    ctx = Context(service)
+    parser = argparse.ArgumentParser(
+        prog="deploy", description="Deploy a webapp"
+    )
+    parser.add_argument("service", nargs="?")
+    args = parser.parse_args()
 
-    await run_task(f"Validating deployment path '{ctx.deploy_path}'", verify_service_path(ctx))
-    await run_task(f"Validating service name '{ctx.service}'", verify_service_name(ctx))
-    await run_task(f"Copying source to {ctx.deploy_path}", copy_source(ctx))
+    ctx = Context(service=args.service)
+
+    await run_task(
+        f"Validating deployment path '{ctx.deploy_path}'",
+        verify_service_path(ctx),
+    )
+    await run_task(
+        f"Validating service name '{ctx.service}'", verify_service_name(ctx)
+    )
+    await run_task(
+        f"Copying source to {ctx.deploy_source_path}", copy_source(ctx)
+    )
     await run_task(f"Starting {ctx.service}", start_service(ctx))
     print("Done")
 
