@@ -3,6 +3,11 @@ local logger = hs.logger.new("init", "info")
 -- Relative Directions
 local LEFT = "left"
 local RIGHT = "right"
+local CENTER = "center"
+local NW = "nw"
+local NE = "ne"
+local SW = "sw"
+local SE = "se"
 
 local THIN_WIDTH = (1020 / 3840) * 1.6
 
@@ -36,29 +41,39 @@ local function isStageManagerEnabled()
 end
 
 ---Get the window IDs for an app in a space.
----@param appName string
+---@param appNames string|string[]
 ---@param spaceId integer
 ---@return hs.window[]
-local function getWindowsInSpace(appName, spaceId)
-  local app = hs.application.get(appName)
-  if app == nil then
-    logger.i("App " .. appName .. " not found")
-    return {}
+local function getWindowsInSpace(appNames, spaceId)
+  ---@type hs.window[]
+  local spaceWins = {}
+
+  ---@type string[]
+  local appNamesArr = {}
+  if type(appNames) == "string" then
+    appNamesArr = { appNames }
+  else
+    appNamesArr = appNames
   end
 
-  local ids = hs.spaces.windowsForSpace(spaceId)
+  for _, appName in pairs(appNamesArr) do
+    local app = hs.application.get(appName)
+    if app == nil then
+      logger.i("App " .. appName .. " not found")
+      return {}
+    end
 
-  ---@type hs.window[]
-  local spaceWinIds = {}
+    local ids = hs.spaces.windowsForSpace(spaceId)
 
-  local appWindows = app:visibleWindows()
-  for _, win in ipairs(appWindows) do
-    if contains(ids, win:id()) then
-      spaceWinIds[#spaceWinIds + 1] = win
+    local appWindows = app:visibleWindows()
+    for _, win in ipairs(appWindows) do
+      if contains(ids, win:id()) then
+        spaceWins[#spaceWins + 1] = win
+      end
     end
   end
 
-  return spaceWinIds
+  return spaceWins
 end
 
 ---@param frame hs.geometry
@@ -79,7 +94,7 @@ local function getScreenFrame(window)
   return padScreenFrame(frame)
 end
 
----@param area 'left'|'right'
+---@param area 'left'|'right'|'center'
 ---@param options { window?: hs.window, portion?: number, width?: number, widthMinus?: number }
 local function fill(area, options)
   local window = options.window or hs.window.focusedWindow()
@@ -140,6 +155,52 @@ local function fill(area, options)
   window:setFrame(frame)
 end
 
+---Get a delta frame between a window and its screen
+---@param win hs.window
+---@return hs.geometry
+local function getDeltaFrame(win)
+  local frame = win:frame()
+  local screen = getScreenFrame(win)
+
+  return hs.geometry.rect(
+    screen.x - frame.x,
+    screen.y - frame.y,
+    screen.w - frame.w,
+    screen.h - frame.h
+  )
+end
+
+---Move a window to an area
+---@param area 'left'|'right'|'center'
+---@param win? hs.window
+local function moveTo(area, win)
+  win = win or hs.window.focusedWindow()
+  local delta = getDeltaFrame(win)
+  local frame = win:frame()
+  local screenFrame = getScreenFrame(win)
+
+  -- x-coordinate
+  if area == NW or area == SW then
+    frame.x = screenFrame.x
+  elseif area == NE or area == SE then
+    frame.x = screenFrame.x + delta.w
+  elseif area == CENTER then
+    frame.x = screenFrame.x + delta.w / 2
+  end
+
+  -- y-coordinate
+  if area == NW or area == NE then
+    frame.y = screenFrame.y
+  elseif area == SE or area == SW then
+    frame.y = screenFrame.y + delta.h
+  elseif area == CENTER then
+    frame.y = screenFrame.y + delta.h / 2
+  end
+
+  logger.i("Setting frame to " .. hs.inspect(frame))
+  win:setFrame(frame)
+end
+
 ---Autolayout the current screen.
 ---@return nil
 local function autolayout()
@@ -157,7 +218,7 @@ local function autolayout()
     logger.d("SM not enabled")
   end
 
-  local browserWins = getWindowsInSpace("Safari", space)
+  local browserWins = getWindowsInSpace({ "Safari", "Wavebox" }, space)
   local termWins = getWindowsInSpace("WezTerm", space)
 
   if #browserWins == 1 and #termWins == 1 then
@@ -165,26 +226,103 @@ local function autolayout()
     fill(RIGHT, { window = termWins[1], portion = THIN_WIDTH })
     return
   end
+
+  local waveboxWins = getWindowsInSpace("Wavebox", space)
+  if #waveboxWins == 1 then
+    local messagesWins = getWindowsInSpace("Messages", space)
+    if #messagesWins > 0 then
+      fill(LEFT, { window = messagesWins[1], portion = 0.32 })
+      fill(RIGHT, { window = waveboxWins[1], widthMinus = 90 })
+    else
+      fill(CENTER, { window = waveboxWins[1] })
+    end
+  end
 end
 
 -- Reload the hammer spoon config when a config file changes
-hs.pathwatcher
-  .new(hs.configdir, function(files)
-    local doReload = false
-    for _, file in pairs(files) do
-      if file:sub(-4) == ".lua" then
-        doReload = true
-        break
-      end
+Watcher = hs.pathwatcher.new(hs.configdir, function(files)
+  local doReload = false
+  for _, file in pairs(files) do
+    if file:sub(-4) == ".lua" then
+      doReload = true
+      break
     end
-    if doReload then
-      hs.reload()
-    end
+  end
+  if doReload then
+    logger.i("Reloading Hammerspoon config")
+    hs.reload()
+  end
+end)
+Watcher:start()
+
+hs.application.watcher
+  .new(function(name, evt)
+    logger.i("App watcher: " .. name .. " " .. evt)
   end)
   :start()
 
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   autolayout()
 end)
+
+hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
+  moveTo(CENTER)
+end)
+
+hs.hotkey.bind({ "ctrl", "shift" }, "r", function()
+  hs.reload()
+end)
+
+-- start raycast --------------------
+-- see https://raycastcommunity.slack.com/archives/C01AC2X0GMN/p1682488277125479?thread_ts=1682102421.928419&cid=C01AC2X0GMN
+
+-- function EscapeForRaycast()
+--   raycastRscape = hs.hotkey.new({}, "escape", function()
+--     raycastRscape:disable()
+--     hs.eventtap.keyStroke({ "shift" }, "escape")
+--   end)
+
+--   wf = hs.window.filter
+--   wf_raycast = wf.new("Raycast")
+--   wf_raycast:subscribe(wf.windowVisible, function()
+--     raycastRscape:enable()
+--   end)
+--   wf_raycast:subscribe(wf.windowNotVisible, function()
+--     raycastRscape:disable()
+--   end)
+-- end
+
+-- local function IsRaycastFocused()
+--   local win = hs.window.focusedWindow()
+--   if
+--     win ~= nil
+--     and win:application():name() == "Raycast"
+--     and win:subrole() == "AXSystemDialog"
+--   then
+--     return true
+--   else
+--     return false
+--   end
+-- end
+
+-- hs.hotkey.bind({ "control", "option" }, "p", function()
+--   hs.alert.show(IsRaycastFocused())
+-- end)
+
+-- end raycast ------------------
+
+-- Toggle this for raycast escape behavior
+-- EscapeForRaycast()
+
+-- hs.hotkey.bind({}, "escape", function()
+--   logger.i('escaped')
+-- end)
+
+-- hs.eventtap.new({ hs.eventtap.event.types.keyUp }, function(event)
+--   if event:getKeyCode() == 40 then
+--     return true
+--   end
+--   logger.i("saw key up: " .. hs.inspect(event:getKeyCode()))
+-- end):start()
 
 hs.alert.show("Hammerspoon config loaded")
