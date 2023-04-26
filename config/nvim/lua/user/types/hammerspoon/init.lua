@@ -2,6 +2,7 @@
 
 ---@module 'alert'
 ---@module 'application'
+---@module 'eventtap'
 ---@module 'geometry'
 ---@module 'hotkey'
 ---@module 'logger'
@@ -12,6 +13,7 @@
 ---@class hs
 ---@field alert alert
 ---@field application application
+---@field eventtap eventtap
 ---@field geometry geometry
 ---@field hotkey hotkey
 ---@field logger logger
