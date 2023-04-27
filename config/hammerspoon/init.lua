@@ -239,90 +239,66 @@ local function autolayout()
   end
 end
 
--- Reload the hammer spoon config when a config file changes
-Watcher = hs.pathwatcher.new(hs.configdir, function(files)
-  local doReload = false
-  for _, file in pairs(files) do
-    if file:sub(-4) == ".lua" then
-      doReload = true
-      break
-    end
-  end
-  if doReload then
-    logger.i("Reloading Hammerspoon config")
-    hs.reload()
-  end
-end)
-Watcher:start()
-
-hs.application.watcher
-  .new(function(name, evt)
-    logger.i("App watcher: " .. name .. " " .. evt)
-  end)
-  :start()
-
+-- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   autolayout()
 end)
 
+-- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
   moveTo(CENTER)
 end)
 
+-- Reload the Hammerspoon config
 hs.hotkey.bind({ "ctrl", "shift" }, "r", function()
   hs.reload()
 end)
 
--- start raycast --------------------
--- see https://raycastcommunity.slack.com/archives/C01AC2X0GMN/p1682488277125479?thread_ts=1682102421.928419&cid=C01AC2X0GMN
+-- Send ctrl-space for escape to hide the Raycast window without navigating
+local raycastEscape = hs.hotkey.new({}, "escape", function()
+  -- ctrl-space must be sent to the system rather than a specific app
+  hs.eventtap.keyStroke({ "ctrl" }, "space", 0)
+end)
 
--- function EscapeForRaycast()
---   raycastRscape = hs.hotkey.new({}, "escape", function()
---     raycastRscape:disable()
---     hs.eventtap.keyStroke({ "shift" }, "escape")
---   end)
+-- Send escape for cmd-w to let cmd-w pop Raycast's navigation stack
+local raycastCmdW = hs.hotkey.new({ "cmd" }, "w", function()
+  -- cmd-w needs to be sent to a specific app
+  local app = hs.window.focusedWindow():application()
+  hs.eventtap.keyStroke({}, "escape", 0, app)
+end)
 
---   wf = hs.window.filter
---   wf_raycast = wf.new("Raycast")
---   wf_raycast:subscribe(wf.windowVisible, function()
---     raycastRscape:enable()
---   end)
---   wf_raycast:subscribe(wf.windowNotVisible, function()
---     raycastRscape:disable()
---   end)
--- end
+-- Watch for the Raycast popup to en/disable the Raycast hotkey overrides
+if raycastEscape == nil or raycastCmdW == nil then
+  hs.alert.show("Error creating Raycast hotkeys")
+else
+  RaycastFilter = hs.window.filter
+    .new(false)
+    :setAppFilter("Raycast", { allowRoles = "AXSystemDialog" })
+    :subscribe(hs.window.filter.windowVisible, function()
+      raycastEscape:enable()
+      raycastCmdW:enable()
+    end)
+    :subscribe(hs.window.filter.windowNotVisible, function()
+      raycastEscape:disable()
+      raycastCmdW:disable()
+    end)
+end
 
--- local function IsRaycastFocused()
---   local win = hs.window.focusedWindow()
---   if
---     win ~= nil
---     and win:application():name() == "Raycast"
---     and win:subrole() == "AXSystemDialog"
---   then
---     return true
---   else
---     return false
---   end
--- end
-
--- hs.hotkey.bind({ "control", "option" }, "p", function()
---   hs.alert.show(IsRaycastFocused())
--- end)
-
--- end raycast ------------------
-
--- Toggle this for raycast escape behavior
--- EscapeForRaycast()
-
--- hs.hotkey.bind({}, "escape", function()
---   logger.i('escaped')
--- end)
-
--- hs.eventtap.new({ hs.eventtap.event.types.keyUp }, function(event)
---   if event:getKeyCode() == 40 then
---     return true
---   end
---   logger.i("saw key up: " .. hs.inspect(event:getKeyCode()))
--- end):start()
+-- Reload the hammer spoon config when a config file changes
+ConfigWatcher = hs.pathwatcher
+  .new(hs.configdir, function(files)
+    local doReload = false
+    for _, file in pairs(files) do
+      if file:sub(-4) == ".lua" then
+        doReload = true
+        break
+      end
+    end
+    if doReload then
+      logger.i("Reloading Hammerspoon config")
+      hs.reload()
+    end
+  end)
+  :start()
 
 hs.alert.show("Hammerspoon config loaded")
