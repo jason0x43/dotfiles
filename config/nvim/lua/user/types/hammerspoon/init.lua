@@ -5,6 +5,7 @@
 ---@module 'eventtap'
 ---@module 'geometry'
 ---@module 'hotkey'
+---@module 'keycodes'
 ---@module 'logger'
 ---@module 'pathwatcher'
 ---@module 'spaces'
@@ -16,6 +17,7 @@
 ---@field eventtap eventtap
 ---@field geometry geometry
 ---@field hotkey hotkey
+---@field keycodes keycodes
 ---@field logger logger
 ---@field pathwatcher pathwatcher
 ---@field spaces spaces

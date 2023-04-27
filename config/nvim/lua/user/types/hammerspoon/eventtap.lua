@@ -8,8 +8,19 @@ local eventtapEventTypes = {}
 
 ---@class hs.eventtap.event
 local event = {
+  ---@return table<string, boolean>
+  getFlags = function() end,
+
   ---@return number
   getKeyCode = function() end,
+
+  ---@param table table<string, boolean>
+  ---@return hs.eventtap.event
+  setFlags = function(self, table) end,
+
+  ---@param keycode number
+  ---@return hs.eventtap.event
+  setKeyCode = function(self, keycode) end,
 }
 
 ---@class eventtap.event
@@ -36,6 +47,13 @@ return {
   ---@return hs.eventtap
   new = function(types, fn) end,
 
-  event = eventtapEvent
+  event = eventtapEvent,
+
+  ---@param modifiers table keyboard modifiers
+  ---@param character string a character to be emitted
+  ---@param delay? integer delay in microseconds
+  ---@param application? hs.application app to send the keystroke to
+  ---@return nil
+  keyStroke = function(modifiers, character, delay, application) end,
 }
 
