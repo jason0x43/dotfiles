@@ -236,6 +236,7 @@ end
 ---@param layout {app: string, win: string | {[1]: string, negative?: boolean} | (fun(app:string):hs.window[]), display: string, frame: LayoutFrame}[]
 ---@return nil
 M.layout = function(layout)
+  ---@type LayoutEntry[]
   local entries = {}
 
   for _, e in pairs(layout) do
