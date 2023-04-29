@@ -58,13 +58,13 @@ local function fill(area, pctOrOffset, win)
     if pctOrOffset <= 1 then
       width = pctOrOffset * screenFrame.w - 0.5 * pad
     else
-      width = screenFrame.w - 1.5 * pad - pctOrOffset
+      width = screenFrame.w - pctOrOffset
     end
   else
     if pctOrOffset <= 1 then
       height = pctOrOffset * screenFrame.h - 1.5 * pad
     else
-      height = screenFrame.h - 1.5 * pad - pctOrOffset
+      height = screenFrame.h - pctOrOffset
     end
   end
 

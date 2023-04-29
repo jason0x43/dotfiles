@@ -9,6 +9,7 @@ raycast.init()
 
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
+  logger.i('running layout')
   win.layout({
     { app = "Safari", display = "DELL P2715Q", frame = { "left", 0.6 } },
     {
@@ -29,9 +30,9 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
     },
     {
       app = "Wavebox",
-      win = "Wavebox:Main",
+      win = { "Wavebox:Main" },
       display = "Built-in Retina Display",
-      frame = { "right", 110 },
+      frame = { "right", 95 },
     },
   })
 end)
