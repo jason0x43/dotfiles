@@ -37,6 +37,14 @@ local window = {
   ---@return hs.application|nil
   application = function() end,
 
+  ---Center this window on the screen,
+  ---@return hs.window
+  centerOnScreen = function() end,
+
+  ---Focus this window
+  ---@return hs.window
+  focus = function() end,
+
   ---Return the window's frame
   ---@return hs.geometry
   frame = function() end,
@@ -44,6 +52,14 @@ local window = {
   ---Return the window's ID
   ---@return integer|nil
   id = function() end,
+
+  ---Move this window one screen to the right
+  ---@return hs.window
+  moveOneScreenEast = function() end,
+
+  ---Move this window one screen to the left
+  ---@return hs.window
+  moveOneScreenWest = function() end,
 
   ---Return the screen containing the window
   ---@return hs.screen
@@ -54,6 +70,15 @@ local window = {
   ---@param frame hs.geometry
   ---@return hs.window
   setFrame = function(self, frame) end,
+
+  ---Set the size of this window
+  ---@param size hs.geometry
+  ---@return hs.window
+  setSize = function(self, size) end,
+
+  ---Get the size of this window
+  ---@return hs.geometry
+  size = function() end,
 
   ---Return the subrole of the window
   ---@return string
