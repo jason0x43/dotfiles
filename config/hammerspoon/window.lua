@@ -5,14 +5,6 @@ local logger = hs.logger.new("window", "info")
 
 local M = {}
 
----Return true if Stage Manager is enabled.
----@return boolean
-local function isStageManagerEnabled()
-  local output =
-    hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
-  return util.trim(output) == "1"
-end
-
 ---@param frame hs.geometry
 ---@return hs.geometry
 local function padScreenFrame(frame)
@@ -46,40 +38,33 @@ local function getDeltaFrame(win)
   )
 end
 
----Get the window IDs for an app in a space.
----@param appNames string|string[]
----@param spaceId integer
----@return hs.window[]
-local function getWindowsInSpace(appNames, spaceId)
-  ---@type hs.window[]
-  local spaceWins = {}
-
-  ---@type string[]
-  local appNamesArr = {}
-  if type(appNames) == "string" then
-    appNamesArr = { appNames }
-  else
-    appNamesArr = appNames
-  end
-
-  for _, appName in pairs(appNamesArr) do
+---Return the first matching window in a given app
+---@param winTitle string
+---@param negative? boolean
+---@return fun(appName:string):hs.window[]
+local function winMatcher(winTitle, negative)
+  return function(appName)
     local app = hs.application.get(appName)
-    if app == nil then
-      logger.i("App " .. appName .. " not found")
-      return {}
-    end
-
-    local ids = hs.spaces.windowsForSpace(spaceId)
-
-    local appWindows = app:visibleWindows()
-    for _, win in ipairs(appWindows) do
-      if util.contains(ids, win:id()) then
-        spaceWins[#spaceWins + 1] = win
+    if app then
+      for _, w in pairs(app:visibleWindows()) do
+        if w:title():find(winTitle) and not negative then
+          return { w }
+        end
+        if not w:title():find(winTitle) and negative then
+          return { w }
+        end
       end
     end
+    return {}
   end
+end
 
-  return spaceWins
+---Return true if Stage Manager is enabled.
+---@return boolean
+M.isStageManagerEnabled = function()
+  local output =
+    hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
+  return util.trim(output) == "1"
 end
 
 ---@param area 'left'|'right'|'center'
@@ -174,35 +159,118 @@ M.moveTo = function(area, win)
   win:setFrame(frame)
 end
 
+---@param win hs.window
+---@param area 'left'|'right'|'top'|'bottom'
+---@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
+local function fill(win, area, pctOrOffset)
+  local screenFrame = win:screen():frame()
+  local pad = screenFrame.h * 0.03
+
+  local left = screenFrame.x + pad
+  local top = screenFrame.y + pad
+  local width = screenFrame.w - 2 * pad
+  local height = screenFrame.h - 2 * pad
+
+  if area == 'left' or area == 'right' then
+    if pctOrOffset <= 1 then
+      width = pctOrOffset * screenFrame.w - 1.5 * pad
+    else
+      width = screenFrame.w - 1.5 * pad - pctOrOffset
+    end
+  else
+    if pctOrOffset <= 1 then
+      height = pctOrOffset * screenFrame.h - 1.5 * pad
+    else
+      height = screenFrame.h - 1.5 * pad - pctOrOffset
+    end
+  end
+
+  if area == 'right' then
+    if pctOrOffset <= 1 then
+      left = screenFrame.x + screenFrame.w * (1 - pctOrOffset) + 0.5 * pad
+    else
+      left = screenFrame.x + pctOrOffset + 0.5 * pad
+    end
+  elseif area == 'bottom' then
+    if pctOrOffset <= 1 then
+      top = screenFrame.y + screenFrame.h * (1 - pctOrOffset) + 0.5 * pad
+    else
+      top = screenFrame.y + pctOrOffset + 0.5 * pad
+    end
+  end
+
+  return hs.geometry.rect(left, top, width, height)
+end
+
+---@param area 'left'|'right'|'top'|'bottom'
+---@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
+M.frame = function(area, pctOrOffset)
+  return function(win)
+    return fill(win, area, pctOrOffset)
+  end
+end
+
+---@alias LayoutFrame {[1]: string, [2]: number} | fun(hs.window): hs.geometry
+
+---Shim over hs.layout.apply with a simpler API
+---@param layout {app: string, win: string|{[1]: string, negative?: boolean}|(fun(app:string):hs.window[]), display: string, frame: LayoutFrame}[]
+---@return nil
+M.layout = function(layout)
+  local entries = {}
+
+  for _, e in pairs(layout) do
+    local frm = e.frame
+    if type(e.frame) == 'table' then
+      frm = M.frame(e.frame[1], e.frame[2])
+    end
+
+    local win = e.win
+    if type(e.win) == 'table' then
+      win = winMatcher(e.win[1], e.win.negative)
+    end
+
+    entries[#entries + 1] = {
+      e.app,
+      win,
+      e.display,
+      nil,
+      frm,
+      nil,
+      options = { absolute_x = true, absolute_y = true },
+    }
+  end
+
+  logger.i(hs.inspect(entries))
+
+  hs.layout.apply(entries)
+end
+
 ---Resize the focused window
 ---@param increment {width?: integer, height?: integer}
 ---@param win? hs.window
 ---@return nil
 M.resize = function(increment, win)
   win = win or hs.window.focusedWindow()
-	local screenFrame = getScreenFrame(win)
-	local windowFrame = win:frame()
+  local screenFrame = getScreenFrame(win)
+  local windowFrame = win:frame()
 
-	if increment.width then
-		local maxWidth = screenFrame.w - (windowFrame.x - screenFrame.x)
-		local oldWidth = windowFrame.w
-		local newWidth = math.min(windowFrame.w + increment.width, maxWidth)
-		windowFrame.w = newWidth;
-		windowFrame.x = windowFrame.x - (newWidth - oldWidth) / 2
+  if increment.width then
+    local maxWidth = screenFrame.w - (windowFrame.x - screenFrame.x)
+    local oldWidth = windowFrame.w
+    local newWidth = math.min(windowFrame.w + increment.width, maxWidth)
+    windowFrame.w = newWidth
+    windowFrame.x = windowFrame.x - (newWidth - oldWidth) / 2
   end
 
-	if increment.height then
-		local maxHeight = screenFrame.h - (windowFrame.y - screenFrame.y)
-		local oldHeight = windowFrame.h
-		local newHeight = math.min(
-			windowFrame.h + increment.height,
-			maxHeight
-		)
-		windowFrame.h = newHeight
-		windowFrame.y = windowFrame.y - (newHeight - oldHeight) / 2
+  if increment.height then
+    local maxHeight = screenFrame.h - (windowFrame.y - screenFrame.y)
+    local oldHeight = windowFrame.h
+    local newHeight = math.min(windowFrame.h + increment.height, maxHeight)
+    windowFrame.h = newHeight
+    windowFrame.y = windowFrame.y - (newHeight - oldHeight) / 2
   end
 
-	win:setFrame(windowFrame)
+  win:setFrame(windowFrame)
 end
 
 ---Return x% of the screen width in pixels
@@ -211,8 +279,8 @@ end
 ---@return integer
 M.widthPercent = function(percent, win)
   win = win or hs.window.focusedWindow()
-	local screenFrame = getScreenFrame(win)
-	return util.round(screenFrame.w * percent)
+  local screenFrame = getScreenFrame(win)
+  return util.round(screenFrame.w * percent)
 end
 
 ---Return x% of the screen height in pixels
@@ -221,49 +289,8 @@ end
 ---@return integer
 M.heightPercent = function(percent, win)
   win = win or hs.window.focusedWindow()
-	local screenFrame = getScreenFrame(win)
-	return util.round(screenFrame.h * percent)
-end
-
----Layout the current screen.
----@return nil
-M.layout = function()
-  local space = hs.spaces.activeSpaceOnScreen()
-  local spaceType = hs.spaces.spaceType(space)
-
-  if spaceType == "fullscreen" then
-    logger.i("Skipping layout because app is full screen")
-    return
-  end
-
-  if isStageManagerEnabled() then
-    logger.d("SM enabled")
-  else
-    logger.d("SM not enabled")
-  end
-
-  local browserWins = getWindowsInSpace({ "Safari", "Wavebox" }, space)
-  local termWins = getWindowsInSpace("WezTerm", space)
-
-  if #browserWins == 1 and #termWins == 1 then
-    M.fill(
-      const.LEFT,
-      { window = browserWins[1], portion = 1 - const.THIN_WIDTH }
-    )
-    M.fill(const.RIGHT, { window = termWins[1], portion = const.THIN_WIDTH })
-    return
-  end
-
-  local waveboxWins = getWindowsInSpace("Wavebox", space)
-  if #waveboxWins == 1 then
-    local messagesWins = getWindowsInSpace("Messages", space)
-    if #messagesWins > 0 then
-      M.fill(const.LEFT, { window = messagesWins[1], portion = 0.32 })
-      M.fill(const.RIGHT, { window = waveboxWins[1], widthMinus = 90 })
-    else
-      M.fill(const.CENTER, { window = waveboxWins[1] })
-    end
-  end
+  local screenFrame = getScreenFrame(win)
+  return util.round(screenFrame.h * percent)
 end
 
 return M

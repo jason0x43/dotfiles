@@ -1,6 +1,6 @@
 local M = {}
 
-M.setup = function()
+M.init = function()
   -- Send ctrl-space for escape to hide the Raycast window without navigating
   local raycastEscape = hs.hotkey.new({}, "escape", function()
     -- ctrl-space must be sent to the system rather than a specific app

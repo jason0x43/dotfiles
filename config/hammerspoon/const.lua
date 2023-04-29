@@ -10,7 +10,7 @@ return {
 
   -- Dimensions
   THIN_WIDTH = (1020 / 3840) * 1.6,
-  PADDING = 10,
+  PADDING = 50,
 
   INCREMENT = 0.05,
 }

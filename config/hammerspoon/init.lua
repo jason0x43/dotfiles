@@ -4,11 +4,35 @@ local raycast = require("raycast")
 
 local logger = hs.logger.new("init", "info")
 
-raycast.setup()
+raycast.init()
 
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
-  win.layout()
+  win.layout({
+    { app = "Safari", display = "DELL P2715Q", frame = { "left", 0.6 } },
+    {
+      app = "Wavebox",
+      win = { "Wavebox:Main", negative = true },
+      display = "DELL P2715Q",
+      frame = { "left", 0.6 },
+    },
+    {
+      app = "WezTerm",
+      display = "DELL P2715Q",
+      frame = { "right", 0.4 },
+    },
+    {
+      app = "Messages",
+      display = "Built-in Retina Display",
+      frame = { "left", 0.3 },
+    },
+    {
+      app = "Wavebox",
+      win = "Wavebox:Main",
+      display = "Built-in Retina Display",
+      frame = { "right", 110 },
+    },
+  })
 end)
 
 -- Move the active window to the center of the display
