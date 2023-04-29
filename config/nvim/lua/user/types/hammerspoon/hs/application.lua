@@ -25,6 +25,15 @@ local appwatcher = {
 
 ---@class hs.application
 local application = {
+  ---Return the name of this application
+  ---@return string
+  name = function() end,
+
+  ---Return the main window of this application
+  ---@return hs.window|nil
+  mainWindow = function() end,
+
+  ---Return the visible windows of this application
   ---@return hs.window[]
   visibleWindows = function() end,
 }
@@ -35,6 +44,10 @@ return {
   ---@param hint number|string pid, bundleID, or name
   ---@return hs.application|nil
   get = function(hint) end,
+
+  ---Return all running applications
+  ---@return hs.application[]
+  runningApplications = function() end,
 
   watcher = appwatcher
 }

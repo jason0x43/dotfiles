@@ -58,6 +58,14 @@ local window = {
   ---Return the subrole of the window
   ---@return string
   subrole = function() end,
+
+  ---Return the number of tabs in the window
+  ---@return integer|nil
+  tabCount = function() end,
+
+  ---Return the window's title
+  ---@return string
+  title = function() end,
 }
 
 ---@class window
@@ -66,4 +74,8 @@ return {
   ---Return the currently focused window
   ---@return hs.window
   focusedWindow = function() end,
+
+  ---Return all visible windows
+  ---@return hs.window[]
+  visibleWindows = function() end,
 }

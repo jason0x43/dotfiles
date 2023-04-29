@@ -1,16 +1,5 @@
 ---@meta
 
----@module 'alert'
----@module 'application'
----@module 'eventtap'
----@module 'geometry'
----@module 'hotkey'
----@module 'keycodes'
----@module 'logger'
----@module 'pathwatcher'
----@module 'spaces'
----@module 'window'
-
 ---@class hs
 ---@field alert alert
 ---@field application application
@@ -18,8 +7,10 @@
 ---@field geometry geometry
 ---@field hotkey hotkey
 ---@field keycodes keycodes
+---@field layout layout
 ---@field logger logger
 ---@field pathwatcher pathwatcher
+---@field screen screen
 ---@field spaces spaces
 ---@field window window
 ---@field configdir string
