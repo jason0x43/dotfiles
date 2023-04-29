@@ -1,6 +1,7 @@
 local win = require("window")
 local const = require("const")
 local raycast = require("raycast")
+local ui = require("ui")
 
 local logger = hs.logger.new("init", "info")
 
@@ -101,5 +102,7 @@ ConfigWatcher = hs.pathwatcher
     end
   end)
   :start()
+
+hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
 
 hs.alert.show("Hammerspoon config loaded")
