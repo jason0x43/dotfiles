@@ -56,7 +56,7 @@ local function fill(area, pctOrOffset, win)
 
   if area == "left" or area == "right" then
     if pctOrOffset <= 1 then
-      width = pctOrOffset * screenFrame.w - 1.5 * pad
+      width = pctOrOffset * screenFrame.w - 0.5 * pad
     else
       width = screenFrame.w - 1.5 * pad - pctOrOffset
     end
@@ -72,11 +72,11 @@ local function fill(area, pctOrOffset, win)
     if pctOrOffset <= 1 then
       left = screenFrame.x + screenFrame.w * (1 - pctOrOffset) + 0.5 * pad
     else
-      left = screenFrame.x + pctOrOffset + 0.5 * pad
+      left = screenFrame.x + pctOrOffset
     end
   elseif area == "bottom" then
     if pctOrOffset <= 1 then
-      top = screenFrame.y + screenFrame.h * (1 - pctOrOffset) + 0.5 * pad
+      top = screenFrame.y + screenFrame.h * (1 - pctOrOffset)
     else
       top = screenFrame.y + pctOrOffset + 0.5 * pad
     end
