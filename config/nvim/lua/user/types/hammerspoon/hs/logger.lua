@@ -9,7 +9,7 @@ local logger = {
 
   ---Log a formatted info message
   ---@param fmt string format string
-  ---@param ... string message strings
+  ---@param ... any format values
   ---@return nil
   f = function(fmt, ...) end,
 
@@ -20,7 +20,7 @@ local logger = {
 
   ---Log a formatted debug message
   ---@param fmt string format string
-  ---@param ... string message strings
+  ---@param ... any format values
   ---@return nil
   df = function(fmt, ...) end,
 
@@ -31,7 +31,7 @@ local logger = {
 
   ---Log a formatted error message
   ---@param fmt string format string
-  ---@param ... string message strings
+  ---@param ... any format values
   ---@return nil
   ef = function(fmt, ...) end,
 
@@ -42,7 +42,7 @@ local logger = {
 
   ---Log a formatted warning message
   ---@param fmt string format string
-  ---@param ... string message strings
+  ---@param ... any format values
   ---@return nil
   wf = function(fmt, ...) end,
 }

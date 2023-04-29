@@ -3,15 +3,19 @@
 ---@class hs
 ---@field alert alert
 ---@field application application
+---@field drawing drawing
 ---@field eventtap eventtap
 ---@field geometry geometry
 ---@field hotkey hotkey
+---@field image image
 ---@field keycodes keycodes
 ---@field layout layout
 ---@field logger logger
+---@field mouse mouse
 ---@field pathwatcher pathwatcher
 ---@field screen screen
 ---@field spaces spaces
+---@field timer timer
 ---@field window window
 ---@field configdir string
 hs = {

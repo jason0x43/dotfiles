@@ -1,7 +1,7 @@
 ---@meta
 
 ---@class hs.styledtext
-local styledtext = {}
+local StyledText = {}
 
 ---@class styledtext
 return {}
