@@ -5,37 +5,19 @@ local logger = hs.logger.new("window", "info")
 
 local M = {}
 
----@param frame hs.geometry
----@return hs.geometry
-local function padScreenFrame(frame)
-  return hs.geometry.rect(
-    frame.x + const.PADDING,
-    frame.y + const.PADDING,
-    frame.w - 2 * const.PADDING,
-    frame.h - 2 * const.PADDING
-  )
-end
-
+---Return the screen frame with edge padding
 ---@param window hs.window
----@return hs.geometry
+---@return hs.geometry frame
+---@return integer padding
 local function getScreenFrame(window)
   local frame = window:screen():frame()
-  return padScreenFrame(frame)
-end
-
----Get a delta frame between a window and its screen
----@param win hs.window
----@return hs.geometry
-local function getDeltaFrame(win)
-  local frame = win:frame()
-  local screen = getScreenFrame(win)
-
+  local pad = frame.h * 0.03
   return hs.geometry.rect(
-    screen.x - frame.x,
-    screen.y - frame.y,
-    screen.w - frame.w,
-    screen.h - frame.h
-  )
+    frame.x + pad,
+    frame.y + pad,
+    frame.w - 2 * pad,
+    frame.h - 2 * pad
+  ), pad
 end
 
 ---Return the first matching window in a given app
@@ -59,119 +41,20 @@ local function winMatcher(winTitle, negative)
   end
 end
 
----Return true if Stage Manager is enabled.
----@return boolean
-M.isStageManagerEnabled = function()
-  local output =
-    hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
-  return util.trim(output) == "1"
-end
-
----@param area 'left'|'right'|'center'
----@param options { window?: hs.window, portion?: number, width?: number, widthMinus?: number }
-M.fill = function(area, options)
-  local window = options.window or hs.window.focusedWindow()
-  local width = options.width or 0
-  local portion = options.portion
-  local widthMinus = options.widthMinus
-
-  local screenFrame = getScreenFrame(window)
-  local isLargeScreen = screenFrame.w > 2000
-  local frame = window:frame()
-
-  if portion then
-    width = screenFrame.w * portion
-  elseif widthMinus then
-    width = screenFrame.w - widthMinus
-  end
-
-  if width == nil then
-    width = screenFrame.w / 2
-  end
-
-  logger.d("windowFrame: " .. hs.inspect(frame))
-  logger.d("screenFrame: " .. hs.inspect(screenFrame))
-
-  ---@type {h: number, w: number, x: number, y: number}
-  local bounds = {}
-
-  -- size
-  if area == const.LEFT or area == const.RIGHT then
-    bounds.h = screenFrame.h
-    bounds.w = width
-  end
-
-  frame.h = bounds.h
-  frame.w = bounds.w
-
-  if isLargeScreen then
-    if area == const.LEFT or area == const.RIGHT then
-      frame.h = frame.h * 0.95
-      frame.w = frame.w * 0.95
-    end
-  end
-
-  -- x-coordinate
-  if area == const.LEFT then
-    frame.x = screenFrame.x + (bounds.w - frame.w) / 2
-  elseif area == const.RIGHT then
-    frame.x = screenFrame.x
-      + (screenFrame.w - bounds.w)
-      + (bounds.w - frame.w - const.PADDING) / 2
-  end
-
-  -- y-coordinate
-  if area == const.LEFT or area == const.RIGHT then
-    frame.y = screenFrame.y + (screenFrame.h - frame.h) / 2
-  end
-
-  window:setFrame(frame)
-end
-
----Move a window to an area
----@param area 'left'|'right'|'center'
----@param win? hs.window
-M.moveTo = function(area, win)
-  win = win or hs.window.focusedWindow()
-  local delta = getDeltaFrame(win)
-  local frame = win:frame()
-  local screenFrame = getScreenFrame(win)
-
-  -- x-coordinate
-  if area == const.NW or area == const.SW then
-    frame.x = screenFrame.x
-  elseif area == const.NE or area == const.SE then
-    frame.x = screenFrame.x + delta.w
-  elseif area == const.CENTER then
-    frame.x = screenFrame.x + delta.w / 2
-  end
-
-  -- y-coordinate
-  if area == const.NW or area == const.NE then
-    frame.y = screenFrame.y
-  elseif area == const.SE or area == const.SW then
-    frame.y = screenFrame.y + delta.h
-  elseif area == const.CENTER then
-    frame.y = screenFrame.y + delta.h / 2
-  end
-
-  logger.i("Setting frame to " .. hs.inspect(frame))
-  win:setFrame(frame)
-end
-
----@param win hs.window
+---Resize the focused window to fill an area
 ---@param area 'left'|'right'|'top'|'bottom'
 ---@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
-local function fill(win, area, pctOrOffset)
-  local screenFrame = win:screen():frame()
-  local pad = screenFrame.h * 0.03
+---@param win? hs.window
+local function fill(area, pctOrOffset, win)
+  win = win or hs.window.focusedWindow()
+  local screenFrame, pad = getScreenFrame(win)
 
-  local left = screenFrame.x + pad
-  local top = screenFrame.y + pad
-  local width = screenFrame.w - 2 * pad
-  local height = screenFrame.h - 2 * pad
+  local left = screenFrame.x
+  local top = screenFrame.y
+  local width = screenFrame.w
+  local height = screenFrame.h
 
-  if area == 'left' or area == 'right' then
+  if area == "left" or area == "right" then
     if pctOrOffset <= 1 then
       width = pctOrOffset * screenFrame.w - 1.5 * pad
     else
@@ -185,13 +68,13 @@ local function fill(win, area, pctOrOffset)
     end
   end
 
-  if area == 'right' then
+  if area == "right" then
     if pctOrOffset <= 1 then
       left = screenFrame.x + screenFrame.w * (1 - pctOrOffset) + 0.5 * pad
     else
       left = screenFrame.x + pctOrOffset + 0.5 * pad
     end
-  elseif area == 'bottom' then
+  elseif area == "bottom" then
     if pctOrOffset <= 1 then
       top = screenFrame.y + screenFrame.h * (1 - pctOrOffset) + 0.5 * pad
     else
@@ -204,28 +87,165 @@ end
 
 ---@param area 'left'|'right'|'top'|'bottom'
 ---@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
-M.frame = function(area, pctOrOffset)
+local function frame(area, pctOrOffset)
   return function(win)
-    return fill(win, area, pctOrOffset)
+    return fill(area, pctOrOffset, win)
   end
 end
 
----@alias LayoutFrame {[1]: string, [2]: number} | fun(hs.window): hs.geometry
+---Return true if Stage Manager is enabled.
+---@return boolean
+M.isStageManagerEnabled = function()
+  local output =
+    hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
+  return util.trim(output) == "1"
+end
+
+---@param area 'left'|'right'|'center'
+---@param options? { window?: hs.window, portion?: number, width?: number, widthMinus?: number }
+M.fill = function(area, options)
+  options = options or {}
+  local window = options.window or hs.window.focusedWindow()
+  local width = options.width
+  local portion = options.portion
+  local widthMinus = options.widthMinus
+
+  local screenFrame = window:screen():frame()
+  local isLargeScreen = screenFrame.w > 2000
+  local winFrame = window:frame()
+  local pad = screenFrame.h * 0.03
+
+  if portion then
+    width = screenFrame.w * portion
+  elseif widthMinus then
+    width = screenFrame.w - widthMinus
+  end
+
+  if width == nil then
+    width = screenFrame.w / 2
+  end
+
+  ---@type {h: number, w: number, x: number, y: number}
+  local bounds = {}
+
+  -- size
+  if area == const.LEFT or area == const.RIGHT then
+    bounds.h = screenFrame.h
+    bounds.w = width
+  else
+    bounds.h = screenFrame.h / 2
+    bounds.w = screenFrame.w / 2
+  end
+
+  winFrame.h = bounds.h
+  winFrame.w = bounds.w
+
+  if isLargeScreen then
+    if area == const.LEFT or area == const.RIGHT then
+      winFrame.h = screenFrame.h - 2 * pad
+      winFrame.w = winFrame.w - 2 * pad
+    end
+  end
+
+  -- x-coordinate
+  if area == const.LEFT then
+    winFrame.x = screenFrame.x + pad
+  elseif area == const.RIGHT then
+    winFrame.x = screenFrame.x
+      + (screenFrame.w - bounds.w)
+      + (bounds.w - winFrame.w - const.PADDING) / 2
+  else
+    winFrame.x = screenFrame.x + (screenFrame.w / 2 - bounds.w / 2)
+  end
+
+  -- y-coordinate
+  if area == const.LEFT or area == const.RIGHT then
+    winFrame.y = screenFrame.y + pad
+  else
+    winFrame.y = screenFrame.y + (screenFrame.h / 2 - bounds.h / 2)
+  end
+
+  window:setFrame(winFrame)
+end
+
+---Move the focused window to an area
+---@param area 'left'|'right'|'center'
+M.moveTo = function(area)
+  local win = hs.window.focusedWindow()
+  local winFrame = win:frame()
+  local screenFrame = getScreenFrame(win)
+
+  if area == 'left' then
+    winFrame.x = screenFrame.x
+  elseif area == 'center' then
+    winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
+  elseif area == 'right' then
+    winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
+  end
+
+  win:setFrame(winFrame)
+end
+
+---Move the focused window to a space
+---@param hint integer|'next'|'prev'
+M.moveToSpace = function(hint)
+  local win = hs.window.focusedWindow()
+  local winId = win:id()
+  if winId == nil then
+    logger.w("Couldn't get ID of focused window")
+    return
+  end
+
+  ---@type integer
+  local spaceId
+
+  if type(hint) == "number" then
+    spaceId = hint
+  else
+    local spaceIds = hs.spaces.spacesForScreen()
+    if not spaceIds then
+      logger.w("Couldn't get list of space IDs")
+      return
+    end
+    local currentSpaceId = hs.spaces.focusedSpace()
+    local idx = util.indexOf(spaceIds, currentSpaceId)
+    if not idx then
+      logger.w("Couldn't find " .. currentSpaceId .. " in " .. spaceIds)
+      return
+    end
+
+    if hint == "next" then
+      idx = (idx + 1) % #spaceIds
+    elseif hint == "prev" then
+      idx = idx - 1
+      if idx == 0 then
+        idx = #spaceIds
+      end
+    end
+
+    spaceId = spaceIds[idx]
+  end
+
+  hs.spaces.moveWindowToSpace(winId, spaceId)
+  win:focus()
+end
+
+---@alias LayoutFrame {[1]: string, [2]: number} | (fun(hs.window): hs.geometry)
 
 ---Shim over hs.layout.apply with a simpler API
----@param layout {app: string, win: string|{[1]: string, negative?: boolean}|(fun(app:string):hs.window[]), display: string, frame: LayoutFrame}[]
+---@param layout {app: string, win: string | {[1]: string, negative?: boolean} | (fun(app:string):hs.window[]), display: string, frame: LayoutFrame}[]
 ---@return nil
 M.layout = function(layout)
   local entries = {}
 
   for _, e in pairs(layout) do
     local frm = e.frame
-    if type(e.frame) == 'table' then
-      frm = M.frame(e.frame[1], e.frame[2])
+    if type(e.frame) == "table" then
+      frm = frame(e.frame[1], e.frame[2])
     end
 
     local win = e.win
-    if type(e.win) == 'table' then
+    if type(e.win) == "table" then
       win = winMatcher(e.win[1], e.win.negative)
     end
 
@@ -240,57 +260,45 @@ M.layout = function(layout)
     }
   end
 
-  logger.i(hs.inspect(entries))
-
   hs.layout.apply(entries)
 end
 
----Resize the focused window
----@param increment {width?: integer, height?: integer}
----@param win? hs.window
+---Resize the focused window. If width or height are <= 1, the value is treated
+---as a percent.
+---@param increment {width?: number, height?: number}
 ---@return nil
-M.resize = function(increment, win)
-  win = win or hs.window.focusedWindow()
+M.resize = function(increment)
+  local win = hs.window.focusedWindow()
   local screenFrame = getScreenFrame(win)
   local windowFrame = win:frame()
 
   if increment.width then
+    local incrW = increment.width
+    if increment.width <= 1 then
+      incrW = util.round(screenFrame.w * increment.width)
+    end
+
     local maxWidth = screenFrame.w - (windowFrame.x - screenFrame.x)
     local oldWidth = windowFrame.w
-    local newWidth = math.min(windowFrame.w + increment.width, maxWidth)
+    local newWidth = math.min(windowFrame.w + incrW, maxWidth)
     windowFrame.w = newWidth
     windowFrame.x = windowFrame.x - (newWidth - oldWidth) / 2
   end
 
   if increment.height then
+    local incrH = increment.height
+    if increment.height <= 1 then
+      incrH = util.round(screenFrame.h * increment.height)
+    end
+
     local maxHeight = screenFrame.h - (windowFrame.y - screenFrame.y)
     local oldHeight = windowFrame.h
-    local newHeight = math.min(windowFrame.h + increment.height, maxHeight)
+    local newHeight = math.min(windowFrame.h + incrH, maxHeight)
     windowFrame.h = newHeight
     windowFrame.y = windowFrame.y - (newHeight - oldHeight) / 2
   end
 
   win:setFrame(windowFrame)
-end
-
----Return x% of the screen width in pixels
----@param percent number
----@param win? hs.window
----@return integer
-M.widthPercent = function(percent, win)
-  win = win or hs.window.focusedWindow()
-  local screenFrame = getScreenFrame(win)
-  return util.round(screenFrame.w * percent)
-end
-
----Return x% of the screen height in pixels
----@param percent number
----@param win? hs.window
----@return integer
-M.heightPercent = function(percent, win)
-  win = win or hs.window.focusedWindow()
-  local screenFrame = getScreenFrame(win)
-  return util.round(screenFrame.h * percent)
 end
 
 return M

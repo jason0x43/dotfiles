@@ -27,4 +27,17 @@ M.round = function(num)
   return math.floor(num + 0.5)
 end
 
+---Return the index of an item in a table, or nil if not found
+---@param table any[]
+---@param item any
+---@return integer | nil
+M.indexOf = function(table, item)
+  for i, v in ipairs(table) do
+    if v == item then
+      return i
+    end
+  end
+  return nil
+end
+
 return M

@@ -37,27 +37,47 @@ end)
 
 -- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
-  win.moveTo(const.CENTER)
+  win.moveTo("center")
+end)
+
+-- Move the active window to the center of the display
+hs.hotkey.bind({ "ctrl", "shift" }, "h", function()
+  win.moveTo("left")
+end)
+
+-- Move the active window to the center of the display
+hs.hotkey.bind({ "ctrl", "shift" }, "l", function()
+  win.moveTo("right")
+end)
+
+-- Move the focuse window one screen to the right
+hs.hotkey.bind({ "ctrl", "shift" }, "right", function()
+  win.moveToSpace("next")
+end)
+
+-- Move the focuse window one screen to the left
+hs.hotkey.bind({ "ctrl", "shift" }, "left", function()
+  win.moveToSpace("prev")
 end)
 
 -- Make the current window thinner
 hs.hotkey.bind({ "ctrl", "shift" }, "[", function()
-  win.resize({ width = -win.widthPercent(const.INCREMENT) })
+  win.resize({ width = -const.INCREMENT })
 end)
 
 -- Make the current window wider
 hs.hotkey.bind({ "ctrl", "shift" }, "]", function()
-  win.resize({ width = win.widthPercent(const.INCREMENT) })
+  win.resize({ width = const.INCREMENT })
 end)
 
 -- Make the current window shorter
 hs.hotkey.bind({ "ctrl", "shift" }, ";", function()
-  win.resize({ height = -win.heightPercent(const.INCREMENT) })
+  win.resize({ height = -const.INCREMENT })
 end)
 
 -- Make the current window taller
 hs.hotkey.bind({ "ctrl", "shift" }, "'", function()
-  win.resize({ height = win.heightPercent(const.INCREMENT) })
+  win.resize({ height = const.INCREMENT })
 end)
 
 -- Reload the Hammerspoon config
