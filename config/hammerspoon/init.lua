@@ -51,14 +51,24 @@ hs.hotkey.bind({ "ctrl", "shift" }, "l", function()
   win.moveTo("right")
 end)
 
--- Move the focuse window one screen to the right
+-- Move the focus window one space to the right
 hs.hotkey.bind({ "ctrl", "shift" }, "right", function()
   win.moveToSpace("next")
 end)
 
--- Move the focuse window one screen to the left
+-- Move the focus window one space to the left
 hs.hotkey.bind({ "ctrl", "shift" }, "left", function()
   win.moveToSpace("prev")
+end)
+
+-- Move the focus window one screen to the right
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, "right", function()
+  hs.window.focusedWindow():moveOneScreenEast()
+end)
+
+-- Move the focuse window one screen to the left
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, "left", function()
+  hs.window.focusedWindow():moveOneScreenWest()
 end)
 
 -- Make the current window thinner
