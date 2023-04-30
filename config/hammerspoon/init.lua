@@ -1,4 +1,4 @@
-local win = require("window")
+local window = require("window")
 local const = require("const")
 local raycast = require("raycast")
 local ui = require("ui")
@@ -10,7 +10,7 @@ raycast.init()
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   logger.i('running layout')
-  win.layout({
+  window.layout({
     { app = "Safari", display = "DELL P2715Q", frame = { "left", 0.6 } },
     {
       app = "Wavebox",
@@ -39,27 +39,35 @@ end)
 
 -- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "z", function()
-  win.moveTo("center")
+  window.moveTo("center")
+end)
+
+-- Move the active window to the center of the display
+hs.hotkey.bind({ "ctrl", "shift", "alt" }, "z", function()
+  local win = hs.window.focusedWindow()
+  local frame = win:screen():frame()
+  win:setSize({ w = frame.w * 0.7, h = frame.h * 0.8 })
+  window.moveTo("center")
 end)
 
 -- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "h", function()
-  win.moveTo("left")
+  window.moveTo("left")
 end)
 
 -- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "l", function()
-  win.moveTo("right")
+  window.moveTo("right")
 end)
 
 -- Move the focus window one space to the right
 hs.hotkey.bind({ "ctrl", "shift" }, "right", function()
-  win.moveToSpace("next")
+  window.moveToSpace("next")
 end)
 
 -- Move the focus window one space to the left
 hs.hotkey.bind({ "ctrl", "shift" }, "left", function()
-  win.moveToSpace("prev")
+  window.moveToSpace("prev")
 end)
 
 -- Move the focus window one screen to the right
@@ -74,22 +82,22 @@ end)
 
 -- Make the current window thinner
 hs.hotkey.bind({ "ctrl", "shift" }, "[", function()
-  win.resize({ width = -const.INCREMENT })
+  window.resize({ width = -const.INCREMENT })
 end)
 
 -- Make the current window wider
 hs.hotkey.bind({ "ctrl", "shift" }, "]", function()
-  win.resize({ width = const.INCREMENT })
+  window.resize({ width = const.INCREMENT })
 end)
 
 -- Make the current window shorter
 hs.hotkey.bind({ "ctrl", "shift" }, ";", function()
-  win.resize({ height = -const.INCREMENT })
+  window.resize({ height = -const.INCREMENT })
 end)
 
 -- Make the current window taller
 hs.hotkey.bind({ "ctrl", "shift" }, "'", function()
-  win.resize({ height = const.INCREMENT })
+  window.resize({ height = const.INCREMENT })
 end)
 
 -- Reload the Hammerspoon config

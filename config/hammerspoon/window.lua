@@ -170,6 +170,7 @@ end
 
 ---Move the focused window to an area
 ---@param area 'left'|'right'|'center'
+---@return hs.window
 M.moveTo = function(area)
   local win = hs.window.focusedWindow()
   local winFrame = win:frame()
@@ -179,11 +180,13 @@ M.moveTo = function(area)
     winFrame.x = screenFrame.x
   elseif area == 'center' then
     winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
+    winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h) / 2
   elseif area == 'right' then
     winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
   end
 
   win:setFrame(winFrame)
+  return win
 end
 
 ---Move the focused window to a space
