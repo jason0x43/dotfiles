@@ -276,14 +276,6 @@ function dotfiles-brew {
         rehash
     fi
 
-    if [[ $OSTYPE == linux* ]]; then
-        local base_group=$(stat -c '%G' $HOMEBREW_BASE)
-        if [[ $base_group != 'brew' ]]; then
-            err "$HOMEBREW_BASE is not owned by brew group"
-            return
-        fi
-    fi
-
     logSub "Updating brew package list..."
     brew update
 
@@ -292,7 +284,6 @@ function dotfiles-brew {
         'bash'            # update from system stock version
         'bat'             # better cat
         'deno'            # JS/TS runtime
-        'direnv'          # environment manager
         'fd'              # file finder
         'fzf'             # fuzzy finder
         'git'             # update from system stock git
