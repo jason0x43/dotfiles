@@ -36,3 +36,6 @@ __pycache__/
  
 # watchman config files
 .watchmanconfig
+
+# neoconf files
+.neoconf.json
