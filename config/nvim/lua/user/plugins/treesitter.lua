@@ -9,6 +9,8 @@ return {
     'JoosepAlviste/nvim-ts-context-commentstring',
   },
 
+  main = 'nvim-treesitter.configs',
+
   opts = {
     ensure_installed = {
       'bash',
