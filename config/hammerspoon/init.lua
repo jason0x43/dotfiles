@@ -50,6 +50,13 @@ hs.hotkey.bind({ "ctrl", "shift", "alt" }, "z", function()
   window.moveTo("center")
 end)
 
+-- Make the active window fill the display
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, "f", function()
+  local win = hs.window.focusedWindow()
+  local frame = window.screenFrame(win:screen())
+  win:setFrame(frame)
+end)
+
 -- Move the active window to the center of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "h", function()
   window.moveTo("left")

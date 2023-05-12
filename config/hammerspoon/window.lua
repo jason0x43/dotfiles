@@ -6,11 +6,11 @@ local logger = hs.logger.new("window", "info")
 local M = {}
 
 ---Return the screen frame with edge padding
----@param window hs.window
+---@param screen hs.screen
 ---@return hs.geometry frame
 ---@return integer padding
-local function getScreenFrame(window)
-  local frame = window:screen():frame()
+local function getScreenFrame(screen)
+  local frame = screen:frame()
   local pad = frame.h * 0.03
   return hs.geometry.rect(
     frame.x + pad,
@@ -47,7 +47,7 @@ end
 ---@param win? hs.window
 local function fill(area, pctOrOffset, win)
   win = win or hs.window.focusedWindow()
-  local screenFrame, pad = getScreenFrame(win)
+  local screenFrame, pad = getScreenFrame(win:screen())
 
   local left = screenFrame.x
   local top = screenFrame.y
@@ -91,6 +91,14 @@ local function frame(area, pctOrOffset)
   return function(win)
     return fill(area, pctOrOffset, win)
   end
+end
+
+---Return the padded frame for a screen
+---@param screen hs.screen
+---@return hs.geometry
+M.screenFrame = function(screen)
+  local f = getScreenFrame(screen)
+  return f
 end
 
 ---Return true if Stage Manager is enabled.
@@ -174,7 +182,7 @@ end
 M.moveTo = function(area)
   local win = hs.window.focusedWindow()
   local winFrame = win:frame()
-  local screenFrame = getScreenFrame(win)
+  local screenFrame = getScreenFrame(win:screen())
 
   if area == 'left' then
     winFrame.x = screenFrame.x
@@ -276,7 +284,7 @@ end
 ---@return nil
 M.resize = function(increment)
   local win = hs.window.focusedWindow()
-  local screenFrame = getScreenFrame(win)
+  local screenFrame = getScreenFrame(win:screen())
   local windowFrame = win:frame()
 
   if increment.width then
