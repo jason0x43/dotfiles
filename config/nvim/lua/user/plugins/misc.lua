@@ -30,6 +30,9 @@ return {
   -- for manipulating parens and such
   'tpope/vim-surround',
 
+  -- for repeating surround commands
+  'tpope/vim-repeat',
+
   -- show semantic file location (e.g., what function you're in)
   {
     'SmiteshP/nvim-navic',
