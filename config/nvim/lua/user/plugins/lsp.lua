@@ -28,6 +28,7 @@ return {
   {
     'williamboman/mason.nvim',
     priority = 100,
+    build = ':MasonUpdate',
     opts = {
       ui = {
         border = 'rounded',
