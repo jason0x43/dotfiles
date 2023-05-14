@@ -5,6 +5,10 @@
 #
 # The service being deployed must already have been configured in the server's
 # compose file.
+#
+# Docker is assumed to be running in an lxc container, and the deployment files
+# are assumed to live in a standard directory relative to root's home directory
+# in the container.
 
 import argparse
 import asyncio
@@ -18,6 +22,9 @@ YELLOW = "\033[93m"
 GREEN = "\033[92m"
 RED = "\033[91m"
 RESET = "\033[0m"
+
+CONTAINER_NAME = "www"
+CONTAINER_PROJECT_DIR = "config"
 
 
 async def spin(msg):
@@ -77,25 +84,31 @@ async def run(cmd: list[str]) -> tuple[int | None, str]:
 
 
 class Context:
-    image: str
-    service: str
-    deploy_host: str
-    deploy_path: str
-    services_path: str
+    service_name: str
+    '''The name of the service that will be started'''
 
-    def __init__(self, service: str | None):
-        self.image = Path.cwd().name
-        self.service = service or self.image
+    deploy_host: str
+    '''The hostname where app will be deployed'''
+
+    services_path: str
+    '''The path on host where app source should be copied'''
+
+    def __init__(self, service_name: str | None):
+        self.service_name = service_name or Path.cwd().name
         self.deploy_host = getenv("DEPLOY_HOST", "localhost")
         self.services_path = getenv("SERVICES_PATH", "services")
+
+    @property
+    def deploy_path(self):
+        '''The absolute path where the docker service config lives'''
         if self.deploy_host == "localhost":
-            self.deploy_path = str(Path.home().joinpath(self.services_path))
-        else:
-            self.deploy_path = f"{self.deploy_host}:{self.services_path}"
+            return str(Path.home().joinpath(self.services_path))
+        return f"{self.deploy_host}:{self.services_path}"
 
     @property
     def deploy_source_path(self):
-        return f"{self.deploy_path}/build/{self.image}"
+        '''The absolute path where the app code will be copied to'''
+        return f"{self.deploy_path}/build/{self.service_name}"
 
 
 async def verify_service_path(ctx: Context) -> tuple[int | None, str]:
@@ -119,10 +132,14 @@ async def verify_service_name(ctx: Context) -> tuple[int | None, str]:
     """Verify that a service is defined in the docker compose file"""
 
     cmd = [
+        "lxc",
+        "exec",
+        CONTAINER_NAME,
+        "--",
         "docker",
         "compose",
         "--project-directory",
-        ctx.services_path,
+        CONTAINER_PROJECT_DIR,
         "config",
         "--services",
     ]
@@ -137,10 +154,10 @@ async def verify_service_name(ctx: Context) -> tuple[int | None, str]:
 
     services = stdout.split()
 
-    if ctx.service not in services:
+    if ctx.service_name not in services:
         return (
             1,
-            f"Service '{ctx.service}' does not exist in server compose file",
+            f"Service '{ctx.service_name}' does not exist in server compose file",
         )
 
     return 0, ""
@@ -165,14 +182,18 @@ async def start_service(ctx: Context) -> tuple[int | None, str]:
     """Build and start the service"""
 
     cmd = [
+        "lxc",
+        "exec",
+        CONTAINER_NAME,
+        "--",
         "docker",
         "compose",
         "--project-directory",
-        ctx.services_path,
+        CONTAINER_PROJECT_DIR,
         "up",
         "-d",
         "--build",
-        ctx.service,
+        ctx.service_name,
     ]
 
     if ctx.deploy_host == "localhost":
@@ -191,19 +212,19 @@ async def main() -> None:
     parser.add_argument("service", nargs="?")
     args = parser.parse_args()
 
-    ctx = Context(service=args.service)
+    ctx = Context(service_name=args.service)
 
     await run_task(
         f"Validating deployment path '{ctx.deploy_path}'",
         verify_service_path(ctx),
     )
     await run_task(
-        f"Validating service name '{ctx.service}'", verify_service_name(ctx)
+        f"Validating service name '{ctx.service_name}'", verify_service_name(ctx)
     )
     await run_task(
         f"Copying source to {ctx.deploy_source_path}", copy_source(ctx)
     )
-    await run_task(f"Starting {ctx.service}", start_service(ctx))
+    await run_task(f"Starting {ctx.service_name}", start_service(ctx))
     print("Done")
 
 
