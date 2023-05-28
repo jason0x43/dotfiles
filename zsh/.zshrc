@@ -115,6 +115,12 @@ else
     compinit -i -d $ZCOMPFILE
 fi
 
+# Add AWS completions
+if (( $+commands[aws_completer] )); then
+    autoload bashcompinit && bashcompinit
+    complete -C aws_completer aws
+fi
+
 # Compile the zcompfile in the background
 {
     # Compile zcompdump, if modified, to increase startup speed.
