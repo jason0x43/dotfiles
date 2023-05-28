@@ -43,7 +43,7 @@ else
     echo -e "Missing plugin ${Yel}${name}${Rst}"
     echo -e "  Cloning from ${Blu}${url}${Rst}..."
     if [[ -n $ref ]]; then
-      git clone --quiet $url $dest
+      git clone --quiet --recurse-submodules $url $dest
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
         cd $cwd
@@ -53,7 +53,7 @@ else
       git checkout --quiet $ref
       echo -e "  Checked out branch ${ref}"
     else
-      git clone --quiet --depth 1 $url $dest
+      git clone --quiet --recurse-submodules --depth 1 $url $dest
       if [[ $? != 0 ]]; then
         git_clone_error_msg $?
         cd $cwd
