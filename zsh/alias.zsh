@@ -195,3 +195,11 @@ fi
 if (( $+commands[bat] )); then
     alias cat=bat
 fi
+
+# Better ls
+if (( $+commands[exa] )); then
+    alias ls='exa -F'
+    alias lt='ls -T'
+    alias la='ls -a'
+    alias l='ls -1a'         # Lists in one column, hidden files
+fi

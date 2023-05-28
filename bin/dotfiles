@@ -291,6 +291,7 @@ function dotfiles-brew {
         'bash'            # update from system stock version
         'bat'             # better cat
         'deno'            # JS/TS runtime
+        'exa'             # better ls
         'fd'              # file finder
         'fzf'             # fuzzy finder
         'git'             # update from system stock git
