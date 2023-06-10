@@ -10,14 +10,18 @@ return {
 
   -- preserve layout when closing buffers; used for <leader>k
   {
-    'famiu/bufdelete.nvim',
-    config = function()
+    'ojroques/nvim-bufdel',
+    config = true,
+    opts = function()
       vim.keymap.set('n', '<leader>k', function()
-        require('bufdelete').bufdelete(0)
+        vim.cmd('BufDel')
       end)
       vim.keymap.set('n', '<leader>K', function()
-        require('bufdelete').bufdelete(0, true)
+        vim.cmd('BufDel!')
       end)
+      return {
+        quit = false
+      }
     end,
   },
 
