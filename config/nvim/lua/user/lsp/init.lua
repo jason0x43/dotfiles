@@ -143,7 +143,6 @@ M.create_on_attach = function(server_on_attach)
     vim.keymap.set('n', '<leader>d', function()
       vim.diagnostic.open_float({
         border = 'rounded',
-        focusable = false,
       })
     end, opts)
   end
