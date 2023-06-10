@@ -201,5 +201,7 @@ if (( $+commands[exa] )); then
     alias ls='exa -F'
     alias lt='ls -T'
     alias la='ls -a'
-    alias l='ls -1a'         # Lists in one column, hidden files
+    alias l='ls -1a'
+    alias lg='ll --git'
+    alias le='ll --extended'
 fi
