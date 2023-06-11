@@ -57,14 +57,24 @@ hs.hotkey.bind({ "ctrl", "alt", "shift" }, "f", function()
   win:setFrame(frame)
 end)
 
--- Move the active window to the center of the display
+-- Move the active window to the left side of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "h", function()
   window.moveTo("left")
 end)
 
--- Move the active window to the center of the display
+-- Fill the left side of the display with the active window
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, "h", function()
+  window.fill("left")
+end)
+
+-- Move the active window to the right side of the display
 hs.hotkey.bind({ "ctrl", "shift" }, "l", function()
   window.moveTo("right")
+end)
+
+-- Fill the right side of the display with the active window
+hs.hotkey.bind({ "ctrl", "alt", "shift" }, "l", function()
+  window.fill("right")
 end)
 
 -- Move the focus window one space to the right
