@@ -3,6 +3,7 @@ local util = require("util")
 local action = require("action")
 local scheme_config = require("scheme_config")
 local active_scheme = require("active_scheme")
+local session = require("session")
 local wez_action = wezterm.action
 
 -- Style the tabs
@@ -342,6 +343,11 @@ config.keys = {
     key = ">",
     mods = "CMD|SHIFT|CTRL",
     action = action.change_scheme_action("next"),
+  },
+  {
+    key = "s",
+    mods = "CMD|CTRL",
+    action = session.save(),
   },
 }
 
