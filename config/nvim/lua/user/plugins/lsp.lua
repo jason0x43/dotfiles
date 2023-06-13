@@ -178,6 +178,11 @@ return {
           require('user.lsp').setup(server_name)
         end,
       })
+
+      -- manually setup sourcekit
+      if vim.fn.executable('sourcekit-lsp') ~= 0 then
+        require('user.lsp').setup('sourcekit')
+      end
     end,
   },
 
