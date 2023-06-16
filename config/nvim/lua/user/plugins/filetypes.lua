@@ -26,4 +26,5 @@ return {
   'vim-scripts/Textile-for-VIM',
   'mustache/vim-mustache-handlebars',
   'jwalton512/vim-blade',
+  'cfdrake/vim-pbxproj',
 }
