@@ -29,6 +29,7 @@ return {
       vim.g.neo_tree_remove_legacy_commands = 1
 
       return {
+        enable_diagnostics = true,
         enable_git_status = true,
 
         popup_border_style = 'rounded',
