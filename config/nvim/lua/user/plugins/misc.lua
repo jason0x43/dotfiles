@@ -20,7 +20,7 @@ return {
         vim.cmd('BufDel!')
       end)
       return {
-        quit = false
+        quit = false,
       }
     end,
   },
@@ -70,6 +70,11 @@ return {
         },
       })
     end,
+  },
+  {
+    'NeogitOrg/neogit',
+    dependencies = 'nvim-lua/plenary.nvim',
+    config = true,
   },
 
   -- Autosave files
