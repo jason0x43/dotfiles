@@ -168,10 +168,10 @@ alias npmv="npm --loglevel error"
 alias npmr="npm --registry=https://registry.npmjs.org"
 alias px="pnpm exec"
 
-alias ha='TERM=xterm-256color ssh root@homeassistant.local'
-alias halog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/home-assistant.log | bat --paging=never -l halog'
-alias adlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
-alias aderrlog='TERM=xterm-256color ssh root@homeassistant.local tail -F /config/appdaemon/logs/error.log'
+alias ha='TERM=xterm-256color ssh hass'
+alias halog='TERM=xterm-256color ssh hass tail -F /config/home-assistant.log | bat --paging=never -l halog'
+alias adlog='TERM=xterm-256color ssh hass tail -F /config/appdaemon/logs/main.log | bat --paging=never -l adlog'
+alias aderrlog='TERM=xterm-256color ssh hass tail -F /config/appdaemon/logs/error.log'
 
 alias ls='ls --color -F'
 alias l='ls -1A'         # Lists in one column, hidden files
