@@ -320,6 +320,9 @@ export PROMPT_EOL_MARK=''
 # Get into vim command mode faster when hitting ESC
 export KEYTIMEOUT=1
 
+# Don't exit on EOF (ctrl+d)
+setopt IGNORE_EOF
+
 # History
 # ------------------------------------------------------------------------
 HISTFILE="$ZCACHEDIR/zhistory"  # The path to the history file

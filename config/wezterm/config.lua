@@ -349,6 +349,13 @@ config.keys = {
     mods = "CMD|CTRL",
     action = session.save(),
   },
+
+  -- Turn off the default CMD-d action
+  {
+    key = "d",
+    mods = "CTRL",
+    action = wezterm.action.DisableDefaultAssignment,
+  },
 }
 
 config.scrollback_lines = 20000
@@ -362,6 +369,31 @@ config.window_padding = {
   right = 4,
   top = 4,
   bottom = 4,
+}
+
+-- Disable hyperlinks
+config.mouse_bindings = {
+  -- Change the default click behavior so that it only selects
+  -- text and doesn't open hyperlinks
+  {
+    event = { Up = { streak = 1, button = "Left" } },
+    mods = "NONE",
+    action = wezterm.action.CompleteSelection("PrimarySelection"),
+  },
+
+  -- and make CTRL-Click open hyperlinks
+  {
+    event = { Up = { streak = 1, button = "Left" } },
+    mods = "CTRL",
+    action = wezterm.action.OpenLinkAtMouseCursor,
+  },
+
+  -- Disable the 'Down' event of CTRL-Click to avoid weird program behaviors
+  {
+    event = { Down = { streak = 1, button = "Left" } },
+    mods = "CTRL",
+    action = wezterm.action.Nop,
+  },
 }
 
 return config
