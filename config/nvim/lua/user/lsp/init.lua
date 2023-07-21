@@ -1,5 +1,8 @@
 local modbase = ...
 
+-- Disable log by default
+vim.lsp.set_log_level('error')
+
 -- Give LspInfo window a border
 require('lspconfig.ui.windows').default_options.border = 'rounded'
 
