@@ -28,8 +28,11 @@ return {
     local eslint_config = find_file(file_dir, function(path)
       local name = vim.fs.basename(path)
       if
-        name:find('.eslintrc.', 1, true) == 1
-        or name:find('eslint.config.', 1, true) == 1
+        name
+        and (
+          name:find('.eslintrc', 1, true) == 1
+          or name:find('eslint.config.', 1, true) == 1
+        )
       then
         return true
       end
