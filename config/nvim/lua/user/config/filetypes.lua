@@ -1,6 +1,7 @@
 vim.filetype.add({
   pattern = {
     ['Dockerfile.*'] = 'dockerfile',
+    ['Fastfile'] = 'ruby',
     ['.*/git/config'] = 'gitconfig',
 
     ['.*'] = {
