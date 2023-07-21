@@ -19,7 +19,4 @@ require('lazy').setup("user.plugins", {
   ui = {
     border = 'rounded',
   },
-  git = {
-    url_format = "git@github.com:%s.git"
-  }
 })
