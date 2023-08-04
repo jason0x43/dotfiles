@@ -3,7 +3,7 @@
 ---@class hs.screen
 local screen = {
   ---Return the screen frame, without the dock and menu
-  ---@return hs.geometry
+  ---@return hs.geometry.size
   frame = function() end,
 
   ---Return the screen frame, including the dock and menu

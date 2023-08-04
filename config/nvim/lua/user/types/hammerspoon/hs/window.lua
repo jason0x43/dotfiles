@@ -72,7 +72,7 @@ local window = {
   setFrame = function(self, frame) end,
 
   ---Set the size of this window
-  ---@param size hs.geometry
+  ---@param size hs.geometry.size
   ---@return hs.window
   setSize = function(self, size) end,
 

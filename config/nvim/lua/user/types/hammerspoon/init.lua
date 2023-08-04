@@ -3,21 +3,25 @@
 ---@class hs
 ---@field alert alert
 ---@field application application
+---@field configdir string
 ---@field drawing drawing
 ---@field eventtap eventtap
+---@field fs fs
 ---@field geometry geometry
 ---@field hotkey hotkey
+---@field http http
 ---@field image image
+---@field json json
 ---@field keycodes keycodes
 ---@field layout layout
 ---@field logger logger
 ---@field mouse mouse
 ---@field pathwatcher pathwatcher
 ---@field screen screen
+---@field settings settings
 ---@field spaces spaces
 ---@field timer timer
 ---@field window window
----@field configdir string
 hs = {
   ---Run a shell command, returning stdout as a string.
   ---@param command string command to execute
