@@ -1,15 +1,17 @@
 local window = require("window")
 local const = require("const")
 local raycast = require("raycast")
+local settings = require("settings")
 local ui = require("ui")
 
 local logger = hs.logger.new("init", "info")
 
+settings.init("settings.json")
 raycast.init()
 
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
-  logger.i('running layout')
+  logger.i("running layout")
   window.layout({
     { app = "Safari", display = "DELL P2715Q", frame = { "left", 0.6 } },
     {
@@ -92,7 +94,7 @@ hs.hotkey.bind({ "ctrl", "alt", "shift" }, "right", function()
   hs.window.focusedWindow():moveOneScreenEast()
 end)
 
--- Move the focuse window one screen to the left
+-- Move the focused window one screen to the left
 hs.hotkey.bind({ "ctrl", "alt", "shift" }, "left", function()
   hs.window.focusedWindow():moveOneScreenWest()
 end)
@@ -120,6 +122,48 @@ end)
 -- Reload the Hammerspoon config
 hs.hotkey.bind({ "ctrl", "shift" }, "r", function()
   hs.reload()
+end)
+
+hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "up", function()
+  hs.http.asyncPost(
+    hs.settings.get('hass_url') .. "/api/events/mac_script",
+    '{"service":"media_player.volume_up","entity":"media_player.'
+      .. hs.settings.get("media_player")
+      .. '"}',
+    {
+      ["Content-Type"] = "application/json",
+      Authorization = "Bearer " .. hs.settings.get("hass_token"),
+    },
+    function() end
+  )
+end)
+
+hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "down", function()
+  hs.http.asyncPost(
+    hs.settings.get('hass_url') .. "/api/events/mac_script",
+    '{"service":"media_player.volume_down","entity":"media_player.'
+      .. hs.settings.get("media_player")
+      .. '"}',
+    {
+      ["Content-Type"] = "application/json",
+      Authorization = "Bearer " .. hs.settings.get("hass_token"),
+    },
+    function() end
+  )
+end)
+
+hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "right", function()
+  hs.http.asyncPost(
+    hs.settings.get('hass_url') .. "/api/events/mac_script",
+    '{"service":"media_player.media_play_pause","entity":"media_player.'
+      .. hs.settings.get("media_player")
+      .. '"}',
+    {
+      ["Content-Type"] = "application/json",
+      Authorization = "Bearer " .. hs.settings.get("hass_token"),
+    },
+    function() end
+  )
 end)
 
 -- Reload the hammer spoon config when a config file changes
