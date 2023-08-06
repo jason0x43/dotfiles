@@ -9,6 +9,10 @@ local wez_action = wezterm.action
 -- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, _, hover, max_width)
   local colors = active_scheme.get()
+  if not colors then
+    return
+  end
+
   local background = colors.tab_bar.inactive_tab.bg_color
   local foreground = colors.tab_bar.inactive_tab.fg_color
 
@@ -227,10 +231,10 @@ config.key_tables = {
   search_mode = search_mode,
 
   window_ops = {
-    { key = "j", action = action.move_action("Down") },
-    { key = "k", action = action.move_action("Up") },
-    { key = "h", action = action.move_action("Left") },
-    { key = "l", action = action.move_action("Right") },
+    { key = "j", mods = "", action = action.move_action("Down") },
+    { key = "k", mods = "", action = action.move_action("Up") },
+    { key = "h", mods = "", action = action.move_action("Left") },
+    { key = "l", mods = "", action = action.move_action("Right") },
     {
       key = "j",
       mods = "SHIFT",
@@ -251,16 +255,24 @@ config.key_tables = {
       mods = "SHIFT",
       action = wez_action.AdjustPaneSize({ "Right", 4 }),
     },
-    { key = "m", action = wez_action.PaneSelect({ mode = "SwapWithActive" }) },
-    { key = "-", action = action.split_action("vertical") },
-    { key = "\\", action = action.split_action("horizontal") },
-    { key = "|", action = action.split_action("horizontal") },
-    { key = "Escape", action = wez_action.PopKeyTable },
-    { key = "c", action = action.copy_mode_action() },
+    {
+      key = "m",
+      mods = "",
+      action = wez_action.PaneSelect({ mode = "SwapWithActive" }),
+    },
+    { key = "-", mods = "", action = action.split_action("vertical") },
+    { key = "\\", mods = "", action = action.split_action("horizontal") },
+    { key = "|", mods = "", action = action.split_action("horizontal") },
+    { key = "Escape", mods = "", action = wez_action.PopKeyTable },
+    { key = "c", mods = "", action = action.copy_mode_action() },
     { key = "c", mods = "CTRL", action = wez_action.PopKeyTable },
-    { key = "q", action = wez_action.QuickSelect },
-    { key = "z", action = wez_action.TogglePaneZoomState },
-    { key = "w", action = wez_action.CloseCurrentPane({ confirm = true }) },
+    { key = "q", mods = "", action = wez_action.QuickSelect },
+    { key = "z", mods = "", action = wez_action.TogglePaneZoomState },
+    {
+      key = "w",
+      mods = "",
+      action = wez_action.CloseCurrentPane({ confirm = true }),
+    },
   },
 }
 

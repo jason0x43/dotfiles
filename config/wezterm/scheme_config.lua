@@ -7,15 +7,15 @@ local M = {}
 
 -- Load a saved scheme config
 function M.get()
-	local data = util.load_json(scheme_file)
-	if data ~= nil then
+	local ok, data = pcall(util.load_json, scheme_file)
+	if ok and data ~= nil then
 		if data.light ~= nil and data.dark ~= nil then
 			return data
 		end
 	end
 
 	return {
-		light = "Selenized Light (selenized)",
+		light = "Selenized White (selenized)",
 		dark = "Selenized Black (selenized)",
 		auto_switch = true,
 	}
