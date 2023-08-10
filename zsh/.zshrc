@@ -445,6 +445,12 @@ if [[ -s "$HOME/.bun/_bun" ]]; then
     source "$HOME/.bun/_bun"
 fi
 
+# 1Password
+# --------------------------------------------------------------------------
+if [[ -f $HOME/.config/op/plugins.sh ]]; then
+    . $HOME/.config/op/plugins.sh
+fi
+
 # zsh-syntax-highlighting
 # --------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
