@@ -205,3 +205,7 @@ if (( $+commands[exa] )); then
     alias lg='ll --git'
     alias le='ll --extended'
 fi
+
+if (( $+commands[docker] )); then
+    alias dc='docker compose'
+fi
