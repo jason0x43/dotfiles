@@ -55,6 +55,7 @@ return {
           {
             'diagnostics',
             sources = { 'nvim_diagnostic' },
+            symbols = { error = ' ', warn = ' ', info = ' ' },
             padding = { left = 0, right = 1 },
           },
         },
