@@ -253,6 +253,17 @@ function dotfiles-launchd {
     done
 }
 
+# Install or update rust
+function dotfiles-rust {
+    if (( ! $+commands[rustup] )); then
+        log "Installing rust..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    else
+        log "Updating rust..."
+        rustup update
+    fi
+}
+
 # Install homebrew and core packages, update packages
 function dotfiles-brew {
     log "Updating brew..."
@@ -299,7 +310,6 @@ function dotfiles-brew {
         'pdm'             # python package manager
         'python'          # default python
         'ripgrep'         # better grep
-        'rust'            # better grep
         'jdxcode/tap/rtx' # tool version manager
         'tig'             # terminal git ui
     )
@@ -308,7 +318,6 @@ function dotfiles-brew {
         brew_packages=(
             $brew_packages
             'font-jetbrains-mono-nerd-font'
-            'phoenix'
             '1password-cli'
         )
 
@@ -540,6 +549,7 @@ if [[ -n $1 ]]; then
         echo '    launchd        Link and bootstrap launchd scripts'
         echo '    node           Update global node packages, install defaults'
         echo '    python         Update global python packages, install defaults'
+        echo '    rust           Update rust install'
         echo '    tmux           Update tpm packages'
         echo '    vim            Update vim plugins'
         echo '    zsh            Update zsh plugins'
@@ -559,6 +569,7 @@ else
     dotfiles-zsh
     dotfiles-python
     dotfiles-node
+    dotfiles-rust
     dotfiles-tmux
     dotfiles-bat
 
