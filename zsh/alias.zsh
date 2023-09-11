@@ -112,17 +112,6 @@ alias ts='tig status'
 # ssh in interactive shells
 # alias ssh=themed_ssh
 
-# vim
-if (( $+commands[nvim] )); then
-    if [[ -n $WEZTERM_PANE ]]; then
-        alias vi="nvim --listen /tmp/nvim-wt$WEZTERM_PANE"
-    else
-        alias vi=nvim
-    fi
-elif (( $+commands[vim] )); then
-    alias vi=vim
-fi
-
 # tmux
 alias tls='tmux list-sessions'
 alias tas='tmux attach -t'
