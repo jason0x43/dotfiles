@@ -403,12 +403,6 @@ fi
 
 # Node
 # ----------------------------------------------------------------------------
-# Load NPX fallback script
-if (( $+commands[npx] )); then
-    npx_fallback="$DOTFILES/zsh/npx.zsh"
-    source "$npx_fallback"
-fi
-
 # Load NPM completion
 if (( $+commands[npm] )); then
     zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
