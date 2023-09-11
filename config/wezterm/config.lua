@@ -413,4 +413,6 @@ config.mouse_bindings = {
 -- https://github.com/wez/wezterm/issues/2818
 config.font = wezterm.font('JetBrainsMonoNL Nerd Font')
 
+config.send_composed_key_when_left_alt_is_pressed = true
+
 return config
