@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# List branches that are only local
+
+git branch --format "%(refname:short) %(upstream)" | awk '{if (!$2) print $1;}'
