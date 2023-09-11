@@ -172,3 +172,5 @@ o.fillchars:append('foldsep: ')
 o.fillchars:append('foldopen:▼')
 o.fillchars:append('foldclose:▶')
 o.fillchars:append('fold:-')
+
+vim.go.splitkeep = 'topline'
