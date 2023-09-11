@@ -71,11 +71,6 @@ return {
       })
     end,
   },
-  {
-    'NeogitOrg/neogit',
-    dependencies = 'nvim-lua/plenary.nvim',
-    config = true,
-  },
 
   -- Autosave files
   {

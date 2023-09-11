@@ -225,38 +225,4 @@ return {
       },
     },
   },
-
-  {
-    'SmiteshP/nvim-navbuddy',
-    dependencies = {
-      'neovim/nvim-lspconfig',
-      'SmiteshP/nvim-navic',
-      'MunifTanjim/nui.nvim',
-    },
-    opts = function()
-      vim.keymap.set('n', '<leader>s', function()
-        if vim.bo.filetype ~= 'Navbuddy' then
-          require('nvim-navbuddy').open()
-        end
-      end)
-      return {
-        lsp = { auto_attach = true },
-        window = {
-          border = 'rounded',
-          size = '80%',
-          sections = {
-            left = {
-              size = '33%',
-            },
-            mid = {
-              size = '34%',
-            },
-            right = {
-              size = '33%',
-            },
-          },
-        },
-      }
-    end,
-  },
 }
