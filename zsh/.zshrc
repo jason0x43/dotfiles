@@ -445,6 +445,13 @@ if [[ -f $HOME/.config/op/plugins.sh ]]; then
     . $HOME/.config/op/plugins.sh
 fi
 
+# Google Cloud
+# --------------------------------------------------------------------------
+if [[ -d $HOMEBREW_BASE/share/google-cloud-sdk ]]; then
+    . $HOMEBREW_BASE/share/google-cloud-sdk/path.zsh.inc
+    . $HOMEBREW_BASE/share/google-cloud-sdk/completion.zsh.inc
+fi
+
 # zsh-syntax-highlighting
 # --------------------------------------------------------------------------
 # This should be near the end (preferably at the end) of the zshrc
