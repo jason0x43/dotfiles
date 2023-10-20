@@ -61,6 +61,12 @@ return {
         no_header = true,
       },
 
+      git = {
+        files = {
+          cmd = "git ls-files --exclude-standard -c -o"
+        }
+      },
+
       helptags = {
         actions = {
           ['default'] = actions.help_tab,
