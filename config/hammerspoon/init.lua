@@ -36,6 +36,11 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
       display = "Built-in Retina Display",
       frame = { "right", 95 },
     },
+    {
+      app = "Slack",
+      display = "Built-in Retina Display",
+      frame = { "right", 95 },
+    },
   })
 end)
 
