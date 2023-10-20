@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+basedir=$PWD
+
+echo ">>> Compacting repos..." 
+for dir in $(fd -HIg --type d .git "$1"); do
+  gitdir=$(dirname "$dir")
+  cd "$gitdir"
+  git gc
+  cd "$basedir"
+done
+
+echo ">>> Creating tar archive..." 
+tar cf "$1.tar" "$1"
+
+echo ">>> Compressing tar file..." 
+xz --verbose -T0 "$1.tar"
+
+echo ">>> Done" 
