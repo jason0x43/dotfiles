@@ -72,19 +72,6 @@ return {
     end,
   },
 
-  -- Autosave files
-  {
-    'Pocco81/auto-save.nvim',
-    config = function()
-      require('auto-save').setup({
-        condition = function(buf)
-          return vim.api.nvim_buf_is_valid(buf)
-            and vim.bo[buf].filetype == 'rust'
-        end,
-      })
-    end,
-  },
-
   -- Auto-set indentation
   {
     'tpope/vim-sleuth',
