@@ -9,7 +9,7 @@
   <array>
     <string>sh</string>
     <string>-c</string>
-    <string>launchctl setenv WEZTERM_CONFIG_FILE /Users/jason/.config/wezterm/config.lua</string>        
+    <string>launchctl setenv WEZTERM_CONFIG_FILE ~/.config/wezterm/config.lua</string>        
   </array>
 
   <key>RunAtLoad</key>
