@@ -730,6 +730,10 @@ function Window:mux_window() end
 ---@param pane _.wezterm.Pane
 function Window:get_selection_text_for_pane(key_assignment, pane) end
 
+---@param key_assignment _.wezterm._Action
+---@param pane _.wezterm.Pane
+function Window:perform_action(key_assignment, pane) end
+
 function Window:restore() end
 
 ---@param overrides any

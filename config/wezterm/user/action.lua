@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local action = wezterm.action
 local action_callback = wezterm.action_callback
-local util = require("util")
+local util = require("user.util")
 
 local M = {}
 

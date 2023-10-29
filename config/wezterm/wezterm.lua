@@ -1,9 +1,9 @@
 local wezterm = require("wezterm")
-local util = require("util")
-local action = require("action")
-local scheme_config = require("scheme_config")
-local active_scheme = require("active_scheme")
-local session = require("session")
+local util = require("user.util")
+local action = require("user.action")
+local scheme_config = require("user.scheme_config")
+local active_scheme = require("user.active_scheme")
+local session = require("user.session")
 local wez_action = wezterm.action
 
 -- Style the tabs
@@ -129,7 +129,7 @@ function Title(title)
 end
 
 -- Copy mode key bindings
-local copy_mode = nil
+local copy_mode = wezterm.gui.default_key_tables().copy_mode
 if wezterm.gui then
   local copy_keys = {
     {
@@ -175,14 +175,13 @@ if wezterm.gui then
     },
   }
 
-  copy_mode = wezterm.gui.default_key_tables().copy_mode
   for _, v in ipairs(copy_keys) do
     table.insert(copy_mode, v)
   end
 end
 
 -- Search mode key bindings
-local search_mode = nil
+local search_mode = wezterm.gui.default_key_tables().search_mode
 if wezterm.gui then
   local search_keys = {
     {
@@ -203,7 +202,6 @@ if wezterm.gui then
     },
   }
 
-  search_mode = wezterm.gui.default_key_tables().search_mode
   for _, v in ipairs(search_keys) do
     table.insert(search_mode, v)
   end
@@ -414,5 +412,9 @@ config.mouse_bindings = {
 config.font = wezterm.font('JetBrainsMonoNL Nerd Font')
 
 config.send_composed_key_when_left_alt_is_pressed = true
+
+-- This cast is needed for other config files to end up using the proper WezTerm
+-- types rather than the type of the value returned by this file
+---@cast config WezTerm
 
 return config

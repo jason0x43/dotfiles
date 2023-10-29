@@ -1,5 +1,6 @@
 ---@meta
 
+---@class WezTerm
 local wezterm = {
   ---@module 'wezterm.color'
   color = {},

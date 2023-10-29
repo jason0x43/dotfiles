@@ -1,6 +1,6 @@
 local wezterm = require("wezterm")
 local action_callback = wezterm.action_callback
-local util = require("util")
+local util = require("user.util")
 
 local layout_file = wezterm.home_dir .. "/.local/share/wezterm/layout.json"
 
