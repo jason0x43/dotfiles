@@ -227,7 +227,7 @@ M.moveToSpace = function(hint)
 
     if hint == "next" then
       idx = idx + 1
-      if idx == #spaceIds then
+      if idx > #spaceIds then
         idx = 1
       end
     elseif hint == "prev" then

@@ -5,6 +5,7 @@ local settings = require("settings")
 local ui = require("ui")
 
 local logger = hs.logger.new("init", "info")
+local monitor = "PHL 272P7VU"
 
 settings.init("settings.json")
 raycast.init()
@@ -13,16 +14,16 @@ raycast.init()
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   logger.i("running layout")
   window.layout({
-    { app = "Safari", display = "DELL P2715Q", frame = { "left", 0.6 } },
-    {
-      app = "Wavebox",
-      win = { "Wavebox:Main", negative = true },
-      display = "DELL P2715Q",
-      frame = { "left", 0.6 },
-    },
+    { app = "Safari", display = monitor, frame = { "left", 0.6 } },
+    -- {
+    --   app = "Wavebox",
+    --   win = { "Wavebox:Main", negative = true },
+    --   display = monitor,
+    --   frame = { "left", 0.6 },
+    -- },
     {
       app = "WezTerm",
-      display = "DELL P2715Q",
+      display = monitor,
       frame = { "right", 0.4 },
     },
     {
@@ -30,12 +31,12 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
       display = "Built-in Retina Display",
       frame = { "left", 0.3 },
     },
-    {
-      app = "Wavebox",
-      win = { "Wavebox:Main" },
-      display = "Built-in Retina Display",
-      frame = { "right", 95 },
-    },
+    -- {
+    --   app = "Wavebox",
+    --   win = { "Wavebox:Main" },
+    --   display = "Built-in Retina Display",
+    --   frame = { "right", 95 },
+    -- },
     {
       app = "Slack",
       display = "Built-in Retina Display",
