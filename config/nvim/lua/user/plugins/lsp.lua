@@ -183,6 +183,10 @@ return {
       if vim.fn.executable('sourcekit-lsp') ~= 0 then
         require('user.lsp').setup('sourcekit')
       end
+
+      vim.keymap.set('n', '<leader>a', function()
+        vim.lsp.buf.code_action()
+      end)
     end,
   },
 

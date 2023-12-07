@@ -5,8 +5,6 @@ return {
     'nvim-lua/plenary.nvim',
     -- provide TSCaptureUnderCursor command
     'nvim-treesitter/playground',
-    -- set proper commentstring for embedded languages
-    'JoosepAlviste/nvim-ts-context-commentstring',
   },
 
   main = 'nvim-treesitter.configs',

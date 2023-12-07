@@ -8,23 +8,6 @@ return {
     end,
   },
 
-  -- preserve layout when closing buffers; used for <leader>k
-  {
-    'ojroques/nvim-bufdel',
-    config = true,
-    opts = function()
-      vim.keymap.set('n', '<leader>k', function()
-        vim.cmd('BufDel')
-      end)
-      vim.keymap.set('n', '<leader>K', function()
-        vim.cmd('BufDel!')
-      end)
-      return {
-        quit = false,
-      }
-    end,
-  },
-
   -- gc for commenting code blocks
   'tpope/vim-commentary',
 
@@ -36,13 +19,6 @@ return {
 
   -- for repeating surround commands
   'tpope/vim-repeat',
-
-  -- show semantic file location (e.g., what function you're in)
-  {
-    'SmiteshP/nvim-navic',
-    dependencies = 'nvim-treesitter/nvim-treesitter',
-    config = true,
-  },
 
   -- JSON schemas
   'b0o/schemastore.nvim',
@@ -91,11 +67,11 @@ return {
     config = true,
   },
 
-  -- fzf-based undotree
+  -- undotree
   {
     dir = '/Users/jason/.config/nvim/lua/undotree-nvim',
     main = 'undotree-nvim',
-    dependencies = 'ibhagwan/fzf-lua',
+    dependencies = 'echasnovski/mini.nvim',
     config = true,
     opts = function()
       vim.keymap.set('n', '<leader>u', function()
@@ -105,5 +81,52 @@ return {
     end,
   },
 
-  'mbbill/undotree',
+  -- many things
+  {
+    'echasnovski/mini.nvim',
+    version = '*',
+    config = function()
+      require('mini.files').setup()
+      vim.keymap.set('n', '<leader>n', function()
+        MiniFiles.open(vim.api.nvim_buf_get_name(0))
+      end)
+
+      require('mini.extra').setup()
+      require('mini.pick').setup()
+
+      vim.ui.select = MiniPick.ui_select
+
+      vim.keymap.set('n', '<leader>f', function()
+        local in_worktree = require('user.util').in_git_dir()
+        if in_worktree then
+          MiniPick.builtin.files({ tool = 'git' })
+        else
+          MiniPick.builtin.files()
+        end
+      end)
+      vim.keymap.set('n', '<leader>g', function()
+        MiniPick.builtin.grep_live()
+      end)
+      vim.keymap.set('n', '<leader>e', function()
+        MiniExtra.pickers.diagnostic({ scope = 'current' })
+      end)
+      vim.keymap.set('n', '<leader>b', function()
+        MiniPick.builtin.buffers()
+      end)
+      vim.keymap.set('n', '<leader>h', function()
+        MiniPick.builtin.help()
+      end)
+      vim.keymap.set('n', '<leader>lr', function()
+        MiniExtra.pickers.lsp({ scope = "references" })
+      end)
+
+      require('mini.bufremove').setup()
+      vim.keymap.set('n', '<leader>k', function()
+        MiniBufremove.delete()
+      end)
+      vim.keymap.set('n', '<leader>K', function()
+        MiniBufremove.wipeout()
+      end)
+    end,
+  },
 }

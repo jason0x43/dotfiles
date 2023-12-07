@@ -328,6 +328,7 @@ local function apply_theme(c)
   hi('diffOldFile', { fg = c.br_red })
   hi('diffNewFile', { fg = c.br_green })
   hi('diffFile', { fg = c.blue })
+  hi('diffLine', { fg = c.yellow })
 
   hilink('TSConstBuiltin', 'Constant')
   hilink('TSConstMacro', 'Constant')

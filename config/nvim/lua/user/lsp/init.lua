@@ -98,12 +98,6 @@ M.create_on_attach = function(server_on_attach)
 
     local opts = { buffer = bufnr }
 
-    -- navic can only attach to one client per buffer, so don't attach to
-    -- clients that don't supply useful info
-    if client.server_capabilities.documentSymbolProvider then
-      require('nvim-navic').attach(client, bufnr)
-    end
-
     -- add a jump to definition keymap; this overrides the default C-] keymap
     -- when an LSP is attached to a buffer
     if client.server_capabilities.definitionProvider then
@@ -206,7 +200,7 @@ M.setup = function(server_name)
 
   -- add cmp capabilities
   local cmp_caps = {}
-  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp');
+  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
   if ok then
     cmp_caps = cmp_nvim_lsp.default_capabilities()
   end

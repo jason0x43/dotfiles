@@ -1,6 +1,7 @@
 -- This code is based on telescope-undo
 
-local utils = require('fzf-lua.utils')
+-- local utils = require('fzf-lua.utils')
+local util = require('user.util')
 
 local M = {}
 
@@ -230,37 +231,18 @@ local function render_undo_entry(undo, seq_cur)
   local seq
 
   if undo.seq == seq_cur then
-    seq = utils.ansi_codes.yellow(
-      utils.ansi_codes.bold(string.format('>%d<', undo.seq))
-    )
+    seq = string.format('>%d<', undo.seq)
   elseif undo.is_next then
-    seq = utils.ansi_codes.green(
-      utils.ansi_codes.bold(string.format('{%d}', undo.seq))
-    )
+    seq = string.format('{%d}', undo.seq)
   else
-    seq = utils.ansi_codes.white(
-      utils.ansi_codes.italic(string.format(' %d ', undo.seq))
-    )
+    seq = string.format(' %d ', undo.seq)
   end
 
-  local time = utils.ansi_codes.blue(time_ago(undo.time))
+  local time = time_ago(undo.time)
   local line = undo.seq .. ':' .. prefix .. seq .. ' ' .. time
 
   ---@type string
   return line
-end
-
----@param diff string
----@return string
-local function highlight_diff(diff)
-  return vim.fn.system(
-    'delta --color-only'
-      .. ' --minus-style 1'
-      .. ' --minus-emph-style "1 reverse"'
-      .. ' --plus-style 2'
-      .. ' --plus-emph-style "2 reverse"',
-    diff
-  )
 end
 
 ---@param item string
@@ -269,6 +251,10 @@ local function get_seq(item)
   local seq = tonumber(item:match('^(%d+)'))
   assert(seq ~= nil, 'Invalid seq in "' .. item .. '"')
   return seq
+end
+
+local function highlight_line(buf_id, line, group)
+  vim.api.nvim_buf_add_highlight(buf_id, 0, group, line, 0, -1)
 end
 
 M.undotree = function()
@@ -293,56 +279,59 @@ M.undotree = function()
     lines[#lines + 1] = render_undo_entry(entry, ut.seq_cur)
   end
 
-  require('fzf-lua').fzf_exec(lines, {
-    actions = {
-      ['default'] = function(selected)
-        local item = selected[1]
+  MiniPick.start({
+    source = {
+      items = lines,
+      choose = function(item)
         local seq = get_seq(item)
-        vim.cmd('silent undo ' .. seq)
+        vim.api.nvim_win_call(
+          MiniPick.get_picker_state().windows.target,
+          function()
+            vim.cmd('silent undo ' .. seq)
+          end
+        )
       end,
-    },
-    fzf_opts = {
-      ['--phony'] = '',
-      ['--delimiter'] = ':',
-      ['--with-nth'] = '2',
-      ['--preview-window'] = 'nohidden,right,75%,border-left',
-      ['--preview'] = require('fzf-lua').shell.action(function(items)
-        ---@type string[]
-        local contents = {}
+      preview = function(buf_id, item)
+        local seq = get_seq(item)
+        local ok, diff_or_error = pcall(
+          ---@return string | nil
+          function()
+            return vim.api.nvim_buf_call(buf, function()
+              return get_diff(seq, ut.seq_cur)
+            end)
+          end
+        )
 
-        vim.tbl_map(function(item)
-          local seq = get_seq(item)
+        local dlines = {}
+        if diff_or_error ~= nil then
+          dlines = vim.fn.split(diff_or_error, '\n')
+        end
 
-          local ok, diff_or_error = pcall(
-            ---@return string | nil
-            function()
-              return vim.api.nvim_buf_call(buf, function()
-                return get_diff(seq, ut.seq_cur)
-              end)
-            end
-          )
+        vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, dlines)
 
-          if diff_or_error ~= nil then
-            if ok then
-              contents[#contents + 1] = highlight_diff(diff_or_error)
-            else
-              contents[#contents + 1] = diff_or_error
+        if diff_or_error ~= nil and ok then
+          for i = 0, #dlines - 1 do
+            local line = dlines[i + 1]
+            if util.starts_with(line, '--- ') then
+              highlight_line(buf_id, i, 'diffOldFile')
+            elseif util.starts_with(line, '+++ ') then
+              highlight_line(buf_id, i, 'diffNewFile')
+            elseif util.starts_with(line, '@@ ') then
+              highlight_line(buf_id, i, 'diffLine')
+            elseif util.starts_with(line, '- ') then
+              highlight_line(buf_id, i, 'diffRemoved')
+            elseif util.starts_with(line, '+ ') then
+              highlight_line(buf_id, i, 'diffAdded')
             end
           end
-        end, items)
-
-        return contents
-      end),
+        end
+      end,
     },
   })
 end
 
 M.setup = function()
-  local ok, _ = pcall(require, 'fzf-lua')
-  if not ok then
-    vim.notify('undotree-nvim requires fzf-lua', vim.log.levels.WARN)
-    return
-  end
+  -- nothing todo for now
 end
 
 return M

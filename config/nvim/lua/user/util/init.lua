@@ -120,4 +120,12 @@ M.is_large_file = function(buf)
   return false
 end
 
+-- return true of the string str starts with the string other
+---@param str string
+---@param other string
+---@return boolean
+M.starts_with = function(str, other)
+  return str:sub(1, #other) == other
+end
+
 return M

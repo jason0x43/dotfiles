@@ -22,9 +22,6 @@ return {
     end,
   },
 
-  -- Better UI
-  'stevearc/dressing.nvim',
-
   -- Popup notifications
   {
     'rcarriga/nvim-notify',
