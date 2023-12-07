@@ -15,6 +15,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   logger.i("running layout")
   window.layout({
     { app = "Safari", display = monitor, frame = { "left", 0.6 } },
+    { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
     -- {
     --   app = "Wavebox",
     --   win = { "Wavebox:Main", negative = true },
