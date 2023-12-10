@@ -17,7 +17,7 @@ return {
             return
           end
           require('colorizer').attach_to_buffer(bufnr)
-        end
+        end,
       })
     end,
   },
@@ -41,14 +41,12 @@ return {
     end,
   },
 
-  -- highlight current word
   {
-    'tzachar/local-highlight.nvim',
-    opts = function()
-      vim.api.nvim_set_hl(0, 'LocalHighlight', { link = 'CursorLine' })
-      return {
-        cw_hlgroup = 'LocalHighlight',
-      }
-    end,
+    'stevearc/dressing.nvim',
+    opts = {
+      select = {
+        enabled = false,
+      },
+    },
   },
 }
