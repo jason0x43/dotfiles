@@ -258,6 +258,11 @@ if [[ -d $HOME/.bun/bin ]]; then
 	)
 fi
 
+# ripgrep
+if (( $+commands[rg] )); then
+	export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep
+fi
+
 # rtx
 if [[ -d $HOME/.local/share/rtx/bin ]]; then
 	path=(

@@ -1,0 +1,5 @@
+# prevent ripgrep from emitting very long lines which can break nvim pickers
+--max-columns=150
+
+# be case insensitive by default
+--smart-case
