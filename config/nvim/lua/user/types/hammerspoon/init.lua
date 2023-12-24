@@ -1,27 +1,47 @@
 ---@meta
 
+---@module 'hs.alert'
+local alert
+---@module 'hs.application'
+local application
+---@module 'hs.drawing'
+local drawing
+---@module 'hs.eventtap'
+local eventtap
+---@module 'hs.fs'
+local fs
+---@module 'hs.geometry'
+local geometry
+---@module 'hs.hotkey'
+local hotkey
+---@module 'hs.http'
+local http
+---@module 'hs.image'
+local image
+---@module 'hs.json'
+local json
+---@module 'hs.keycodes'
+local keycodes
+---@module 'hs.layout'
+local layout
+---@module 'hs.logger'
+local logger
+---@module 'hs.mouse'
+local mouse
+---@module 'hs.pathwatcher'
+local pathwatcher
+---@module 'hs.screen'
+local screen
+---@module 'hs.settings'
+local settings
+---@module 'hs.spaces'
+local spaces
+---@module 'hs.timer'
+local timer
+---@module 'hs.window'
+local window
+
 ---@class hs
----@field alert alert
----@field application application
----@field configdir string
----@field drawing drawing
----@field eventtap eventtap
----@field fs fs
----@field geometry geometry
----@field hotkey hotkey
----@field http http
----@field image image
----@field json json
----@field keycodes keycodes
----@field layout layout
----@field logger logger
----@field mouse mouse
----@field pathwatcher pathwatcher
----@field screen screen
----@field settings settings
----@field spaces spaces
----@field timer timer
----@field window window
 hs = {
   ---Run a shell command, returning stdout as a string.
   ---@param command string command to execute
@@ -39,5 +59,28 @@ hs = {
 
   ---Reload the Hammerspoon config
   ---@return nil
-  reload = function() end
+  reload = function() end,
+
+  configdir = "",
+
+  alert = alert,
+  application = application,
+  drawing = drawing,
+  eventtap = eventtap,
+  fs = fs,
+  geometry = geometry,
+  hotkey = hotkey,
+  http = http,
+  image = image,
+  json = json,
+  keycodes = keycodes,
+  layout = layout,
+  logger = logger,
+  mouse = mouse,
+  pathwatcher = pathwatcher,
+  screen = screen,
+  settings = settings,
+  spaces = spaces,
+  timer = timer,
+  window = window,
 }
