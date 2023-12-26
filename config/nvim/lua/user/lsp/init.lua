@@ -123,13 +123,13 @@ M.create_on_attach = function(server_on_attach)
 
     -- add a :Format command and keymap
     if client.server_capabilities.documentFormattingProvider then
-      vim.api.nvim_buf_create_user_command(0, 'Format', function()
-        vim.lsp.buf.format()
-      end, {})
-
-      vim.keymap.set('n', '<leader>F', function()
-        vim.lsp.buf.format()
-      end, opts)
+      -- vim.api.nvim_buf_create_user_command(0, 'Format', function()
+      --   vim.lsp.buf.format()
+      -- end, {})
+      --
+      -- vim.keymap.set('n', '<leader>F', function()
+      --   vim.lsp.buf.format()
+      -- end, opts)
 
       vim.api.nvim_buf_create_user_command(0, 'OrganizeImports', function()
         organize_imports(0)
