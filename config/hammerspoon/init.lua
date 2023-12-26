@@ -13,37 +13,60 @@ raycast.init()
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   logger.i("running layout")
-  window.layout({
-    { app = "Safari", display = monitor, frame = { "left", 0.6 } },
-    { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
-    -- {
-    --   app = "Wavebox",
-    --   win = { "Wavebox:Main", negative = true },
-    --   display = monitor,
-    --   frame = { "left", 0.6 },
-    -- },
-    {
-      app = "WezTerm",
-      display = monitor,
-      frame = { "right", 0.4 },
-    },
-    {
-      app = "Messages",
-      display = "Built-in Retina Display",
-      frame = { "left", 0.3 },
-    },
-    -- {
-    --   app = "Wavebox",
-    --   win = { "Wavebox:Main" },
-    --   display = "Built-in Retina Display",
-    --   frame = { "right", 95 },
-    -- },
-    {
-      app = "Slack",
-      display = "Built-in Retina Display",
-      frame = { "right", 95 },
-    },
-  })
+  if window.isStageManagerEnabled() then
+    window.layout({
+      { app = "Safari", display = monitor, frame = { "right", 0.9 } },
+      { app = "Chrome", display = monitor, frame = { "right", 0.9 } },
+      { app = "Fastmail", display = monitor, frame = { "right", 0.9 } },
+      {
+        app = "WezTerm",
+        display = monitor,
+        frame = { "center", 0.6 },
+      },
+      {
+        app = "Messages",
+        display = "Built-in Retina Display",
+        frame = { "right", 0.6 },
+      },
+      {
+        app = "Slack",
+        display = "Built-in Retina Display",
+        frame = { "right", 95 },
+      },
+    })
+  else
+    window.layout({
+      { app = "Safari", display = monitor, frame = { "left", 0.6 } },
+      { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
+      -- {
+      --   app = "Wavebox",
+      --   win = { "Wavebox:Main", negative = true },
+      --   display = monitor,
+      --   frame = { "left", 0.6 },
+      -- },
+      {
+        app = "WezTerm",
+        display = monitor,
+        frame = { "right", 0.4 },
+      },
+      {
+        app = "Messages",
+        display = "Built-in Retina Display",
+        frame = { "left", 0.3 },
+      },
+      -- {
+      --   app = "Wavebox",
+      --   win = { "Wavebox:Main" },
+      --   display = "Built-in Retina Display",
+      --   frame = { "right", 95 },
+      -- },
+      {
+        app = "Slack",
+        display = "Built-in Retina Display",
+        frame = { "right", 95 },
+      },
+    })
+  end
 end)
 
 -- Move the active window to the center of the display

@@ -42,8 +42,8 @@ local function winMatcher(winTitle, negative)
 end
 
 ---Resize the focused window to fill an area
----@param area 'left'|'right'|'top'|'bottom'
----@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
+---@param area 'left'|'right'|'top'|'bottom'|'center'
+---@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset (not for center)
 ---@param win? hs.window
 local function fill(area, pctOrOffset, win)
   win = win or hs.window.focusedWindow()
@@ -54,7 +54,7 @@ local function fill(area, pctOrOffset, win)
   local width = screenFrame.w
   local height = screenFrame.h
 
-  if area == "left" or area == "right" then
+  if area == "left" or area == "right" or area == "center" then
     if pctOrOffset <= 1 then
       width = pctOrOffset * screenFrame.w - 0.5 * pad
     else
@@ -80,6 +80,9 @@ local function fill(area, pctOrOffset, win)
     else
       top = screenFrame.y + pctOrOffset + 0.5 * pad
     end
+  elseif area == "center" then
+    local margin = (screenFrame.w - width) / 2
+    left = screenFrame.x + margin
   end
 
   return hs.geometry.rect(left, top, width, height)
