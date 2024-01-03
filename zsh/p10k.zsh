@@ -70,7 +70,7 @@
     direnv                  # direnv status (https://direnv.net/)
     npm                     # custom npm registry host
     asdf                    # asdf version manager (https://github.com/asdf-vm/asdf)
-    rtx                     # rtx version manager (https://github.com/jdxcode/rtx)
+    mise                    # mise version manager (https://github.com/jdxcode/mise)
     virtualenv              # python virtual environment (https://docs.python.org/3/library/venv.html)
     anaconda                # conda environment (https://conda.io/)
     pyenv                   # python environment (https://github.com/pyenv/pyenv)
@@ -1714,27 +1714,27 @@
     fi
   }
 
-  typeset -g POWERLEVEL9K_RTX_FOREGROUND=$CYAN
-  typeset -g POWERLEVEL9K_RTX_RUBY_FOREGROUND=$RED
-  typeset -g POWERLEVEL9K_RTX_PYTHON_FOREGROUND=$BLUE
-  typeset -g POWERLEVEL9K_RTX_GOLANG_FOREGROUND=$YELLOW
-  typeset -g POWERLEVEL9K_RTX_NODE_FOREGROUND=$GREEN
-  typeset -g POWERLEVEL9K_RTX_NODE_VISUAL_IDENTIFIER_EXPANSION=''
-  typeset -g POWERLEVEL9K_RTX_RUST_FOREGROUND=$RED
-  typeset -g POWERLEVEL9K_RTX_DOTNET_CORE_FOREGROUND=$BLUE
-  typeset -g POWERLEVEL9K_RTX_FLUTTER_FOREGROUND=$MAGENTA
-  typeset -g POWERLEVEL9K_RTX_LUA_FOREGROUND=$YELLOW
-  typeset -g POWERLEVEL9K_RTX_JAVA_FOREGROUND=$BLUE
-  typeset -g POWERLEVEL9K_RTX_PERL_FOREGROUND=$CYAN
-  typeset -g POWERLEVEL9K_RTX_ERLANG_FOREGROUND=$RED
-  typeset -g POWERLEVEL9K_RTX_ELIXIR_FOREGROUND=$MAGENTA
-  typeset -g POWERLEVEL9K_RTX_POSTGRES_FOREGROUND=$CYAN
-  typeset -g POWERLEVEL9K_RTX_PHP_FOREGROUND=$MAGENTA
-  typeset -g POWERLEVEL9K_RTX_HASKELL_FOREGROUND=$YELLOW
-  typeset -g POWERLEVEL9K_RTX_JULIA_FOREGROUND=$GREEN
+  typeset -g POWERLEVEL9K_MISE_FOREGROUND=$CYAN
+  typeset -g POWERLEVEL9K_MISE_RUBY_FOREGROUND=$RED
+  typeset -g POWERLEVEL9K_MISE_PYTHON_FOREGROUND=$BLUE
+  typeset -g POWERLEVEL9K_MISE_GOLANG_FOREGROUND=$YELLOW
+  typeset -g POWERLEVEL9K_MISE_NODE_FOREGROUND=$GREEN
+  typeset -g POWERLEVEL9K_MISE_NODE_VISUAL_IDENTIFIER_EXPANSION=''
+  typeset -g POWERLEVEL9K_MISE_RUST_FOREGROUND=$RED
+  typeset -g POWERLEVEL9K_MISE_DOTNET_CORE_FOREGROUND=$BLUE
+  typeset -g POWERLEVEL9K_MISE_FLUTTER_FOREGROUND=$MAGENTA
+  typeset -g POWERLEVEL9K_MISE_LUA_FOREGROUND=$YELLOW
+  typeset -g POWERLEVEL9K_MISE_JAVA_FOREGROUND=$BLUE
+  typeset -g POWERLEVEL9K_MISE_PERL_FOREGROUND=$CYAN
+  typeset -g POWERLEVEL9K_MISE_ERLANG_FOREGROUND=$RED
+  typeset -g POWERLEVEL9K_MISE_ELIXIR_FOREGROUND=$MAGENTA
+  typeset -g POWERLEVEL9K_MISE_POSTGRES_FOREGROUND=$CYAN
+  typeset -g POWERLEVEL9K_MISE_PHP_FOREGROUND=$MAGENTA
+  typeset -g POWERLEVEL9K_MISE_HASKELL_FOREGROUND=$YELLOW
+  typeset -g POWERLEVEL9K_MISE_JULIA_FOREGROUND=$GREEN
 
-  function prompt_rtx() {
-    local plugins=("${(@f)$(rtx current)}")
+  function prompt_mise() {
+    local plugins=("${(@f)$(mise current)}")
     local plugin
     for plugin in ${(k)plugins}; do
       local parts=("${(@s/ /)plugin}")

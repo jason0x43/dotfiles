@@ -263,10 +263,10 @@ if (( $+commands[rg] )); then
 	export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep
 fi
 
-# rtx
-if [[ -d $HOME/.local/share/rtx/bin ]]; then
+# mise
+if [[ -d $HOME/.local/share/mise/bin ]]; then
 	path=(
-		$HOME/.local/share/rtx/bin
+		$HOME/.local/share/mise/bin
 		$path
 	)
 fi

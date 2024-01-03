@@ -421,9 +421,9 @@ if [[ ! -d $XDG_CACHE_HOME/tmux ]]; then
     mkdir $XDG_CACHE_HOME/tmux
 fi
 
-# rtx
+# mise
 # ------------------------------------------------------------------------
-eval "$(rtx activate zsh)"
+eval "$(mise activate zsh)"
 
 # Line editor
 # ------------------------------------------------------------------------

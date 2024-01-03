@@ -306,11 +306,11 @@ function dotfiles-brew {
         'fd'              # file finder
         'fzf'             # fuzzy finder
         'git'             # update from system stock git
+        'mise'            # tool version manager
         'oven-sh/bun/bun' # JS/TS runtime
         'pdm'             # python package manager
         'python'          # default python
         'ripgrep'         # better grep
-        'jdxcode/tap/rtx' # tool version manager
         'tig'             # terminal git ui
     )
 
@@ -363,9 +363,9 @@ function dotfiles-brew {
         op completion zsh >! $ZDATADIR/functions/_op
     fi
 
-    # Update rtx zsh completions
-    if (( $+commands[rtx] )); then
-        rtx complete --shell zsh >! $ZDATADIR/functions/_rtx
+    # Update mise zsh completions
+    if (( $+commands[mise] )); then
+        mise complete --shell zsh >! $ZDATADIR/functions/_mise
     fi
 
     # Update bun zsh completions
