@@ -271,11 +271,6 @@ if [[ -d $HOME/.local/share/mise/bin ]]; then
 	)
 fi
 
-# wezterm
-if (( $+commands[wezterm] )); then
-	export WEZTERM_CONFIG_FILE=$XDG_CONFIG_HOME/wezterm/config.lua
-fi
-
 # Add user dirs to path
 # --------------------------------------------------------------------------
 path=($DOTFILES/bin $path)
