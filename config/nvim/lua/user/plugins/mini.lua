@@ -145,6 +145,9 @@ return {
       vim.keymap.set('n', '<leader>h', function()
         MiniPick.builtin.help()
       end)
+      vim.keymap.set('n', '<leader>m', function()
+        MiniExtra.pickers.git_files({ scope = 'modified' })
+      end)
       vim.keymap.set('n', '<leader>lr', function()
         MiniExtra.pickers.lsp({ scope = 'references' })
       end)
@@ -201,12 +204,41 @@ return {
       -- start screen
       local starter = require('mini.starter')
       local height = vim.fn.winheight(0)
+      local filter = function(lister)
+        return function()
+          return vim.tbl_filter(function(f)
+            return f.name:find('COMMIT_EDITMSG') == nil
+          end, lister())
+        end
+      end
       starter.setup({
         header = table.concat(headers.block, '\n'),
         footer = '',
         items = {
-          starter.sections.recent_files((height - 10) / 2, true),
-          starter.sections.recent_files((height - 10) / 2, false),
+          function()
+            local git_status =
+              vim.fn.systemlist({ 'git', 'status', '--porcelain=v1' })
+            local git_root = vim.fn.trim(
+              vim.fn.system({ 'git', 'rev-parse', '--show-toplevel' })
+            )
+            local git_items = {}
+            for _, line in pairs(git_status) do
+              if line:find('^ [AM] ') then
+                local relative = vim.fn.trim(line:sub(4), '"')
+                local absolute = git_root .. '/' .. relative
+                print(absolute)
+
+                table.insert(git_items, {
+                  name = relative,
+                  action = 'edit ' .. absolute,
+                  section = 'Modified files',
+                })
+              end
+            end
+            return git_items
+          end,
+          filter(starter.sections.recent_files((height - 10) / 3, true)),
+          filter(starter.sections.recent_files((height - 10) / 3, false)),
         },
       })
 
@@ -215,6 +247,9 @@ return {
 
       -- bracket movement
       require('mini.bracketed').setup()
+
+      -- jumping around
+      require('mini.jump2d').setup()
     end,
   },
 }

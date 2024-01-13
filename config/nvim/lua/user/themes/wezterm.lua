@@ -374,6 +374,8 @@ local function apply_theme(c)
   hi('MiniStatuslineHint', { fg = hint, bg = c.bg_2 })
   hi('MiniStarterCurrent', { bg = c.bg_2 })
 
+  hi('MiniJump2dSpot', { bg = c.bg_1, fg = c.fg_1, bold = true })
+
   hilink('LspDiagnosticsDefaultHint', 'DiagnosticHint')
   hilink('LspDiagnosticsDefaultInformation', 'DiagnosticInfo')
   hilink('LspDiagnosticsDefaultWarning', 'DiagnosticWarn')
