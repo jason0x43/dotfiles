@@ -21,6 +21,11 @@ autocmd('FileType', 'text,textile,markdown,html', function()
   util.text_mode()
 end)
 
+-- disable yaml comment indent
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "yaml",
+	command = "set indentkeys-=0#"
+})
 -- better formatting for JavaScript
 autocmd('FileType', 'javascript', function()
   vim.bo.formatprg = nil
