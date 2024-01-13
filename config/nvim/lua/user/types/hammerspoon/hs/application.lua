@@ -10,21 +10,26 @@ local watcher = {
 }
 
 ---@class application.watcher
----@field activated string
----@field deactivated string
----@field hidden string
----@field launched string
----@field launching string
----@field terminated string
----@field unhidden string
 local appwatcher = {
   ---@param fn fun(name: string, evtType: string, app: hs.application): nil
   ---@return hs.application.watcher
-  new = function(fn) end
+  new = function(fn) end,
+
+  activated = '',
+  deactivated = '',
+  hidden = '',
+  launched = '',
+  launching = '',
+  terminated = '',
+  unhidden = '',
 }
 
 ---@class hs.application
 local application = {
+  ---Ativate this application
+  ---@return nil
+  activate = function() end,
+
   ---Return the name of this application
   ---@return string
   name = function() end,
@@ -49,5 +54,5 @@ return {
   ---@return hs.application[]
   runningApplications = function() end,
 
-  watcher = appwatcher
+  watcher = appwatcher,
 }
