@@ -31,8 +31,8 @@ __pycache__/
 .envrc
 .direnv/
 
-# rtx config files
-.rtx.toml
+# mise config files
+.mise.toml
  
 # watchman config files
 .watchmanconfig
