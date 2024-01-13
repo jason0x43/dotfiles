@@ -32,6 +32,11 @@ autocmd('BufEnter', '*.*', function()
   require('user.util').show_view_width()
 end)
 
+autocmd('BufReadPost', '*', function()
+  -- make the buffer name a relative path
+  vim.cmd('silent! lcd .')
+end)
+
 autocmd('VimResized', '*', function()
   -- automatically resize splits
   vim.api.nvim_command('wincmd =')
