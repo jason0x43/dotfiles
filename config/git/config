@@ -105,6 +105,8 @@
 	status = S !?git stash save --keep-index %(prompt)
 	status = + !git commit --amend
 	main = = !git edit-commit %(commit)
+	main = R !git rebase -i %(commit)^
+	diff = R !git rebase -i %(commit)^
 
 [url "git@github.com:"]
 	insteadOf = gh:
