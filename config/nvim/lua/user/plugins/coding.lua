@@ -14,6 +14,13 @@ return {
         formatters_by_ft = {
           lua = { 'stylua' },
           html = { 'prettier' },
+          javascript = { 'prettier' },
+          javascriptreact = { 'prettier' },
+          json = { 'prettier' },
+          jsonc = { 'prettier' },
+          markdown = { 'prettier' },
+          typescript = { 'prettier' },
+          typescriptreact = { 'prettier' },
           swift = { 'swift_format' },
         },
       }
@@ -26,6 +33,9 @@ return {
       local lint = require('lint')
 
       lint.linters.tidy.ignore_exitcode = true
+      lint.linters_by_ft.json = {}
+      -- lint.linters_by_ft.text = {}
+      -- lint.linters_by_ft.markdown = {}
 
       if vim.fn.executable('htmlhint') == 1 then
         lint.linters.htmlhint = {
@@ -61,6 +71,23 @@ return {
           end,
         }
       )
+
+      vim.api.nvim_create_user_command('LintInfo', function()
+        local runningLinters = table.concat(require('lint').get_running(), '\n')
+        if runningLinters == '' then
+          vim.notify(
+            'No running linters',
+            vim.log.levels.INFO,
+            { title = 'nvim-lint' }
+          )
+        else
+          vim.notify(
+            runningLinters,
+            vim.log.levels.INFO,
+            { title = 'nvim-lint' }
+          )
+        end
+      end, {})
     end,
   },
 }
