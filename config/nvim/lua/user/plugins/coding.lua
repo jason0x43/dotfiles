@@ -12,6 +12,7 @@ return {
 
       return {
         formatters_by_ft = {
+          css = { 'prettier' },
           lua = { 'stylua' },
           html = { 'prettier' },
           javascript = { 'prettier' },
