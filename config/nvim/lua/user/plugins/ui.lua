@@ -22,25 +22,6 @@ return {
     end,
   },
 
-  -- Popup notifications
-  {
-    'rcarriga/nvim-notify',
-
-    opts = function()
-      vim.notify = require('notify')
-      if vim.go.termguicolors then
-        return {
-          timeout = 1000,
-        }
-      end
-
-      return {
-        timeout = 3000,
-        stages = 'static',
-      }
-    end,
-  },
-
   {
     'stevearc/dressing.nvim',
     opts = {

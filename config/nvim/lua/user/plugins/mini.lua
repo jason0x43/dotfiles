@@ -105,7 +105,9 @@ return {
   -- many things
   {
     'echasnovski/mini.nvim',
-    version = '*',
+
+    version = false,
+
     config = function()
       -- file tree / explorer
       require('mini.files').setup({
@@ -150,6 +152,12 @@ return {
       end)
       vim.keymap.set('n', '<leader>lr', function()
         MiniExtra.pickers.lsp({ scope = 'references' })
+      end)
+      vim.keymap.set('n', '<leader>vp', function()
+        MiniExtra.pickers.visit_paths()
+      end)
+      vim.keymap.set('n', '<leader>vl', function()
+        MiniExtra.pickers.visit_labels()
       end)
 
       -- buffer deletion
@@ -226,10 +234,10 @@ return {
               if line:find('^ [AM] ') then
                 local relative = vim.fn.trim(line:sub(4), '"')
                 local absolute = git_root .. '/' .. relative
-                print(absolute)
+                local file = vim.fn.fnamemodify(absolute, ':t')
 
                 table.insert(git_items, {
-                  name = relative,
+                  name = file .. ' (' .. relative .. ')',
                   action = 'edit ' .. absolute,
                   section = 'Modified files',
                 })
@@ -250,6 +258,13 @@ return {
 
       -- jumping around
       require('mini.jump2d').setup()
+
+      -- notifications
+      require('mini.notify').setup()
+      vim.notify = require('mini.notify').make_notify()
+
+      -- location and label tracking
+      require('mini.visits').setup()
     end,
   },
 }
