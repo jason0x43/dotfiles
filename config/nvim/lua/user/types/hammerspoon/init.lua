@@ -61,7 +61,7 @@ hs = {
   ---@return nil
   reload = function() end,
 
-  configdir = "",
+  configdir = '',
 
   alert = alert,
   application = application,

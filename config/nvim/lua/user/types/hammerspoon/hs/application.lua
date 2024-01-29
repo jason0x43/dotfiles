@@ -54,5 +54,9 @@ return {
   ---@return hs.application[]
   runningApplications = function() end,
 
+  ---Enable or disable using Spotlight for name searches
+  ---@param enable boolean
+  enableSpotlightForNameSearches = function(enable) end,
+
   watcher = appwatcher,
 }
