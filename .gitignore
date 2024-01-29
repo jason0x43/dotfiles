@@ -11,3 +11,4 @@ config/kitty/kitty.d/*.conf
 config/kitty/colors.conf
 config/direnv/allow
 .tool-versions
+zsh/.zsh_sessions

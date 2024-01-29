@@ -304,7 +304,4 @@ fi
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshenv ]] && source $ZCONFDIR/zshenv
 
-# Disable global zprofile, which messes with the path
-unsetopt GLOBAL_RCS
-
 # vim:shiftwidth=4:tabstop=4:noexpandtab
