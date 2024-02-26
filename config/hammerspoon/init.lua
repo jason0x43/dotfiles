@@ -25,6 +25,8 @@ end
 
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
+  logger.i("Laying out");
+
   local layout = {}
   local layouts = {
     Safari = { app = "Safari", display = monitor, frame = { "left", 0.6 } },
@@ -75,7 +77,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
     table.insert(layout, layouts.Safari)
   end
 
-  if contains_app(apps, "Chrome") then
+  if contains_app(apps, "Google Chrome") then
     table.insert(layout, layouts.Chrome)
   end
 
