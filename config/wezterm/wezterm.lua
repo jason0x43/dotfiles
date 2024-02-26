@@ -7,20 +7,7 @@ local session = require("user.session")
 local wez_action = wezterm.action
 
 -- Style the tabs
-wezterm.on("format-tab-title", function(tab, _, _, _, hover, max_width)
-  local colors = active_scheme.get()
-  if not colors then
-    return
-  end
-
-  local background = colors.tab_bar.inactive_tab.bg_color
-  local foreground = colors.tab_bar.inactive_tab.fg_color
-
-  if tab.is_active or hover then
-    background = colors.tab_bar.active_tab.bg_color
-    foreground = colors.tab_bar.active_tab.fg_color
-  end
-
+wezterm.on("format-tab-title", function(tab, _, _, _, _, max_width)
   local tab_title = tab.tab_title
   if tab_title == nil or #tab_title == 0 then
     tab_title = tab.active_pane.title
@@ -31,8 +18,6 @@ wezterm.on("format-tab-title", function(tab, _, _, _, hover, max_width)
   local title = "  " .. wezterm.truncate_right(tab_title, max_width - 4) .. "  "
 
   return {
-    { Background = { Color = background } },
-    { Foreground = { Color = foreground } },
     { Text = title },
   }
 end)
