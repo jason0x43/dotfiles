@@ -130,7 +130,7 @@ return {
       vim.keymap.set('n', '<leader>f', function()
         local in_worktree = require('user.util').in_git_dir()
         if in_worktree then
-          MiniPick.builtin.files({ tool = 'git' })
+          MiniExtra.pickers.git_files()
         else
           MiniPick.builtin.files()
         end
@@ -223,28 +223,6 @@ return {
         header = table.concat(headers.block, '\n'),
         footer = '',
         items = {
-          function()
-            local git_status =
-              vim.fn.systemlist({ 'git', 'status', '--porcelain=v1' })
-            local git_root = vim.fn.trim(
-              vim.fn.system({ 'git', 'rev-parse', '--show-toplevel' })
-            )
-            local git_items = {}
-            for _, line in pairs(git_status) do
-              if line:find('^ [AM] ') then
-                local relative = vim.fn.trim(line:sub(4), '"')
-                local absolute = git_root .. '/' .. relative
-                local file = vim.fn.fnamemodify(absolute, ':t')
-
-                table.insert(git_items, {
-                  name = file .. ' (' .. relative .. ')',
-                  action = 'edit ' .. absolute,
-                  section = 'Modified files',
-                })
-              end
-            end
-            return git_items
-          end,
           filter(starter.sections.recent_files((height - 10) / 3, true)),
           filter(starter.sections.recent_files((height - 10) / 3, false)),
         },
