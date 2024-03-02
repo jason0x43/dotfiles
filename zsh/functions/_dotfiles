@@ -3,7 +3,6 @@
 _dotfiles_commands() {
   local -a commands
   commands=(
-    'asdf:Update asdf plugins, install defaults'
     'bat:Rebuild bat theme and filetype cache'
     'brew:Update brew packages, install defaults'
     'home:Update dotfiles and home directories, fixup terminfo database'
