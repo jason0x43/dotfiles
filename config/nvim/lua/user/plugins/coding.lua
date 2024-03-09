@@ -39,25 +39,6 @@ return {
       -- lint.linters_by_ft.markdown = {}
 
       if vim.fn.executable('htmlhint') == 1 then
-        lint.linters.htmlhint = {
-          name = 'htmlhint',
-          cmd = 'htmlhint',
-          env = { ['NODE_OPTIONS'] = '--no-deprecation' },
-          stdin = true,
-          args = { 'stdin', '-f', 'compact' },
-          stream = 'stdout',
-          ignore_exitcode = true,
-          parser = require('lint.parser').from_pattern(
-            '.*: line (%d+), col (%d+), (%a+) %- (.+) %((.+)%)',
-            { 'lnum', 'col', 'severity', 'message', 'code' },
-            {
-              error = vim.diagnostic.severity.ERROR,
-              warning = vim.diagnostic.severity.WARN,
-            },
-            { source = 'htmlhint' }
-          ),
-        }
-
         lint.linters_by_ft.html = { 'htmlhint' }
       else
         lint.linters_by_ft.html = { 'tidy' }
@@ -68,6 +49,11 @@ return {
         {
           group = vim.api.nvim_create_augroup('nvim-lint', { clear = true }),
           callback = function()
+            -- Don't run linters in JS projects, because those should have
+            -- more specific tooling
+            if require('lspconfig').util.root_pattern('package.json') then
+              return
+            end
             require('lint').try_lint()
           end,
         }
