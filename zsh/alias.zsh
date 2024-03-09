@@ -193,7 +193,6 @@ if (( $+commands[exa] )); then
     alias la='ls -a'
     alias l='ls -1a'
     alias lg='ll --git'
-    alias le='ll --extended'
 fi
 
 if (( $+commands[docker] )); then
