@@ -40,6 +40,16 @@
 
         # Add ability to used TouchID for sudo authentication
         security.pam.enableSudoTouchIdAuth = true;
+
+        # Configure macOS system options
+        system.defaults = {
+          dock.autohide = true;
+          dock.mru-spaces = false;
+          finder.AppleShowAllExtensions = true;
+          finder.FXPreferredViewStyle = "clmv";
+          screencapture.location = "~/Desktop";
+          screensaver.askForPasswordDelay = 10;
+        };
       };
     in
     {
