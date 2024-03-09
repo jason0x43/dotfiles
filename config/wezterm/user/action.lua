@@ -16,8 +16,8 @@ local vim_dir_map = {
 function M.move_action(dir)
 	return action_callback(function(window, pane)
 		local name = pane:get_foreground_process_name()
-		local timeout = util.homebrew_base() .. "/timeout"
-		local nvim = util.homebrew_base() .. "/nvim"
+		local timeout = util.find_app("timeout")
+		local nvim = util.find_app("nvim")
 
 		if name ~= nil and pane:get_foreground_process_name():sub(-4) == "nvim" then
 			-- Try to do the move in vim. If it doesn't work, do the move in
