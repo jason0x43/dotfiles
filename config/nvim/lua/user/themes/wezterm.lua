@@ -342,6 +342,17 @@ local function apply_theme(c)
   hilink('@variable', 'Identifier')
   hilink('@keyword', 'Keyword')
 
+  hi('@markup.strong', { bold = true })
+  hi('@markup.emphasis', { bold = true, italic = true })
+  hi('@markup.italic', { italic = true })
+  hi('@markup.underline', { underline = true })
+  hi('@markup.strike', { strikethrough = true })
+  hi('@markup.link.label', { fg = c.blue })
+  hilink('@markup.link', 'Underlined')
+  hilink('@markup.list', 'Delimiter')
+  hilink('@markup.raw', 'String')
+  hilink('@markup.heading', 'Title')
+
   hilink('typescriptBraces', 'Delimiter')
   hilink('typescriptParens', 'Delimiter')
 
