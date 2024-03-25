@@ -6,95 +6,102 @@ local ui = require("ui")
 
 local logger = hs.logger.new("init", "info")
 local monitor = "PHL 272P7VU"
+local built_in_display = "Built-in Retina Display"
 
 settings.init("settings.json")
 raycast.init()
 
 hs.application.enableSpotlightForNameSearches(true)
 
----@param apps hs.application[]
----@param name string
-local function contains_app(apps, name)
-  for _, app in pairs(apps) do
-    if app:name() == name then
-      return true
-    end
-  end
-  return false
-end
-
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
-  logger.i("Laying out");
+  logger.i("Laying out")
 
+  ---@type table<number, { app: string, display: string, frame: table<string, number> }>
   local layout = {}
-  local layouts = {
-    Safari = { app = "Safari", display = monitor, frame = { "left", 0.6 } },
-    Chrome = { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
-    WezTerm = { app = "WezTerm", display = monitor, frame = { "right", 0.4 } },
-    Messages = {
-      app = "Messages",
-      display = "Built-in Retina Display",
-      frame = { "left", 0.3 },
-    },
-    Slack = {
-      app = "Slack",
-      display = "Built-in Retina Display",
-      frame = { "right", 95 },
-    },
-  }
 
+  ---@type table<string, { app: string, display: string, frame: table<string, number> }>
+  local layouts = {}
+
+  ---@type table<string, boolean>
+  local apps = {}
+
+  for _, app in pairs(hs.application.runningApplications()) do
+    apps[app:name()] = true
+  end
+
+  -- If Stage Manager is enabled, assume only the built-in display is in use.
+  -- Otherwise, assume the external display is in use.
   if window.isStageManagerEnabled() then
     layouts = {
-      Safari = { app = "Safari", display = monitor, frame = { "right", 0.9 } },
-      Chrome = { app = "Chrome", display = monitor, frame = { "right", 0.9 } },
+      Safari = {
+        app = "Safari",
+        display = built_in_display,
+        frame = { "right", 0.9 },
+      },
+      Chrome = {
+        app = "Chrome",
+        display = built_in_display,
+        frame = { "right", 0.9 },
+      },
       Fastmail = {
         app = "Fastmail",
-        display = monitor,
+        display = built_in_display,
         frame = { "right", 0.9 },
       },
       WezTerm = {
         app = "WezTerm",
-        display = monitor,
+        display = built_in_display,
         frame = { "center", 0.6 },
       },
       Messages = {
         app = "Messages",
-        display = "Built-in Retina Display",
-        frame = { "right", 0.6 },
+        display = built_in_display,
+        frame = { "center", 0.4 },
       },
       Slack = {
         app = "Slack",
-        display = "Built-in Retina Display",
+        display = built_in_display,
+        frame = { "right", 160 },
+      },
+      Mail = {
+        app = "Mail",
+        display = built_in_display,
+        frame = { "right", 160 },
+      },
+      CARROTweather = {
+        app = "CARROTweather",
+        display = built_in_display,
+        frame = { "right", 160 },
+      },
+    }
+  else
+    layouts = {
+      Safari = { app = "Safari", display = monitor, frame = { "left", 0.6 } },
+      Chrome = { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
+      WezTerm = { app = "WezTerm", display = monitor, frame = { "right", 0.4 } },
+      Messages = {
+        app = "Messages",
+        display = built_in_display,
+        frame = { "left", 0.3 },
+      },
+      Slack = {
+        app = "Slack",
+        display = built_in_display,
         frame = { "right", 95 },
       },
     }
   end
 
-  local apps = hs.application.runningApplications()
+  ---@type table<string, boolean>
+  local laid_out_apps = {}
 
-  if contains_app(apps, "Safari") then
-    table.insert(layout, layouts.Safari)
-  end
-
-  if contains_app(apps, "Google Chrome") then
-    table.insert(layout, layouts.Chrome)
-  end
-
-  if contains_app(apps, "Fastmail") then
-    table.insert(layout, layouts.Fastmail)
-  end
-
-  if contains_app(apps, "WezTerm") then
-    table.insert(layout, layouts.WezTerm)
-  end
-
-  if contains_app(apps, "Messages") then
-    table.insert(layout, layouts.Messages)
-  end
-
-  if contains_app(apps, "Slack") then
-    table.insert(layout, layouts.Slack)
+  for app, _ in pairs(apps) do
+    logger.i(app)
+    if layouts[app] ~= nil and laid_out_apps[app] == nil then
+      table.insert(layout, layouts[app])
+      laid_out_apps[app] = true
+    end
   end
 
   window.layout(layout)
