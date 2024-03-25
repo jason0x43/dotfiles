@@ -23,7 +23,18 @@ return {
   },
 
   on_attach = function(client)
-    -- disable formatting in favor of null_ls
+    -- disable formatting in favor of conform
     client.server_capabilities.documentFormattingProvider = false
+
+    -- print(vim.inspect(client.server_capabilities))
+
+    -- use angular LS for renames
+    if require('user.util.lsp').server_is_available('angularls') then
+      local exists = vim.fn.findfile('angular.json', '.;')
+      if exists ~= '' then
+        client.server_capabilities.renameProvider = false
+        -- client.server_capabilities.referencesProvider = false
+      end
+    end
   end,
 }
