@@ -128,6 +128,13 @@ M.create_on_attach = function(server_on_attach)
       end, {})
     end
 
+    if client.server_capabilities.documentSymbolProvider then
+      local ok, navic = pcall(require, 'nvim-navic')
+      if ok then
+        navic.attach(client, bufnr)
+      end
+    end
+
     -- keymap to show error diagnostic popup
     vim.keymap.set('n', '<leader>d', function()
       vim.diagnostic.open_float({

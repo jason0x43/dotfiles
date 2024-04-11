@@ -103,4 +103,27 @@ return {
       },
     },
   },
+
+  {
+    'SmiteshP/nvim-navic',
+    config = true,
+  },
+
+  {
+    'utilyre/barbecue.nvim',
+    name = 'barbecue',
+    version = '*',
+    dependencies = {
+      'SmiteshP/nvim-navic',
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = function()
+      local colors = require('user.themes.wezterm').load_colors()
+      return {
+        theme = {
+          normal = { fg = colors.fg_0, bg = colors.bg_1 }
+        },
+      }
+    end,
+  },
 }
