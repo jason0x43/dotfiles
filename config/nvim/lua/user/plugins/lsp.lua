@@ -36,9 +36,6 @@ return {
     },
   },
 
-  -- basic language server support
-  'neovim/nvim-lspconfig',
-
   -- language server manager
   {
     'williamboman/mason-lspconfig.nvim',
@@ -67,6 +64,7 @@ return {
   -- diagnostics display
   {
     'folke/trouble.nvim',
+    branch = 'dev',
     event = 'BufEnter',
     dependencies = 'nvim-tree/nvim-web-devicons',
     config = true,
