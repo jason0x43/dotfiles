@@ -103,11 +103,6 @@ o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
 -- show line numbers if the window is wide enough
 o.number = vim.go.columns >= 88
 
--- set python version for pyx commands
-if vim.fn.has('pythonx') == 1 then
-  o.pyxversion = 3
-end
-
 -- use ripgrep if available
 if vim.fn.executable('rg') then
   o.grepprg = 'rg --no-heading --color=never'
