@@ -149,13 +149,40 @@ return {
       'SmiteshP/nvim-navic',
       'nvim-tree/nvim-web-devicons',
     },
-    opts = function()
+    config = function()
       local colors = require('user.themes.wezterm').load_colors()
-      return {
+
+      -- triggers CursorHold event faster
+      vim.opt.updatetime = 200
+
+      require('barbecue').setup({
+        -- prevent barbecue from updating itself automatically
+        create_autocmd = false,
+
+        exclude_filetypes = { "netrw", "toggleterm", "starter" },
+
         theme = {
-          normal = { fg = colors.fg_0, bg = colors.bg_1 }
+          normal = { fg = colors.fg_0, bg = colors.bg_1 },
         },
-      }
+      })
+
+      vim.api.nvim_create_autocmd({
+        'WinScrolled', -- or WinResized on NVIM-v0.9 and higher
+        'BufWinEnter',
+        'CursorHold',
+        'InsertLeave',
+
+        -- include this if you have set `show_modified` to `true`
+        'BufModifiedSet',
+      }, {
+        group = vim.api.nvim_create_augroup('barbecue.updater', {}),
+        callback = function()
+          require('barbecue.ui').update()
+        end,
+      })
+
+      -- hide barbecue by default
+      require('barbecue.ui').toggle(false)
     end,
   },
 }
