@@ -458,13 +458,14 @@ function dotfiles-node {
 	return
     fi
 
-    log "Updating package managers..."
+    # log "Updating package managers..."
+    # TODO: disable corepack for now
 
-    if (( $+commands[corepack] )); then
-        corepack prepare pnpm@latest --activate
-        corepack prepare npm@latest --activate
-        corepack prepare yarn@1 --activate
-    fi
+    # if (( $+commands[corepack] )); then
+    #     corepack prepare pnpm@latest --activate
+    #     corepack prepare npm@latest --activate
+    #     corepack prepare yarn@1 --activate
+    # fi
 
     log "Updating global node packages..."
 
