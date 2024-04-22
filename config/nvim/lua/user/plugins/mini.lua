@@ -2,7 +2,7 @@
 ---@param sl any
 ---@param args table
 local function section_lsps(sl, args)
-  local clients = vim.lsp.get_active_clients()
+  local clients = vim.lsp.get_clients()
   local client_names = {}
 
   for _, client in pairs(clients) do
