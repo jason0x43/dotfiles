@@ -187,8 +187,8 @@ if (( $+commands[bat] )); then
 fi
 
 # Better ls
-if (( $+commands[exa] )); then
-    alias ls='exa -F'
+if (( $+commands[eza] )); then
+    alias ls='eza -F'
     alias lt='ls -T'
     alias la='ls -a'
     alias l='ls -1a'
