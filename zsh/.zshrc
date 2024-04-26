@@ -501,6 +501,11 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
+if (( $+commands[git] )); then
+    export GIT_COMMITTER_NAME=$(git config --get user.name)
+    export GIT_COMMITTER_EMAIL=$(git config --get user.email)
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
