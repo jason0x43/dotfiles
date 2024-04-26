@@ -84,7 +84,7 @@ o.showmode = false
 o.mouse = 'a'
 
 -- enable truecolor mode
-if os.getenv('SSH_CLIENT') ~= nil or os.getenv('TERM') == 'xterm-color' then
+if os.getenv('TERM') == 'xterm-color' then
 	o.termguicolors = false
 else
 	o.termguicolors = true
