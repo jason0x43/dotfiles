@@ -2,8 +2,14 @@
 ---@param sl any
 ---@param args table
 local function section_lsps(sl, args)
-  local clients = vim.lsp.get_clients()
+  local clients
   local client_names = {}
+
+  if vim.lsp.get_clients ~= nil then
+    clients = vim.lsp.get_clients()
+  else
+    clients = vim.lsp.get_active_clients()
+  end
 
   for _, client in pairs(clients) do
     table.insert(client_names, client.name)
