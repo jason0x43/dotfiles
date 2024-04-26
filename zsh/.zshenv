@@ -168,11 +168,8 @@ if [[ -d $HOMEBREW_BASE/lib/ruby/gems/3.0.0 ]]; then
 fi
 
 # Rust
-if [[ -d $HOME/.cargo/bin ]]; then
-	path=(
-		$HOME/.cargo/bin
-		$path
-	)
+if [[ -f $HOME/.cargo/env ]]; then
+	. $HOME/.cargo/env
 fi
 
 # sqlite3
@@ -283,11 +280,6 @@ fi
 # From go install
 if [[ -d $GOPATH ]]; then
 	path=($GOPATH/bin $path)
-fi
-
-# From cargo install
-if [[ -d $HOME/.cargo/bin ]]; then
-	path=($HOME/.cargo/bin $path)
 fi
 
 # Local apps
