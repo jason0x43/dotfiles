@@ -220,7 +220,12 @@ return {
         end
       end
       starter.setup({
-        header = table.concat(headers.block, '\n'),
+        header = function()
+          vim.keymap.set('n', '<ESC>', function()
+            starter.close()
+          end, { buffer = 0 })
+          return table.concat(headers.block, '\n')
+        end,
         footer = '',
         items = {
           filter(starter.sections.recent_files((height - 10) / 3, true)),
