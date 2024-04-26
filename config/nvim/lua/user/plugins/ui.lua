@@ -30,4 +30,26 @@ return {
       },
     },
   },
+
+  {
+    "JManch/sunset.nvim",
+    lazy = false,
+    enabled = function()
+      local locfile = vim.fn.expand('~/.config/location.json')
+      return vim.fn.filereadable(locfile)
+    end,
+    opts = function()
+      local locfile = vim.fn.expand('~/.config/location.json')
+      if vim.fn.filereadable(locfile) == 0 then
+        print('not readable')
+        return
+      end
+      local location = vim.fn.json_decode(vim.fn.join(vim.fn.readfile(locfile)))
+
+      return {
+        latitude = location["latitude"],
+        longitude = location["longitude"]
+      }
+    end
+  }
 }

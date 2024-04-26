@@ -446,6 +446,15 @@ function M.apply()
   apply_theme(colors)
 
   vim.api.nvim_exec_autocmds('ColorScheme', {})
+
+  -- reload the theme if the background changes
+  vim.api.nvim_create_autocmd('OptionSet', {
+    pattern = 'background',
+    callback = function()
+      local colors = M.load_colors()
+      apply_theme(colors)
+    end
+  })
 end
 
 ---@return Palette | CtermPalette
@@ -455,7 +464,10 @@ function M.load_colors()
     local ok, colors_text = pcall(vim.fn.readfile, colors_file)
 
     if not ok then
-      return palettes.white
+      if vim.go.background == 'light' then
+        return palettes.white
+      end
+      return palettes.black
     else
       local scheme = vim.fn.json_decode(colors_text)
       ---@cast scheme table
