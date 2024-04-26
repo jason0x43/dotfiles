@@ -1735,6 +1735,10 @@
   typeset -g POWERLEVEL9K_MISE_JULIA_FOREGROUND=$GREEN
 
   function prompt_mise() {
+    if (( ! $+commands[mise] )); then
+      return
+    fi
+
     local plugins=("${(@f)$(mise current)}")
     local plugin
     for plugin in ${(k)plugins}; do
