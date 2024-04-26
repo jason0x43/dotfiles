@@ -4,6 +4,11 @@ autoload colors; colors
 
 source $HOME/.dotfiles/zsh/common.zsh
 
+export HOMEBREW_AUTO_UPDATE_SECS=300
+
+INSTALL=0
+GROUP=""
+
 if [ -d $HOMEBREW_BASE ]; then
     export PATH=$HOMEBREW_BASE/bin:$PATH
 fi
@@ -107,11 +112,9 @@ function dotfiles-health {
     local os=$(uname)
 
     checkcmd brew
-    checkcmd tmux
 
     if [[ $os == "Linux" ]]; then
         checkcmd unzip 1
-        checkcmd xclip
     fi
 }
 
@@ -129,63 +132,18 @@ function dotfiles-bat {
     fi
 }
 
-# Install build tools necessary for building other things like python
-function dotfiles-buildtools {
-    log "Installing build tools..."
-    local out=""
-    local code=""
-
-    if [[ $OSTYPE == linux* ]]; then
-        local installed_packages=($(dpkg-query --show --showformat '${Package}\n'))
-        local desired_packages=(
-            make
-            build-essential
-            libssl-dev
-            zlib1g-dev
-            libbz2-dev
-            libreadline-dev
-            libsqlite3-dev
-            wget
-            curl
-            llvm
-            libncursesw5-dev
-            xz-utils
-            tk-dev
-            libxml2-dev
-            libxmlsec1-dev
-            libffi-dev
-            liblzma-dev
-        )
-        for pkg in $desired_packages; do
-            if ((! $installed_packages[(Ie)$pkg])); then
-                out=$(sudo apt install -y $pkg 2>&1)
-                if (( $? )); then
-                    err "Error installing $pkg"
-                    err $out
-                else
-                    logSub "Installed $pkg"
-                fi
-            fi
-        done
-    else
-        out=$(brew install openssl readline sqlite3 xz zlib 2>&1)
-        if (( $? )); then
-            err "Error installing build tools"
-            err $out
-        fi
-    fi
-}
-
 # Install terminal fonts
 function dotfiles-fonts {
-    log "Installing terminal fonts..."
+    if [[ $INSTALL == "1" ]]; then
+        log "Installing terminal fonts..."
 
-    if [[ $OSTYPE == darwin* ]]; then
-        local fonts
-        fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
-        if (( ${#fonts} == 0 )) then
-            curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf"
-            logSub "Installed Symbols-1000-em Nerd Font Complete"
+        if [[ $OSTYPE == darwin* ]]; then
+            local fonts
+            fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
+            if (( ${#fonts} == 0 )) then
+                curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf"
+                logSub "Installed Symbols-1000-em Nerd Font Complete"
+            fi
         fi
     fi
 }
@@ -217,27 +175,11 @@ function dotfiles-home {
         link $f $XDG_CONFIG_HOME/$f:t
     done
 
-    makedir $XDG_CACHE_HOME/tmux/resurrect
     makedir $XDG_CACHE_HOME/zsh
     makedir $XDG_CACHE_HOME/direnv/allow
 
-    # Fix the terminal definition so that C-H works properly in neovim. This
-    # function may also need to be run for the tmux terminal type.
+    # Fix the terminal definition so that C-H works properly in neovim.
     fixterm
-}
-
-# Install terminal fonts
-function dotfiles-fonts {
-    log "Installing terminal fonts..."
-    local fonts
-
-    if [[ $OSTYPE == darwin* ]]; then
-        fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
-        if (( ${#fonts} == 0 )) then
-            curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" 'https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf'
-            logSub "Installed Symbols font"
-        fi
-    fi
 }
 
 # Link and activate launchd scripts
@@ -256,8 +198,12 @@ function dotfiles-launchd {
 # Install or update rust
 function dotfiles-rust {
     if (( ! $+commands[rustup] )); then
-        log "Installing rust..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        if [[ $INSTALL == "1" ]]; then
+            log "Installing rust..."
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+        else
+            logSub "Skipping rust install because install is disabled"
+        fi
     else
         log "Updating rust..."
         rustup update
@@ -265,141 +211,85 @@ function dotfiles-rust {
 }
 
 # Install homebrew and core packages, update packages
-function dotfiles-brew {
-    log "Updating brew..."
+function dotfiles-init {
+    if [[ $INSTALL == "1" ]]; then
+        if [[ $OSTYPE == linux* ]] && (( $+commands[apt] )); then
+            if (( ! $+commands[brew] )); then
+                logSub "Installing essential build packages..."
+                sudo apt-get update
+                sudo apt-get install -Y build-essential procps curl file git unzip zlib1g-dev
 
-    if [[ $OSTYPE == linux* ]]; then
-        if (( ! $+commands[git] )) || (( ! $+commands[gcc] )) || (( ! $+commands[curl] )); then
-            logSub "Installing system requirements..."
-            sudo apt-get update
-            sudo apt-get install -y build-essential curl file git || true
+                if [[ $(passwd --status | cut -d" " -f2) != "P" ]]; then
+                    logSub "Adding a password for $USER..."
+                    sudo passwd $USER
+                fi
+
+                logSub "Installing Homebrew..."
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+                # If homebrew was just installed, ensure it's in the path
+                export PATH=$HOMEBREW_BASE/bin:$PATH
+            fi
+        else
+            logSub "Unable to initialize this system"
         fi
     fi
 
-    if ! hash brew; then
-        log "Installing homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-        # If homebrew was just installed, ensure it's in the path
-        export PATH=$HOMEBREW_BASE/bin:$PATH
-
-        if [[ $OSTYPE == linux* ]]; then
-            # Add a brew group so that the current user can manage brew
-            sudo groupadd brew
-            sudo usermod -a -G brew $USER
-            sudo chgrp -R brew $HOMEBREW_BASE
-            sudo chmod g+w -R $HOMEBREW_BASE
-        fi
-
-        rehash
-    fi
-
-    logSub "Updating brew package list..."
-    brew update
-
-    logSub "Checking for missing brew packages..."
-    brew_packages=(
-        'bash'            # update from system stock version
-        'bat'             # better cat
-        'deno'            # JS/TS runtime
-        'exa'             # better ls
-        'fd'              # file finder
-        'fzf'             # fuzzy finder
-        'git'             # update from system stock git
-        'mise'            # tool version manager
-        'oven-sh/bun/bun' # JS/TS runtime
-        'pdm'             # python package manager
-        'python'          # default python
-        'ripgrep'         # better grep
-        'tig'             # terminal git ui
-    )
-
-    if [[ $OSTYPE == darwin* ]]; then
+    if (( $+commands[brew] )); then
+        # Install some missing or newer core packages from brew
+        logSub "Installing/updating core packages..."
         brew_packages=(
-            $brew_packages
-            'font-jetbrains-mono-nerd-font'
-            '1password-cli'
+            'bash'       # update from system stock version
+            'bat'        # better cat
+            'eza'        # better ls
+            'fd'         # file finder
+            'git'        # update from system stock git
+            'mise'       # tool version manager
+            'ripgrep'    # better grep
+            'tig'        # terminal git ui
         )
 
-        taps=($(brew tap))
-        if ((! $taps[(Ie)homebrew/cask-fonts])); then
-            brew tap homebrew/cask-fonts
+        if [[ $OSTYPE == darwin* ]]; then
+            brew_packages=(
+                $brew_packages
+                'font-jetbrains-mono-nerd-font'
+                '1password-cli'
+            )
+
+            taps=($(brew tap))
+            if ((! $taps[(Ie)homebrew/cask-fonts])); then
+                brew tap homebrew/cask-fonts
+            fi
         fi
-    fi
 
-    local need_rehash=0
+        brew install -q ${brew_packages[@]} 
 
-    local installed_packages=($(brew ls --versions | awk '{ print $1 }' | cut -d'@' -f1))
-    for pkg in $brew_packages; do
-        # some packages include tap names, and python packages include versions
-        local name=$(echo $pkg | awk -F '/' '{print $NF}' | cut -d'@' -f1)
-        if ((! $installed_packages[(Ie)$name])); then
-            logSub "Installing $pkg..."
-            brew install $pkg
-            need_rehash=1
-        fi
-    done
-
-    if (( $need_rehash )); then
         # Let the shell know about any newly installed packages
         rehash
-    fi
 
-    logSub "Updating installed brew packages..."
-    brew upgrade
+        logSub "Updating installed brew packages..."
+        brew upgrade
 
-    # Remove git's included zsh completions in favor of the system completions
-    if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
-	hb_owner=$(owner $HOMEBREW_BASE)
-	if [[ $hb_owner == $USER ]]; then
-            rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
-	else
-            sudo rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
-	fi
-    fi
-
-    # Update 1password-cli zsh completions
-    if (( $+commands[op] )); then
-        op completion zsh >! $ZDATADIR/functions/_op
-    fi
-
-    # Update mise zsh completions
-    if (( $+commands[mise] )); then
-        mise complete --shell zsh >! $ZDATADIR/functions/_mise
-    fi
-
-    # Update bun zsh completions
-    if (( $+commands[bun] )); then
-        cp $ZDOTDIR/.zshrc $ZDOTDIR/.zshrc.bak
-        bun completions > /dev/null
-        mv $ZDOTDIR/.zshrc.bak $ZDOTDIR/.zshrc
-    fi
-}
-
-# Install or update deno
-function dotfiles-deno {
-    log "Updating deno..."
-
-    local out=""
-    local version=""
-
-    if (( ! $+commands[deno] )); then
-        logSub "Installing..."
-        out=$(curl -fsSL https://deno.land/x/install/install.sh | sh)
-        if (( $? )); then
-            err "Error installing deno"
-            err $out
+        # Remove git's included zsh completions in favor of the system completions
+        if [[ -f $HOMEBREW_BASE/share/zsh/site-functions/_git ]]; then
+            hb_owner=$(owner $HOMEBREW_BASE)
+            if [[ $hb_owner == $USER ]]; then
+                rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+            else
+                sudo rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
+            fi
         fi
-        rehash
-    else
-        out=$(deno upgrade)
-        if [[ ! $out =~ "is the most recent release" ]]; then
-            version=$(deno --version | grep 'deno [0-9]' | awk '{print $2}')
-            logSub "Installed version $version"
+
+        # Update 1password-cli zsh completions
+        if (( $+commands[op] )); then
+            op completion zsh >! $ZDATADIR/functions/_op
+        fi
+
+        # Update mise zsh completions
+        if (( $+commands[mise] )); then
+            mise complete --shell zsh >! $ZDATADIR/functions/_mise
         fi
     fi
-
-    deno completions zsh >! $ZDATADIR/functions/_deno
 }
 
 # Update zsh plugins
@@ -508,75 +398,65 @@ function dotfiles-node {
     done
 }
 
-# Update tmux plugins
-function dotfiles-tmux {
-    log "Updating tmux plugins..."
-    local out=""
-
-    if [[ -z $TMUX_PLUGIN_MANAGER_PATH ]]; then
-        err "TMUX_PLUGIN_MANAGER_PATH not defined"
-        return
-    fi
-
-    if [[ -d $TMUX_PLUGIN_MANAGER_PATH/tpm ]]; then
-        logSub "Installing plugins..."
-        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/install_plugins
-
-        logSub "Removing unused plugins..."
-        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/clean_plugins
-
-        logSub "Updating plugins..."
-        $TMUX_PLUGIN_MANAGER_PATH/tpm/bin/update_plugins all
-    fi
-}
-
 cd $HOME
 
-if [[ -n $1 ]]; then
-    if [[ $1 == -h || $1 == --help ]]; then
-        echo 'usage: dotfiles [-h | --help | <group>]'
-        echo
-        echo 'Update local environment. All groups are updated by default.'
-        echo
-        echo 'Options:'
-        echo '    -h, --help     Show this help message'
-        echo '    <group>        A group to update'
-        echo
-        echo 'Available groups:'
-        echo '    bat            Rebuild bat theme and filetype cache'
-        echo '    brew           Update brew packages, install defaults'
-        echo '    fonts          Install terminal fonts'
-        echo '    home           Update dotfiles and home directories, fixup terminfo database'
-        echo '    launchd        Link and bootstrap launchd scripts'
-        echo '    node           Update global node packages, install defaults'
-        echo '    python         Update global python packages, install defaults'
-        echo '    rust           Update rust install'
-        echo '    tmux           Update tpm packages'
-        echo '    vim            Update vim plugins'
-        echo '    zsh            Update zsh plugins'
-    elif [[ $1 == -* ]]; then
-        echo "Unknown option $1"
-        exit 1
-    else
-        dotfiles-$1
-        log "Done"
-    fi
+while (( $# > 0 )); do
+    case $1 in
+        -h | --help)
+            echo 'usage: dotfiles [options] [group]'
+            echo
+            echo 'Update local environment. All groups are updated by default.'
+            echo
+            echo 'Options:'
+            echo '    -h, --help     Show this help message'
+            echo '    -i, --install  Install missing things'
+            echo '    <group>        A group to update'
+            echo
+            echo 'Available groups:'
+            echo '    bat            Rebuild bat theme and filetype cache'
+            echo '    init           Install/update core packages'
+            echo '    fonts          Install terminal fonts'
+            echo '    home           Update dotfiles and home directories, fixup terminfo database'
+            echo '    launchd        Link and bootstrap launchd scripts'
+            echo '    node           Update global node packages, install defaults'
+            echo '    python         Update global python packages, install defaults'
+            echo '    rust           Update rust install'
+            echo '    vim            Update vim plugins'
+            echo '    zsh            Update zsh plugins'
+            exit 1
+            ;;
+        -i | --install)
+            INSTALL=1
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            GROUP=$1
+            log "Done"
+            ;;
+    esac
+
+    shift
+done
+
+if [[ -n $GROUP ]]; then
+    dotfiles-$GROUP
 else
     dotfiles-health
     dotfiles-home
-    dotfiles-brew
+    dotfiles-init
     dotfiles-fonts
-    dotfiles-buildtools
     dotfiles-zsh
     dotfiles-python
     dotfiles-node
     dotfiles-rust
-    dotfiles-tmux
     dotfiles-bat
 
     if [[ $OSTYPE == darwin* ]]; then
         dotfiles-launchd
     fi
-
-    log "Done"
 fi
+
+log "Done"
