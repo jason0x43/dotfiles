@@ -121,6 +121,9 @@ return {
   -- copilot integration
   {
     'zbirenbaum/copilot.lua',
+    enabled = function()
+      return vim.fn.executable('node') == 1
+    end,
     opts = {
       event = 'InsertEnter',
       suggestion = {
