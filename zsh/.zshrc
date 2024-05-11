@@ -502,8 +502,10 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-li
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
 if (( $+commands[git] )); then
-    export GIT_COMMITTER_NAME=$(git config --get user.name)
-    export GIT_COMMITTER_EMAIL=$(git config --get user.email)
+    export GIT_COMMITTER_NAME=${GIT_COMMITTER_NAME:-$(git config --get user.name)}
+    export GIT_COMMITTER_EMAIL=${GIT_COMMITTER_EMAIL:-$(git config --get user.email)}
+    export GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-$(git config --get user.name)}
+    export GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-$(git config --get user.email)}
 fi
 
 # Local config
