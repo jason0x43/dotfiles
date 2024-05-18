@@ -11,4 +11,10 @@ parts=(${bg//\// })
 r=${parts[0]:0:2}
 g=${parts[1]:0:2}
 b=${parts[2]:0:2}
-echo "#$r$g$b"
+#echo "#$r$g$b"
+
+if [[ ${r[0]} =~ [0-7] ]]; then
+  echo "dark"
+else
+  echo "light"
+fi
