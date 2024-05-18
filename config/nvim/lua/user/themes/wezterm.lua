@@ -353,6 +353,10 @@ local function apply_theme(c)
   hilink('@markup.raw', 'String')
   hilink('@markup.heading', 'Title')
 
+  hilink('@diff.plus', 'diffAdded');
+  hilink('@diff.minus', 'diffRemoved');
+  hilink('@attribute', 'Type');
+
   hilink('typescriptBraces', 'Delimiter')
   hilink('typescriptParens', 'Delimiter')
 
