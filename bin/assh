@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# An SSH wrapper for situations where the environments SSH_AUTH_SOCK may become
+# stale, such as within a zellij session
+
+if [ -z $SSH_AUTH_SOCK ] || [ ! -e $SSH_AUTH_SOCK ]; then
+  AGENT_DIR=$(find /tmp -maxdepth 1 -user $USER -name 'ssh-XXX*' -print -quit)
+  if [ -n $AGENT_DIR ]; then
+    SOCK_FILE=$(/bin/ls "$AGENT_DIR")
+    export SSH_AUTH_SOCK="$AGENT_DIR/$SOCK_FILE"
+    echo "Using auth sock: $SSH_AUTH_SOCK"
+  fi
+fi
+
+ssh "$@"
