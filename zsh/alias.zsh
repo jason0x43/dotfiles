@@ -198,3 +198,7 @@ fi
 if (( $+commands[docker] )); then
     alias dc='docker compose'
 fi
+
+if (( $+commands[zellij] )); then
+    alias za=zellij attach
+fi
