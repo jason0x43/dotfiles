@@ -434,15 +434,6 @@ function M.apply()
 
   vim.g.colors_name = 'wezterm'
 
-  if vim.go.termguicolors then
-    ---@cast colors Palette
-    if require('user.util.theme').is_dark(colors.bg_0) then
-      vim.go.background = 'dark'
-    else
-      vim.go.background = 'light'
-    end
-  end
-
   apply_theme(colors)
 
   vim.api.nvim_exec_autocmds('ColorScheme', {})
