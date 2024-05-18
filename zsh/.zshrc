@@ -508,6 +508,12 @@ if (( $+commands[git] )); then
     export GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-$(git config --get user.email)}
 fi
 
+# zoxide
+# --------------------------------------------------------------------------
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh --cmd cd)"
+fi
+
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
