@@ -239,14 +239,13 @@ function dotfiles-init {
         # Install some missing or newer core packages from brew
         logSub "Installing/updating core packages..."
         brew_packages=(
-            'bash'       # update from system stock version
             'bat'        # better cat
             'eza'        # better ls
             'fd'         # file finder
-            'git'        # update from system stock git
             'mise'       # tool version manager
             'ripgrep'    # better grep
             'tig'        # terminal git ui
+            'zoxide'     # better cd
         )
 
         if [[ $OSTYPE == darwin* ]]; then
