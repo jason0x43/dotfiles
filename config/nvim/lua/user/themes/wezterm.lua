@@ -376,9 +376,9 @@ local function apply_theme()
   hilink('@markup.raw', 'String')
   hilink('@markup.heading', 'Title')
 
-  hilink('@diff.plus', 'diffAdded');
-  hilink('@diff.minus', 'diffRemoved');
-  hilink('@attribute', 'Type');
+  hilink('@diff.plus', 'diffAdded')
+  hilink('@diff.minus', 'diffRemoved')
+  hilink('@attribute', 'Type')
 
   hilink('typescriptBraces', 'Delimiter')
   hilink('typescriptParens', 'Delimiter')
@@ -454,7 +454,7 @@ local function apply_theme()
 end
 
 local M = {
-  load_colors = load_colors
+  load_colors = load_colors,
 }
 
 ---@return nil
@@ -464,8 +464,12 @@ function M.setup()
     pattern = 'UiReady',
     callback = function()
       apply_theme()
-    end
+    end,
   })
+
+  -- initially clear the Normal group to prevent a flash of an incorrect
+  -- background
+  vim.api.nvim_set_hl(0, 'Normal', {})
 end
 
 return M
