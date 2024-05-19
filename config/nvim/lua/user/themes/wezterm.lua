@@ -8,7 +8,7 @@ local os = require('os')
 -- Default color palettes in the Selenized format
 ---@type { [string]: Palette }
 local palettes = {
-  black = {
+  dark = {
     bg_0 = '#181818',
     bg_1 = '#252525',
     bg_2 = '#3b3b3b',
@@ -32,7 +32,7 @@ local palettes = {
     br_orange = '#fa9153',
     br_violet = '#b891f5',
   },
-  white = {
+  light = {
     bg_0 = '#ffffff',
     bg_1 = '#ebebeb',
     bg_2 = '#cdcdcd',
@@ -56,59 +56,11 @@ local palettes = {
     br_orange = '#ba3700',
     br_violet = '#6b40c3',
   },
-  dark = {
-    bg_0 = '#103c48',
-    bg_1 = '#184956',
-    bg_2 = '#2d5b69',
-    dim_0 = '#72898f',
-    fg_0 = '#adbcbc',
-    fg_1 = '#cad8d9',
-    red = '#fa5750',
-    green = '#75b938',
-    yellow = '#dbb32d',
-    blue = '#4695f7',
-    magenta = '#f275be',
-    cyan = '#41c7b9',
-    br_red = '#ff665c',
-    br_green = '#84c747',
-    br_yellow = '#ebc13d',
-    br_blue = '#58a3ff',
-    br_magenta = '#ff84cd',
-    br_cyan = '#53d6c7',
-    orange = '#ed8649',
-    violet = '#af88eb',
-    br_orange = '#fd9456',
-    br_violet = '#bd96fa',
-  },
-  light = {
-    bg_0 = '#fbf3db',
-    bg_1 = '#e9e4d0',
-    bg_2 = '#cfcebe',
-    dim_0 = '#909995',
-    fg_0 = '#53676d',
-    fg_1 = '#3a4d53',
-    red = '#d2212d',
-    green = '#489100',
-    yellow = '#ad8900',
-    blue = '#0072d4',
-    magenta = '#ca4898',
-    cyan = '#009c8f',
-    br_red = '#cc1729',
-    br_green = '#428b00',
-    br_yellow = '#a78300',
-    br_blue = '#006dce',
-    br_magenta = '#c44392',
-    br_cyan = '#00978a',
-    orange = '#c25d1e',
-    violet = '#8762c6',
-    br_orange = '#bc5819',
-    br_violet = '#825dc0',
-  },
 }
 
 local cterm_palette = {
-  bg_0 = nil,
-  fg_0 = nil,
+  bg_0 = 0,
+  fg_0 = 15,
   bg_1 = 0,
   red = 1,
   green = 2,
@@ -166,24 +118,23 @@ end
 
 ---@return Palette | CtermPalette
 local function load_colors()
-  print('loading with termguicolors = ' .. vim.inspect(vim.go.termguicolors))
   if vim.go.termguicolors then
     local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
     local ok, colors_text = pcall(vim.fn.readfile, colors_file)
 
     if not ok then
       if vim.go.background == 'light' then
-        return palettes.white
+        return palettes.light
       end
-      return palettes.black
-    else
-      local scheme = vim.fn.json_decode(colors_text)
-      ---@cast scheme table
-      return to_selenized(scheme)
+      return palettes.dark
     end
-  else
-    return cterm_palette
+
+    local scheme = vim.fn.json_decode(colors_text)
+    ---@cast scheme table
+    return to_selenized(scheme)
   end
+
+  return cterm_palette
 end
 
 -- A convenience function for linking highlight groups
@@ -242,6 +193,7 @@ local function apply_theme()
   hilink('Label', 'Statement')
   hilink('Macro', 'PreProc')
   hilink('MatchParen', 'MatchBackground')
+  hilink('NormalFloat', 'Normal')
   hilink('Number', 'Constant')
   hilink('Operator', 'Statement')
   hilink('PreCondit', 'PreProc')
@@ -280,9 +232,8 @@ local function apply_theme()
   hi('ModeMsg', {})
   hi('MoreMsg', {})
   hi('NonText', {})
-  hi('Normal', { fg = c.fg_0, bg = c.bg_0 })
-  hi('NormalFloat', { bg = c.bg_0 })
-  hi('NormalNC', { fg = c.dim_0, bg = c.bg_0 })
+  hi('Normal', { fg = c.fg_0 })
+  hi('NormalNC', { fg = c.dim_0 })
   hi('Pmenu', { fg = c.fg_0, bg = c.bg_1 })
   hi('PmenuSbar', { fg = c.bg_2 })
   hi('PmenuSel', { bg = c.bg_2 })
@@ -310,7 +261,7 @@ local function apply_theme()
   hi('ToolbarLine', { bg = c.bg_2 })
   hi('Type', { fg = c.green })
   hi('Underlined', { fg = c.violet, underline = true })
-  hi('VertSplit', { fg = c.dim_0, bg = c.bg_0 })
+  hi('VertSplit', { fg = c.dim_0 })
   hi('VimCommand', { fg = c.yellow })
   hi('Visual', { bg = c.bg_2 })
   hi('VisualNOS', {})
@@ -460,8 +411,8 @@ local M = {
 ---@return nil
 function M.setup()
   -- reload the theme if the TUI color handling setup changes
-  vim.api.nvim_create_autocmd('User', {
-    pattern = 'UiReady',
+  vim.api.nvim_create_autocmd('OptionSet', {
+    pattern = {'background', 'termguicolors'},
     callback = function()
       apply_theme()
     end,

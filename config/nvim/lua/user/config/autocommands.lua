@@ -149,22 +149,3 @@ end)
 autocmd('VimResized', '*', function()
   vim.wo.number = vim.go.columns > 88
 end)
-
-local vim_background = nil
-local vim_termguicolors = nil
-
-local function maybe_emit_ui_ready()
-  if vim_background ~= nil and vim_termguicolors ~= nil then
-    vim.api.nvim_exec_autocmds("User", { pattern = "UiReady" })
-  end
-end
-
-autocmd('OptionSet', 'background', function()
-  vim_background = vim.go.background
-  maybe_emit_ui_ready()
-end)
-
-autocmd('OptionSet', 'termguicolors', function()
-  vim_termguicolors = vim.go.background
-  maybe_emit_ui_ready()
-end)
