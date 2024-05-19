@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Setup a swapfile on an Ubuntu VM, such as a Lightsail VPS
+
+if [ $(id -u) != "0" ]; then
+  echo "This script must be run as root"
+  exit 1
+fi
+
+fallocate -l 1G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo "Created swapfile /swapfile"
+
+echo "/swapfile none  swap  sw  0 0" | tee -a /etc/fstab
+echo "Added swapfile to fstab"
+
+echo "vm.swappiness=10" | tee -a /etc/sysctl.conf
+echo "Reduced"
