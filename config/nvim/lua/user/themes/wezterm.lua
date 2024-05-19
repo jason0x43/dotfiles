@@ -83,39 +83,6 @@ local cterm_palette = {
   br_violet = 19,
 }
 
--- Convert a Wezterm color scheme to the Selenized format.
---
--- This function assumes a scheme that follows standard XTerm conventions, with
--- 2 extra dark + bright colors in the 16-19 indexes
----@param wezterm_colors table
----@return Palette
-local function to_selenized(wezterm_colors)
-  return {
-    bg_0 = wezterm_colors.background,
-    bg_1 = wezterm_colors.ansi['1'],
-    bg_2 = wezterm_colors.brights['1'],
-    dim_0 = wezterm_colors.ansi['8'],
-    fg_0 = wezterm_colors.foreground,
-    fg_1 = wezterm_colors.brights['8'],
-    red = wezterm_colors.ansi['2'],
-    green = wezterm_colors.ansi['3'],
-    yellow = wezterm_colors.ansi['4'],
-    blue = wezterm_colors.ansi['5'],
-    magenta = wezterm_colors.ansi['6'],
-    cyan = wezterm_colors.ansi['7'],
-    br_red = wezterm_colors.brights['2'],
-    br_green = wezterm_colors.brights['3'],
-    br_yellow = wezterm_colors.brights['4'],
-    br_blue = wezterm_colors.brights['5'],
-    br_magenta = wezterm_colors.brights['6'],
-    br_cyan = wezterm_colors.brights['7'],
-    orange = wezterm_colors.indexed['16'],
-    br_orange = wezterm_colors.indexed['17'],
-    violet = wezterm_colors.indexed['18'],
-    br_violet = wezterm_colors.indexed['19'],
-  }
-end
-
 ---@return Palette | CtermPalette
 local function load_colors()
   if vim.go.termguicolors then
