@@ -200,9 +200,9 @@ if (( $+commands[docker] )); then
 fi
 
 if (( $+commands[zellij] )); then
-    alias za=zellij attach
+    alias za='zellij attach'
 fi
 
 if (( $+commands[tmux] )); then
-    alias ta=tmux attach
+    alias ta='tmux attach'
 fi
