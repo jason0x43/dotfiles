@@ -119,19 +119,11 @@ end
 ---@return Palette | CtermPalette
 local function load_colors()
   if vim.go.termguicolors then
-    local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
-    local ok, colors_text = pcall(vim.fn.readfile, colors_file)
-
-    if not ok then
-      if vim.go.background == 'light' then
-        return palettes.light
-      end
-      return palettes.dark
+    if vim.go.background == 'light' then
+      return palettes.light
     end
 
-    local scheme = vim.fn.json_decode(colors_text)
-    ---@cast scheme table
-    return to_selenized(scheme)
+    return palettes.dark
   end
 
   return cterm_palette
@@ -209,6 +201,11 @@ local function apply_theme()
   hilink('Tag', 'Special')
   hilink('Typedef', 'Type')
   hilink('lCursor', 'Cursor')
+
+  -- hilink('CmpItemMenuDefault', 'Pmenu')
+  -- hilink('CmpItemAbbrDefault', 'Pmenu')
+  -- hilink('CmpItemAbbrMatchDefault', 'Pmenu')
+  -- hilink('CmpItemAbbrMatchFuzzyDefault', 'Pmenu')
 
   hi('ColorColumn', { bg = c.bg_1 })
   hi('Comment', { fg = c.dim_0, italic = true })
@@ -402,6 +399,10 @@ local function apply_theme()
   hilink('NavbuddyString', 'String')
   hilink('NavbuddyStruct', 'Structure')
   hilink('NavbuddyVariable', '@variable')
+
+  -- notify listeners that the colorscheme has been set
+  vim.g.colors_name = 'wezterm'
+  vim.api.nvim_exec_autocmds('ColorScheme', {})
 end
 
 local M = {
@@ -412,7 +413,7 @@ local M = {
 function M.setup()
   -- reload the theme if the TUI color handling setup changes
   vim.api.nvim_create_autocmd('OptionSet', {
-    pattern = {'background', 'termguicolors'},
+    pattern = { 'background', 'termguicolors' },
     callback = function()
       apply_theme()
     end,
