@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Run a command with resource restrictions
+
+systemd-run --scope -p CPUQuota=60% -p MemoryMax=512M --user "$@"
