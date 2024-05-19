@@ -103,7 +103,12 @@ local function hilink(group, other_group)
   vim.api.nvim_set_hl(0, group, { link = other_group })
 end
 
+local M = {
+  load_colors = load_colors,
+}
+
 -- Apply a theme in the Selenized format
+---@return nil
 local function apply_theme()
   local c = load_colors()
 
@@ -168,11 +173,6 @@ local function apply_theme()
   hilink('Tag', 'Special')
   hilink('Typedef', 'Type')
   hilink('lCursor', 'Cursor')
-
-  -- hilink('CmpItemMenuDefault', 'Pmenu')
-  -- hilink('CmpItemAbbrDefault', 'Pmenu')
-  -- hilink('CmpItemAbbrMatchDefault', 'Pmenu')
-  -- hilink('CmpItemAbbrMatchFuzzyDefault', 'Pmenu')
 
   hi('ColorColumn', { bg = c.bg_1 })
   hi('Comment', { fg = c.dim_0, italic = true })
@@ -372,23 +372,27 @@ local function apply_theme()
   vim.api.nvim_exec_autocmds('ColorScheme', {})
 end
 
-local M = {
-  load_colors = load_colors,
-}
+---@return nil
+function M.set_background(value)
+  print('Setting background to ' .. value)
+  vim.schedule(function()
+    vim.go.background = value
+  end)
+end
 
 ---@return nil
 function M.setup()
-  -- reload the theme if the TUI color handling setup changes
+  -- initially clear the Normal group to prevent a flash of an incorrect
+  -- background
+  vim.api.nvim_set_hl(0, 'Normal', {})
+
+  -- load the theme if the TUI color handling setup changes
   vim.api.nvim_create_autocmd('OptionSet', {
     pattern = { 'background', 'termguicolors' },
     callback = function()
       apply_theme()
     end,
   })
-
-  -- initially clear the Normal group to prevent a flash of an incorrect
-  -- background
-  vim.api.nvim_set_hl(0, 'Normal', {})
 end
 
 return M
