@@ -264,7 +264,7 @@ config.keys = {
   { key = "k", mods = "CTRL", action = action.move_action("Up") },
   { key = "h", mods = "CTRL", action = action.move_action("Left") },
   { key = "l", mods = "CTRL", action = action.move_action("Right") },
-  { key = "t", mods = "CTRL", action = wez_action.SpawnTab("DefaultDomain") },
+  { key = "t", mods = "CMD", action = wez_action.SpawnTab("DefaultDomain") },
   {
     key = "t",
     mods = "CTRL|SHIFT",
