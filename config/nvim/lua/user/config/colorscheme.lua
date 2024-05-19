@@ -1,1 +1,1 @@
-require('user.themes.wezterm').apply()
+require('user.themes.wezterm').setup()

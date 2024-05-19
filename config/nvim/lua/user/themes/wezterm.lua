@@ -164,6 +164,28 @@ local function to_selenized(wezterm_colors)
   }
 end
 
+---@return Palette | CtermPalette
+local function load_colors()
+  print('loading with termguicolors = ' .. vim.inspect(vim.go.termguicolors))
+  if vim.go.termguicolors then
+    local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
+    local ok, colors_text = pcall(vim.fn.readfile, colors_file)
+
+    if not ok then
+      if vim.go.background == 'light' then
+        return palettes.white
+      end
+      return palettes.black
+    else
+      local scheme = vim.fn.json_decode(colors_text)
+      ---@cast scheme table
+      return to_selenized(scheme)
+    end
+  else
+    return cterm_palette
+  end
+end
+
 -- A convenience function for linking highlight groups
 ---@param group string
 ---@param other_group string
@@ -172,8 +194,9 @@ local function hilink(group, other_group)
 end
 
 -- Apply a theme in the Selenized format
----@param c Palette | CtermPalette
-local function apply_theme(c)
+local function apply_theme()
+  local c = load_colors()
+
   -- A convenience function for setting highlight groups
   local hi = nil
   if vim.go.termguicolors then
@@ -430,47 +453,19 @@ local function apply_theme(c)
   hilink('NavbuddyVariable', '@variable')
 end
 
-local M = {}
+local M = {
+  load_colors = load_colors
+}
 
 ---@return nil
-function M.apply()
-  local colors = M.load_colors()
-
-  vim.g.colors_name = 'wezterm'
-
-  apply_theme(colors)
-
-  vim.api.nvim_exec_autocmds('ColorScheme', {})
-
-  -- reload the theme if the background changes
-  vim.api.nvim_create_autocmd('OptionSet', {
-    pattern = 'background',
+function M.setup()
+  -- reload the theme if the TUI color handling setup changes
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'UiReady',
     callback = function()
-      local colors = M.load_colors()
-      apply_theme(colors)
+      apply_theme()
     end
   })
-end
-
----@return Palette | CtermPalette
-function M.load_colors()
-  if vim.go.termguicolors then
-    local colors_file = os.getenv('HOME') .. '/.local/share/wezterm/colors.json'
-    local ok, colors_text = pcall(vim.fn.readfile, colors_file)
-
-    if not ok then
-      if vim.go.background == 'light' then
-        return palettes.white
-      end
-      return palettes.black
-    else
-      local scheme = vim.fn.json_decode(colors_text)
-      ---@cast scheme table
-      return to_selenized(scheme)
-    end
-  else
-    return cterm_palette
-  end
 end
 
 return M

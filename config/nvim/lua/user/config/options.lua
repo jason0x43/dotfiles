@@ -83,13 +83,6 @@ o.showmode = false
 -- enable mouse support
 o.mouse = 'a'
 
--- enable truecolor mode
-if os.getenv('TERM') == 'xterm-color' then
-	o.termguicolors = false
-else
-	o.termguicolors = true
-end
-
 -- show markers for long lines
 o.listchars.precedes = '^'
 o.listchars.extends = '$'

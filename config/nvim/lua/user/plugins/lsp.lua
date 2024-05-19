@@ -152,6 +152,7 @@ return {
       'SmiteshP/nvim-navic',
       'nvim-tree/nvim-web-devicons',
     },
+    event = 'User UiReady',
     config = function()
       local colors = require('user.themes.wezterm').load_colors()
 
