@@ -7,8 +7,6 @@ local function section_lsps(sl, args)
 
   if vim.lsp.get_clients ~= nil then
     clients = vim.lsp.get_clients()
-  else
-    clients = vim.lsp.get_active_clients()
   end
 
   for _, client in pairs(clients) do
@@ -175,9 +173,6 @@ return {
         MiniBufremove.wipeout()
       end)
 
-      -- commenting
-      require('mini.comment').setup()
-
       -- highlight current word
       require('mini.cursorword').setup()
 
@@ -254,6 +249,9 @@ return {
 
       -- location and label tracking
       require('mini.visits').setup()
+
+      -- diffing
+      require('mini.diff').setup()
     end,
   },
 }
