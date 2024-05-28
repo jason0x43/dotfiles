@@ -329,6 +329,8 @@ local function apply_theme()
 
   hi('MiniJump2dSpot', { bg = c.bg_1, fg = c.fg_1, bold = true })
 
+  hi('MiniCursorWord', { bg = c.bg_1, underline = false })
+
   hilink('LspDiagnosticsDefaultHint', 'DiagnosticHint')
   hilink('LspDiagnosticsDefaultInformation', 'DiagnosticInfo')
   hilink('LspDiagnosticsDefaultWarning', 'DiagnosticWarn')
