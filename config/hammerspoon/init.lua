@@ -54,6 +54,11 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
         display = built_in_display,
         frame = { "center", 0.6 },
       },
+      kitty = {
+        app = "kitty",
+        display = built_in_display,
+        frame = { "center", 0.6 },
+      },
       Messages = {
         app = "Messages",
         display = built_in_display,
@@ -79,6 +84,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
     layouts = {
       Safari = { app = "Safari", display = monitor, frame = { "left", 0.6 } },
       Chrome = { app = "Chrome", display = monitor, frame = { "left", 0.6 } },
+      kitty = { app = "kitty", display = monitor, frame = { "right", 0.4 } },
       WezTerm = { app = "WezTerm", display = monitor, frame = { "right", 0.4 } },
       Messages = {
         app = "Messages",
