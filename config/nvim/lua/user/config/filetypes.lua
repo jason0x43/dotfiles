@@ -3,6 +3,7 @@ vim.filetype.add({
     ['Dockerfile.*'] = 'dockerfile',
     ['Fastfile'] = 'ruby',
     ['.*/git/config'] = 'gitconfig',
+    ['.*/ansible/.*%.yml'] = 'yaml.ansible',
 
     ['.*'] = {
       priority = -math.huge,
@@ -17,6 +18,7 @@ vim.filetype.add({
         if
           first_line == '#!/usr/bin/osascript -l JavaScript'
           or first_line == '#!/usr/bin/env zx'
+          or first_line == '#!/usr/bin/env node'
         then
           return 'javascript'
         end
