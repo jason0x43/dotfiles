@@ -27,7 +27,7 @@ return {
         },
         sources = {
           { name = 'copilot' },
-          { name = 'nvim_lua' },
+          { name = 'lazydev', group_index = 0 },
           { name = 'nvim_lsp' },
           { name = 'path' },
           { name = 'luasnip' },

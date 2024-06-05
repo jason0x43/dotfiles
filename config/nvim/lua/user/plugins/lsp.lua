@@ -18,9 +18,11 @@ return {
   -- helpers for editing neovim lua; must be setup **before** any language
   -- servers are configured
   {
-    'folke/neodev.nvim',
-    priority = 100,
-    config = true,
+    'folke/lazydev.nvim',
+    ft = "lua",
+    opts = {
+      library = {}
+    }
   },
 
   -- language server installer; must be setup before null-ls to ensure
@@ -64,7 +66,6 @@ return {
   -- diagnostics display
   {
     'folke/trouble.nvim',
-    branch = 'dev',
     event = 'BufEnter',
     dependencies = 'nvim-tree/nvim-web-devicons',
     keys = {
