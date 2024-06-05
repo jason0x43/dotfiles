@@ -129,7 +129,12 @@ return {
 
       -- pickers
       require('mini.extra').setup()
-      require('mini.pick').setup()
+      require('mini.pick').setup({
+        mappings = {
+          paste = '',
+          refine = '<C-r>'
+        }
+      })
       vim.ui.select = MiniPick.ui_select
       vim.keymap.set('n', '<leader>f', function()
         local in_worktree = require('user.util').in_git_dir()
