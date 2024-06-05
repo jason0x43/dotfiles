@@ -103,7 +103,6 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
   local laid_out_apps = {}
 
   for app, _ in pairs(apps) do
-    logger.i(app)
     if layouts[app] ~= nil and laid_out_apps[app] == nil then
       table.insert(layout, layouts[app])
       laid_out_apps[app] = true
