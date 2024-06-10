@@ -1,6 +1,9 @@
 local o = vim.opt
 local g = vim.g
 
+-- Always assume termguicolors are available
+vim.go.termguicolors = true
+
 -- Leader for mappings
 g.mapleader = ';'
 
