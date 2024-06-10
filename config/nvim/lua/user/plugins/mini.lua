@@ -132,8 +132,8 @@ return {
       require('mini.pick').setup({
         mappings = {
           paste = '',
-          refine = '<C-r>'
-        }
+          refine = '<C-r>',
+        },
       })
       vim.ui.select = MiniPick.ui_select
       vim.keymap.set('n', '<leader>f', function()
@@ -220,8 +220,10 @@ return {
       local height = vim.fn.winheight(0)
       local filter = function(lister)
         return function()
+          -- Don't include git commit messages or files from node_modules
           return vim.tbl_filter(function(f)
             return f.name:find('COMMIT_EDITMSG') == nil
+              and f.name:find('node_modules/') == nil
           end, lister())
         end
       end
