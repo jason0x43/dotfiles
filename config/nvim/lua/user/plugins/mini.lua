@@ -139,7 +139,44 @@ return {
       vim.keymap.set('n', '<leader>f', function()
         local in_worktree = require('user.util').in_git_dir()
         if in_worktree then
-          MiniExtra.pickers.git_files()
+          print('doing worktree thing')
+          return MiniPick.builtin.cli({
+            command = {
+              'git',
+              'ls-files',
+              '--cached',
+              '--others',
+              '-t',
+              '--exclude-standard',
+            },
+
+            ---@param files string[]
+            postprocess = function(files)
+              local items = {}
+              for _, file in pairs(files) do
+                if file ~= '' then
+                  table.insert(items, {
+                    text = file,
+                    path = file:sub(3),
+                  })
+                end
+              end
+              return items
+            end,
+          }, {
+            source = {
+              name = 'Git files (index + untracked)',
+              show = function(buf_id, items, query)
+                print('showing git files')
+                return MiniPick.default_show(
+                  buf_id,
+                  items,
+                  query,
+                  { show_icons = true }
+                )
+              end,
+            },
+          })
         else
           MiniPick.builtin.files()
         end
