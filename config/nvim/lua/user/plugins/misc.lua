@@ -82,4 +82,11 @@ return {
       return {}
     end,
   },
+
+  -- spelling
+  {
+    'ravibrock/spellwarn.nvim',
+    event = 'VeryLazy',
+    config = true,
+  },
 }
