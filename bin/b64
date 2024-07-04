@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const { isUtf8 } = require('node:buffer');
+const tty = require('tty');
+
+const input = process.argv[2];
+const buf = Buffer.from(input, 'base64');
+
+if (isUtf8(buf)) {
+  const str = buf.toString('utf8');
+
+  try {
+    const data = JSON.parse(str);
+    console.log(JSON.stringify(data, null, 2));
+  } catch {
+    console.log(str);
+  }
+} else {
+  if (tty.isatty(process.stdout.fd)) {
+    console.log('Data is binary; redirect to a file');
+  } else {
+    process.stdout.write(buf);
+  }
+}
