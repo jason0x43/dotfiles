@@ -1,27 +1,35 @@
-#!/bin/zsh
+#!/usr/bin/env python
 
-local addr=localhost
-local port=8080
-local dir=.
+from sys import argv, exit
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-while (( $# )) do
-	if [[ $1 == '-p' || $1 == '--port' ]] then
-		port=$2
-		shift 2
-	elif [[ $1 == '-a' || $1 == '--address' ]] then
-		addr=$2
-		shift 2
-	elif [[ $1 =~ '^-' ]] then
-		echo "usage: serve [-p|--port PORT] [-a|--addres ADDRESS]"
-		exit 1
-	else
-		dir=$1
-		shift
-	fi
-done
+addr = "localhost"
+port = 8080
+dir = "."
 
-if (( $+commands[python3] )) then
-	python3 -m http.server --directory $dir --bind $addr $port
-else
-	python -m SimpleHTTPServer --directory $dir --bind $addr $port
-fi
+args = argv[1:]
+
+while len(args) > 0:
+    arg = args.pop(0)
+    if arg == "-p" or arg == "--port":
+        port = int(args.pop(0))
+    elif arg == "-a" or arg == "--address":
+        addr = args.pop(0)
+    elif arg.startswith("-"):
+        print("usage: serve [-p|--port PORT] [-a|--addres ADDRESS]")
+        exit(1)
+    else:
+        dir = arg
+
+
+class CORSRequestHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        return super(CORSRequestHandler, self).end_headers()
+
+
+print(f"Serving HTTP on {addr}:{port}")
+httpd = HTTPServer((addr, port), CORSRequestHandler)
+httpd.serve_forever()
