@@ -1,5 +1,7 @@
 /// <reference types="./phoenix" />
 
+/** @typedef {import("./phoenix").Direction} Direction */
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // General setup
@@ -28,23 +30,8 @@ const CONTROL_SHIFT = ["ctrl", "shift"];
 const CONTROL_ALT_SHIFT = ["ctrl", "alt", "shift"];
 const PADDING = 10;
 
-// Relative Directions
-const LEFT = "left";
-const RIGHT = "right";
-const CENTER = "center";
-
-// Cardinal Directions
-const NW = "nw";
-const NE = "ne";
-const SE = "se";
-const SW = "sw";
-const EAST = "east";
-const WEST = "west";
-const NORTH = "north";
-const SOUTH = "south";
-
 const MODAL_TIMEOUT = 750;
-const THIN_WIDTH = (1020 / 3840) * 1.6;
+const THIN_WIDTH = (1020 / 3840) * 1.4;
 
 /** @type {number | null} */
 let helpTimer = null;
@@ -60,48 +47,53 @@ let helpCloser = null;
 const keys = [
 	["Show help", "\\", CONTROL_SHIFT, () => showHelp()],
 
-	["Move to NW corner", "q", CONTROL_SHIFT, () => moveTo(NW)],
-	["Move to NE corner", "w", CONTROL_SHIFT, () => moveTo(NE)],
-	["Move to SE corner", "s", CONTROL_SHIFT, () => moveTo(SE)],
-	["Move to SW corner", "a", CONTROL_SHIFT, () => moveTo(SW)],
-	["Move to center", "z", CONTROL_SHIFT, () => moveTo(CENTER)],
+	["Move to NW corner", "q", CONTROL_SHIFT, () => moveTo("top-left")],
+	["Move to NE corner", "w", CONTROL_SHIFT, () => moveTo("top-right")],
+	["Move to SE corner", "s", CONTROL_SHIFT, () => moveTo("bottom-right")],
+	["Move to SW corner", "a", CONTROL_SHIFT, () => moveTo("bottom-left")],
+	["Move to left", "h", CONTROL_SHIFT, () => moveTo("left")],
+	["Move to right", "l", CONTROL_SHIFT, () => moveTo("right")],
+	["Move to top", "k", CONTROL_SHIFT, () => moveTo("top")],
+	["Move to bottom", "j", CONTROL_SHIFT, () => moveTo("bottom")],
+	["Move to center", "z", CONTROL_SHIFT, () => moveTo("center")],
+
 	["Development layout", "space", CONTROL_SHIFT, () => autoLayout()],
 
 	[
 		"Fill NW quadrant",
 		"q",
 		CONTROL_ALT_SHIFT,
-		() => fill(NW, { portion: 1 - THIN_WIDTH }),
+		() => fill("top-left", { portion: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill SW quadrant",
 		"a",
 		CONTROL_ALT_SHIFT,
-		() => fill(SW, { portion: 1 - THIN_WIDTH }),
+		() => fill("bottom-left", { portion: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill SE quadrant",
 		"s",
 		CONTROL_ALT_SHIFT,
-		() => fill(SE, { portion: THIN_WIDTH }),
+		() => fill("bottom-right", { portion: THIN_WIDTH }),
 	],
 	[
 		"Fill NE quadrant",
 		"w",
 		CONTROL_ALT_SHIFT,
-		() => fill(NE, { portion: THIN_WIDTH }),
+		() => fill("top-right", { portion: THIN_WIDTH }),
 	],
 	[
 		"Fill left half",
 		"h",
 		CONTROL_ALT_SHIFT,
-		() => fill(LEFT, { portion: 1 - THIN_WIDTH }),
+		() => fill("left", { portion: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill right half",
 		"l",
 		CONTROL_ALT_SHIFT,
-		() => fill(RIGHT, { portion: THIN_WIDTH }),
+		() => fill("right", { portion: THIN_WIDTH }),
 	],
 	["Fill screen", "f", CONTROL_ALT_SHIFT, () => toggleFillScreen()],
 	["Fill center", "z", CONTROL_ALT_SHIFT, () => center()],
@@ -131,16 +123,21 @@ const keys = [
 		() => resize({ width: -widthPercent(INCREMENT) }),
 	],
 
-	["Focus western neighbor", "h", CONTROL_SHIFT, () => focusNeighbor(WEST)],
-	["Focus southern neighbor", "j", CONTROL_SHIFT, () => focusNeighbor(SOUTH)],
-	["Focus northern neighbor", "k", CONTROL_SHIFT, () => focusNeighbor(NORTH)],
-	["Focus eastern neighbor", "l", CONTROL_SHIFT, () => focusNeighbor(EAST)],
+	["Move to right space", "right", CONTROL_SHIFT, () => moveToSpace("right")],
+	["Move to left space", "left", CONTROL_SHIFT, () => moveToSpace("left")],
 
-	["Move to right display", "right", CONTROL_SHIFT, () => moveToScreen(RIGHT)],
-	["Move to left display", "left", CONTROL_SHIFT, () => moveToScreen(LEFT)],
-
-	["Move to right space", "right", CONTROL_ALT_SHIFT, () => moveToSpace(RIGHT)],
-	["Move to left space", "left", CONTROL_ALT_SHIFT, () => moveToSpace(LEFT)],
+	[
+		"Move to right display",
+		"right",
+		CONTROL_ALT_SHIFT,
+		() => moveToScreen("right"),
+	],
+	[
+		"Move to left display",
+		"left",
+		CONTROL_ALT_SHIFT,
+		() => moveToScreen("left"),
+	],
 ];
 
 for (const binding of keys) {
@@ -210,12 +207,10 @@ async function autoLayout() {
 		return;
 	}
 
-	if (await isStageManagerEnabled()) {
-		Phoenix.log("Skipping layout because Stage Manager is enabled");
-		return;
-	}
-
-	// space with one browser window and one terminal window
+	const terminalWins = [
+		...getWindowsInSpace("kitty", space),
+		...getWindowsInSpace("WezTerm", space),
+	];
 
 	const browserWins = [
 		...getWindowsInSpace("Safari", space),
@@ -223,53 +218,72 @@ async function autoLayout() {
 		...getWindowsInSpace("Google Chrome", space),
 		...getWindowsInSpace("Firefox", space),
 	];
-	const terminalWins = [
-		...getWindowsInSpace("kitty", space),
-		...getWindowsInSpace("WezTerm", space),
-	];
-	if (browserWins.length === 1 && terminalWins.length === 1) {
-		fill(LEFT, { window: browserWins[0], portion: 1 - THIN_WIDTH });
-		fill(RIGHT, { window: terminalWins[0], portion: THIN_WIDTH });
-		return;
-	}
 
-	// space with a reeder window
-
-	const reederWins = getWindowsInSpace("Reeder", space);
-	if (reederWins.length === 1) {
-		moveTo(CENTER, reederWins[0]);
-		return;
-	}
-
-	// space with a wavebox window
-
-	const waveboxWins = getWindowsInSpace("Wavebox", space);
-	if (waveboxWins.length === 1) {
-		const messagesWins = getWindowsInSpace("Messages", space);
-
-		if (messagesWins.length > 0) {
-			fill(LEFT, { window: messagesWins[0], portion: 0.32 });
-			fill(RIGHT, { window: waveboxWins[0], widthMinus: 90 });
-		} else {
-			fill(CENTER, { window: waveboxWins[0] });
+	if (await isStageManagerEnabled()) {
+		for (const win of terminalWins) {
+			fill("center", { window: win, width: 750 });
 		}
 
-		return;
-	}
+		for (const win of browserWins) {
+			fill("right", { window: win, widthMinus: 180 });
+		}
+	} else {
+		const browserWins = [
+			...getWindowsInSpace("Safari", space),
+			...getWindowsInSpace("Wavebox", space),
+			...getWindowsInSpace("Google Chrome", space),
+			...getWindowsInSpace("Firefox", space),
+		];
 
-	// space with Slack window
-	const slackWins = getWindowsInSpace("Slack", space);
-	if (slackWins.length === 1) {
-		const messagesWins = getWindowsInSpace("Messages", space);
-
-		if (messagesWins.length > 0) {
-			fill(LEFT, { window: messagesWins[0], portion: 0.32 });
-			fill(RIGHT, { window: slackWins[0], portion: 0.68 });
-		} else {
-			fill(CENTER, { window: slackWins[0] });
+		if (browserWins.length === 1 && terminalWins.length === 1) {
+			fill("left", { window: browserWins[0], portion: 1 - THIN_WIDTH });
+			fill("right", { window: terminalWins[0], portion: THIN_WIDTH });
+			return;
 		}
 
-		return;
+		// space with a reeder window
+
+		const reederWins = getWindowsInSpace("Reeder", space);
+		if (reederWins.length === 1) {
+			moveTo("center", reederWins[0]);
+			return;
+		}
+
+		// space with a wavebox window
+
+		const waveboxWins = getWindowsInSpace("Wavebox", space);
+		if (waveboxWins.length === 1) {
+			const messagesWins = getWindowsInSpace("Messages", space);
+
+			if (messagesWins.length > 0) {
+				fill("left", { window: messagesWins[0], portion: 0.32 });
+				fill("right", { window: waveboxWins[0], widthMinus: 90 });
+			} else {
+				fill("center", { window: waveboxWins[0] });
+			}
+
+			return;
+		}
+
+		// space with Slack window
+
+		const slackWins = getWindowsInSpace("Slack", space);
+		if (slackWins.length === 1) {
+			const messagesWins = getWindowsInSpace("Messages", space);
+			const chatWins = getWindowsInSpace("Google Chat", space);
+
+			if (messagesWins.length > 0) {
+				fill("left", { window: messagesWins[0], portion: 0.3 });
+				fill("right", { window: slackWins[0], widthMinus: 95 });
+			} else {
+				fill("center", { window: slackWins[0] });
+			}
+
+			if (chatWins.length === 1) {
+			}
+
+			return;
+		}
 	}
 }
 
@@ -301,7 +315,7 @@ function center(window = Window.focused()) {
 		height: Math.round(screenFrame.height * heightScale),
 	});
 
-	moveTo(CENTER);
+	moveTo("center");
 }
 
 /**
@@ -358,21 +372,21 @@ function fill(area, options = {}) {
 
 	// size
 	switch (area) {
-		case NW:
-		case NE:
-		case SW:
-		case SE:
+		case "top-left":
+		case "top-right":
+		case "bottom-left":
+		case "bottom-right":
 			bounds.height = screenFrame.height / 2 - 0.5 * PADDING;
 			bounds.width = width - PADDING;
 			break;
-		case LEFT:
-		case RIGHT:
+		case "left":
+		case "right":
 			bounds.height = screenFrame.height;
 			bounds.width = width;
 			break;
-		case CENTER:
+		case "center":
 			bounds.height = screenFrame.height;
-			bounds.width = screenFrame.width;
+			bounds.width = width;
 			break;
 	}
 
@@ -381,9 +395,9 @@ function fill(area, options = {}) {
 
 	if (isLargeScreen) {
 		switch (area) {
-			case LEFT:
-			case RIGHT:
-			case CENTER:
+			case "left":
+			case "right":
+			case "center":
 				frame.height *= 0.95;
 				frame.width *= 0.95;
 				break;
@@ -392,19 +406,19 @@ function fill(area, options = {}) {
 
 	// x-coordinate
 	switch (area) {
-		case NW:
-		case SW:
+		case "top-left":
+		case "bottom-left":
 			frame.x = screenFrame.x;
 			break;
-		case LEFT:
+		case "left":
 			frame.x = screenFrame.x + (bounds.width - frame.width) / 2;
 			break;
-		case CENTER:
+		case "center":
 			frame.x = screenFrame.x + (screenFrame.width - frame.width) / 2;
 			break;
-		case NE:
-		case SE:
-		case RIGHT:
+		case "top-right":
+		case "bottom-right":
+		case "right":
 			frame.x =
 				screenFrame.x +
 				(screenFrame.width - bounds.width) +
@@ -414,17 +428,17 @@ function fill(area, options = {}) {
 
 	// y-coordinate
 	switch (area) {
-		case NW:
-		case NE:
+		case "top-left":
+		case "top-right":
 			frame.y = screenFrame.y;
 			break;
-		case RIGHT:
-		case LEFT:
-		case CENTER:
+		case "right":
+		case "left":
+		case "center":
 			frame.y = screenFrame.y + (screenFrame.height - frame.height) / 2;
 			break;
-		case SE:
-		case SW:
+		case "bottom-right":
+		case "bottom-left":
 			frame.y = screenFrame.y + frame.height + PADDING;
 			break;
 	}
@@ -510,9 +524,9 @@ function heightPercent(percent, window = Window.focused()) {
 }
 
 /**
- * Move to cardinal directions NW, NE, SE, SW or relative direction CENTER
+ * Move to top, bottom, left, right, center, NW, NE, SE, SW
  *
- * @param {string} direction
+ * @param {Direction} direction
  * @param {Window} [window]
  */
 function moveTo(direction, window = Window.focused()) {
@@ -522,30 +536,38 @@ function moveTo(direction, window = Window.focused()) {
 
 	// x-coordinate
 	switch (direction) {
-		case NW:
-		case SW:
+		case "left":
+		case "top-left":
+		case "bottom-left":
 			frame.x = screenFrame.x;
 			break;
-		case NE:
-		case SE:
+		case "right":
+		case "top-right":
+		case "bottom-right":
 			frame.x = screenFrame.x + delta.width;
 			break;
-		case CENTER:
+		case "top":
+		case "bottom":
+		case "center":
 			frame.x = screenFrame.x + delta.width / 2;
 			break;
 	}
 
 	// y-coordinate
 	switch (direction) {
-		case NW:
-		case NE:
+		case "top":
+		case "top-left":
+		case "top-right":
 			frame.y = screenFrame.y;
 			break;
-		case SE:
-		case SW:
+		case "bottom":
+		case "bottom-right":
+		case "bottom-left":
 			frame.y = screenFrame.y + delta.height;
 			break;
-		case CENTER:
+		case "left":
+		case "right":
+		case "center":
 			frame.y = screenFrame.y + delta.height / 2;
 			break;
 	}
@@ -562,7 +584,7 @@ function moveTo(direction, window = Window.focused()) {
  */
 function moveToScreen(direction, window = Window.focused()) {
 	const screen = window.screen();
-	const newScreen = direction === RIGHT ? screen.next() : screen.previous();
+	const newScreen = direction === "right" ? screen.next() : screen.previous();
 	if (screen === newScreen) {
 		return;
 	}
@@ -582,10 +604,10 @@ function moveToScreen(direction, window = Window.focused()) {
 	const width = Math.round(windowFrame.width * widthRatio);
 	const height = Math.round(windowFrame.height * heightRatio);
 	const x = Math.round(
-		newScreenFrame.x + (windowFrame.x - screenFrame.x) * widthRatio
+		newScreenFrame.x + (windowFrame.x - screenFrame.x) * widthRatio,
 	);
 	const y = Math.round(
-		newScreenFrame.y + (windowFrame.y - screenFrame.y) * heightRatio
+		newScreenFrame.y + (windowFrame.y - screenFrame.y) * heightRatio,
 	);
 	const newWindowFrame = { x, y, width, height };
 
@@ -622,7 +644,7 @@ function moveToSpace(direction, window) {
 		return;
 	}
 
-	const targetSpace = direction == RIGHT ? space.next() : space.previous();
+	const targetSpace = direction == "right" ? space.next() : space.previous();
 	if (!targetSpace) {
 		return;
 	}
@@ -668,7 +690,7 @@ async function resize(increment, window = Window.focused()) {
 		const oldHeight = windowFrame.height;
 		const newHeight = Math.min(
 			windowFrame.height + increment.height,
-			maxHeight
+			maxHeight,
 		);
 		windowFrame.height = newHeight;
 		windowFrame.y -= (newHeight - oldHeight) / 2;
@@ -744,7 +766,7 @@ function toggleFillScreen(window = Window.focused()) {
 		Phoenix.log("Filling center");
 		lastPositions[windowId] = { ...windowFrame };
 		Storage.set("lastPositions", lastPositions);
-		fill(CENTER, { window });
+		fill("center", { window });
 	} else if (lastPositions[windowId]) {
 		window.setFrame(lastPositions[windowId]);
 	}

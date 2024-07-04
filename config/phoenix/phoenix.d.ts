@@ -1,4 +1,13 @@
-export {};
+export type Direction =
+	| "top"
+	| "bottom"
+	| "left"
+	| "right"
+	| "center"
+	| "top-left"
+	| "top-right"
+	| "bottom-left"
+	| "bottom-right";
 
 declare global {
 	class Phoenix {
