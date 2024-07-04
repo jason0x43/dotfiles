@@ -159,3 +159,5 @@ o.fillchars:append('foldclose:▶')
 o.fillchars:append('fold:-')
 
 vim.go.splitkeep = 'topline'
+
+vim.lsp.log.set_format_func(vim.inspect)
