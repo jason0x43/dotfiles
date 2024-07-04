@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+autoload colors; colors
+
+# Log output
+function log {
+    local msg=$1
+    local color=${2:-$fg_bold[green]}
+    echo "$color>>>$reset_color $msg"
+}
+
+# Log output
+function logSub {
+    log $1 $fg_bold[blue]
+}
+
+# Log error output
+function err {
+    log $1 $fg_bold[red]
+}
+
+# Log warning output
+function warn {
+    log $1 $fg_bold[yellow]
+}
+
+log "Cleaning Homebrew cache..."
+brew cleanup
+
+log "Cleaning Docker files..."
+docker system prune -f
+
+log "Cleaning Xcode files..."
+logSub "Checking space used by developer files..."
+start_space=$(du -sm $HOME/Library/Developer | awk '{print $1}')
+logSub "Removing old runtimes..."
+xcrun simctl runtime delete --notUsedSinceDays 180
+logSub "Deleting devices without runtimes..."
+xcrun simctl delete unavailable
+logSub "Deleting Swift previews for unavailable devices..."
+xcrun simctl --set previews delete unavailable
+end_space=$(du -sm $HOME/Library/Developer | awk '{print $1}')
+logSub "Freed $(( end_space - start_space )) MB"
+
+echo ">>> Done"
