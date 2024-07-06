@@ -224,7 +224,9 @@ async function autoLayout() {
 			fill("center", { window: win, width: 750 });
 		}
 
-		for (const win of browserWins) {
+		const slackWins = getWindowsInSpace("Slack", space);
+
+		for (const win of [...browserWins, ...slackWins]) {
 			fill("right", { window: win, widthMinus: 180 });
 		}
 	} else {
@@ -238,18 +240,12 @@ async function autoLayout() {
 		if (browserWins.length === 1 && terminalWins.length === 1) {
 			fill("left", { window: browserWins[0], portion: 1 - THIN_WIDTH });
 			fill("right", { window: terminalWins[0], portion: THIN_WIDTH });
-			return;
 		}
-
-		// space with a reeder window
 
 		const reederWins = getWindowsInSpace("Reeder", space);
 		if (reederWins.length === 1) {
 			moveTo("center", reederWins[0]);
-			return;
 		}
-
-		// space with a wavebox window
 
 		const waveboxWins = getWindowsInSpace("Wavebox", space);
 		if (waveboxWins.length === 1) {
@@ -261,28 +257,27 @@ async function autoLayout() {
 			} else {
 				fill("center", { window: waveboxWins[0] });
 			}
-
-			return;
 		}
 
-		// space with Slack window
-
+		const messagesWins = getWindowsInSpace("Messages", space);
 		const slackWins = getWindowsInSpace("Slack", space);
-		if (slackWins.length === 1) {
-			const messagesWins = getWindowsInSpace("Messages", space);
-			const chatWins = getWindowsInSpace("Google Chat", space);
 
+		if (messagesWins.length === 1) {
+			fill("left", { window: messagesWins[0], portion: 0.4 });
+		}
+
+		if (slackWins.length === 1) {
 			if (messagesWins.length > 0) {
-				fill("left", { window: messagesWins[0], portion: 0.3 });
 				fill("right", { window: slackWins[0], widthMinus: 95 });
 			} else {
 				fill("center", { window: slackWins[0] });
 			}
+		}
 
-			if (chatWins.length === 1) {
-			}
-
-			return;
+		const chatWins = getWindowsInSpace("Chat", space);
+		Phoenix.log(`>>> found ${chatWins.length} chat wins`);
+		if (chatWins.length === 1) {
+			fill("right", { window: chatWins[0], portion: 0.58 });
 		}
 	}
 }
@@ -680,7 +675,10 @@ async function resize(increment, window = Window.focused()) {
 	if (increment.width) {
 		const maxWidth = screenFrame.width - (windowFrame.x - screenFrame.x);
 		const oldWidth = windowFrame.width;
-		const newWidth = Math.min(windowFrame.width + increment.width, maxWidth);
+		const newWidth = Math.min(
+			windowFrame.width + increment.width,
+			maxWidth,
+		);
 		windowFrame.width = newWidth;
 		windowFrame.x -= (newWidth - oldWidth) / 2;
 	}
