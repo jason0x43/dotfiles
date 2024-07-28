@@ -56,6 +56,9 @@ return {
           { name = 'buffer' },
         },
         preselect = 'none',
+        view = {
+          entries = 'native'
+        }
       }
     end,
   },
