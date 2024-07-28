@@ -19,10 +19,10 @@ return {
   -- servers are configured
   {
     'folke/lazydev.nvim',
-    ft = "lua",
+    ft = 'lua',
     opts = {
-      library = {}
-    }
+      library = {},
+    },
   },
 
   -- language server installer; must be setup before null-ls to ensure
@@ -67,7 +67,6 @@ return {
   {
     'folke/trouble.nvim',
     event = 'BufEnter',
-    dependencies = 'nvim-tree/nvim-web-devicons',
     keys = {
       {
         '<leader>td',
@@ -151,7 +150,6 @@ return {
     version = '*',
     dependencies = {
       'SmiteshP/nvim-navic',
-      'nvim-tree/nvim-web-devicons',
     },
     event = 'User UiReady',
     config = function()
@@ -164,7 +162,7 @@ return {
         -- prevent barbecue from updating itself automatically
         create_autocmd = false,
 
-        exclude_filetypes = { "netrw", "toggleterm", "starter" },
+        exclude_filetypes = { 'netrw', 'toggleterm', 'starter' },
 
         theme = {
           normal = { fg = colors.fg_0, bg = colors.bg_1 },
