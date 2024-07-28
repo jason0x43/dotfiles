@@ -225,8 +225,9 @@ async function autoLayout() {
 		}
 
 		const slackWins = getWindowsInSpace("Slack", space);
+		const hassWins = getWindowsInSpace("Home Assistant", space);
 
-		for (const win of [...browserWins, ...slackWins]) {
+		for (const win of [...browserWins, ...slackWins, ...hassWins]) {
 			fill("right", { window: win, widthMinus: 180 });
 		}
 	} else {
@@ -237,9 +238,17 @@ async function autoLayout() {
 			...getWindowsInSpace("Firefox", space),
 		];
 
-		if (browserWins.length === 1 && terminalWins.length === 1) {
-			fill("left", { window: browserWins[0], portion: 1 - THIN_WIDTH });
-			fill("right", { window: terminalWins[0], portion: THIN_WIDTH });
+		if (browserWins.length > 0 && terminalWins.length > 0) {
+			for (const window of browserWins) {
+				fill("left", { window, portion: 1 - THIN_WIDTH });
+			}
+			for (const window of terminalWins) {
+				fill("right", { window, portion: THIN_WIDTH });
+			}
+		} else if (browserWins.length > 0) {
+			for (const window of browserWins) {
+				fill("center", { window });
+			}
 		}
 
 		const reederWins = getWindowsInSpace("Reeder", space);
