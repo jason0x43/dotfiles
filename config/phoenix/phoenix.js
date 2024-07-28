@@ -192,9 +192,10 @@ function getWindowsInSpace(appName, space) {
 		return [];
 	}
 
-	return app
-		.windows({ visible: true })
-		.filter((win) => win.spaces().find((s) => s.isEqual(space)));
+	const wins = app.windows();
+	Phoenix.log(`App ${appName} has ${wins.length} windows`);
+
+	return wins.filter((win) => win.spaces().find((s) => s.isEqual(space)));
 }
 
 /**
@@ -229,6 +230,12 @@ async function autoLayout() {
 
 		for (const win of [...browserWins, ...slackWins, ...hassWins]) {
 			fill("right", { window: win, widthMinus: 180 });
+		}
+
+		const simWins = getWindowsInSpace("Simulator", space);
+		Phoenix.log(`Found ${simWins.length} sim wins`);
+		for (const win of simWins) {
+			moveTo("center", win);
 		}
 	} else {
 		const browserWins = [
@@ -369,9 +376,6 @@ function fill(area, options = {}) {
 		width = screenFrame.width / 2;
 	}
 
-	Phoenix.log(`windowFrame: ${JSON.stringify(frame)}`);
-	Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
-
 	const bounds = {};
 
 	// size
@@ -447,7 +451,6 @@ function fill(area, options = {}) {
 			break;
 	}
 
-	Phoenix.log(`Setting frame to ${JSON.stringify(frame)}`);
 	window.setFrame(frame);
 }
 
@@ -512,7 +515,6 @@ function getDeltaFrame(window = Window.focused()) {
  */
 function getScreenFrame(window = Window.focused()) {
 	const screenFrame = window.screen().flippedVisibleFrame();
-	Phoenix.log(`screenFrame: ${JSON.stringify(screenFrame)}`);
 	return padScreenFrame(screenFrame);
 }
 

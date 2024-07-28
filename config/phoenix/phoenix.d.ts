@@ -94,8 +94,8 @@ declare global {
 	}
 
 	interface SpaceStatic {
-		active(): SpaceInstance;
-		all(): SpaceInstance[];
+		active(): Space;
+		all(): Space[];
 	}
 
 	const Space: SpaceStatic;
