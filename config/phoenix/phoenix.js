@@ -28,7 +28,7 @@ Event.on("willTerminate", () => {
 const INCREMENT = 0.05;
 const CONTROL_SHIFT = ["ctrl", "shift"];
 const CONTROL_ALT_SHIFT = ["ctrl", "alt", "shift"];
-const PADDING = 10;
+const PADDING = 20;
 
 const MODAL_TIMEOUT = 750;
 const THIN_WIDTH = (1020 / 3840) * 1.4;
@@ -227,8 +227,18 @@ async function autoLayout() {
 
 		const slackWins = getWindowsInSpace("Slack", space);
 		const hassWins = getWindowsInSpace("Home Assistant", space);
+		const mailWins = getWindowsInSpace("Mail", space);
+		const dtWins = getWindowsInSpace("DEVONthink 3", space);
+		const movieWins = getWindowsInSpace("iMovie", space);
 
-		for (const win of [...browserWins, ...slackWins, ...hassWins]) {
+		for (const win of [
+			...browserWins,
+			...slackWins,
+			...hassWins,
+			...mailWins,
+			...dtWins,
+			...movieWins,
+		]) {
 			fill("right", { window: win, widthMinus: 180 });
 		}
 
