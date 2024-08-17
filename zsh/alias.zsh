@@ -206,3 +206,8 @@ fi
 if (( $+commands[tmux] )); then
     alias ta='tmux attach'
 fi
+
+if (( $+commands[wezterm] )); then
+    alias wtc='wezterm cli'
+fi
+
