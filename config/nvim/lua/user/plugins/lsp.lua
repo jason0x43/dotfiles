@@ -151,9 +151,8 @@ return {
     dependencies = {
       'SmiteshP/nvim-navic',
     },
-    event = 'User UiReady',
     config = function()
-      local colors = require('user.themes.wezterm').load_colors()
+      -- local colors = require('user.themes.wezterm').load_colors()
 
       -- triggers CursorHold event faster
       vim.opt.updatetime = 200
@@ -164,9 +163,7 @@ return {
 
         exclude_filetypes = { 'netrw', 'toggleterm', 'starter' },
 
-        theme = {
-          normal = { fg = colors.fg_0, bg = colors.bg_1 },
-        },
+        theme = 'auto',
       })
 
       vim.api.nvim_create_autocmd({
