@@ -4,11 +4,17 @@ root = true
 indent_size = 4
 indent_style = space
 
-[*.{js,ts,tsx,jsx}]
+[*.{py}]
 indent_size = 4
-indent_style = tab
+indent_style = space
 max_line_length = 80
 tab_width = 4
+
+[*.{js,ts,tsx,jsx}]
+indent_size = 2
+indent_style = tab
+max_line_length = 80
+tab_width = 2
 
 [*.lua]
 indent_style = space
