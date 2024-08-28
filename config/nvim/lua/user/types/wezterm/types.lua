@@ -1083,6 +1083,7 @@ function KeyAssignment.SwitchWorkspaceRelative(direction) end
 ---@field key_tables table<string, _.wezterm.KeyBinding[]>
 ---@field keys _.wezterm.KeyBinding[]
 ---@field launch_menu _.wezterm.SpawnCommand[]
+---@field leader _.wezterm.KeyBinding[]
 ---@field line_height number
 ---@field log_unknown_escape_sequences boolean
 ---@field macos_forward_to_ime_modifier_mask string
