@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+tar cf "$1.tar" "$1"
+xz --verbose -T0 "$1.tar"
+rm -rf "$1"
