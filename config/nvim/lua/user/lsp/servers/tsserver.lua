@@ -51,7 +51,7 @@ return {
       'deno.jsonc'
     )(vim.fn.getcwd())
 
-    if deno_config and #deno_config <= #ts_config then
+    if deno_config and (ts_config == nil or #deno_config <= #ts_config) then
       return nil
     end
 
