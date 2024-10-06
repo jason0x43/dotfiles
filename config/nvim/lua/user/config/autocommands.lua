@@ -149,3 +149,8 @@ end)
 autocmd('VimResized', '*', function()
   vim.wo.number = vim.go.columns > 88
 end)
+
+-- autosave on exit
+autocmd({ 'ExitPre' }, '*', function()
+  vim.cmd('silent! wa')
+end)
