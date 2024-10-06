@@ -110,7 +110,7 @@ local width_mult = 0.816
 
 --- Truncate a path
 local function truncate_path(path)
-  local width = math.floor(0.816 * vim.o.columns) - 4
+  local width = math.floor(width_mult * vim.o.columns) - 4
   print(width)
 
   if path:len() <= width then
@@ -136,6 +136,37 @@ end
 local function truncate(buf_id, items, query, opts)
   items = map_gsub(items, '^%Z+', truncate_path)
   MiniPick.default_show(buf_id, items, query, opts)
+end
+
+--- Give a code action title a sort score
+---@param title string
+local function score_action(title)
+  if title:find('^Add import ') then
+    return 10
+  end
+  if title:find('^Import ') then
+    return 9
+  end
+  if title:find('^Show documentation ') then
+    return 4
+  end
+  if title:find('^Disable ') then
+    return 3
+  end
+  if title:find('^Move to a new file') then
+    return 0
+  end
+
+  return 5
+end
+
+--- Sort code actions by score
+---@param a { action: { title: string } }
+---@param b { action: { title: string } }
+local function sort_actions(a, b)
+  if score_action(a.action.title) > score_action(b.action.title) then
+    return true
+  end
 end
 
 return {
@@ -168,7 +199,20 @@ return {
           refine = '<C-r>',
         },
       })
-      vim.ui.select = MiniPick.ui_select
+
+      ---@param items table
+      ---@param opts table
+      ---@param on_choice function?
+      local ui_select = function(items, opts, on_choice)
+        local type = opts.prompt or opts.kind
+        if type:find('Code actions') then
+          table.sort(items, sort_actions)
+        end
+        return MiniPick.ui_select(items, opts, on_choice)
+      end
+
+      vim.ui.select = ui_select
+
       vim.keymap.set('n', '<leader>f', function()
         local in_worktree = require('user.util').in_git_dir()
         if in_worktree then
@@ -208,7 +252,9 @@ return {
                 )
               end,
             },
-            window = { config = { width = math.floor(0.816 * vim.o.columns) } },
+            window = {
+              config = { width = math.floor(width_mult * vim.o.columns) },
+            },
           })
         else
           MiniPick.builtin.files()
@@ -217,7 +263,9 @@ return {
       vim.keymap.set('n', '<leader>g', function()
         MiniPick.builtin.grep_live({}, {
           source = { show = truncate },
-          window = { config = { width = math.floor(0.816 * vim.o.columns) } },
+          window = {
+            config = { width = math.floor(width_mult * vim.o.columns) },
+          },
         })
       end)
       vim.keymap.set('n', '<leader>e', function()
@@ -225,7 +273,9 @@ return {
       end)
       vim.keymap.set('n', '<leader>b', function()
         MiniPick.builtin.buffers({}, {
-          window = { config = { width = math.floor(0.816 * vim.o.columns) } },
+          window = {
+            config = { width = math.floor(width_mult * vim.o.columns) },
+          },
         })
       end)
       vim.keymap.set('n', '<leader>h', function()
