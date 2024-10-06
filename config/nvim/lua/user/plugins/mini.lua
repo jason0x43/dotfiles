@@ -105,6 +105,39 @@ local headers = {
   },
 }
 
+local sep = '/'
+local width_mult = 0.816
+
+--- Truncate a path
+local function truncate_path(path)
+  local width = math.floor(0.816 * vim.o.columns) - 4
+  print(width)
+
+  if path:len() <= width then
+    return path
+  end
+
+  local parts = vim.split(path, sep)
+  if #parts > 2 then
+    parts = { parts[1], '…', parts[#parts] }
+  end
+  return table.concat(parts, sep)
+end
+
+--- Map a gsub over an table of strings
+local function map_gsub(items, pattern, replacement)
+  return vim.tbl_map(function(item)
+    item, _ = string.gsub(item, pattern, replacement)
+    return item
+  end, items)
+end
+
+--- Truncate pathnames
+local function truncate(buf_id, items, query, opts)
+  items = map_gsub(items, '^%Z+', truncate_path)
+  MiniPick.default_show(buf_id, items, query, opts)
+end
+
 return {
   -- many things
   {
@@ -156,7 +189,7 @@ return {
               for _, file in pairs(files) do
                 if file ~= '' then
                   table.insert(items, {
-                    text = file,
+                    text = truncate_path(file),
                     path = file:sub(3),
                   })
                 end
@@ -167,7 +200,6 @@ return {
             source = {
               name = 'Git files (index + untracked)',
               show = function(buf_id, items, query)
-                print('showing git files')
                 return MiniPick.default_show(
                   buf_id,
                   items,
@@ -176,19 +208,25 @@ return {
                 )
               end,
             },
+            window = { config = { width = math.floor(0.816 * vim.o.columns) } },
           })
         else
           MiniPick.builtin.files()
         end
       end)
       vim.keymap.set('n', '<leader>g', function()
-        MiniPick.builtin.grep_live()
+        MiniPick.builtin.grep_live({}, {
+          source = { show = truncate },
+          window = { config = { width = math.floor(0.816 * vim.o.columns) } },
+        })
       end)
       vim.keymap.set('n', '<leader>e', function()
         MiniExtra.pickers.diagnostic({ scope = 'current' })
       end)
       vim.keymap.set('n', '<leader>b', function()
-        MiniPick.builtin.buffers()
+        MiniPick.builtin.buffers({}, {
+          window = { config = { width = math.floor(0.816 * vim.o.columns) } },
+        })
       end)
       vim.keymap.set('n', '<leader>h', function()
         MiniPick.builtin.help()
