@@ -31,11 +31,98 @@ return {
     'williamboman/mason.nvim',
     priority = 100,
     build = ':MasonUpdate',
-    opts = {
-      ui = {
-        border = 'rounded',
-      },
-    },
+    opts = function()
+      vim.api.nvim_create_user_command('MasonUpgrade', function(context)
+        local function check_done(updating, any_update)
+          if updating == 0 then
+            if any_update then
+              io.write('Finished updating\n')
+            else
+              io.write('Nothing to update\n')
+            end
+
+            vim.schedule(function()
+              vim.api.nvim_exec_autocmds('User', {
+                pattern = 'MasonUpgradeComplete',
+              })
+            end)
+          end
+        end
+
+        local checking = 0
+        local updating = 0
+        local any_update = false
+
+        io.write('Checking for updates...\n')
+
+        local registry = require('mason-registry')
+        registry.refresh()
+        registry.update(function(success, error)
+          if not success then
+            io.write('Error updating registry: ' .. error)
+            vim.schedule(function()
+              vim.api.nvim_exec_autocmds('User', {
+                pattern = 'MasonUpgradeComplete',
+              })
+            end)
+
+            return
+          end
+
+          ---@param pkg Package
+          ---@param version NewPackageVersion
+          ---@param succeeded boolean
+          local update_finished = function(pkg, version, succeeded)
+            updating = updating - 1
+            if succeeded then
+              io.write(
+                ('Updated %s to %s\n'):format(pkg.name, version.latest_version)
+              )
+            else
+              io.write(('Error updating %s\n'):format(pkg.name))
+            end
+            check_done(updating, any_update)
+          end
+
+          local packages = registry.get_installed_packages()
+          for _, pkg in ipairs(packages) do
+            checking = checking + 1
+
+            pkg:check_new_version(function(new_available, version)
+              if new_available then
+                io.write(
+                  ('Updating %s to %s...\n'):format(
+                    pkg.name,
+                    version.latest_version
+                  )
+                )
+                any_update = true
+                updating = updating + 1
+                pkg:on('install:success', function()
+                  update_finished(pkg, version, true)
+                end)
+                pkg:on('install:failure', function()
+                  update_finished(pkg, version, false)
+                end)
+                pkg:install({ version = version.latest_version, force = true })
+              end
+
+              checking = checking - 1
+
+              if checking == 0 then
+                check_done(updating, any_update)
+              end
+            end)
+          end
+        end)
+      end, { force = true })
+
+      return {
+        ui = {
+          border = 'rounded',
+        },
+      }
+    end,
   },
 
   -- language server manager

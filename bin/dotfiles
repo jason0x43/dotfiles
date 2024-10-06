@@ -291,6 +291,20 @@ function dotfiles-init {
     fi
 }
 
+# Update neovim plugins
+function dotfiles-nvim {
+    log "Updating neovim resource..."
+
+    logSub "Updating neovim plugins..."
+    nvim --headless "+Lazy! sync" +qa
+
+    logSub "Updating neovim language servers..."
+    nvim --headless -c "autocmd User MasonUpgradeComplete qall" -c 'MasonUpgrade'
+
+    logSub "Updating neovim language servers..."
+    nvim --headless -c 'TSUpdateSync | lua io.flush()' +qa
+}
+
 # Update zsh plugins
 function dotfiles-zsh {
     log "Updating zsh plugins..."
@@ -447,11 +461,12 @@ else
     dotfiles-home
     dotfiles-init
     dotfiles-fonts
-    dotfiles-zsh
     dotfiles-python
     dotfiles-node
     dotfiles-rust
     dotfiles-bat
+    dotfiles-zsh
+    dotfiles-nvim
 
     if [[ $OSTYPE == darwin* ]]; then
         dotfiles-launchd
