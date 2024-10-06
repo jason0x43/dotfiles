@@ -63,37 +63,37 @@ const keys = [
 		"Fill NW quadrant",
 		"q",
 		CONTROL_ALT_SHIFT,
-		() => fill("top-left", { portion: 1 - THIN_WIDTH }),
+		() => fill("top-left", { width: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill SW quadrant",
 		"a",
 		CONTROL_ALT_SHIFT,
-		() => fill("bottom-left", { portion: 1 - THIN_WIDTH }),
+		() => fill("bottom-left", { width: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill SE quadrant",
 		"s",
 		CONTROL_ALT_SHIFT,
-		() => fill("bottom-right", { portion: THIN_WIDTH }),
+		() => fill("bottom-right", { width: THIN_WIDTH }),
 	],
 	[
 		"Fill NE quadrant",
 		"w",
 		CONTROL_ALT_SHIFT,
-		() => fill("top-right", { portion: THIN_WIDTH }),
+		() => fill("top-right", { width: THIN_WIDTH }),
 	],
 	[
 		"Fill left half",
 		"h",
 		CONTROL_ALT_SHIFT,
-		() => fill("left", { portion: 1 - THIN_WIDTH }),
+		() => fill("left", { width: 1 - THIN_WIDTH }),
 	],
 	[
 		"Fill right half",
 		"l",
 		CONTROL_ALT_SHIFT,
-		() => fill("right", { portion: THIN_WIDTH }),
+		() => fill("right", { width: THIN_WIDTH }),
 	],
 	["Fill screen", "f", CONTROL_ALT_SHIFT, () => toggleFillScreen()],
 	["Fill center", "z", CONTROL_ALT_SHIFT, () => center()],
@@ -188,12 +188,10 @@ async function isStageManagerEnabled() {
 function getWindowsInSpace(appName, space) {
 	const app = App.get(appName);
 	if (!app) {
-		Phoenix.log(`Could not find app ${appName}`);
 		return [];
 	}
 
 	const wins = app.windows();
-	Phoenix.log(`App ${appName} has ${wins.length} windows`);
 
 	return wins.filter((win) => win.spaces().find((s) => s.isEqual(space)));
 }
@@ -239,11 +237,10 @@ async function autoLayout() {
 			...dtWins,
 			...movieWins,
 		]) {
-			fill("right", { window: win, widthMinus: 180 });
+			fill("center", { window: win, width: -300 });
 		}
 
 		const simWins = getWindowsInSpace("Simulator", space);
-		Phoenix.log(`Found ${simWins.length} sim wins`);
 		for (const win of simWins) {
 			moveTo("center", win);
 		}
@@ -257,10 +254,10 @@ async function autoLayout() {
 
 		if (browserWins.length > 0 && terminalWins.length > 0) {
 			for (const window of browserWins) {
-				fill("left", { window, portion: 1 - THIN_WIDTH });
+				fill("left", { window, width: 1 - THIN_WIDTH });
 			}
 			for (const window of terminalWins) {
-				fill("right", { window, portion: THIN_WIDTH });
+				fill("right", { window, width: THIN_WIDTH });
 			}
 		} else if (browserWins.length > 0) {
 			for (const window of browserWins) {
@@ -278,8 +275,8 @@ async function autoLayout() {
 			const messagesWins = getWindowsInSpace("Messages", space);
 
 			if (messagesWins.length > 0) {
-				fill("left", { window: messagesWins[0], portion: 0.32 });
-				fill("right", { window: waveboxWins[0], widthMinus: 90 });
+				fill("left", { window: messagesWins[0], width: 0.32 });
+				fill("right", { window: waveboxWins[0], width: -90 });
 			} else {
 				fill("center", { window: waveboxWins[0] });
 			}
@@ -289,12 +286,12 @@ async function autoLayout() {
 		const slackWins = getWindowsInSpace("Slack", space);
 
 		if (messagesWins.length === 1) {
-			fill("left", { window: messagesWins[0], portion: 0.4 });
+			fill("left", { window: messagesWins[0], width: 0.4 });
 		}
 
 		if (slackWins.length === 1) {
 			if (messagesWins.length > 0) {
-				fill("right", { window: slackWins[0], widthMinus: 95 });
+				fill("right", { window: slackWins[0], width: -84 });
 			} else {
 				fill("center", { window: slackWins[0] });
 			}
@@ -303,7 +300,7 @@ async function autoLayout() {
 		const chatWins = getWindowsInSpace("Chat", space);
 		Phoenix.log(`>>> found ${chatWins.length} chat wins`);
 		if (chatWins.length === 1) {
-			fill("right", { window: chatWins[0], portion: 0.58 });
+			fill("right", { window: chatWins[0], width: 0.58 });
 		}
 	}
 }
@@ -356,80 +353,57 @@ function centerFrame(frame1, frame2) {
 /**
  * Fill an area of the screen
  *
- * @param {string} area
+ * @param {string} anchor
  * @param {{
  *   window?: Window,
- *   portion?: number,
  *   width?: number,
- *   widthMinus?: number
  * }} options
  */
-function fill(area, options = {}) {
-	let { window, portion, width, widthMinus } = options;
-
-	window = window || Window.focused();
+function fill(anchor, options = {}) {
+	const window = options.window ?? Window.focused();
 	if (!window) {
 		return;
 	}
 
 	let screenFrame = getScreenFrame(window);
-	const isLargeScreen = screenFrame.width > 2000;
 	const frame = window.frame();
 
-	if (portion) {
-		width = screenFrame.width * portion;
-	} else if (widthMinus) {
-		width = screenFrame.width - widthMinus;
-	}
+	let width = screenFrame.width / 2;
 
-	if (!width) {
-		width = screenFrame.width / 2;
+	if (options.width > 1) {
+		width = options.width;
+	} else if (options.width > 0) {
+		width = screenFrame.width * options.width;
+	} else if (options.width < 0) {
+		width = screenFrame.width + options.width;
 	}
-
-	const bounds = {};
 
 	// size
-	switch (area) {
+	switch (anchor) {
 		case "top-left":
 		case "top-right":
 		case "bottom-left":
 		case "bottom-right":
-			bounds.height = screenFrame.height / 2 - 0.5 * PADDING;
-			bounds.width = width - PADDING;
+			frame.height = screenFrame.height / 2 - 0.5 * PADDING;
+			frame.width = width - PADDING;
 			break;
 		case "left":
 		case "right":
-			bounds.height = screenFrame.height;
-			bounds.width = width;
+			frame.height = screenFrame.height;
+			frame.width = width - PADDING;
 			break;
 		case "center":
-			bounds.height = screenFrame.height;
-			bounds.width = width;
+			frame.height = screenFrame.height;
+			frame.width = width;
 			break;
-	}
-
-	frame.height = bounds.height;
-	frame.width = bounds.width;
-
-	if (isLargeScreen) {
-		switch (area) {
-			case "left":
-			case "right":
-			case "center":
-				frame.height *= 0.95;
-				frame.width *= 0.95;
-				break;
-		}
 	}
 
 	// x-coordinate
-	switch (area) {
+	switch (anchor) {
 		case "top-left":
 		case "bottom-left":
-			frame.x = screenFrame.x;
-			break;
 		case "left":
-			frame.x = screenFrame.x + (bounds.width - frame.width) / 2;
+			frame.x = screenFrame.x;
 			break;
 		case "center":
 			frame.x = screenFrame.x + (screenFrame.width - frame.width) / 2;
@@ -439,13 +413,12 @@ function fill(area, options = {}) {
 		case "right":
 			frame.x =
 				screenFrame.x +
-				(screenFrame.width - bounds.width) +
-				(bounds.width - frame.width - PADDING) / 2;
+				(screenFrame.width - frame.width)  - PADDING / 2;
 			break;
 	}
 
 	// y-coordinate
-	switch (area) {
+	switch (anchor) {
 		case "top-left":
 		case "top-right":
 			frame.y = screenFrame.y;
