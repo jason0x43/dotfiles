@@ -147,6 +147,9 @@ local function score_action(title)
   if title:find('^Import ') then
     return 9
   end
+  if title:find('^Update import ') then
+    return 8
+  end
   if title:find('^Show documentation ') then
     return 4
   end
