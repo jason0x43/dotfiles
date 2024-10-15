@@ -25,7 +25,7 @@ local function section_lsps(sl, args)
     end, client_names)
   end
 
-  return string.format('%s%s', icon, table.concat(client_names, ','))
+  return string.format('%s %s', icon, table.concat(client_names, ','))
 end
 
 ---hilight a string
@@ -141,6 +141,9 @@ end
 --- Give a code action title a sort score
 ---@param title string
 local function score_action(title)
+  if title:find('^Update dependencies') then
+    return 11
+  end
   if title:find('^Add import ') then
     return 10
   end
