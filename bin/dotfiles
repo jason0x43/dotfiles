@@ -302,7 +302,7 @@ function dotfiles-nvim {
     nvim --headless -c "autocmd User MasonUpgradeComplete qall" -c 'MasonUpgrade'
 
     logSub "Updating neovim language servers..."
-    nvim --headless -c 'TSUpdateSync | lua io.flush()' +qa
+    nvim --headless -c 'TSUpdateSync | lua print() io.flush()' +qa
 }
 
 # Update zsh plugins
