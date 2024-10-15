@@ -15,7 +15,7 @@ return {
           css = { 'prettier' },
           lua = { 'stylua' },
           html = { 'prettier' },
-          javascript = { 'prettier' },
+          javascript = { 'prettier', 'deno_fmt' },
           javascriptreact = { 'prettier' },
           json = { 'prettier' },
           jsonc = { 'prettier' },
@@ -23,6 +23,20 @@ return {
           typescript = { 'prettier' },
           typescriptreact = { 'prettier' },
           swift = { 'swift_format' },
+        },
+        formatters = {
+          prettier = {
+            cwd = require('conform.util').root_file({
+              'package.json',
+            }),
+            require_cwd = true,
+          },
+          deno_fmt = {
+            cwd = require('conform.util').root_file({
+              'deno.json',
+            }),
+            require_cwd = true,
+          },
         },
       }
     end,

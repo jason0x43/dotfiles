@@ -1,3 +1,5 @@
+local lspconfig = require('lspconfig')
+
 return {
   handlers = {
     ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
@@ -38,25 +40,7 @@ return {
     end
   end,
 
-  root_dir = function()
-    local ts_config = require('lspconfig').util.root_pattern(
-      'tsconfig.json',
-      'tsconfig.jsonc',
-      'jsconfig.json',
-      'jsconfig.jsonc'
-    )(vim.fn.getcwd())
+  root_dir = lspconfig.util.root_pattern("package.json"),
 
-    local deno_config = require('lspconfig').util.root_pattern(
-      'deno.json',
-      'deno.jsonc'
-    )(vim.fn.getcwd())
-
-    if deno_config and (ts_config == nil or #deno_config <= #ts_config) then
-      return nil
-    end
-
-    return ts_config
-  end,
-
-  single_file_support = false,
+  single_file_support = false
 }
