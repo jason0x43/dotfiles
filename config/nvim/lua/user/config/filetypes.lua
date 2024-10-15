@@ -22,6 +22,10 @@ vim.filetype.add({
         then
           return 'javascript'
         end
+
+        if first_line:find('#!/usr/bin/env %-S deno') ~= nil then
+          return 'typescript'
+        end
       end,
     },
   },
