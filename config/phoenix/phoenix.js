@@ -241,7 +241,8 @@ async function autoLayout() {
 		}
 
 		const simWins = getWindowsInSpace("Simulator", space);
-		for (const win of simWins) {
+		const messagesWins = getWindowsInSpace("Messages", space);
+		for (const win of [...simWins, ...messagesWins]) {
 			moveTo("center", win);
 		}
 	} else {
