@@ -255,6 +255,11 @@ if [[ -d $HOME/.bun/bin ]]; then
 	)
 fi
 
+# corepack
+if (( $+commands[corepack] )); then
+	export COREPACK_ENABLE_AUTO_PIN=0
+fi
+
 # ripgrep
 if (( $+commands[rg] )); then
 	export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep
