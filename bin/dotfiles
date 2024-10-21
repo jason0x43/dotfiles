@@ -278,31 +278,21 @@ function dotfiles-init {
                 sudo rm -f $HOMEBREW_BASE/share/zsh/site-functions/_git
             fi
         fi
-
-        # Update 1password-cli zsh completions
-        if (( $+commands[op] )); then
-            op completion zsh >! $ZDATADIR/functions/_op
-        fi
-
-        # Update mise zsh completions
-        if (( $+commands[mise] )); then
-            mise complete --shell zsh >! $ZDATADIR/functions/_mise
-        fi
     fi
 }
 
 # Update neovim plugins
 function dotfiles-nvim {
-    log "Updating neovim resource..."
+    log "Updating neovim resources..."
 
-    logSub "Updating neovim plugins..."
+    logSub "Updating plugins..."
     nvim --headless "+Lazy! sync" +qa
 
-    logSub "Updating neovim language servers..."
+    logSub "Updating language servers..."
     nvim --headless -c "autocmd User MasonUpgradeComplete qall" -c 'MasonUpgrade'
 
-    logSub "Updating neovim language servers..."
-    nvim --headless -c 'TSUpdateSync | lua print() io.flush()' +qa
+    logSub "Updating treesitter parsers..."
+    nvim --headless -c 'TSUpdateSync | lua print("\n") io.flush()' +qa
 }
 
 # Update zsh plugins
@@ -335,6 +325,23 @@ function dotfiles-zsh {
             logSub "Updated ${plugin:h:t}/${plugin:t}"
         fi
     done
+
+    log "Updating zsh completions..."
+
+    # Update 1password-cli zsh completions
+    if (( $+commands[op] )); then
+        op completion zsh >! $ZDATADIR/functions/_op
+    fi
+
+    # Update mise zsh completions
+    if (( $+commands[mise] )); then
+        mise complete --shell zsh >! $ZDATADIR/functions/_mise
+    fi
+
+    # Update orb zsh completions
+    if (( $+commands[orb] )); then
+        orb completion zsh >! $ZDATADIR/functions/_orb
+    fi
 }
 
 # Update global python packages
