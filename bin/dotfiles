@@ -134,20 +134,7 @@ function dotfiles-bat {
 
 # Setup the fish shell prompt
 function dotfiles-fish {
-    tide configure \
-        --auto \
-        --style=Lean \
-        --prompt_colors='True color' \
-        --show_time='24-hour format' \
-        --lean_prompt_height='Two lines' \
-        --prompt_connection=Disconnected \
-        --prompt_spacing=Compact \
-        --icons='Many icons' \
-        --transient=No
-
-    set -U fish_greeting ""
-    set -U tide_git_icon 
-    set -U tide_right_prompt_items $tide_right_prompt_items[1..-2] mise $tide_right_prompt_items[-1]
+    fish -c configure
 }
 
 # Install terminal fonts
