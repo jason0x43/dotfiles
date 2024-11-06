@@ -497,18 +497,14 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 
-# if (( $+commands[git] )); then
-#     export GIT_COMMITTER_NAME=${GIT_COMMITTER_NAME:-$(git config --get user.name)}
-#     export GIT_COMMITTER_EMAIL=${GIT_COMMITTER_EMAIL:-$(git config --get user.email)}
-#     export GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-$(git config --get user.name)}
-#     export GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-$(git config --get user.email)}
-# fi
-
 # zoxide
 # --------------------------------------------------------------------------
 if (( $+commands[zoxide] )); then
     eval "$(zoxide init zsh --cmd cd)"
 fi
+
+# 4-space tabs
+tabs -4
 
 # Local config
 # --------------------------------------------------------------------------
