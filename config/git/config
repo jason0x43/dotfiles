@@ -90,6 +90,7 @@
 	commit-order = default
 	main-view-id = yes
 	main-view-date = relative-compact
+	tab-size = 2
 
 [tig "color"]
 	default = default default normal
