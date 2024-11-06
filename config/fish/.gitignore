@@ -1,2 +1,6 @@
 completions/docker.fish
 completions/kubectl.fish
+functions/tide
+**/tide.fish
+**/_tide_*.fish
+!functions/_tide_item_mise.fish
