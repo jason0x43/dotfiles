@@ -253,16 +253,32 @@ async function autoLayout() {
 			...getWindowsInSpace("Firefox", space),
 		];
 
-		if (browserWins.length > 0 && terminalWins.length > 0) {
-			for (const window of browserWins) {
-				fill("left", { window, width: 1 - THIN_WIDTH });
-			}
-			for (const window of terminalWins) {
-				fill("right", { window, width: THIN_WIDTH });
-			}
-		} else if (browserWins.length > 0) {
-			for (const window of browserWins) {
-				fill("center", { window });
+		const simWins = getWindowsInSpace("Simulator", space);
+
+		if (browserWins.length > 0) {
+			if (terminalWins.length > 0) {
+				if (simWins.length > 0) {
+					for (const window of browserWins) {
+						fill("left", { window, width: 1 - THIN_WIDTH, marginLeft: 350 });
+					}
+					for (const window of simWins) {
+						moveTo("left", window);
+					}
+					for (const window of terminalWins) {
+						fill("right", { window, width: THIN_WIDTH });
+					}
+				} else {
+					for (const window of browserWins) {
+						fill("left", { window, width: 1 - THIN_WIDTH });
+					}
+					for (const window of terminalWins) {
+						fill("right", { window, width: THIN_WIDTH });
+					}
+				}
+			} else {
+				for (const window of browserWins) {
+					fill("center", { window });
+				}
 			}
 		}
 
@@ -358,6 +374,10 @@ function centerFrame(frame1, frame2) {
  * @param {{
  *   window?: Window,
  *   width?: number,
+ *   marginTop?: number,
+ *   marginLeft?: number,
+ *   marginRight?: number,
+ *   marginBottom?: number,
  * }} options
  */
 function fill(anchor, options = {}) {
@@ -413,8 +433,7 @@ function fill(anchor, options = {}) {
 		case "bottom-right":
 		case "right":
 			frame.x =
-				screenFrame.x +
-				(screenFrame.width - frame.width)  - PADDING / 2;
+				screenFrame.x + (screenFrame.width - frame.width) - PADDING / 2;
 			break;
 	}
 
@@ -433,6 +452,24 @@ function fill(anchor, options = {}) {
 		case "bottom-left":
 			frame.y = screenFrame.y + frame.height + PADDING;
 			break;
+	}
+
+	if (options.marginTop) {
+		frame.y += options.marginTop;
+		frame.height -= options.marginTop;
+	}
+
+	if (options.marginLeft) {
+		frame.x += options.marginLeft;
+		frame.width -= options.marginLeft;
+	}
+
+	if (options.marginRight) {
+		frame.width -= options.marginRight;
+	}
+
+	if (options.marginBottom) {
+		frame.height -= options.marginBottom;
 	}
 
 	window.setFrame(frame);
@@ -626,18 +663,23 @@ function moveToScreen(direction, window = Window.focused()) {
 function moveToSpace(direction, window) {
 	window = window || Window.focused();
 	if (!window) {
+		Phoenix.log("No window found - not moving");
 		return;
 	}
 
 	const space = Space.active();
 	if (!space) {
+		Phoenix.log("No active space - not moving");
 		return;
 	}
 
 	const targetSpace = direction == "right" ? space.next() : space.previous();
 	if (!targetSpace) {
+		Phoenix.log("No target space - not moving");
 		return;
 	}
+
+	Phoenix.log("Moving", window, "to", targetSpace);
 
 	targetSpace.moveWindows([window]);
 	window.focus();
