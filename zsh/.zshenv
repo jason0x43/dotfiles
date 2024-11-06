@@ -273,6 +273,14 @@ if [[ -d $HOME/.local/share/mise/bin ]]; then
 	)
 fi
 
+# orbstack
+if (( $+commands[orb] )); then
+	path=(
+		~/.orbstack/bin
+		$path
+	)
+fi
+
 # Add user dirs to path
 # --------------------------------------------------------------------------
 path=($DOTFILES/bin $path)
