@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+target_branch=$1
+
+if [[ -z $target_branch ]]; then
+  echo "Usage: git merge-pr <target_branch>"
+  exit 1
+fi
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+echo "Updating remote refs..."
+git remote update
+
+current_commit=$(git rev-parse $target_branch)
+remote_commit=$(git rev-parse origin/$current_branch)
+
+if [[ $current_commit == $remote_commit ]]; then
+  echo "$target_branch is up to date -- did you forget to push?"
+  exit 1
+fi
+
+echo "Checking for remote branch..."
+remote_branch=$(git ls-remote --heads origin refs/heads/$current_branch)
+if [[ -n $remote_branch ]]; then
+  echo "$current_branch still exists on remote -- has the PR been merged?"
+  exit 1
+fi
+
+git checkout $target_branch
+git pull
+git branch -D $current_branch
+
+echo "Pruning remote refs..."
+git remote update --prune
