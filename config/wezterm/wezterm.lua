@@ -423,8 +423,11 @@ config.mouse_bindings = {
 
 config.send_composed_key_when_left_alt_is_pressed = true
 
+config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
+
 -- This cast is needed for other config files to end up using the proper WezTerm
 -- types rather than the type of the value returned by this file
 ---@cast config WezTerm
+
 
 return config
