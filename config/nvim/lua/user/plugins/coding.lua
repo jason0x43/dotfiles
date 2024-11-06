@@ -27,7 +27,7 @@ return {
         formatters = {
           prettier = {
             cwd = require('conform.util').root_file({
-              'package.json',
+              'package.json', 'jsconfig.json', 'tsconfig.json'
             }),
             require_cwd = true,
           },
