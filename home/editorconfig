@@ -35,3 +35,6 @@ max_line_length = 80
 [*.{yml,yaml}]
 indent_size = 2
 indent_style = space
+
+[*.svelte]
+max_line_length = 80
