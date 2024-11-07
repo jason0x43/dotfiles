@@ -284,6 +284,23 @@ function dotfiles-init {
             fi
         fi
     fi
+
+    log "Updating shell completions..."
+
+    if (( $+commands[op] )); then
+        op completion zsh >! $ZDATADIR/functions/_op
+        op completion fish >! $HOME/.config/fish/completions/op.fish
+    fi
+
+    if (( $+commands[mise] )); then
+        mise complete --shell zsh >! $ZDATADIR/functions/_mise
+        mise complete --shell fish >! $HOME/.config/fish/completions/mise.fish
+    fi
+
+    if (( $+commands[orb] )); then
+        orb completion zsh >! $ZDATADIR/functions/_orb
+        orb completion zsh >! $HOME/.config/fish/completions/orb.fish
+    fi
 }
 
 # Update neovim plugins
@@ -330,23 +347,6 @@ function dotfiles-zsh {
             logSub "Updated ${plugin:h:t}/${plugin:t}"
         fi
     done
-
-    log "Updating zsh completions..."
-
-    # Update 1password-cli zsh completions
-    if (( $+commands[op] )); then
-        op completion zsh >! $ZDATADIR/functions/_op
-    fi
-
-    # Update mise zsh completions
-    if (( $+commands[mise] )); then
-        mise complete --shell zsh >! $ZDATADIR/functions/_mise
-    fi
-
-    # Update orb zsh completions
-    if (( $+commands[orb] )); then
-        orb completion zsh >! $ZDATADIR/functions/_orb
-    fi
 }
 
 # Update global python packages

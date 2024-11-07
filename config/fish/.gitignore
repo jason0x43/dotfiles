@@ -1,5 +1,4 @@
-completions/docker.fish
-completions/kubectl.fish
+completions/*.fish
 functions/tide
 **/tide.fish
 **/_tide_*.fish
