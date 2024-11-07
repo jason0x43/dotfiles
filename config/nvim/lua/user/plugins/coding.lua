@@ -14,6 +14,7 @@ return {
         formatters_by_ft = {
           css = { 'prettier' },
           lua = { 'stylua' },
+          fish = { 'fish_indent' },
           html = { 'prettier' },
           javascript = { 'prettier', 'deno_fmt' },
           javascriptreact = { 'prettier' },
