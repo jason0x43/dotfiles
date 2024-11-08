@@ -9,6 +9,6 @@ function _tide_item_mise
         set -l tool $parts[1]
         set -l ver $parts[2]
         set -l icon_var tide_"$tool"_icon
-        _tide_print_item $tool (eval echo \$$icon_var)' ' $ver
+        _tide_print_item $tool $$icon_var' ' $ver
     end
 end

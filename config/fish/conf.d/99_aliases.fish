@@ -8,7 +8,7 @@ alias rgla="rg -l -u"
 alias reload="exec $SHELL"
 
 # moving around
-alias b="cd -"
+alias b="prevd"
 
 # docker
 alias dps="docker ps --format '{{.Names}}'"
