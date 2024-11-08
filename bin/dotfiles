@@ -137,22 +137,6 @@ function dotfiles-fish {
     fish -c configure
 }
 
-# Install terminal fonts
-function dotfiles-fonts {
-    if [[ $INSTALL == "1" ]]; then
-        log "Installing terminal fonts..."
-
-        if [[ $OSTYPE == darwin* ]]; then
-            local fonts
-            fonts=($HOME/Library/Fonts/Symbols-1000*(NY1))
-            if (( ${#fonts} == 0 )) then
-                curl --silent -o "$HOME/Library/Fonts/Symbols-1000-em Nerd Font Complete.ttf" "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/src/glyphs/Symbols-1000-em%20Nerd%20Font%20Complete.ttf"
-                logSub "Installed Symbols-1000-em Nerd Font Complete"
-            fi
-        fi
-    fi
-}
-
 # Link dotfiles into $HOME, update terminfo
 function dotfiles-home {
     log "Updating home directory files..."
@@ -256,7 +240,6 @@ function dotfiles-init {
         if [[ $OSTYPE == darwin* ]]; then
             brew_packages=(
                 $brew_packages
-                'font-jetbrains-mono-nerd-font'
                 '1password-cli'
             )
 
@@ -356,7 +339,7 @@ function dotfiles-python {
     log "Updating global python packages..."
 
     local out=""
-    out=$(pip install -U pip setuptools pynvim neovim-remote > /dev/null 2>& 1)
+    out=$(pip install -U pip setuptools typing_extensions pynvim nvim-remote > /dev/null 2>& 1)
     if (( $? )); then
         err "Error updating packages"
         err $out
@@ -371,13 +354,10 @@ function dotfiles-node {
     fi
 
     # log "Updating package managers..."
-    # TODO: disable corepack for now
 
-    # if (( $+commands[corepack] )); then
-    #     corepack prepare pnpm@latest --activate
-    #     corepack prepare npm@latest --activate
-    #     corepack prepare yarn@1 --activate
-    # fi
+    if (( $+commands[corepack] )); then
+        corepack prepare pnpm@latest --activate
+    fi
 
     log "Updating global node packages..."
 
@@ -437,7 +417,6 @@ while (( $# > 0 )); do
             echo 'Available groups:'
             echo '    bat            Rebuild bat theme and filetype cache'
             echo '    init           Install/update core packages'
-            echo '    fonts          Install terminal fonts'
             echo '    home           Update dotfiles and home directories, fixup terminfo database'
             echo '    launchd        Link and bootstrap launchd scripts'
             echo '    node           Update global node packages, install defaults'
@@ -469,7 +448,6 @@ else
     dotfiles-health
     dotfiles-home
     dotfiles-init
-    dotfiles-fonts
     dotfiles-python
     dotfiles-node
     dotfiles-rust
