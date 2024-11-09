@@ -9,6 +9,7 @@ alias reload="exec $SHELL"
 
 # moving around
 alias b="prevd"
+alias f="nextd"
 
 # docker
 alias dps="docker ps --format '{{.Names}}'"
