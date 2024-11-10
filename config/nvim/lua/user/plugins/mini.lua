@@ -367,6 +367,28 @@ return {
         end,
         footer = '',
         items = {
+          function()
+            local git_status =
+              vim.fn.systemlist({ 'git', 'status', '--porcelain=v1' })
+            local git_root = vim.fn.trim(
+              vim.fn.system({ 'git', 'rev-parse', '--show-toplevel' })
+            )
+            local git_items = {}
+            for _, line in pairs(git_status) do
+              if line:find('^ [AM] ') then
+                local relative = vim.fn.trim(line:sub(4), '"')
+                local absolute = git_root .. '/' .. relative
+                print(absolute)
+
+                table.insert(git_items, {
+                  name = relative,
+                  action = 'edit ' .. absolute,
+                  section = 'Modified files',
+                })
+              end
+            end
+            return git_items
+          end,
           filter(starter.sections.recent_files((height - 10) / 3, true)),
           filter(starter.sections.recent_files((height - 10) / 3, false)),
         },
