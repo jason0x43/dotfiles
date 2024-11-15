@@ -378,10 +378,10 @@ return {
               if line:find('^ [AM] ') then
                 local relative = vim.fn.trim(line:sub(4), '"')
                 local absolute = git_root .. '/' .. relative
-                print(absolute)
+                local file = vim.fs.basename(relative)
 
                 table.insert(git_items, {
-                  name = relative,
+                  name = string.format('%s (%s)', file, relative),
                   action = 'edit ' .. absolute,
                   section = 'Modified files',
                 })
