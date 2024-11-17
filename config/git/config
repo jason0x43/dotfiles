@@ -166,3 +166,6 @@
 
 [includeIf "gitdir:~/Work/"]
 	path = ~/.config/local/git/work
+[user]
+	email = jason@jasoncheatham.com
+	name = Jason Cheatham

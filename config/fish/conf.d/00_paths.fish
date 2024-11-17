@@ -1,4 +1,5 @@
 fish_add_path /opt/homebrew/bin
+fish_add_path /home/linuxbrew/.linuxbrew/bin
 fish_add_path ~/.dotfiles/bin
 fish_add_path ~/.orbstack/bin
 fish_add_path ~/.cargo/bin

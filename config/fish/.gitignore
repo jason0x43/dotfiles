@@ -1,5 +1,6 @@
 completions/*.fish
 functions/tide
+functions/fisher.fish
 **/tide.fish
 **/_tide_*.fish
 !functions/_tide_item_mise.fish
