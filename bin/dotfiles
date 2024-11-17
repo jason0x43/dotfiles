@@ -234,7 +234,7 @@ function dotfiles-brew {
 
         logSub "Installing Homebrew..."
 
-╎       if [[ $OSTYPE == linux* ]]; then
+        if [[ $OSTYPE == linux* ]]; then
             if ! id linuxbrew > /dev/null 2>&1; then
                 sudo adduser --disabled-password --gecos "" linuxbrew
             fi
