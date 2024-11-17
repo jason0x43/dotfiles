@@ -240,12 +240,14 @@ function dotfiles-brew {
             fi
 
             sudo -u linuxbrew NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            sudo apt install build-essential
+
+            # If homebrew was just installed, ensure it's in the path
+            export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
         else
             NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            export PATH=/opt/homebrew/bin:$PATH
         fi
-
-        # If homebrew was just installed, ensure it's in the path
-        export PATH=$HOMEBREW_BASE/bin:$PATH
     fi
 
     # Install some missing or newer core packages from brew
