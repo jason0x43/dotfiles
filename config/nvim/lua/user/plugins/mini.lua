@@ -392,6 +392,10 @@ return {
           filter(starter.sections.recent_files((height - 10) / 3, true)),
           filter(starter.sections.recent_files((height - 10) / 3, false)),
         },
+        item_is_active = function(item, query)
+          return item.name:lower():find(query:lower()) ~= nil
+            and item.action ~= ''
+        end,
       })
 
       -- surround
