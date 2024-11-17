@@ -112,17 +112,6 @@ function checkcmd {
     fi
 }
 
-# Basic health check
-function dotfiles-health {
-    local os=$(uname)
-
-    checkcmd brew
-
-    if [[ $os == "Linux" ]]; then
-        checkcmd unzip 1
-    fi
-}
-
 # Rebuild bat cache
 function dotfiles-bat {
     if (( ! $+commands[bat] )); then
@@ -499,7 +488,6 @@ done
 if [[ -n $GROUP ]]; then
     dotfiles-$GROUP
 else
-    dotfiles-health
     dotfiles-home
     dotfiles-brew
     dotfiles-python
