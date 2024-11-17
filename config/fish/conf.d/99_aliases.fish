@@ -1,8 +1,14 @@
 # file commands
-alias ls="eza -F"
 alias fda="fd -I"
 alias rgl="rg -l"
 alias rgla="rg -l -u"
+
+# better ls
+if command -q eza
+    alias ls="eza -F"
+else
+    alias ls="ls -CF"
+end
 
 # reload the shell
 alias reload="exec $SHELL"
