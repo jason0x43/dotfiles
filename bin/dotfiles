@@ -233,7 +233,16 @@ function dotfiles-brew {
         fi
 
         logSub "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+╎       if [[ $OSTYPE == linux* ]]; then
+            if ! id linuxbrew > /dev/null 2>&1; then
+                sudo adduser --disabled-password --gecos "" linuxbrew
+            fi
+
+            sudo -u linuxbrew NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        else
+            NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
 
         # If homebrew was just installed, ensure it's in the path
         export PATH=$HOMEBREW_BASE/bin:$PATH
@@ -360,7 +369,7 @@ function dotfiles-python {
     log "Updating global python packages..."
 
     local out=""
-    out=$(pip install -U pip setuptools typing_extensions pynvim nvim-remote > /dev/null 2>& 1)
+    out=$(pip install -U pip setuptools typing_extensions pynvim nvim-remote > /dev/null 2>&1)
     if (( $? )); then
         err "Error updating packages"
         err $out
