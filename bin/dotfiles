@@ -231,7 +231,7 @@ function dotfiles-rust {
 
 # Install homebrew and core packages, update brew packages
 function dotfiles-brew {
-    if (( ! -x $BREW )); then
+    if [[ ! -x $BREW ]]; then
         if [[ $INSTALL == 0 ]]; then
             warn "Homebrew not installed"
             return
@@ -246,6 +246,9 @@ function dotfiles-brew {
 
             sudo -u linuxbrew NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             sudo apt install build-essential
+
+	    sudo chmod a+rx /home/linuxbrew
+	    sudo chmod -R o=u-w $HOMEBREW_BASE
         else
             NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         fi
@@ -260,6 +263,7 @@ function dotfiles-brew {
         'eza'        # better ls
         'fd'         # file finder
         'mise'       # tool version manager
+        'nvim'       # editor
         'ripgrep'    # better grep
         'tig'        # terminal git ui
         'zoxide'     # better cd
@@ -273,7 +277,8 @@ function dotfiles-brew {
     fi
 
     if [[ $OSTYPE == linux* ]]; then
-        sudo -u linuxbrew bash -c "cd && $BREW install -q ${brew_packages[@]}"
+        sudo -u linuxbrew bash -c "cd && $BREW install -q ${brew_packages}"
+	exit 0
     else
         $BREW install -q ${brew_packages[@]} 
     fi
@@ -283,7 +288,7 @@ function dotfiles-brew {
 
     logSub "Updating installed brew packages..."
     if [[ $OSTYPE == linux* ]]; then
-        sudo -u linuxbrew bash -c "$BREW upgrade"
+        sudo -u linuxbrew bash -c "cd && $BREW upgrade"
     else
         $BREW upgrade
     fi
