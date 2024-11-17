@@ -1,8 +1,14 @@
 function configure
-    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish \
-        | source && fisher install jorgebucaran/fisher
+    if ! command -q fisher
+        curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish \
+            | source && fisher install jorgebucaran/fisher
+    end
 
-    fisher install IlanCosman/tide@v6
+    if ! command -q tide
+        fisher install IlanCosman/tide@v6
+    end
+
+    fisher update
 
     tide configure \
         --auto \
