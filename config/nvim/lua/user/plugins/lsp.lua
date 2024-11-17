@@ -114,6 +114,8 @@ return {
               end
             end)
           end
+
+          check_done(updating, any_update)
         end)
       end, { force = true })
 

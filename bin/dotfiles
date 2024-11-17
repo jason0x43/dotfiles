@@ -100,18 +100,6 @@ function fixterm {
     fi
 }
 
-# Check if a command exists
-function checkcmd {
-    local cmd=$1
-    local required=$2
-    if (( ! $+commands[$cmd] )); then
-        err "$cmd is missing"
-        if [[ $required == "1" ]]; then
-            exit 1
-        fi
-    fi
-}
-
 # Rebuild bat cache
 function dotfiles-bat {
     if (( ! $+commands[bat] )); then
@@ -267,7 +255,6 @@ function dotfiles-brew {
 
     if [[ $OSTYPE == linux* ]]; then
         sudo -u linuxbrew bash -c "cd && $BREW install -q ${brew_packages}"
-	exit 0
     else
         $BREW install -q ${brew_packages[@]} 
     fi
