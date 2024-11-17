@@ -16,6 +16,7 @@ else
 fi
 
 path=($HOMEBREW_BASE/bin $path)
+BREW=$HOMEBREW_BASE/bin/brew
 
 setopt null_glob
 
@@ -230,7 +231,7 @@ function dotfiles-rust {
 
 # Install homebrew and core packages, update brew packages
 function dotfiles-brew {
-    if (( ! $+commands[brew] )); then
+    if (( ! -x $BREW )); then
         if [[ $INSTALL == 0 ]]; then
             warn "Homebrew not installed"
             return
@@ -272,9 +273,9 @@ function dotfiles-brew {
     fi
 
     if [[ $OSTYPE == linux* ]]; then
-        sudo -u linuxbrew brew install -q ${brew_packages[@]} 
+        sudo -u linuxbrew bash -c "cd && $BREW install -q ${brew_packages[@]}"
     else
-        brew install -q ${brew_packages[@]} 
+        $BREW install -q ${brew_packages[@]} 
     fi
 
     # Let the shell know about any newly installed packages
@@ -282,9 +283,9 @@ function dotfiles-brew {
 
     logSub "Updating installed brew packages..."
     if [[ $OSTYPE == linux* ]]; then
-        sudo -u linuxbrew brew upgrade
+        sudo -u linuxbrew bash -c "$BREW upgrade"
     else
-        brew upgrade
+        $BREW upgrade
     fi
 
     # Remove git's included zsh completions in favor of the system completions
