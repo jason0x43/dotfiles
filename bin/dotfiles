@@ -226,6 +226,12 @@ function dotfiles-rust {
 
 # Install homebrew and core packages, update brew packages
 function dotfiles-brew {
+    if [[ $OSTYPE == linux* ]]; then
+        path=(/home/linuxbrew/.linuxbrew/bin $path)
+    else
+        path=(/opt/homebrew/bin $path)
+    fi
+
     if (( ! $+commands[brew] )); then
         if [[ $INSTALL == 0 ]]; then
             warn "Homebrew not installed"
@@ -241,12 +247,8 @@ function dotfiles-brew {
 
             sudo -u linuxbrew NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             sudo apt install build-essential
-
-            # If homebrew was just installed, ensure it's in the path
-            export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
         else
             NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            export PATH=/opt/homebrew/bin:$PATH
         fi
     fi
 
