@@ -194,11 +194,11 @@ M.setup = function(server_name)
 
   config.on_attach = M.create_on_attach(config.on_attach)
 
-  -- add cmp capabilities
+  -- add completion capabilities
   local cmp_caps = {}
-  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+  local ok, blink = pcall(require, 'blink.cmp')
   if ok then
-    cmp_caps = cmp_nvim_lsp.default_capabilities()
+    cmp_caps = blink.get_lsp_capabilities(config.capabilities)
   end
 
   if config.capabilities then
