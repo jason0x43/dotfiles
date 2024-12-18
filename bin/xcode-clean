@@ -39,7 +39,9 @@ logSub "Deleting devices without runtimes..."
 xcrun simctl delete unavailable
 logSub "Deleting Swift previews for unavailable devices..."
 xcrun simctl --set previews delete unavailable
+logSub "Deleting derived data..."
+rm -rf $HOME/Library/Developer/Xcode/DerivedData
 end_space=$(du -sm $HOME/Library/Developer | awk '{print $1}')
-logSub "Freed $(( end_space - start_space )) MB"
+logSub "Freed $(( start_space - end_space )) MB"
 
 echo ">>> Done"
