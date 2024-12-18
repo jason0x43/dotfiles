@@ -2,6 +2,7 @@
 alias fda="fd -I"
 alias rgl="rg -l"
 alias rgla="rg -l -u"
+alias rga="rg -u"
 
 # better ls
 if command -q eza
