@@ -66,6 +66,8 @@ return {
     cond = vim.fn.executable('tig') == 1,
     main = 'tig-nvim',
     config = true,
+    lazy = true,
+    cmd = 'Tig'
   },
 
   -- undotree

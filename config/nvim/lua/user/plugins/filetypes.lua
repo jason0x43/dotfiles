@@ -22,8 +22,11 @@ return {
     ft = { 'javascriptreact', 'typescriptreact' },
   },
 
-  'vim-scripts/applescript.vim',
-  'vim-scripts/Textile-for-VIM',
+  {
+    'vim-scripts/applescript.vim',
+    ft = 'applescript',
+  },
+
   'mustache/vim-mustache-handlebars',
   'jwalton512/vim-blade',
   'cfdrake/vim-pbxproj',
