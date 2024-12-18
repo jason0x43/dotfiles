@@ -82,6 +82,25 @@ local function organize_imports(bufnr)
   end
 end
 
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+  callback = function()
+    local first_line = vim.fn.getline(1)
+    if first_line:find('#!/usr/bin/env %-S deno') ~= nil then
+      vim.cmd('LspStart denols')
+    else
+      local lspconfig = require('lspconfig')
+      local root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc')
+      if root_dir(vim.fn.expand('%')) then
+        print(root_dir)
+        vim.cmd('LspStart denols')
+      else
+        vim.cmd('LspStart ts_ls')
+      end
+    end
+  end,
+})
+
 local M = {}
 
 ---@alias AttachFunction fun(client: vim.lsp.Client, bufnr: integer): nil

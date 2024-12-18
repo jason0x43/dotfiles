@@ -8,4 +8,8 @@ return {
     lint = true,
     unstable = true,
   },
+
+  autostart = false,
+
+  single_file_support = true,
 }

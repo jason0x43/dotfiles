@@ -41,4 +41,8 @@ return {
   end,
 
   root_dir = lspconfig.util.root_pattern("package.json"),
+
+  autostart = false,
+
+  single_file_support = true,
 }
