@@ -20,10 +20,12 @@ return {
           javascriptreact = { 'prettier' },
           json = { 'prettier' },
           jsonc = { 'prettier' },
+          tex = { 'tex-fmt' },
           markdown = { 'prettier' },
           typescript = { 'prettier' },
           typescriptreact = { 'prettier' },
           swift = { 'swift_format' },
+          blade = { 'prettier' },
         },
         formatters = {
           prettier = {
