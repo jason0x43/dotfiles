@@ -419,7 +419,7 @@ config.mouse_bindings = {
 -- Specify a font with built-in symbols. If Wezterm uses a fallback font for
 -- symbols, it aligns using the font baseline rather than centering the glyphs.
 -- https://github.com/wez/wezterm/issues/2818
--- config.font = wezterm.font("JetBrainsMonoNL Nerd Font")
+config.font = wezterm.font("JetBrainsMonoNL NF")
 
 config.send_composed_key_when_left_alt_is_pressed = true
 
