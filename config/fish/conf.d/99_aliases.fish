@@ -47,6 +47,7 @@ alias glba="git lgb"
 alias gp="git pull"
 alias grc="git rebase --continue"
 alias gri="git ri"
+alias grv="git remote -v"
 alias gs="git -c status.color=always status --short"
 alias ts='tig status'
 
