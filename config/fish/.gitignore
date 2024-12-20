@@ -7,3 +7,4 @@ functions/fish_mode_prompt.fish
 **/_tide_*.fish
 !functions/_tide_item_mise.fish
 fish_variables
+fishd.tmp.*

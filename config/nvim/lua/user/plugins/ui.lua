@@ -21,13 +21,4 @@ return {
       })
     end,
   },
-
-  {
-    'stevearc/dressing.nvim',
-    opts = {
-      select = {
-        enabled = false,
-      },
-    },
-  },
 }

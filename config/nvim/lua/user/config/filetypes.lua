@@ -1,10 +1,24 @@
 vim.filetype.add({
+  filename = {
+    ['.envrc'] = 'bash',
+    ['.jscsrc'] = 'json',
+    ['.bowerrc'] = 'json',
+    ['.tslintrc'] = 'json',
+    ['.eslintrc'] = 'json',
+    ['.dojorc'] = 'json',
+    ['.prettierrc'] = 'json',
+    Fastfile = 'ruby',
+    Podfile = 'ruby',
+  },
   pattern = {
+    ['*.dashtoc'] = 'json',
+    ['[tj]sconfig.json'] = 'jsonc',
     ['Dockerfile.*'] = 'dockerfile',
-    ['Fastfile'] = 'ruby',
+    ['fish_funced.*'] = 'fish',
+    ['*.ejs'] = 'html',
     ['.*/git/config'] = 'gitconfig',
+    ['*/zsh/functions/*'] = 'zsh',
     ['.*/ansible/.*%.yml'] = 'yaml.ansible',
-
     ['.*'] = {
       priority = -math.huge,
       function()

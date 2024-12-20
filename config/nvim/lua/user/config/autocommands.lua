@@ -16,22 +16,6 @@ autocmd('SwapExists', '*', function()
   vim.v.swapchoice = 'o'
 end)
 
--- make text files easier to work with
-autocmd('FileType', 'text,textile,markdown,html', function()
-  util.text_mode()
-end)
-
--- disable yaml comment indent
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "yaml",
-  command = "set indentkeys-=0#"
-})
--- better formatting for JavaScript
-autocmd('FileType', 'javascript', function()
-  vim.bo.formatprg = nil
-  vim.bo.formatexpr = nil
-end)
-
 autocmd('User', 'UiReady', function()
   autocmd('BufEnter', '*.*', function()
     -- show the current textwidth with color columns
@@ -56,6 +40,22 @@ autocmd('VimResized', '*', function()
   vim.opt.number = vim.go.columns > 88
 end)
 
+-- make text files easier to work with
+autocmd('FileType', 'text,textile,markdown,html', function()
+  util.text_mode()
+end)
+
+-- disable yaml comment indent
+autocmd('FileType', 'yaml', function()
+  vim.cmd('set indentkeys-=0#"')
+end)
+
+-- better formatting for JavaScript
+autocmd('FileType', 'javascript', function()
+  vim.bo.formatprg = nil
+  vim.bo.formatexpr = nil
+end)
+
 -- wrap lines in quickfix windows
 autocmd('FileType', 'qf', function()
   vim.wo.wrap = true
@@ -71,23 +71,24 @@ autocmd('FileType', 'Trouble', function()
   vim.wo.colorcolumn = ''
 end)
 
--- don't show sign column in help panes
-autocmd('FileType', 'help', function()
+local function bare_text()
   vim.wo.signcolumn = 'no'
+  vim.wo.number = false
+end
+
+-- don't show number or sign column in popups, panes
+autocmd('FileType', 'help', bare_text)
+
+-- snacks sets the notification history filetype in a way that doesn't seem to
+-- work well with FileType events
+autocmd('BufEnter', '', function()
+  if vim.o.filetype == 'snacks_notif_history' then
+    bare_text()
+  end
 end)
 
 -- close qf panes and help tabs with 'q'
-autocmd('FileType', 'qf,fugitiveblame,lspinfo,startuptime', function()
-  vim.keymap.set('', 'q', function()
-    vim.api.nvim_buf_delete(0, {})
-  end, { buffer = true })
-end)
-autocmd('FileType', 'help', function()
-  vim.keymap.set('', 'q', function()
-    vim.api.nvim_win_close(0, true)
-  end, { buffer = true })
-end)
-autocmd('BufEnter', 'output:///info', function()
+autocmd('FileType', 'qf,help,fugitiveblame,lspinfo,startuptime', function()
   vim.keymap.set('', 'q', function()
     vim.api.nvim_buf_delete(0, {})
   end, { buffer = true })
@@ -96,6 +97,13 @@ end)
 -- auto-set quickfix height
 autocmd('FileType', 'qf', function()
   require('user.util').adjust_window_height(1, 10)
+end)
+
+-- q to close output panes
+autocmd('BufEnter', 'output:///info', function()
+  vim.keymap.set('', 'q', function()
+    vim.api.nvim_buf_delete(0, {})
+  end, { buffer = true })
 end)
 
 -- highlight yanked text
@@ -114,27 +122,6 @@ autocmd('BufWinEnter', '*', function()
   require('user.util').restore_cursor()
 end)
 
--- set filetypes
-local function autoft(pattern, filetype)
-  autocmd({ 'BufNewFile', 'BufRead' }, pattern, function()
-    vim.bo.filetype = filetype
-  end)
-end
-
-autoft('.envrc', 'bash')
-autoft('fish_funced.*', 'fish')
-autoft('*.ejs', 'html')
-autoft('.{jscsrc,bowerrc,tslintrc,eslintrc,dojorc,prettierrc}', 'json')
-autoft('.dojorc-*', 'json')
-autoft('*.dashtoc', 'json')
-autoft('Podfile', 'ruby')
-autoft('*/zsh/functions/*', 'zsh')
-autoft('{ts,js}config.json', 'jsonc')
-autoft('intern.json', 'jsonc')
-autoft('intern{-.}*.json', 'jsonc')
-autoft('*.textile', 'textile')
-autoft('*.{frag,vert}', 'glsl')
-
 -- improve handling of very large files
 autocmd({ 'BufReadPost', 'FileReadPost' }, '*', function()
   if require('user.util').is_large_file() then
@@ -143,11 +130,6 @@ autocmd({ 'BufReadPost', 'FileReadPost' }, '*', function()
     vim.bo.undofile = false
     vim.wo.foldmethod = 'manual'
   end
-end)
-
--- show line numbers if the window is big enough
-autocmd('VimResized', '*', function()
-  vim.wo.number = vim.go.columns > 88
 end)
 
 -- autosave on exit

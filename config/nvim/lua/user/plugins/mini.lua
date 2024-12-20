@@ -310,7 +310,7 @@ return {
       end)
 
       -- highlight current word
-      require('mini.cursorword').setup()
+      -- require('mini.cursorword').setup()
 
       -- animated indent line
       require('mini.indentscope').setup()
@@ -408,8 +408,8 @@ return {
       require('mini.jump2d').setup()
 
       -- notifications
-      require('mini.notify').setup()
-      vim.notify = require('mini.notify').make_notify()
+      -- require('mini.notify').setup()
+      -- vim.notify = require('mini.notify').make_notify()
 
       -- location and label tracking
       require('mini.visits').setup()
