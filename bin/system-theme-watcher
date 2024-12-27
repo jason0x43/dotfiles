@@ -7,19 +7,19 @@ import Cocoa
 
 @discardableResult
 func shell(_ args: String...) -> Int32 {
-    let task = Process()
-    task.launchPath = "/usr/bin/env"
-    task.arguments = args
-    task.launch()
-    task.waitUntilExit()
-    return task.terminationStatus
+  let task = Process()
+  task.launchPath = "/usr/bin/env"
+  task.arguments = args
+  task.launch()
+  task.waitUntilExit()
+  return task.terminationStatus
 }
 
 func updateTheme() {
     let isDark = UserDefaults.standard.string(
 	forKey: "AppleInterfaceStyle"
     ) == "Dark"
-    shell("update_theme", isDark ? "black" : "light");
+    shell("update_theme", isDark ? "dark" : "light");
 }
 
 updateTheme()
@@ -29,5 +29,12 @@ DistributedNotificationCenter.default.addObserver(
     object: nil,
     queue: nil
 ) { _ in updateTheme() }
+
+let sigintSrc = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+sigintSrc.setEventHandler {
+  Swift.print("")
+  exit(0)
+}
+sigintSrc.resume()
 
 NSApplication.shared.run()
