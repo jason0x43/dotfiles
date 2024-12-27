@@ -367,6 +367,8 @@ return {
         end,
         footer = '',
         items = {
+          filter(starter.sections.recent_files((height - 10) / 3, true)),
+          filter(starter.sections.recent_files((height - 10) / 3, false)),
           function()
             local git_status =
               vim.fn.systemlist({ 'git', 'status', '--porcelain=v1' })
@@ -389,8 +391,6 @@ return {
             end
             return git_items
           end,
-          filter(starter.sections.recent_files((height - 10) / 3, true)),
-          filter(starter.sections.recent_files((height - 10) / 3, false)),
         },
         item_is_active = function(item, query)
           return item.name:lower():find(query:lower()) ~= nil
