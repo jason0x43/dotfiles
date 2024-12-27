@@ -398,7 +398,7 @@ function M.setup()
     local function watch_file(_) end
 
     local function on_change()
-      local theme = vim.fn.readfile(themefile)[1] or 'nil'
+      local theme = vim.fn.readfile(themefile)[1]
       if theme then
         vim.go.background = theme
       end
