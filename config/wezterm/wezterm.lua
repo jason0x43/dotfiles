@@ -53,31 +53,6 @@ wezterm.on("window-config-reloaded", function(window)
     Scheme(color_scheme, window)
 end)
 
--- Reload the them in any running neovim sessions
----@param appearance string
-local function reload_neovim_theme(appearance)
-    local homebrew_base = util.homebrew_base()
-    local timeout = homebrew_base .. "/timeout"
-    local nvim = homebrew_base .. "/nvim"
-
-    local servers =
-        util.splitlines(util.run({ homebrew_base .. "/nvr", "--serverlist" }))
-    for _, server in ipairs(servers) do
-        util.run({
-            timeout,
-            "0.2",
-            nvim,
-            "--server",
-            server,
-            "--remote-expr",
-            "v:lua.require('user.themes.wezterm').set_background('"
-                .. appearance
-                .. "')",
-        })
-        print("notified " .. server)
-    end
-end
-
 -- Set the color scheme
 -- This function needs to be global to be called from the config-reloaded event
 -- handler
@@ -106,8 +81,6 @@ function Scheme(name, window)
     local overrides = window:get_config_overrides() or {}
     overrides.color_scheme = name
     window:set_config_overrides(overrides)
-
-    reload_neovim_theme(appearance)
 end
 
 -- Set a tab title from the debug overlay

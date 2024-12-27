@@ -1,0 +1,11 @@
+command = /opt/homebrew/bin/fish
+theme = light:selenized-light,dark:selenized-dark
+keybind = global:alt+ctrl+cmd+space=toggle_quick_terminal
+keybind = ctrl+cmd+h=goto_split:left
+keybind = ctrl+cmd+j=goto_split:bottom
+keybind = ctrl+cmd+k=goto_split:top
+keybind = ctrl+cmd+l=goto_split:right
+quick-terminal-animation-duration = 0.25
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig

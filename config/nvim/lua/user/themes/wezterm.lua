@@ -375,14 +375,6 @@ local function apply_theme()
 end
 
 ---@return nil
-function M.set_background(value)
-  print('Setting background to ' .. value)
-  vim.schedule(function()
-    vim.go.background = value
-  end)
-end
-
----@return nil
 function M.setup()
   -- initially clear the Normal group to prevent a flash of an incorrect
   -- background
@@ -395,6 +387,31 @@ function M.setup()
       apply_theme()
     end,
   })
+
+  -- Check for a theme file. If it exists, it will be updated by a background
+  -- process when the system theme changes.
+  local home = os.getenv('HOME')
+  local themefile = home .. '/.local/share/theme'
+  if vim.fn.filereadable(themefile) == 1 then
+    local w = vim.uv.new_fs_event()
+
+    local function watch_file(_) end
+
+    local function on_change()
+      local theme = vim.fn.readfile(themefile)[1] or 'nil'
+      if theme then
+        vim.go.background = theme
+      end
+      w:stop()
+      watch_file(themefile)
+    end
+
+    watch_file = function()
+      w:start(themefile, {}, vim.schedule_wrap(on_change))
+    end
+
+    watch_file()
+  end
 end
 
 return M
