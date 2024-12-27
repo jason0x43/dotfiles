@@ -213,8 +213,6 @@ local function apply_theme()
   hi('SpellLocal', { undercurl = true, sp = c.yellow })
   hi('SpellRare', { undercurl = true, sp = c.cyan })
   hi('Statement', { fg = c.yellow })
-  hi('StatusLine', { reverse = true })
-  hi('StatusLineNC', { bg = c.bg_2 })
   hi('TabLine', { fg = c.dim_0, reverse = true })
   hi('TabLineFill', { fg = c.dim_0, reverse = true })
   hi('TabLineSel', { fg = c.fg_1, bg = c.bg_1, bold = true, reverse = true })
@@ -319,8 +317,8 @@ local function apply_theme()
   hi('MiniStatuslineModeInsert', { fg = c.bg_0, bg = c.green })
   hi('MiniStatuslineModeCommand', { fg = c.bg_0, bg = c.orange })
   hi('MiniStatuslineModeVisual', { fg = c.bg_0, bg = c.violet })
-  hi('MiniStatuslineDevInfo', { bg = c.bg_2 })
-  hi('MiniStatuslineFilename', { bg = c.bg_1 })
+  hi('MiniStatuslineDevInfo', { fg = c.fg_0, bg = c.bg_2 })
+  hi('MiniStatuslineFilename', { fg = c.fg_0, bg = c.bg_1 })
   hi('MiniStatuslineError', { fg = error, bg = c.bg_2 })
   hi('MiniStatuslineWarning', { fg = warn, bg = c.bg_2 })
   hi('MiniStatuslineInfo', { fg = info, bg = c.bg_2 })
@@ -387,31 +385,6 @@ function M.setup()
       apply_theme()
     end,
   })
-
-  -- Check for a theme file. If it exists, it will be updated by a background
-  -- process when the system theme changes.
-  local home = os.getenv('HOME')
-  local themefile = home .. '/.local/share/theme'
-  if vim.fn.filereadable(themefile) == 1 then
-    local w = vim.uv.new_fs_event()
-
-    local function watch_file(_) end
-
-    local function on_change()
-      local theme = vim.fn.readfile(themefile)[1]
-      if theme then
-        vim.go.background = theme
-      end
-      w:stop()
-      watch_file(themefile)
-    end
-
-    watch_file = function()
-      w:start(themefile, {}, vim.schedule_wrap(on_change))
-    end
-
-    watch_file()
-  end
 end
 
 return M
