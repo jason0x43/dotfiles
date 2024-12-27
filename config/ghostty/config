@@ -1,11 +1,22 @@
 command = /opt/homebrew/bin/fish
 theme = light:selenized-light,dark:selenized-dark
+
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:bottom
+keybind = ctrl+k=goto_split:top
+keybind = ctrl+l=goto_split:right
+keybind = ctrl+s>minus=new_split:down
+keybind = ctrl+s>shift+backslash=new_split:right
+keybind = alt+j=resize_split:down,32
+keybind = alt+k=resize_split:up,32
+keybind = alt+h=resize_split:left,32
+keybind = alt+l=resize_split:right,32
+
+# enable the quick terminal
 keybind = global:alt+ctrl+cmd+space=toggle_quick_terminal
-keybind = ctrl+cmd+h=goto_split:left
-keybind = ctrl+cmd+j=goto_split:bottom
-keybind = ctrl+cmd+k=goto_split:top
-keybind = ctrl+cmd+l=goto_split:right
 quick-terminal-animation-duration = 0.25
+
+# disable ligatures
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
