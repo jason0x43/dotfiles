@@ -209,6 +209,7 @@ async function autoLayout() {
 	const terminalWins = [
 		...getWindowsInSpace("kitty", space),
 		...getWindowsInSpace("WezTerm", space),
+		...getWindowsInSpace("Ghostty", space),
 	];
 
 	const browserWins = [
