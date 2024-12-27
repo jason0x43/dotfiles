@@ -22,6 +22,7 @@ return {
           jsonc = { 'prettier' },
           tex = { 'tex-fmt' },
           markdown = { 'prettier' },
+          python = { 'ruff_format' },
           typescript = { 'prettier' },
           typescriptreact = { 'prettier' },
           swift = { 'swift_format' },
