@@ -122,6 +122,10 @@ local wezterm = {
   ---@return string
   json_encode = function(value) end,
 
+  ---@param value string
+  ---@return any
+  json_parse = function(value) end,
+
   ---@param arg string
   ---@param ... any
   log_error = function(arg, ...) end,

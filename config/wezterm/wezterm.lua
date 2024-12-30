@@ -1,17 +1,7 @@
 local wezterm = require("wezterm")
 local util = require("user.util")
 local action = require("user.action")
-local scheme_config = require("user.scheme_config")
-local active_scheme = require("user.active_scheme")
-local session = require("user.session")
 local wez_action = wezterm.action
-
-local is_stage_manager = util.run({
-    "defaults",
-    "read",
-    "com.apple.WindowManager",
-    "GloballyEnabled",
-}) == "1"
 
 -- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, _, _, max_width)
@@ -40,68 +30,22 @@ wezterm.on("update-right-status", function(window)
     window:set_right_status(status)
 end)
 
--- Whenever the config is reloaded, update the color scheme
-wezterm.on("window-config-reloaded", function(window)
-    local cfg = window:effective_config()
-    local color_scheme = cfg.color_scheme
-    local scheme_cfg = scheme_config.get()
+-- Return the config
+local config = wezterm.config_builder()
 
-    if scheme_cfg.auto_switch then
-        color_scheme = scheme_cfg[util.get_appearance()]
-    end
+config.adjust_window_size_when_changing_font_size = false
+config.color_scheme = util.get_appearance() == "dark"
+        and "Selenized Black (selenized)"
+    or "Selenized White (selenized)"
 
-    Scheme(color_scheme, window)
-end)
+-- Use a smaller font when stage manager is active
+config.font_size = util.is_stage_manager_active() and 12 or 13
 
--- Set the color scheme
--- This function needs to be global to be called from the config-reloaded event
--- handler
-function Scheme(name, window)
-    if not window then
-        ---@diagnostic disable-next-line:undefined-field
-        window = _G.window
-    end
+-- Disable ligatures
+config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
-    if not name then
-        local cfg = window:effective_config()
-        return cfg.color_scheme
-    end
-
-    print('Setting scheme to "' .. name .. '"')
-    local scheme = util.get_schemes(window)[name]
-    if not scheme then
-        print("Could not find scheme " .. name)
-        return
-    end
-
-    local appearance = util.get_appearance()
-    scheme_config.update({ [appearance] = name })
-    active_scheme.save(name, scheme)
-
-    local overrides = window:get_config_overrides() or {}
-    overrides.color_scheme = name
-    window:set_config_overrides(overrides)
-end
-
--- Set a tab title from the debug overlay
-function Title(title)
-    ---@diagnostic disable-next-line:undefined-field
-    local gui_window = _G.window
-    local window = wezterm.mux.get_window(gui_window:window_id())
-    if window then
-        for _, tab_info in ipairs(window:tabs_with_info()) do
-            if tab_info.is_active then
-                tab_info.tab:set_title(title)
-                break
-            end
-        end
-    end
-end
-
--- Copy mode key bindings
-local copy_mode = wezterm.gui.default_key_tables().copy_mode
-if wezterm.gui then
-    local copy_keys = {
+config.key_tables = {
+    copy_mode = util.merge(wezterm.gui.default_key_tables().copy_mode, {
         {
             key = "y",
             mods = "NONE",
@@ -151,17 +95,9 @@ if wezterm.gui then
                 wez_action.CopyMode("Close"),
             }),
         },
-    }
+    }),
 
-    for _, v in ipairs(copy_keys) do
-        table.insert(copy_mode, v)
-    end
-end
-
--- Search mode key bindings
-local search_mode = wezterm.gui.default_key_tables().search_mode
-if wezterm.gui then
-    local search_keys = {
+    search_mode = util.merge(wezterm.gui.default_key_tables().search_mode, {
         {
             key = "Enter",
             mods = "NONE",
@@ -178,38 +114,7 @@ if wezterm.gui then
                 wez_action.CopyMode("Close"),
             }),
         },
-    }
-
-    for _, v in ipairs(search_keys) do
-        table.insert(search_mode, v)
-    end
-end
-
--- Return the config
-local config = {}
-if wezterm.config_builder then
-    config = wezterm.config_builder()
-end
-
-config.adjust_window_size_when_changing_font_size = false
-config.color_scheme = util.get_appearance() == "dark" and scheme_config.dark
-    or scheme_config.light
-
-if is_stage_manager then
-    config.font_size = 12
-else
-    config.font_size = 13
-end
-
--- disable ligatures
-config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
-
-config.hide_tab_bar_if_only_one_tab = true
-
-config.key_tables = {
-    copy_mode = copy_mode,
-
-    search_mode = search_mode,
+    }),
 
     window_ops = {
         { key = "j", mods = "", action = action.move_action("Down") },
@@ -327,21 +232,6 @@ config.keys = {
         }),
     },
     { key = "/", mods = "CMD", action = wez_action.ShowDebugOverlay },
-    {
-        key = "<",
-        mods = "CMD|SHIFT|CTRL",
-        action = action.change_scheme_action("prev"),
-    },
-    {
-        key = ">",
-        mods = "CMD|SHIFT|CTRL",
-        action = action.change_scheme_action("next"),
-    },
-    {
-        key = "s",
-        mods = "CMD|CTRL",
-        action = session.save(),
-    },
 
     -- Turn off the default CMD-d action
     {
@@ -354,9 +244,7 @@ config.keys = {
 config.scrollback_lines = 20000
 config.term = "wezterm"
 config.use_fancy_tab_bar = false
-
 config.window_decorations = "RESIZE"
-
 config.window_padding = {
     left = 4,
     right = 4,
@@ -397,10 +285,5 @@ config.font = wezterm.font("JetBrainsMonoNL NF")
 config.send_composed_key_when_left_alt_is_pressed = true
 
 config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
-
--- This cast is needed for other config files to end up using the proper WezTerm
--- types rather than the type of the value returned by this file
----@cast config WezTerm
-
 
 return config

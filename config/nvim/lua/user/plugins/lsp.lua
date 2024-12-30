@@ -15,16 +15,6 @@ return {
     priority = 100,
   },
 
-  -- helpers for editing neovim lua; must be setup **before** any language
-  -- servers are configured
-  {
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {},
-    },
-  },
-
   -- language server installer; must be setup before null-ls to ensure
   -- mason-managed tools are available in the path
   {

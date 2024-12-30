@@ -31,7 +31,9 @@ return {
         formatters = {
           prettier = {
             cwd = require('conform.util').root_file({
-              'package.json', 'jsconfig.json', 'tsconfig.json'
+              'package.json',
+              'jsconfig.json',
+              'tsconfig.json',
             }),
             require_cwd = true,
           },
@@ -94,5 +96,19 @@ return {
         end
       end, {})
     end,
+  },
+
+  -- helpers for editing neovim lua; must be setup **before** any language
+  -- servers are configured
+  {
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
   },
 }

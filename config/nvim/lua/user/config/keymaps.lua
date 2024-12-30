@@ -39,9 +39,3 @@ vim.keymap.set('n', '<leader>p', '"*p')
 
 -- disable "Entering Ex mode"
 vim.keymap.set('', 'Q', '<nop>')
-
--- window movement commands
-vim.keymap.set('', '<c-l>', ':wincmd l<cr>', { silent = true })
-vim.keymap.set('', '<c-k>', ':wincmd k<cr>', { silent = true })
-vim.keymap.set('', '<c-h>', ':wincmd h<cr>', { silent = true })
-vim.keymap.set('', '<c-j>', ':wincmd j<cr>', { silent = true })

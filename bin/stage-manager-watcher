@@ -5,25 +5,14 @@
 
 import Cocoa
 
-@discardableResult
-func shell(_ args: String...) -> Int32 {
-  let task = Process()
-  task.launchPath = "/usr/bin/env"
-  task.arguments = args
-  task.launch()
-  task.waitUntilExit()
-  return task.terminationStatus
-}
-
 let wmDefaults = UserDefaults.init(suiteName: "com.apple.WindowManager")!
-
 let env = ProcessInfo.processInfo.environment
 let home = env["HOME"] ?? ""
 
 class Observer: NSObject {
   func checkStatus() {
     let isEnabled = wmDefaults.bool(forKey: "GloballyEnabled")
-    print("is enabled? \(String(describing: isEnabled))")
+    print("Stage manager \(isEnabled ? "is" : "is not") enabled")
   }
 
   override func observeValue(
@@ -33,7 +22,16 @@ class Observer: NSObject {
     context: UnsafeMutableRawPointer?
   ) {
     checkStatus()
-    shell("touch", "\(home)/.config/wezterm/wezterm.lua")
+
+    let manager = FileManager.default
+    var filename = manager.homeDirectoryForCurrentUser
+      .appendingPathComponent(".config")
+      .appendingPathComponent("wezterm")
+      .appendingPathComponent("wezterm.lua")
+
+    var resourceValues = URLResourceValues()
+    resourceValues.contentModificationDate = Date()
+    try? filename.setResourceValues(resourceValues)
   }
 }
 

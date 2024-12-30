@@ -370,6 +370,32 @@ local function apply_theme()
   -- notify listeners that the colorscheme has been set
   vim.g.colors_name = 'wezterm'
   vim.api.nvim_exec_autocmds('ColorScheme', {})
+
+  -- Check for a theme file. If it exists, it will be updated by a background
+  -- process when the system theme changes.
+  local home = os.getenv('HOME')
+  local themefile = home .. '/.local/share/theme'
+  if vim.fn.filereadable(themefile) == 1 then
+    local w = vim.uv.new_fs_event()
+    if w ~= nil then
+      local function watch_file(_) end
+
+      local function on_change()
+        local theme = vim.fn.readfile(themefile)[1]
+        if theme then
+          vim.go.background = theme
+        end
+        w:stop()
+        watch_file(themefile)
+      end
+
+      watch_file = function()
+        w:start(themefile, {}, vim.schedule_wrap(on_change))
+      end
+
+      watch_file()
+    end
+  end
 end
 
 ---@return nil

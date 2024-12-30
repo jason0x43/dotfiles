@@ -213,7 +213,7 @@ M.setup = function(server_name)
 
   config.on_attach = M.create_on_attach(config.on_attach)
 
-  -- add completion capabilities
+  -- add cmp capabilities
   local cmp_caps = {}
   local ok, blink = pcall(require, 'blink.cmp')
   if ok then
