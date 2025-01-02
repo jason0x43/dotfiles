@@ -67,7 +67,7 @@ return {
     main = 'tig-nvim',
     config = true,
     lazy = true,
-    cmd = 'Tig'
+    cmd = 'Tig',
   },
 
   -- undotree

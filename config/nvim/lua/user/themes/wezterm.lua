@@ -217,7 +217,7 @@ local function apply_theme()
   hi('TabLineFill', { fg = c.dim_0, reverse = true })
   hi('TabLineSel', { fg = c.fg_1, bg = c.bg_1, bold = true, reverse = true })
   hi('Terminal', {})
-  hi('Title', { fg = c.orange, bold = true })
+  hi('Title', { fg = c.blue, bold = true })
   hi('Todo', { fg = c.magenta, bold = true })
   hi('ToolbarButton', { reverse = true })
   hi('ToolbarLine', { bg = c.bg_2 })
@@ -366,6 +366,9 @@ local function apply_theme()
   hilink('NavbuddyString', 'String')
   hilink('NavbuddyStruct', 'Structure')
   hilink('NavbuddyVariable', '@variable')
+
+  hilink('SnacksDashboardDesc', 'Normal')
+  hilink('SnacksDashboardTitle', 'Title')
 
   -- notify listeners that the colorscheme has been set
   vim.g.colors_name = 'wezterm'

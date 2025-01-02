@@ -52,59 +52,6 @@ local function section_diagnostics(sl, args)
   return section
 end
 
-local headers = {
-  smkeyboard = {
-    ' ____ ____ ____ ____ ____ ____ ',
-    '||n |||e |||o |||v |||i |||m ||',
-    '||__|||__|||__|||__|||__|||__||',
-    '|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|',
-  },
-  univers = {
-    '                                               88',
-    '                                               ""',
-    '',
-    '8b,dPPYba,   ,adPPYba,  ,adPPYba,  8b       d8 88 88,dPYba,,adPYba,',
-    '88P\'   `"8a a8P_____88 a8"     "8a `8b     d8\' 88 88P\'   "88"    "8a',
-    '88       88 8PP""""""" 8b       d8  `8b   d8\'  88 88      88      88',
-    '88       88 "8b,   ,aa "8a,   ,a8"   `8b,d8\'   88 88      88      88',
-    '88       88  `"Ybbd8"\'  `"YbbdP"\'      "8"     88 88      88      88',
-  },
-  starwars = {
-    '.__   __.  _______   ______   ____    ____  __  .___  ___.',
-    '|  \\ |  | |   ____| /  __  \\  \\   \\  /   / |  | |   \\/   |',
-    '|   \\|  | |  |__   |  |  |  |  \\   \\/   /  |  | |  \\  /  |',
-    '|  . `  | |   __|  |  |  |  |   \\      /   |  | |  |\\/|  |',
-    "|  |\\   | |  |____ |  `--'  |    \\    /    |  | |  |  |  |",
-    '|__| \\__| |_______| \\______/      \\__/     |__| |__|  |__|',
-  },
-  roman = {
-    '                                             o8o',
-    '                                             `"\'',
-    'ooo. .oo.    .ooooo.   .ooooo.  oooo    ooo oooo  ooo. .oo.  .oo.',
-    '`888P"Y88b  d88\' `88b d88\' `88b  `88.  .8\'  `888  `888P"Y88bP"Y88b',
-    " 888   888  888ooo888 888   888   `88..8'    888   888   888   888",
-    " 888   888  888    .o 888   888    `888'     888   888   888   888",
-    "o888o o888o `Y8bod8P' `Y8bod8P'     `8'     o888o o888o o888o o888o",
-  },
-  epic = {
-    ' _        _______  _______          _________ _______',
-    '( (    /|(  ____ \\(  ___  )|\\     /|\\__   __/(       )',
-    '|  \\  ( || (    \\/| (   ) || )   ( |   ) (   | () () |',
-    '|   \\ | || (__    | |   | || |   | |   | |   | || || |',
-    '| (\\ \\) ||  __)   | |   | |( (   ) )   | |   | |(_)| |',
-    '| | \\   || (      | |   | | \\ \\_/ /    | |   | |   | |',
-    '| )  \\  || (____/\\| (___) |  \\   /  ___) (___| )   ( |',
-    '|/    )_)(_______/(_______)   \\_/   \\_______/|/     \\|',
-  },
-  block = {
-    '                                          _|',
-    '  _|_|      _|_|      _|_|    _|      _|        _|_|  _|_|',
-    '_|    _|  _|_|_|_|  _|    _|  _|      _|  _|  _|    _|    _|',
-    '_|    _|  _|        _|    _|    _|  _|    _|  _|    _|    _|',
-    '_|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|',
-  },
-}
-
 local sep = '/'
 local width_mult = 0.816
 
@@ -182,6 +129,8 @@ return {
 
     version = false,
 
+    dependencies = { 'glepnir/nerdicons.nvim' },
+
     config = function()
       -- file tree / explorer
       require('mini.files').setup({
@@ -216,13 +165,12 @@ return {
         end
         return MiniPick.ui_select(items, opts, on_choice)
       end
-
       vim.ui.select = ui_select
 
+      -- files
       vim.keymap.set('n', '<leader>f', function()
         local in_worktree = require('user.util').in_git_dir()
         if in_worktree then
-          print('doing worktree thing')
           return MiniPick.builtin.cli({
             command = {
               'git',
@@ -266,6 +214,8 @@ return {
           MiniPick.builtin.files()
         end
       end)
+
+      -- git files
       vim.keymap.set('n', '<leader>g', function()
         MiniPick.builtin.grep_live({}, {
           source = { show = truncate },
@@ -274,9 +224,13 @@ return {
           },
         })
       end)
+
+      -- diagnostics in current file
       vim.keymap.set('n', '<leader>e', function()
         MiniExtra.pickers.diagnostic({ scope = 'current' })
       end)
+
+      -- buffers
       vim.keymap.set('n', '<leader>b', function()
         MiniPick.builtin.buffers({}, {
           window = {
@@ -284,20 +238,55 @@ return {
           },
         })
       end)
+
+      -- help
       vim.keymap.set('n', '<leader>h', function()
         MiniPick.builtin.help()
       end)
+
+      -- help
+      vim.keymap.set('n', '<leader>s', function()
+        MiniExtra.pickers.hl_groups()
+      end)
+
+      -- modified git files
       vim.keymap.set('n', '<leader>m', function()
         MiniExtra.pickers.git_files({ scope = 'modified' })
       end)
+
+      -- ls references
       vim.keymap.set('n', '<leader>lr', function()
         MiniExtra.pickers.lsp({ scope = 'references' })
       end)
+
+      -- recently visited files
       vim.keymap.set('n', '<leader>vp', function()
         MiniExtra.pickers.visit_paths()
       end)
+
+      -- recently visited labels
       vim.keymap.set('n', '<leader>vl', function()
         MiniExtra.pickers.visit_labels()
+      end)
+
+      vim.keymap.set('n', '<leader>i', function()
+        MiniPick.start({
+          source = {
+            items = function()
+              local icons = require('nerdicons.icons').get_icons()
+              local items = {}
+              for k, v in pairs(icons) do
+                table.insert(items, { text = v .. ' ' .. k, icon = v })
+              end
+              return items
+            end,
+            choose = function(item)
+              vim.schedule(function()
+                vim.api.nvim_put({ item['icon'] }, '', false, true)
+              end)
+            end,
+          },
+        })
       end)
 
       -- buffer deletion
@@ -308,9 +297,6 @@ return {
       vim.keymap.set('n', '<leader>K', function()
         MiniBufremove.wipeout()
       end)
-
-      -- highlight current word
-      -- require('mini.cursorword').setup()
 
       -- animated indent line
       require('mini.indentscope').setup()
@@ -346,58 +332,6 @@ return {
         },
       })
 
-      -- start screen
-      local starter = require('mini.starter')
-      local height = vim.fn.winheight(0)
-      local filter = function(lister)
-        return function()
-          -- Don't include git commit messages or files from node_modules
-          return vim.tbl_filter(function(f)
-            return f.name:find('COMMIT_EDITMSG') == nil
-              and f.name:find('node_modules/') == nil
-          end, lister())
-        end
-      end
-      starter.setup({
-        header = function()
-          vim.keymap.set('n', '<ESC>', function()
-            starter.close()
-          end, { buffer = 0 })
-          return table.concat(headers.block, '\n')
-        end,
-        footer = '',
-        items = {
-          filter(starter.sections.recent_files((height - 10) / 3, true)),
-          filter(starter.sections.recent_files((height - 10) / 3, false)),
-          function()
-            local git_status =
-              vim.fn.systemlist({ 'git', 'status', '--porcelain=v1' })
-            local git_root = vim.fn.trim(
-              vim.fn.system({ 'git', 'rev-parse', '--show-toplevel' })
-            )
-            local git_items = {}
-            for _, line in pairs(git_status) do
-              if line:find('^ [AM] ') then
-                local relative = vim.fn.trim(line:sub(4), '"')
-                local absolute = git_root .. '/' .. relative
-                local file = vim.fs.basename(relative)
-
-                table.insert(git_items, {
-                  name = string.format('%s (%s)', file, relative),
-                  action = 'edit ' .. absolute,
-                  section = 'Modified files',
-                })
-              end
-            end
-            return git_items
-          end,
-        },
-        item_is_active = function(item, query)
-          return item.name:lower():find(query:lower()) ~= nil
-            and item.action ~= ''
-        end,
-      })
-
       -- surround
       require('mini.surround').setup()
 
@@ -406,10 +340,6 @@ return {
 
       -- jumping around
       require('mini.jump2d').setup()
-
-      -- notifications
-      -- require('mini.notify').setup()
-      -- vim.notify = require('mini.notify').make_notify()
 
       -- location and label tracking
       require('mini.visits').setup()
