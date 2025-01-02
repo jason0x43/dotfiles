@@ -12,21 +12,21 @@ return {
 
       return {
         formatters_by_ft = {
+          blade = { 'prettier' },
           css = { 'prettier' },
-          lua = { 'stylua' },
           fish = { 'fish_indent' },
           html = { 'prettier' },
           javascript = { 'prettier', 'deno_fmt' },
           javascriptreact = { 'prettier' },
           json = { 'prettier' },
           jsonc = { 'prettier' },
-          tex = { 'tex-fmt' },
+          lua = { 'stylua' },
           markdown = { 'prettier' },
           python = { 'ruff_format' },
+          swift = { 'swift_format' },
+          tex = { 'latexindent' },
           typescript = { 'prettier' },
           typescriptreact = { 'prettier' },
-          swift = { 'swift_format' },
-          blade = { 'prettier' },
         },
         formatters = {
           prettier = {
@@ -43,6 +43,9 @@ return {
             }),
             require_cwd = true,
           },
+          latexindent = {
+            prepend_args = { '-m' }
+          }
         },
       }
     end,

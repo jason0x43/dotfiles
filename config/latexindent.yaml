@@ -1,0 +1,8 @@
+removeTrailingWhitespace: 1
+modifyLineBreaks:
+    condenseMultipleBlankLinesInto: 1
+    textWrapOptions:
+        when: after
+        columns: 80
+        blocksFollow:
+            headings: 0
