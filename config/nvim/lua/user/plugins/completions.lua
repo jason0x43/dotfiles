@@ -4,8 +4,8 @@ return {
     version = 'v0.*',
     opts = {
       sources = {
-        -- TODO: use this on next version update
         default = { 'lsp', 'copilot', 'path', 'buffer', 'lazydev' },
+        cmdline = {},
         providers = {
           copilot = {
             name = 'copilot',
@@ -24,11 +24,6 @@ return {
       keymap = {
         preset = 'default',
         ['<C-e>'] = { 'select_and_accept' },
-        -- cmdline = {
-        --   preset = 'enter',
-        --   -- ['<Tab>'] = { 'select_next', 'fallback' },
-        --   -- ['<S-Tab>'] = { 'select_prev', 'fallback' },
-        -- },
       },
     },
   },
