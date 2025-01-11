@@ -20,7 +20,12 @@ return {
           },
         },
       },
-      signature = { enabled = true },
+      signature = {
+        enabled = true,
+        window = {
+          border = 'rounded',
+        },
+      },
       keymap = {
         preset = 'default',
         ['<C-e>'] = { 'select_and_accept' },
