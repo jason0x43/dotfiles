@@ -35,7 +35,7 @@ return {
               'jsconfig.json',
               'tsconfig.json',
             }),
-            require_cwd = true,
+            require_cwd = false,
           },
           deno_fmt = {
             cwd = require('conform.util').root_file({
