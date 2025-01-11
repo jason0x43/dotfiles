@@ -3,3 +3,6 @@
 
 # be case insensitive by default
 --smart-case
+
+# follow symlinks
+--follow
