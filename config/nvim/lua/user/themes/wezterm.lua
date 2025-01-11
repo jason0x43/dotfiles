@@ -103,9 +103,15 @@ local function hilink(group, other_group)
   vim.api.nvim_set_hl(0, group, { link = other_group })
 end
 
-local M = {
-  load_colors = load_colors,
-}
+local home = os.getenv('HOME')
+local themefile = home .. '/.local/share/theme'
+
+local function update_background()
+  local theme = vim.fn.readfile(themefile)[1]
+  if theme then
+    vim.go.background = theme
+  end
+end
 
 -- Apply a theme in the Selenized format
 ---@return nil
@@ -128,6 +134,7 @@ local function apply_theme()
       for k, v in pairs(options) do
         if k == 'fg' or k == 'bg' then
           opts['cterm' .. k] = v
+          opts['gui' .. k] = v
         else
           opts[k] = v
         end
@@ -376,18 +383,13 @@ local function apply_theme()
 
   -- Check for a theme file. If it exists, it will be updated by a background
   -- process when the system theme changes.
-  local home = os.getenv('HOME')
-  local themefile = home .. '/.local/share/theme'
   if vim.fn.filereadable(themefile) == 1 then
     local w = vim.uv.new_fs_event()
     if w ~= nil then
       local function watch_file(_) end
 
       local function on_change()
-        local theme = vim.fn.readfile(themefile)[1]
-        if theme then
-          vim.go.background = theme
-        end
+        update_background()
         w:stop()
         watch_file(themefile)
       end
@@ -400,6 +402,10 @@ local function apply_theme()
     end
   end
 end
+
+local M = {
+  load_colors = load_colors,
+}
 
 ---@return nil
 function M.setup()
@@ -414,6 +420,11 @@ function M.setup()
       apply_theme()
     end,
   })
+
+  if vim.g.neovide then
+    update_background()
+    apply_theme()
+  end
 end
 
 return M
