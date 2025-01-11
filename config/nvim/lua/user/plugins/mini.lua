@@ -122,6 +122,27 @@ local function sort_actions(a, b)
   end
 end
 
+-- Get the tool to use for the files picker
+local get_files_tool = function()
+  if vim.fn.executable('fd') == 1 then
+    return 'fd'
+  end
+  return 'rg'
+end
+
+-- Get the command to use for the files picker
+local get_files_command = function(tool)
+  if tool == 'fd' then
+    return { 'fd', '--type=f', '--follow', '--color=never' }
+  end
+  return { 'rg', '--files', '--follow', '--color=never' }
+end
+
+-- Show icons in the file picker
+local show_files_icons = function(buf_id, items, query)
+  MiniPick.default_show(buf_id, items, query, { show_icons = true })
+end
+
 return {
   -- many things
   {
@@ -153,7 +174,21 @@ return {
           paste = '',
           refine = '<C-r>',
         },
+        window = {
+          config = { width = math.floor(width_mult * vim.o.columns) },
+        },
       })
+
+      -- like the builtin file picker, but follows symlinks
+      MiniPick.registry.files = function(_, opts)
+        local tool = get_files_tool()
+        local source = {
+          name = string.format('Files (%s)', tool),
+          show = show_files_icons,
+        }
+        opts = vim.tbl_deep_extend('force', { source = source }, opts or {})
+        return MiniPick.builtin.cli({ command = get_files_command(tool) }, opts)
+      end
 
       ---@param items table
       ---@param opts table
@@ -206,9 +241,6 @@ return {
                 )
               end,
             },
-            window = {
-              config = { width = math.floor(width_mult * vim.o.columns) },
-            },
           })
         else
           MiniPick.builtin.files()
@@ -217,66 +249,66 @@ return {
 
       -- git files
       vim.keymap.set('n', '<leader>g', function()
-        MiniPick.builtin.grep_live({}, {
+        MiniPick.registry.grep_live({}, {
           source = { show = truncate },
-          window = {
-            config = { width = math.floor(width_mult * vim.o.columns) },
-          },
         })
       end)
 
       -- diagnostics in current file
       vim.keymap.set('n', '<leader>e', function()
-        MiniExtra.pickers.diagnostic({ scope = 'current' })
+        MiniPick.registry.diagnostic({ scope = 'current' })
       end)
 
       -- buffers
       vim.keymap.set('n', '<leader>b', function()
-        MiniPick.builtin.buffers({}, {
-          window = {
-            config = { width = math.floor(width_mult * vim.o.columns) },
-          },
-        })
+        MiniPick.registry.buffers({}, {})
       end)
+
+      -- recent
+      vim.keymap.set('n', '<leader>r', function()
+        MiniPick.registry.oldfiles({}, {})
+      end)
+      vim.api.nvim_create_user_command('Recent', function()
+        MiniPick.registry.oldfiles({}, {})
+      end, {})
 
       -- help
       vim.keymap.set('n', '<leader>h', function()
-        MiniPick.builtin.help()
-      end)
-
-      -- help
-      vim.keymap.set('n', '<leader>s', function()
-        MiniExtra.pickers.hl_groups()
+        MiniPick.registry.help()
       end)
 
       -- modified git files
       vim.keymap.set('n', '<leader>m', function()
-        MiniExtra.pickers.git_files({ scope = 'modified' })
+        MiniPick.registry.git_files({ scope = 'modified' })
       end)
 
       -- ls references
       vim.keymap.set('n', '<leader>lr', function()
-        MiniExtra.pickers.lsp({ scope = 'references' })
+        MiniPick.registry.lsp({ scope = 'references' })
       end)
 
       -- recently visited files
       vim.keymap.set('n', '<leader>vp', function()
-        MiniExtra.pickers.visit_paths()
+        MiniPick.registry.visit_paths()
       end)
 
       -- recently visited labels
       vim.keymap.set('n', '<leader>vl', function()
-        MiniExtra.pickers.visit_labels()
+        MiniPick.registry.visit_labels()
       end)
 
-      vim.keymap.set('n', '<leader>i', function()
+      vim.api.nvim_create_user_command('Hlgroups', function()
+        MiniPick.registry.hl_groups()
+      end, {})
+
+      vim.api.nvim_create_user_command('Icons', function()
         MiniPick.start({
           source = {
             items = function()
               local icons = require('nerdicons.icons').get_icons()
               local items = {}
               for k, v in pairs(icons) do
-                table.insert(items, { text = v .. ' ' .. k, icon = v })
+                table.insert(items, { text = v .. '  ' .. k, icon = v })
               end
               return items
             end,
@@ -287,7 +319,7 @@ return {
             end,
           },
         })
-      end)
+      end, {})
 
       -- buffer deletion
       require('mini.bufremove').setup()
