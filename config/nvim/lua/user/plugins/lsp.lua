@@ -22,14 +22,13 @@ return {
     priority = 100,
     build = ':MasonUpdate',
     opts = function()
-      vim.api.nvim_create_user_command('MasonUpgrade', function(context)
-        local function check_done(updating, any_update)
-          if updating == 0 then
-            if any_update then
-              io.write('Finished updating\n')
-            else
-              io.write('Nothing to update\n')
-            end
+      vim.api.nvim_create_user_command('MasonUpgrade', function()
+        local to_check = 0
+        local updating = 0
+
+        local function check_done()
+          if updating == 0 and to_check == 0 then
+            io.write('Finished updating\n')
 
             vim.schedule(function()
               vim.api.nvim_exec_autocmds('User', {
@@ -39,14 +38,14 @@ return {
           end
         end
 
-        local checking = 0
-        local updating = 0
-        local any_update = false
-
         io.write('Checking for updates...\n')
 
         local registry = require('mason-registry')
+
+        -- This is blocking when called without a callback
         registry.refresh()
+        io.write('Refreshed registry\n')
+
         registry.update(function(success, error)
           if not success then
             io.write('Error updating registry: ' .. error)
@@ -57,55 +56,55 @@ return {
             end)
 
             return
-          end
-
-          ---@param pkg Package
-          ---@param version NewPackageVersion
-          ---@param succeeded boolean
-          local update_finished = function(pkg, version, succeeded)
-            updating = updating - 1
-            if succeeded then
-              io.write(
-                ('Updated %s to %s\n'):format(pkg.name, version.latest_version)
-              )
-            else
-              io.write(('Error updating %s\n'):format(pkg.name))
-            end
-            check_done(updating, any_update)
+          else
+            io.write('Updated registry\n')
           end
 
           local packages = registry.get_installed_packages()
-          for _, pkg in ipairs(packages) do
-            checking = checking + 1
+          to_check = #packages
 
-            pkg:check_new_version(function(new_available, version)
-              if new_available then
-                io.write(
-                  ('Updating %s to %s...\n'):format(
-                    pkg.name,
-                    version.latest_version
+          io.write('Checking ' .. to_check .. ' packages...\n')
+
+          if to_check == 0 then
+            check_done()
+          else
+            for _, pkg in ipairs(packages) do
+              updating = updating + 1
+              to_check = to_check - 1
+
+              pkg:check_new_version(function(new_available, version)
+                if new_available then
+                  pkg:on('install:success', function()
+                    io.write(
+                      ('Updated %s to %s\n'):format(
+                        pkg.name,
+                        version.latest_version
+                      )
+                    )
+                    updating = updating - 1
+                    check_done()
+                  end)
+
+                  pkg:on('install:failure', function()
+                    io.write(('Error updating %s\n'):format(pkg.name))
+                    updating = updating - 1
+                    check_done()
+                  end)
+
+                  io.write(
+                    ('Updating %s to %s...\n'):format(
+                      pkg.name,
+                      version.latest_version
+                    )
                   )
-                )
-                any_update = true
-                updating = updating + 1
-                pkg:on('install:success', function()
-                  update_finished(pkg, version, true)
-                end)
-                pkg:on('install:failure', function()
-                  update_finished(pkg, version, false)
-                end)
-                pkg:install({ version = version.latest_version, force = true })
-              end
-
-              checking = checking - 1
-
-              if checking == 0 then
-                check_done(updating, any_update)
-              end
-            end)
+                  pkg:install({ version = version.latest_version, force = true })
+                else
+                  updating = updating - 1
+                  check_done()
+                end
+              end)
+            end
           end
-
-          check_done(updating, any_update)
         end)
       end, { force = true })
 
