@@ -38,6 +38,9 @@ local wezterm = {
   ---@type table<string, string>
   nerdfonts = {},
 
+  ---@module 'wezterm.plugin'
+  plugin = {},
+
   ---@type string
   target_triple = '',
 

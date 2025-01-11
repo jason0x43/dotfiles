@@ -2,6 +2,8 @@ local wezterm = require("wezterm")
 local util = require("user.util")
 local action = require("user.action")
 local wez_action = wezterm.action
+local resurrect =
+    wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
 
 -- Style the tabs
 wezterm.on("format-tab-title", function(tab, _, _, _, _, max_width)
@@ -158,6 +160,46 @@ config.key_tables = {
             key = "w",
             mods = "",
             action = wez_action.CloseCurrentPane({ confirm = true }),
+        },
+        {
+            key = "s",
+            mods = "",
+            action = resurrect.window_state.save_window_action(),
+        },
+        {
+            key = "r",
+            mods = "",
+            action = wezterm.action_callback(function(win, pane)
+                resurrect.fuzzy_load(win, pane, function(id, _)
+                    -- match before '/'
+                    local type = string.match(id, "^([^/]+)")
+                    -- match after '/'
+                    id = string.match(id, "([^/]+)$")
+                    -- remove file extension
+                    id = string.match(id, "(.+)%..+$")
+
+                    local opts = {
+                        relative = true,
+                        restore_text = true,
+                        on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+                    }
+
+                    if type == "workspace" then
+                        local state = resurrect.load_state(id, "workspace")
+                        resurrect.workspace_state.restore_workspace(state, opts)
+                    elseif type == "window" then
+                        local state = resurrect.load_state(id, "window")
+                        resurrect.window_state.restore_window(
+                            pane:window(),
+                            state,
+                            opts
+                        )
+                    elseif type == "tab" then
+                        local state = resurrect.load_state(id, "tab")
+                        resurrect.tab_state.restore_tab(pane:tab(), state, opts)
+                    end
+                end)
+            end),
         },
     },
 }
