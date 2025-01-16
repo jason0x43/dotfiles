@@ -201,6 +201,21 @@ config.key_tables = {
                 end)
             end),
         },
+        {
+            key = "t",
+            mods = "",
+            action = wez_action.PromptInputLine({
+                description = "Tab name",
+                action = wezterm.action_callback(function(window, _, line)
+                    -- line will be `nil` if they hit escape without entering anything
+                    -- An empty string if they just hit enter
+                    -- Or the actual line of text they wrote
+                    if line then
+                        window:active_tab():set_title(line)
+                    end
+                end),
+            }),
+        },
     },
 }
 
@@ -210,21 +225,6 @@ config.keys = {
     { key = "h", mods = "CTRL", action = action.move_action("Left") },
     { key = "l", mods = "CTRL", action = action.move_action("Right") },
     { key = "t", mods = "CMD", action = wez_action.SpawnTab("DefaultDomain") },
-    {
-        key = "t",
-        mods = "CTRL|SHIFT",
-        action = wez_action.PromptInputLine({
-            description = "Tab name",
-            action = wezterm.action_callback(function(window, _, line)
-                -- line will be `nil` if they hit escape without entering anything
-                -- An empty string if they just hit enter
-                -- Or the actual line of text they wrote
-                if line then
-                    window:active_tab():set_title(line)
-                end
-            end),
-        }),
-    },
     {
         key = "\\",
         mods = "CMD|CTRL",
