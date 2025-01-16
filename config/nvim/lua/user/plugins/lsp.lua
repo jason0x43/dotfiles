@@ -121,7 +121,6 @@ return {
     'williamboman/mason-lspconfig.nvim',
     config = function()
       require('mason-lspconfig').setup()
-      require('user.lsp').config()
 
       -- use mason's automatic server startup functionality
       require('mason-lspconfig').setup_handlers({

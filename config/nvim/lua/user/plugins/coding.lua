@@ -44,8 +44,8 @@ return {
             require_cwd = true,
           },
           latexindent = {
-            prepend_args = { '-m' }
-          }
+            prepend_args = { '-m' },
+          },
         },
       }
     end,
@@ -72,11 +72,6 @@ return {
         {
           group = vim.api.nvim_create_augroup('nvim-lint', { clear = true }),
           callback = function()
-            -- Don't run linters in JS projects, because those should have
-            -- more specific tooling
-            if require('lspconfig').util.root_pattern('package.json') then
-              return
-            end
             require('lint').try_lint()
           end,
         }
@@ -113,5 +108,13 @@ return {
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
       },
     },
+  },
+
+  -- bacon diagnostics
+  {
+    dir = '/Users/jason/.config/nvim/lua/bacon-diag',
+    cond = vim.fn.findfile('.bacon-locations', '.;') ~= '',
+    main = 'bacon-diag',
+    config = true,
   },
 }

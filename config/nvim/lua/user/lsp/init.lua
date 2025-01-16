@@ -179,6 +179,11 @@ M.config = function()
     { text = '', texthl = 'DiagnosticSignHint' }
   )
 
+  -- faster update
+  vim.diagnostic.config({
+    update_in_insert = true
+  })
+
   -- rounded border for hover popups
   vim.lsp.handlers['textDocument/hover'] =
     vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
