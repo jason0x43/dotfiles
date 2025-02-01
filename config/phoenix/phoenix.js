@@ -219,12 +219,17 @@ async function autoLayout() {
 		...getWindowsInSpace("Firefox", space),
 	];
 
+	const simWins = getWindowsInSpace("Simulator", space);
+	const emuWins = getWindowsInSpace("qemu-system-aarch64", space);
+	const messagesWins = getWindowsInSpace("Messages", space);
+	const slackWins = getWindowsInSpace("Slack", space);
+
 	if (await isStageManagerEnabled()) {
+		// Stage Manager
 		for (const win of terminalWins) {
 			fill("center", { window: win, width: 750 });
 		}
 
-		const slackWins = getWindowsInSpace("Slack", space);
 		const hassWins = getWindowsInSpace("Home Assistant", space);
 		const mailWins = getWindowsInSpace("Mail", space);
 		const dtWins = getWindowsInSpace("DEVONthink 3", space);
@@ -241,29 +246,26 @@ async function autoLayout() {
 			fill("center", { window: win, width: -300 });
 		}
 
-		const simWins = getWindowsInSpace("Simulator", space);
-		const messagesWins = getWindowsInSpace("Messages", space);
 		for (const win of [...simWins, ...messagesWins]) {
 			moveTo("center", win);
 		}
 	} else {
-		const browserWins = [
-			...getWindowsInSpace("Safari", space),
-			...getWindowsInSpace("Wavebox", space),
-			...getWindowsInSpace("Google Chrome", space),
-			...getWindowsInSpace("Firefox", space),
-		];
-
-		const simWins = getWindowsInSpace("Simulator", space);
-
+		// Not Stage Manager
 		if (browserWins.length > 0) {
 			if (terminalWins.length > 0) {
 				if (simWins.length > 0) {
 					for (const window of browserWins) {
-						fill("left", { window, width: 1 - THIN_WIDTH, marginLeft: 350 });
+						fill("left", {
+							window,
+							width: 1 - THIN_WIDTH,
+							marginLeft: 350,
+						});
 					}
 					for (const window of simWins) {
-						moveTo("left", window);
+						moveTo("top-left", window);
+					}
+					for (const window of emuWins) {
+						moveTo("bottom-left", window);
 					}
 					for (const window of terminalWins) {
 						fill("right", { window, width: THIN_WIDTH });
@@ -290,8 +292,6 @@ async function autoLayout() {
 
 		const waveboxWins = getWindowsInSpace("Wavebox", space);
 		if (waveboxWins.length === 1) {
-			const messagesWins = getWindowsInSpace("Messages", space);
-
 			if (messagesWins.length > 0) {
 				fill("left", { window: messagesWins[0], width: 0.32 });
 				fill("right", { window: waveboxWins[0], width: -90 });
@@ -299,9 +299,6 @@ async function autoLayout() {
 				fill("center", { window: waveboxWins[0] });
 			}
 		}
-
-		const messagesWins = getWindowsInSpace("Messages", space);
-		const slackWins = getWindowsInSpace("Slack", space);
 
 		if (messagesWins.length === 1) {
 			fill("left", { window: messagesWins[0], width: 0.4 });
@@ -316,7 +313,6 @@ async function autoLayout() {
 		}
 
 		const chatWins = getWindowsInSpace("Chat", space);
-		Phoenix.log(`>>> found ${chatWins.length} chat wins`);
 		if (chatWins.length === 1) {
 			fill("right", { window: chatWins[0], width: 0.58 });
 		}
