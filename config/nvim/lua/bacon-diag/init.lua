@@ -124,7 +124,7 @@ M.setup = function()
 
   -- TODO: start per-project watchers with local state
 
-  vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
+  vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufEnter' }, {
     pattern = '*.rs',
     callback = function()
       show_diagnostics()
