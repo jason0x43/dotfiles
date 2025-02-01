@@ -8,18 +8,14 @@ return {
         require('snacks').terminal.open()
       end, {})
 
+      vim.api.nvim_create_user_command('Term', function()
+        require('snacks').terminal.open()
+      end, {})
+
       return {
         input = { enabled = true },
         words = { enabled = true },
         notifier = { enabled = true },
-        terminal = {
-          win = {
-            position = 'float',
-            border = 'rounded',
-            width = 0.9,
-            height = 0.5,
-          },
-        },
         dashboard = {
           preset = {
             header = [[                           _|
@@ -39,7 +35,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               end
 
               if cmd == 'config' then
-                return MiniPick.registry.files({}, {
+                return MiniPick.registry.files_and_dirs({}, {
                   source = { cwd = vim.fn.getenv('HOME') .. '/.config' },
                 })
               end

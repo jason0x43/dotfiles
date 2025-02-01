@@ -127,15 +127,12 @@ local get_files_tool = function()
   if vim.fn.executable('fd') == 1 then
     return 'fd'
   end
-  return 'rg'
+  return 'find'
 end
 
 -- Get the command to use for the files picker
-local get_files_command = function(tool)
-  if tool == 'fd' then
-    return { 'fd', '--type=f', '--follow', '--color=never' }
-  end
-  return { 'rg', '--files', '--follow', '--color=never' }
+local get_files_command = function()
+  return { 'fd', '--follow', '--color=never' }
 end
 
 -- Show icons in the file picker
@@ -179,15 +176,19 @@ return {
         },
       })
 
-      -- like the builtin file picker, but follows symlinks
-      MiniPick.registry.files = function(_, opts)
-        local tool = get_files_tool()
+      -- Change the file picker
+      MiniPick.registry.files_and_dirs = function(_, opts)
         local source = {
-          name = string.format('Files (%s)', tool),
+          name = string.format('Files and directories'),
           show = show_files_icons,
+          choose = function(item)
+            vim.schedule(function()
+              MiniPick.default_choose(item)
+            end)
+          end,
         }
         opts = vim.tbl_deep_extend('force', { source = source }, opts or {})
-        return MiniPick.builtin.cli({ command = get_files_command(tool) }, opts)
+        return MiniPick.builtin.cli({ command = get_files_command() }, opts)
       end
 
       ---@param items table
@@ -204,59 +205,71 @@ return {
 
       -- files
       vim.keymap.set('n', '<leader>f', function()
-        local in_worktree = require('user.util').in_git_dir()
-        if in_worktree then
-          return MiniPick.builtin.cli({
-            command = {
-              'git',
-              'ls-files',
-              '--cached',
-              '--others',
-              '-t',
-              '--exclude-standard',
-            },
-
-            ---@param files string[]
-            postprocess = function(files)
-              local items = {}
-              for _, file in pairs(files) do
-                if file ~= '' then
-                  table.insert(items, {
-                    text = truncate_path(file),
-                    path = file:sub(3),
-                  })
-                end
-              end
-              return items
-            end,
-          }, {
-            source = {
-              name = 'Git files (index + untracked)',
-              show = function(buf_id, items, query)
-                return MiniPick.default_show(
-                  buf_id,
-                  items,
-                  query,
-                  { show_icons = true }
-                )
-              end,
-            },
-          })
-        else
-          MiniPick.builtin.files()
-        end
+        MiniPick.registry.files_and_dirs()
       end)
 
-      -- git files
+      -- live grep
       vim.keymap.set('n', '<leader>g', function()
-        MiniPick.registry.grep_live({}, {
+        MiniPick.builtin.grep_live({}, {
           source = { show = truncate },
         })
       end)
 
-      -- diagnostics in current file
-      vim.keymap.set('n', '<leader>e', function()
-        MiniPick.registry.diagnostic({ scope = 'current' })
+      -- diagnostics
+      vim.keymap.set('n', '<leader>d', function()
+        MiniExtra.pickers.diagnostic({
+          scope = 'current',
+        }, {
+          source = {
+            preview = function(buf_id, item)
+              print(vim.inspect(item))
+              local message = item.message
+              local source = item.source
+              local code = item.code
+              local severity = item.severity
+
+              local text = message
+              if code or source then
+                  text = text .. ' ['
+                  if code and source then
+                    text = text .. code .. ', ' .. source
+                  elseif code then
+                    text = text .. code
+                  else
+                    text = text .. source
+                  end
+                  text = text .. ']'
+              end
+
+              local hl_group = 'DiagnosticError'
+              if severity == 'warning' then
+                hl_group = 'DiagnosticWarning'
+              elseif severity == 'info' then
+                hl_group = 'DiagnosticInfo'
+              end
+
+              vim.api.nvim_set_option_value('wrap', true, {})
+              vim.api.nvim_set_option_value('linebreak', true, {})
+              vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, { text })
+              vim.api.nvim_buf_add_highlight(
+                buf_id,
+                -1,
+                hl_group,
+                0,
+                0,
+                #message
+              )
+              vim.api.nvim_buf_add_highlight(
+                buf_id,
+                -1,
+                'DiagnosticVirtualTextHint',
+                0,
+                #message + 1,
+                -1
+              )
+            end
+          },
+        })
       end)
 
       -- buffers
@@ -268,9 +281,6 @@ return {
       vim.keymap.set('n', '<leader>r', function()
         MiniPick.registry.oldfiles({}, {})
       end)
-      vim.api.nvim_create_user_command('Recent', function()
-        MiniPick.registry.oldfiles({}, {})
-      end, {})
 
       -- help
       vim.keymap.set('n', '<leader>h', function()

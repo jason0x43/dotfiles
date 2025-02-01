@@ -31,11 +31,5 @@ vim.keymap.set('', '<space>', function()
   vim.go.hlsearch = false
 end)
 
--- yank to and paste from system clipboard
-vim.keymap.set({ 'n', 'v', 'o' }, '<leader>y', function()
-  require('user.util').yank(vim.fn.getreg('0'))
-end)
-vim.keymap.set('n', '<leader>p', '"*p')
-
 -- disable "Entering Ex mode"
 vim.keymap.set('', 'Q', '<nop>')

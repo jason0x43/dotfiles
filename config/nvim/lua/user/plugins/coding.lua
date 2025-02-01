@@ -58,8 +58,8 @@ return {
 
       lint.linters.tidy.ignore_exitcode = true
       lint.linters_by_ft.json = {}
-      -- lint.linters_by_ft.text = {}
-      -- lint.linters_by_ft.markdown = {}
+      lint.linters_by_ft.text = {}
+      lint.linters_by_ft.markdown = {}
 
       if vim.fn.executable('htmlhint') == 1 then
         lint.linters_by_ft.html = { 'htmlhint' }

@@ -139,9 +139,9 @@ M.create_on_attach = function(server_on_attach)
 
     -- add a rename keymap
     if client.server_capabilities.renameProvider then
-      vim.keymap.set('n', '<leader>r', function()
+      vim.api.nvim_buf_create_user_command(0, 'Rename', function()
         vim.lsp.buf.rename()
-      end, opts)
+      end, {})
     end
 
     -- add a :Format command and keymap
@@ -151,12 +151,12 @@ M.create_on_attach = function(server_on_attach)
       end, {})
     end
 
-    -- keymap to show error diagnostic popup
-    vim.keymap.set('n', '<leader>d', function()
+    -- show error diagnostic popup for the current line
+    vim.api.nvim_buf_create_user_command(0, 'Diag', function()
       vim.diagnostic.open_float({
         border = 'rounded',
       })
-    end, opts)
+    end, {})
   end
 end
 
@@ -181,7 +181,7 @@ M.config = function()
 
   -- faster update
   vim.diagnostic.config({
-    update_in_insert = true
+    update_in_insert = true,
   })
 
   -- rounded border for hover popups
