@@ -336,6 +336,8 @@ local function apply_theme()
 
   hi('MiniCursorWord', { bg = c.bg_1, underline = false })
 
+  hi('MiniPickMatchRanges', { fg = c.magenta })
+
   hilink('LspDiagnosticsDefaultHint', 'DiagnosticHint')
   hilink('LspDiagnosticsDefaultInformation', 'DiagnosticInfo')
   hilink('LspDiagnosticsDefaultWarning', 'DiagnosticWarn')

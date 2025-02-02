@@ -35,8 +35,8 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               end
 
               if cmd == 'config' then
-                return MiniPick.registry.files_and_dirs({}, {
-                  source = { cwd = vim.fn.getenv('HOME') .. '/.config' },
+                return MiniPick.registry.files_and_dirs({
+                  cwd = vim.fn.getenv('HOME') .. '/.config',
                 })
               end
 
@@ -69,8 +69,8 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
               {
                 icon = ' ',
-                key = 'r',
-                desc = 'Recent',
+                key = 'o',
+                desc = 'Oldfiles',
                 action = ":lua Snacks.dashboard.pick('oldfiles')",
               },
               {

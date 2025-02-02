@@ -139,6 +139,10 @@ M.create_on_attach = function(server_on_attach)
 
     -- add a rename keymap
     if client.server_capabilities.renameProvider then
+      vim.keymap.set('n', '<leader>r', function()
+        vim.lsp.buf.rename()
+      end, opts)
+
       vim.api.nvim_buf_create_user_command(0, 'Rename', function()
         vim.lsp.buf.rename()
       end, {})
@@ -161,27 +165,19 @@ M.create_on_attach = function(server_on_attach)
 end
 
 M.config = function()
-  -- configure diagnostic signs
-  vim.fn.sign_define(
-    'DiagnosticSignError',
-    { text = '', texthl = 'DiagnosticSignError' }
-  )
-  vim.fn.sign_define(
-    'DiagnosticSignWarn',
-    { text = '', texthl = 'DiagnosticSignWarn' }
-  )
-  vim.fn.sign_define(
-    'DiagnosticSignInfo',
-    { text = '', texthl = 'DiagnosticSignInfo' }
-  )
-  vim.fn.sign_define(
-    'DiagnosticSignHint',
-    { text = '', texthl = 'DiagnosticSignHint' }
-  )
-
-  -- faster update
   vim.diagnostic.config({
+    -- faster update
     update_in_insert = true,
+
+    -- specify some diagnostic icons
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = '',
+        [vim.diagnostic.severity.WARN] = '',
+        [vim.diagnostic.severity.INFO] = '',
+        [vim.diagnostic.severity.HINT] = '',
+      },
+    },
   })
 
   -- rounded border for hover popups

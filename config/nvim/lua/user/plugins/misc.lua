@@ -21,20 +21,6 @@ return {
     config = true,
   },
 
-  -- better git decorations
-  {
-    'lewis6991/gitsigns.nvim',
-    dependencies = 'nvim-lua/plenary.nvim',
-    config = function()
-      require('gitsigns').setup({
-        signs = {
-          add = { text = '▋' },
-          change = { text = '▋' },
-        },
-      })
-    end,
-  },
-
   -- Git tools
   'tpope/vim-fugitive',
 

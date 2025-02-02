@@ -122,22 +122,39 @@ local function sort_actions(a, b)
   end
 end
 
--- Get the tool to use for the files picker
-local get_files_tool = function()
-  if vim.fn.executable('fd') == 1 then
-    return 'fd'
-  end
-  return 'find'
-end
-
 -- Get the command to use for the files picker
-local get_files_command = function()
+local function get_files_command()
   return { 'fd', '--follow', '--color=never' }
 end
 
 -- Show icons in the file picker
-local show_files_icons = function(buf_id, items, query)
+local function show_files_icons(buf_id, items, query)
   MiniPick.default_show(buf_id, items, query, { show_icons = true })
+end
+
+-- A mapping of diagnostic severity values to severity name for groups and icons
+---@type string[]
+local severity_names = { 'Error', 'Warn', 'Info', 'Hint' }
+
+---@param str string
+---@param query string[]
+---@return integer[] | nil
+local function find_matches(str, query)
+  local lower_str = str:lower()
+  local offset = 0
+  ---@type integer[]
+  local indexes = {}
+
+  for _, v in ipairs(query) do
+    local idx = lower_str:find(v:lower(), offset)
+    if idx == nil then
+      return nil
+    end
+    table.insert(indexes, idx)
+    offset = idx + 1
+  end
+
+  return indexes
 end
 
 return {
@@ -176,10 +193,10 @@ return {
         },
       })
 
-      -- Change the file picker
-      MiniPick.registry.files_and_dirs = function(_, opts)
+      -- Pick from files *and* directories
+      MiniPick.registry.files_and_dirs = function(local_opts)
         local source = {
-          name = string.format('Files and directories'),
+          name = string.format('Files and dirs'),
           show = show_files_icons,
           choose = function(item)
             vim.schedule(function()
@@ -187,8 +204,108 @@ return {
             end)
           end,
         }
-        opts = vim.tbl_deep_extend('force', { source = source }, opts or {})
-        return MiniPick.builtin.cli({ command = get_files_command() }, opts)
+        if local_opts['cwd'] then
+          source['cwd'] = local_opts['cwd']
+          source['name'] = source['name'] .. ' (' .. local_opts['cwd'] .. ')'
+        end
+        return MiniPick.builtin.cli(
+          { command = get_files_command() },
+          { source = source }
+        )
+      end
+
+      -- Filter some entries out of oldfiles
+      MiniPick.registry.oldfiles = function(local_opts)
+        vim.v.oldfiles = vim.tbl_filter(function(item)
+          return not vim.endswith(item, 'COMMIT_EDITMSG')
+        end, vim.v.oldfiles)
+        return MiniExtra.pickers.oldfiles(local_opts)
+      end
+
+      -- Better diagnostic formatting
+      MiniPick.registry.diagnostic = function(local_opts)
+        local single_file = local_opts and local_opts.scope == 'current'
+          or false
+
+        return MiniExtra.pickers.diagnostic(local_opts, {
+          source = {
+            show = function(buf_id, items_to_show, query)
+              ---@type string[]
+              local lines = {}
+              ---@type { hlgroup: string, line: number, col_start: integer, col_end: integer }[]
+              local highlights = {}
+
+              for _, v in ipairs(items_to_show) do
+                local icon = vim.diagnostic.config().signs.text[v.severity]
+                local text = v.message:gsub('\n', ' ')
+                local line
+
+                if single_file then
+                  line = string.format('%s │ %s', icon, text)
+                else
+                  line = string.format('%s │ %s │ %s', icon, v.path, text)
+                end
+
+                local matches = find_matches(line, query)
+                if matches ~= nil then
+                  local line_num = #lines
+                  table.insert(lines, line)
+                  table.insert(highlights, {
+                    hlgroup = 'Diagnostic' .. severity_names[v.severity],
+                    line = line_num,
+                    col_start = 0,
+                    col_end = #line,
+                  })
+                  for _, m in ipairs(matches) do
+                    table.insert(highlights, {
+                      hlgroup = 'MiniPickMatchRanges',
+                      line = line_num,
+                      col_start = m - 1,
+                      col_end = m,
+                    })
+                  end
+                end
+              end
+
+              vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
+
+              for _, v in ipairs(highlights) do
+                vim.api.nvim_buf_add_highlight(
+                  buf_id,
+                  -1,
+                  v.hlgroup,
+                  v.line,
+                  v.col_start,
+                  v.col_end
+                )
+              end
+            end,
+
+            ---@param buf_id number
+            ---@param item vim.Diagnostic
+            preview = function(buf_id, item)
+              local message = item.message
+              local severity = item.severity
+              local hl_group = 'Diagnostic' .. severity_names[severity]
+              local text = message
+              local source = item.source
+                .. (item.code and ': ' .. item.code or '')
+
+              vim.api.nvim_set_option_value('wrap', true, {})
+              vim.api.nvim_set_option_value('linebreak', true, {})
+              vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, { text, source })
+              vim.api.nvim_buf_add_highlight(buf_id, -1, hl_group, 0, 0, -1)
+              vim.api.nvim_buf_add_highlight(
+                buf_id,
+                -1,
+                'DiagnosticVirtualTextHint',
+                1,
+                0,
+                -1
+              )
+            end,
+          },
+        })
       end
 
       ---@param items table
@@ -205,7 +322,7 @@ return {
 
       -- files
       vim.keymap.set('n', '<leader>f', function()
-        MiniPick.registry.files_and_dirs()
+        MiniPick.registry.files_and_dirs({})
       end)
 
       -- live grep
@@ -217,98 +334,44 @@ return {
 
       -- diagnostics
       vim.keymap.set('n', '<leader>d', function()
-        MiniExtra.pickers.diagnostic({
-          scope = 'current',
-        }, {
-          source = {
-            preview = function(buf_id, item)
-              print(vim.inspect(item))
-              local message = item.message
-              local source = item.source
-              local code = item.code
-              local severity = item.severity
-
-              local text = message
-              if code or source then
-                  text = text .. ' ['
-                  if code and source then
-                    text = text .. code .. ', ' .. source
-                  elseif code then
-                    text = text .. code
-                  else
-                    text = text .. source
-                  end
-                  text = text .. ']'
-              end
-
-              local hl_group = 'DiagnosticError'
-              if severity == 'warning' then
-                hl_group = 'DiagnosticWarning'
-              elseif severity == 'info' then
-                hl_group = 'DiagnosticInfo'
-              end
-
-              vim.api.nvim_set_option_value('wrap', true, {})
-              vim.api.nvim_set_option_value('linebreak', true, {})
-              vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, { text })
-              vim.api.nvim_buf_add_highlight(
-                buf_id,
-                -1,
-                hl_group,
-                0,
-                0,
-                #message
-              )
-              vim.api.nvim_buf_add_highlight(
-                buf_id,
-                -1,
-                'DiagnosticVirtualTextHint',
-                0,
-                #message + 1,
-                -1
-              )
-            end
-          },
-        })
+        MiniPick.registry.diagnostic({ scope = 'current' })
+      end)
+      vim.keymap.set('n', '<leader>s', function()
+        MiniPick.registry.diagnostic({})
       end)
 
       -- buffers
       vim.keymap.set('n', '<leader>b', function()
-        MiniPick.registry.buffers({}, {})
+        MiniPick.builtin.buffers()
       end)
 
       -- recent
-      vim.keymap.set('n', '<leader>r', function()
-        MiniPick.registry.oldfiles({}, {})
+      vim.keymap.set('n', '<leader>o', function()
+        MiniPick.registry.oldfiles()
       end)
 
       -- help
       vim.keymap.set('n', '<leader>h', function()
-        MiniPick.registry.help()
+        MiniPick.builtin.help()
       end)
 
       -- modified git files
       vim.keymap.set('n', '<leader>m', function()
-        MiniPick.registry.git_files({ scope = 'modified' })
+        MiniExtra.pickers.git_files({ scope = 'modified' })
       end)
 
       -- ls references
       vim.keymap.set('n', '<leader>lr', function()
-        MiniPick.registry.lsp({ scope = 'references' })
+        MiniExtra.pickers.lsp({ scope = 'references' })
       end)
 
-      -- recently visited files
-      vim.keymap.set('n', '<leader>vp', function()
-        MiniPick.registry.visit_paths()
-      end)
-
-      -- recently visited labels
-      vim.keymap.set('n', '<leader>vl', function()
-        MiniPick.registry.visit_labels()
+      -- recently visited paths
+      vim.keymap.set('n', '<leader>p', function()
+        MiniExtra.pickers.visit_paths()
       end)
 
       vim.api.nvim_create_user_command('Hlgroups', function()
-        MiniPick.registry.hl_groups()
+        MiniExtra.pickers.hl_groups()
       end, {})
 
       vim.api.nvim_create_user_command('Icons', function()
@@ -388,6 +451,9 @@ return {
 
       -- diffing
       require('mini.diff').setup()
+      vim.api.nvim_create_user_command('Diff', function()
+        MiniDiff.toggle_overlay(0)
+      end, {})
 
       -- icons
       require('mini.icons').setup()
