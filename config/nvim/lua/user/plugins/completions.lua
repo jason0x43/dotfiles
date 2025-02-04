@@ -2,39 +2,47 @@ return {
   {
     'saghen/blink.cmp',
     version = 'v0.*',
-    opts = {
-      sources = {
-        default = { 'lsp', 'copilot', 'path', 'buffer', 'lazydev' },
-        cmdline = {},
-        providers = {
-          copilot = {
-            name = 'copilot',
-            module = 'blink-cmp-copilot',
-            score_offset = 100,
-            async = true,
-          },
+    dependencies = {
+      'giuxtaposition/blink-cmp-copilot',
+    },
+    opts = function()
+      local providers = {
           lazydev = {
             name = 'LazyDev',
             module = 'lazydev.integrations.blink',
             fallbacks = { 'lsp' },
           },
-        },
-      },
-      signature = {
-        enabled = true,
-        window = {
-          border = 'rounded',
-        },
-      },
-      keymap = {
-        preset = 'default',
-        ['<C-e>'] = { 'select_and_accept' },
-      },
-    },
-  },
+      }
+      local default = { 'lsp', 'path', 'buffer', 'lazydev' }
 
-  {
-    'giuxtaposition/blink-cmp-copilot',
-    dependencies = 'zbirenbaum/copilot.lua',
+      local ok, _ = pcall(require, 'copilot.api')
+      if ok then
+        providers.copilot = {
+          name = 'copilot',
+          module = 'blink-cmp-copilot',
+          score_offset = 100,
+          async = true,
+        }
+        table.insert(default, 2, 'copilot')
+      end
+
+      return {
+        sources = {
+          default = default,
+          cmdline = {},
+          providers = providers,
+        },
+        signature = {
+          enabled = true,
+          window = {
+            border = 'rounded',
+          },
+        },
+        keymap = {
+          preset = 'default',
+          ['<C-e>'] = { 'select_and_accept' },
+        },
+      }
+    end
   },
 }
