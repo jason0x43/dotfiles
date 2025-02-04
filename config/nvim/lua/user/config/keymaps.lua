@@ -76,6 +76,10 @@ leader_map('K', function()
   Snacks.bufdelete.delete({ force = true })
 end)
 
+leader_map('ls', function()
+  Snacks.picker.lsp_symbols()
+end)
+
 leader_map('lr', function()
   Snacks.picker.lsp_references()
 end)
@@ -97,7 +101,8 @@ leader_map('r', function()
 end)
 
 leader_map('s', function()
-  Snacks.dashboard()
+  ---@diagnostic disable-next-line: undefined-field
+  Snacks.picker.smart()
 end)
 
 leader_map('t', function()
@@ -105,7 +110,8 @@ leader_map('t', function()
 end)
 
 leader_map('u', function()
-  require('undotree-nvim').undotree()
+  ---@diagnostic disable-next-line: undefined-field
+  Snacks.picker.undo()
 end)
 
 -- save the current file

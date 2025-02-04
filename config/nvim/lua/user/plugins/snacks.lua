@@ -21,6 +21,10 @@ return {
         Snacks.picker.keymaps()
       end)
 
+      util.user_cmd('Manpage', function()
+        Snacks.picker.man()
+      end)
+
       util.user_cmd('Notifications', function()
         Snacks.notifier.show_history()
       end)
@@ -167,6 +171,16 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 filter = function(item)
                   return item.file:find('COMMIT_EDITMSG') == nil
                 end,
+              },
+            },
+            lsp_symbols = {
+              layout = {
+                preview = true,
+              },
+            },
+            undo = {
+              layout = {
+                preview = true,
               },
             },
           },

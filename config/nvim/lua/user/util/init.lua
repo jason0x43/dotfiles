@@ -110,15 +110,17 @@ end
 ---Create a global user command
 ---@param name string
 ---@param callback function
-M.user_cmd = function(name, callback)
-    vim.api.nvim_create_user_command(name, callback, {})
+---@param opts vim.api.keyset.user_command | nil
+M.user_cmd = function(name, callback, opts)
+  vim.api.nvim_create_user_command(name, callback, opts or {})
 end
 
 ---Create a buffer-local user command
 ---@param name string
 ---@param callback function
-M.user_buf_cmd = function(name, callback)
-    vim.api.nvim_buf_create_user_command(0, name, callback, {})
+---@param opts vim.api.keyset.user_command | nil
+M.user_buf_cmd = function(name, callback, opts)
+  vim.api.nvim_buf_create_user_command(0, name, callback, opts or {})
 end
 
 return M
