@@ -1,4 +1,5 @@
 local modbase = ...
+local util = require('user.util')
 
 -- Disable log by default
 vim.lsp.set_log_level('error')
@@ -111,7 +112,7 @@ M.create_on_attach = function(server_on_attach)
   ---@param client vim.lsp.Client
   ---@param bufnr integer
   return function(client, bufnr)
-    if require('user.util').is_large_file(bufnr) then
+    if util.is_large_file(bufnr) then
       return
     end
 
@@ -139,28 +140,24 @@ M.create_on_attach = function(server_on_attach)
 
     -- add a rename keymap
     if client.server_capabilities.renameProvider then
-      vim.keymap.set('n', '<leader>r', function()
+      util.user_buf_cmd('Rename', function()
         vim.lsp.buf.rename()
-      end, opts)
-
-      vim.api.nvim_buf_create_user_command(0, 'Rename', function()
-        vim.lsp.buf.rename()
-      end, {})
+      end)
     end
 
     -- add a :Format command and keymap
     if client.server_capabilities.documentFormattingProvider then
-      vim.api.nvim_buf_create_user_command(0, 'OrganizeImports', function()
+      util.user_buf_cmd('OrganizeImports', function()
         organize_imports(0)
-      end, {})
+      end)
     end
 
     -- show error diagnostic popup for the current line
-    vim.api.nvim_buf_create_user_command(0, 'Diag', function()
+    util.user_buf_cmd('Diag', function()
       vim.diagnostic.open_float({
         border = 'rounded',
       })
-    end, {})
+    end)
   end
 end
 

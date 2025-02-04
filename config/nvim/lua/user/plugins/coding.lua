@@ -1,14 +1,12 @@
+local util = require('user.util')
+
 return {
   {
     'stevearc/conform.nvim',
     opts = function()
-      vim.api.nvim_create_user_command('Format', function()
+      util.user_cmd('Format', function()
         require('conform').format({ lsp_fallback = true })
-      end, {})
-
-      vim.keymap.set('n', '<leader>F', function()
-        require('conform').format({ lsp_fallback = true })
-      end, {})
+      end)
 
       return {
         formatters_by_ft = {
@@ -77,7 +75,7 @@ return {
         }
       )
 
-      vim.api.nvim_create_user_command('LintInfo', function()
+      util.user_cmd('LintInfo', function()
         local runningLinters = table.concat(require('lint').get_running(), '\n')
         if runningLinters == '' then
           vim.notify(
@@ -92,7 +90,7 @@ return {
             { title = 'nvim-lint' }
           )
         end
-      end, {})
+      end)
     end,
   },
 

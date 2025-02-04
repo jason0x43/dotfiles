@@ -63,9 +63,6 @@ return {
     dependencies = 'echasnovski/mini.nvim',
     config = true,
     opts = function()
-      vim.keymap.set('n', '<leader>u', function()
-        require('undotree-nvim').undotree()
-      end)
       return {}
     end,
   },

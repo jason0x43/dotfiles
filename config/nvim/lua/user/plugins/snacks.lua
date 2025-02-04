@@ -1,21 +1,35 @@
+local util = require('user.util')
+
 return {
   {
     'folke/snacks.nvim',
     priority = 1000,
     lazy = false,
     opts = function()
-      vim.keymap.set('n', '<leader>t', function()
-        require('snacks').terminal.open()
-      end, {})
+      require('snacks')
 
-      vim.api.nvim_create_user_command('Term', function()
-        require('snacks').terminal.open()
-      end, {})
+      util.user_cmd('Highlights', function()
+        Snacks.picker.highlights()
+      end)
+
+      util.user_cmd('Icons', function()
+        ---@diagnostic disable-next-line: undefined-field
+        Snacks.picker.icons()
+      end)
+
+      util.user_cmd('Keys', function()
+        Snacks.picker.keymaps()
+      end)
+
+      util.user_cmd('Recent', function()
+        Snacks.picker.recent()
+      end)
+
+      util.user_cmd('Term', function()
+        Snacks.terminal.open()
+      end)
 
       return {
-        input = { enabled = true },
-        words = { enabled = true },
-        notifier = { enabled = true },
         dashboard = {
           preset = {
             header = [[                           _|
@@ -23,25 +37,6 @@ return {
 _|    _|  _|_|_|_|  _|    _|  _|      _|  _|  _|    _|    _|
 _|    _|  _|        _|    _|    _|  _|    _|  _|    _|    _|
 _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
-            pick = function(cmd, opts)
-              if cmd == 'oldfiles' then
-                return MiniPick.registry.oldfiles(opts)
-              end
-
-              if cmd == 'modified' then
-                local o = opts or {}
-                o.scope = 'modified'
-                return MiniPick.registry.git_files(o)
-              end
-
-              if cmd == 'config' then
-                return MiniPick.registry.files_and_dirs({
-                  cwd = vim.fn.getenv('HOME') .. '/.config',
-                })
-              end
-
-              return MiniPick.registry[cmd](opts)
-            end,
             keys = {
               {
                 icon = ' ',
@@ -53,37 +48,51 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 icon = ' ',
                 key = 'f',
                 desc = 'Find',
-                action = ":lua Snacks.dashboard.pick('files')",
+                action = function()
+                  Snacks.dashboard.pick('files')
+                end,
               },
               {
                 icon = ' ',
-                key = 'b',
-                desc = 'Browse',
-                action = ':lua MiniFiles.open()',
+                key = 'e',
+                desc = 'Explore',
+                action = function()
+                  Snacks.dashboard.pick('explorer')
+                end,
               },
               {
                 icon = ' ',
                 key = 'g',
                 desc = 'Grep',
-                action = ":lua Snacks.dashboard.pick('grep_live')",
+                action = function()
+                  Snacks.dashboard.pick('grep')
+                end,
               },
               {
                 icon = ' ',
-                key = 'o',
-                desc = 'Oldfiles',
-                action = ":lua Snacks.dashboard.pick('oldfiles')",
+                key = 'r',
+                desc = 'Recent',
+                action = function()
+                  Snacks.dashboard.pick('recent')
+                end,
               },
               {
                 icon = ' ',
                 key = 'm',
                 desc = 'Modified',
-                action = ":lua Snacks.dashboard.pick('modified')",
+                action = function()
+                  Snacks.dashboard.pick('git_status')
+                end,
               },
               {
                 icon = ' ',
                 key = 'c',
                 desc = 'Config',
-                action = ":lua Snacks.dashboard.pick('config')",
+                action = function()
+                  Snacks.dashboard.pick('files', {
+                    dirs = { vim.fn.getenv('HOME') .. '/.config' },
+                  })
+                end,
               },
               {
                 icon = '󰒲 ',
@@ -95,6 +104,75 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
             },
           },
+        },
+        indent = {
+          enabled = true,
+          indent = {
+            only_scope = true,
+            char = '┊',
+          },
+          animate = {
+            enabled = true,
+            duration = {
+              step = 50, -- ms per step
+              total = 1000, -- maximum duration
+            },
+          },
+        },
+        input = {
+          enabled = true,
+        },
+        notifier = {
+          enabled = true,
+        },
+        picker = {
+          ui_select = true,
+          layout = {
+            preset = 'ivy',
+            preview = false,
+            layout = {
+              height = 15
+            },
+          },
+          win = {
+            input = {
+              keys = {
+                ['<Esc>'] = { 'close', mode = { 'n', 'i' } },
+              },
+            },
+          },
+          sources = {
+            explorer = {
+              auto_close = true,
+              win = {
+                input = {
+                  keys = {
+                    ['<Esc>'] = 'close',
+                  },
+                },
+              },
+            },
+            files = {
+              follow = true,
+            },
+            recent = {
+              filter = {
+                filter = function(item)
+                  return item.file:find('COMMIT_EDITMSG') == nil
+                end,
+              },
+            },
+          },
+        },
+        scope = {
+          enabled = true,
+        },
+        statuscolumnn = {
+          enabled = true,
+          left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
+        },
+        words = {
+          enabled = true,
         },
       }
     end,

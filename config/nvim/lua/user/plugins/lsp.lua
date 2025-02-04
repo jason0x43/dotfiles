@@ -1,3 +1,5 @@
+local util = require('user.util')
+
 return {
   -- native LSP
   {
@@ -22,7 +24,7 @@ return {
     priority = 100,
     build = ':MasonUpdate',
     opts = function()
-      vim.api.nvim_create_user_command('MasonUpgrade', function()
+      util.user_cmd('MasonUpgrade', function()
         local to_check = 0
         local updating = 0
 
@@ -106,7 +108,7 @@ return {
             end
           end
         end)
-      end, { force = true })
+      end)
 
       return {
         ui = {
@@ -133,10 +135,6 @@ return {
       if vim.fn.executable('sourcekit-lsp') ~= 0 then
         require('user.lsp').setup('sourcekit')
       end
-
-      vim.keymap.set('n', '<leader>a', function()
-        vim.lsp.buf.code_action()
-      end)
     end,
   },
 
@@ -147,20 +145,6 @@ return {
     opts = {
       focus = true,
     },
-  },
-
-  -- virtual text diagnostics
-  {
-    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
-    config = true,
-    enabled = false,
-    opts = function()
-      vim.diagnostic.config({
-        virtual_text = false,
-      })
-      vim.keymap.set('n', '<leader>l', require('lsp_lines').toggle)
-      return {}
-    end,
   },
 
   -- copilot integration
