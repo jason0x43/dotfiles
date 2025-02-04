@@ -21,6 +21,10 @@ return {
         Snacks.picker.keymaps()
       end)
 
+      util.user_cmd('Notifications', function()
+        Snacks.notifier.show_history()
+      end)
+
       util.user_cmd('Recent', function()
         Snacks.picker.recent()
       end)
@@ -30,6 +34,9 @@ return {
       end)
 
       return {
+        bigfile = {
+          enabled = true,
+        },
         dashboard = {
           preset = {
             header = [[                           _|
@@ -131,7 +138,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             preset = 'ivy',
             preview = false,
             layout = {
-              height = 15
+              height = 15,
             },
           },
           win = {

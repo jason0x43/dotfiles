@@ -112,10 +112,6 @@ M.create_on_attach = function(server_on_attach)
   ---@param client vim.lsp.Client
   ---@param bufnr integer
   return function(client, bufnr)
-    if util.is_large_file(bufnr) then
-      return
-    end
-
     if server_on_attach then
       server_on_attach(client, bufnr)
     end

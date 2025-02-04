@@ -162,7 +162,11 @@ return {
       panel = { enabled = false },
       filetypes = {
         ['*'] = function()
-          return not require('user.util').is_large_file(0)
+          local attach = vim.bo.filetype ~= 'bigfile'
+          if not attach then
+            print('Copilot is ignoring file')
+          end
+          return attach
         end,
       },
     },

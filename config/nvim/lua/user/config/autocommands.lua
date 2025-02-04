@@ -122,16 +122,6 @@ autocmd('BufWinEnter', '*', function()
   require('user.util').restore_cursor()
 end)
 
--- improve handling of very large files
-autocmd({ 'BufReadPost', 'FileReadPost' }, '*', function()
-  if require('user.util').is_large_file() then
-    vim.bo.filetype = nil
-    vim.bo.swapfile = false
-    vim.bo.undofile = false
-    vim.wo.foldmethod = 'manual'
-  end
-end)
-
 -- autosave on exit
 autocmd({ 'ExitPre' }, '*', function()
   vim.cmd('silent! wa')

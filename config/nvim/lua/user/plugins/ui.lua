@@ -12,11 +12,10 @@ return {
       vim.api.nvim_create_autocmd('FileType', {
         pattern = '*',
         callback = function(ev)
-          local bufnr = ev.buf
-          if require('user.util').is_large_file(bufnr) then
+          if ev.match == 'bigfile' then
             return
           end
-          require('colorizer').attach_to_buffer(bufnr)
+          require('colorizer').attach_to_buffer(ev.buf)
         end,
       })
     end,

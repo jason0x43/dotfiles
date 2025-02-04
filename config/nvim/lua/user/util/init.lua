@@ -99,27 +99,6 @@ M.in_git_dir = function()
   return vim.v.shell_error == 0
 end
 
--- return true if the given buffer should enable "large file" mode
----@param buf number?
----@return boolean
-M.is_large_file = function(buf)
-  buf = buf or 0
-  local ok1, is_large = pcall(vim.api.nvim_buf_get_var, buf, 'large_file')
-  if ok1 then
-    -- set a buffer variable so we don't have to re-stat the file if this is
-    -- called again
-    vim.api.nvim_buf_set_var(buf, 'large_file', is_large)
-    return is_large
-  end
-
-  local ok2, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-  if ok2 and stats and stats.size > 1000000 then
-    return true
-  end
-
-  return false
-end
-
 -- return true of the string str starts with the string other
 ---@param str string
 ---@param other string

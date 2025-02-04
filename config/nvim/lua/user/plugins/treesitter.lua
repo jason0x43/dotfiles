@@ -16,27 +16,15 @@ return {
 
     highlight = {
       enable = true,
-      disable = function(_, buf)
-        return require('user.util').is_large_file(buf)
-      end,
     },
     indent = {
       enable = true,
-      disable = function(_, buf)
-        return require('user.util').is_large_file(buf)
-      end,
     },
     matchup = {
       enable = true,
-      disable = function(_, buf)
-        return require('user.util').is_large_file(buf)
-      end,
     },
     context_commentstring = {
       enable = true,
-      disable = function(_, buf)
-        return require('user.util').is_large_file(buf)
-      end,
     },
   },
 }
