@@ -46,16 +46,6 @@ return {
     end,
   },
 
-  -- tig in a float
-  {
-    dir = '/Users/jason/.config/nvim/lua/tig-nvim',
-    cond = vim.fn.executable('tig') == 1,
-    main = 'tig-nvim',
-    config = true,
-    lazy = true,
-    cmd = 'Tig',
-  },
-
   -- spelling
   {
     'ravibrock/spellwarn.nvim',

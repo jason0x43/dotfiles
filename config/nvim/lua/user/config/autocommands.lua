@@ -19,12 +19,12 @@ end)
 autocmd('User', 'UiReady', function()
   autocmd('BufEnter', '*.*', function()
     -- show the current textwidth with color columns
-    require('user.util').show_view_width()
+    util.show_view_width()
   end)
 
   -- Show the view width when the UI is ready in case that event was emitted
   -- after a buffer had already been entered
-  require('user.util').show_view_width()
+  util.show_view_width()
 end)
 
 autocmd('BufReadPost', '*', function()
@@ -96,7 +96,7 @@ end)
 
 -- auto-set quickfix height
 autocmd('FileType', 'qf', function()
-  require('user.util').adjust_window_height(1, 10)
+  util.adjust_window_height(1, 10)
 end)
 
 -- q to close output panes
@@ -119,7 +119,7 @@ end)
 -- run this in BufWinEnter instead of BufReadPost so that this won't override
 -- a line number provided on the commandline
 autocmd('BufWinEnter', '*', function()
-  require('user.util').restore_cursor()
+  util.restore_cursor()
 end)
 
 -- autosave on exit
