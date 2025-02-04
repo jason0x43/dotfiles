@@ -378,7 +378,9 @@ local function apply_theme()
 
   hilink('SnacksDashboardDesc', 'Normal')
   hilink('SnacksDashboardTitle', 'Title')
+
   hi('SnacksIndent', { fg = c.dim_0 })
+  hi('SnacksPickerTree', { fg = c.dim_0 })
 
   -- notify listeners that the colorscheme has been set
   vim.g.colors_name = 'wezterm'

@@ -56,17 +56,6 @@ return {
     cmd = 'Tig',
   },
 
-  -- undotree
-  {
-    dir = '/Users/jason/.config/nvim/lua/undotree-nvim',
-    main = 'undotree-nvim',
-    dependencies = 'echasnovski/mini.nvim',
-    config = true,
-    opts = function()
-      return {}
-    end,
-  },
-
   -- spelling
   {
     'ravibrock/spellwarn.nvim',
