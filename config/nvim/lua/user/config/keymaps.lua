@@ -114,6 +114,10 @@ leader_map('u', function()
   Snacks.picker.undo()
 end)
 
+leader_map('z', function()
+  Snacks.picker.zoxide()
+end)
+
 -- save the current file
 leader_map('w', '<cmd>w<cr>')
 leader_map('W', '<cmd>w!<cr>')
