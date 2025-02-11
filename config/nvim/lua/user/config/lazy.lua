@@ -1,5 +1,6 @@
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     'git',
     'clone',
@@ -9,13 +10,14 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
+
 vim.opt.runtimepath:prepend(lazypath)
 
-require('lazy').setup("user.plugins", {
-	checker = {
-		enabled = true,
-		notify = false,
-	},
+require('lazy').setup('user.plugins', {
+  checker = {
+    enabled = true,
+    notify = false,
+  },
   ui = {
     border = 'rounded',
   },

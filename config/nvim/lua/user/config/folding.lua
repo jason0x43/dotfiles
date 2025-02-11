@@ -3,7 +3,7 @@ local M = {}
 M.foldtext = function()
 	local indentation = vim.fn.indent(vim.v.foldstart)
 	local text = ''
-	for i = 1, indentation do
+	for _ = 1, indentation do
 		text = text .. ' '
 	end
 	local foldSize = 1 + vim.v.foldend - vim.v.foldstart
