@@ -60,7 +60,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 key = 'f',
                 desc = 'Find',
                 action = function()
-                  Snacks.dashboard.pick('files')
+                  Snacks.dashboard.pick('smart')
                 end,
               },
               {
@@ -162,6 +162,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   },
                 },
               },
+              layout = {
+                preset = 'ivy'
+              }
             },
             files = {
               follow = true,

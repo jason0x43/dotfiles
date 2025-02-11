@@ -115,4 +115,25 @@ return {
     main = 'bacon-diag',
     config = true,
   },
+
+  -- copilot integration
+  {
+    'zbirenbaum/copilot.lua',
+    enabled = function()
+      return vim.fn.executable('node') == 1
+    end,
+    opts = {
+      event = 'InsertEnter',
+      suggestion = {
+        enabled = false,
+        auto_trigger = true,
+      },
+      panel = { enabled = false },
+      filetypes = {
+        ['*'] = function()
+          return vim.bo.filetype ~= 'bigfile'
+        end,
+      },
+    },
+  },
 }

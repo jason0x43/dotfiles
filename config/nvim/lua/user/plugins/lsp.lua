@@ -5,16 +5,9 @@ return {
   {
     'neovim/nvim-lspconfig',
     config = function()
-      require('user.lsp').config()
+      -- Give LspInfo window a border
+      require('lspconfig.ui.windows').default_options.border = 'rounded'
     end,
-  },
-
-  -- LSP settings manager; must be setup **before** any language servers are
-  -- configured
-  {
-    'folke/neoconf.nvim',
-    config = true,
-    priority = 100,
   },
 
   -- language server installer; must be setup before null-ls to ensure
@@ -136,35 +129,5 @@ return {
         require('user.lsp').setup('sourcekit')
       end
     end,
-  },
-
-  -- diagnostics display
-  {
-    'folke/trouble.nvim',
-    event = 'BufEnter',
-    opts = {
-      focus = true,
-    },
-  },
-
-  -- copilot integration
-  {
-    'zbirenbaum/copilot.lua',
-    enabled = function()
-      return vim.fn.executable('node') == 1
-    end,
-    opts = {
-      event = 'InsertEnter',
-      suggestion = {
-        enabled = false,
-        auto_trigger = true,
-      },
-      panel = { enabled = false },
-      filetypes = {
-        ['*'] = function()
-          return vim.bo.filetype ~= 'bigfile'
-        end,
-      },
-    },
   },
 }
