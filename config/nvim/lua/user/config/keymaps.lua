@@ -1,15 +1,11 @@
+local util = require('user.util')
+local leader_map = util.leader_map
+
 ---Create a normal mode key mapping
 ---@param key string
 ---@param callback function | string
 local function key_map(key, callback)
   vim.keymap.set('n', key, callback, {})
-end
-
----Create a leader mapping
----@param key string
----@param callback function | string
-local function leader_map(key, callback)
-  vim.keymap.set('n', '<leader>' .. key, callback, {})
 end
 
 -- toggle crosshairs
@@ -48,8 +44,14 @@ leader_map('c', function()
   vim.api.nvim_win_close(0, false)
 end)
 
-leader_map('d', function()
+leader_map('e', function()
   require('snacks').picker.diagnostics()
+end)
+
+leader_map('d', function()
+  vim.diagnostic.open_float({
+    border = 'rounded',
+  })
 end)
 
 leader_map('f', function()

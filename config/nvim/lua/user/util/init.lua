@@ -123,4 +123,11 @@ M.user_buf_cmd = function(name, callback, opts)
   vim.api.nvim_buf_create_user_command(0, name, callback, opts or {})
 end
 
+---Create a leader mapping
+---@param key string
+---@param callback function | string
+M.leader_map = function(key, callback)
+  vim.keymap.set('n', '<leader>' .. key, callback, {})
+end
+
 return M
