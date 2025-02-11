@@ -91,7 +91,9 @@ leader_map('m', function()
 end)
 
 leader_map('n', function()
-  Snacks.picker.explorer()
+  Snacks.picker.explorer({
+    cwd = vim.fn.expand('%:p:h'),
+  })
 end)
 
 -- quit vim
