@@ -21,8 +21,6 @@ function M.move_action(dir)
 		local timeout = util.find_app("timeout")
 		local nvim = util.find_app("nvim")
 
-    print("calling move action")
-
 		if name ~= nil and pane:get_foreground_process_name():sub(-4) == "nvim" then
 			-- Try to do the move in vim. If it doesn't work, do the move in
 			-- wezterm. Use timeout because `nvim --remote-expr` will hang
@@ -34,7 +32,7 @@ function M.move_action(dir)
 				"--server",
 				"/tmp/nvim-wt" .. pane:pane_id(),
 				"--remote-expr",
-				"v:lua.require('user.wezterm').go_" .. vim_dir_map[dir] .. "()",
+				"v:lua.require('user.terminal').focus('" .. vim_dir_map[dir] .. "')",
 			})
 			if result ~= "" and not result:find("SIGTERM") then
 				return
