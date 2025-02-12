@@ -1,163 +1,99 @@
-local o = vim.opt
-local g = vim.g
-
--- Always assume termguicolors are available
-vim.go.termguicolors = true
-
 -- Leader for mappings
-g.mapleader = ';'
+vim.g.mapleader = ';'
 
--- Use spaces by default
-o.expandtab = true
+-- Ask for confirmation if exiting with modified files
+vim.o.confirm = true
 
--- yank to system clipboard
+-- Yank to system clipboard
 if vim.fn.has('clipboard') == 1 then
-  o.clipboard = 'unnamedplus'
+  vim.opt.clipboard = vim.opt.clipboard + 'unnamedplus'
 end
 
--- overwrite the original file when saving
-o.backupcopy = 'yes'
+-- Use undo files for persistent undo
+vim.o.undofile = true
 
--- use undo files for persistent undo
-o.undofile = true
+-- Maintain indent when lines are broken by linebreak
+vim.o.breakindent = true
 
--- maintain indent when lines are broken by linebreak
-o.breakindent = true
+-- Ignore case when searching, unless the search is mixed case
+vim.o.ignorecase = true
+vim.o.smartcase = true
 
--- show commands in the command area, don't show 'Press Enter to continue'
-o.showcmd = true
-
--- use hidden buffers
-o.hidden = true
-
--- ignore case when searching, unless the search is mixed case
-o.ignorecase = true
-o.smartcase = true
-
--- only insert one space after a period when joining lines
-o.joinspaces = false
-
--- don't move to the beginning of a line when jumping
-o.startofline = false
-
--- give the cursor a 5 line margin when scrolling
-o.scrolloff = 5
-
--- 2-space indents
-o.shiftwidth = 2
-o.tabstop = 2
-
--- don't give ins-completion-menu messages
-o.shortmess = o.shortmess + 'c'
-
--- ensure that BufRead autocommands run
-o.shortmess = o.shortmess - 'F'
+-- Give the cursor a 5 line margin when scrolling
+vim.o.scrolloff = 5
 
 -- always show the sign column
-o.signcolumn = 'yes'
+vim.o.signcolumn = 'yes'
 
--- open splits below and to the right
-o.splitbelow = true
-o.splitright = true
+-- Open splits below and to the right, and don't scroll
+vim.o.splitbelow = true
+vim.o.splitright = true
+vim.o.splitkeep = 'topline'
 
--- don't add EOL to files that don't already have one
-o.fixendofline = false
+-- Don't add EOL to files that don't already have one
+vim.o.fixendofline = false
 
-o.formatoptions = o.formatoptions
+-- Formatting while typing
+vim.opt.formatoptions = vim.opt.formatoptions
   + 'r' -- automatically insert comment leader after CR
   + 'o' -- automatically insert comment leader for o/O
   + 'n' -- recognize numbered lists
 
--- show location in statusline
-o.ruler = true
+-- Use case-insensitive filename completion
+vim.o.wildignorecase = true
 
--- don't wrap text by default
-o.wrap = false
+-- Enable mouse support
+vim.o.mouse = 'a'
 
--- use case-insensitive filename completion
-o.wildignorecase = true
+-- Show markers for long lines
+vim.opt.listchars.precedes = '^'
+vim.opt.listchars.extends = '$'
 
--- update the UI more frequently, but skip some redraws
-o.updatetime = 500
+-- Ignore some binary files in the standard vim finder
+vim.opt.wildignore = vim.opt.wildignore + '*.pyc' + '*.obj' + '*.bin' + 'a.out'
 
--- don't show the mode on the last line
-o.showmode = false
+-- Use a better default diffing algorithm
+vim.opt.diffopt = vim.opt.diffopt + { 'internal', 'algorithm:patience' }
 
--- enable mouse support
-o.mouse = 'a'
+-- Show line numbers if the window is wide enough
+vim.o.number = vim.o.columns >= 88
 
--- show markers for long lines
-o.listchars.precedes = '^'
-o.listchars.extends = '$'
-
--- ignore binary files in the standard vim finder
-o.wildignore = o.wildignore + '*.pyc' + '*.obj' + '*.bin' + 'a.out'
-
--- better diffing
-o.diffopt = o.diffopt + { 'internal', 'algorithm:patience' }
-
--- show line numbers if the window is wide enough
-o.number = vim.go.columns >= 88
-
--- use ripgrep if available
+-- Use ripgrep if available
 if vim.fn.executable('rg') then
-  o.grepprg = 'rg --no-heading --color=never'
+  vim.o.grepprg = 'rg --no-heading --color=never'
 end
-
--- enable syntax highlighting language blocks in markdown
-g.markdown_fenced_languages = {
-  'css',
-  'html',
-  'json',
-  'javascript',
-  'typescript',
-  'js=javascript',
-  'ts=typescript',
-  'javascriptreact',
-  'typescriptreact',
-  'jsx=javascriptreact',
-  'tsx=typescriptreact',
-}
-
--- disable builtin plugins
--- the value of the loaded var doesn't matter, just that it's defined
-local disabled_plugins = {
-  '2html_plugin',
-  'getscript',
-  'getscriptPlugin',
-  'gzip',
-  'logipat',
-  'matchit',
-  'matchparen',
-  'netrw',
-  'netrwFileHandlers',
-  'netrwPlugin',
-  'netrwSettings',
-  'rrhelper',
-  'spec',
-  'spellfile_plugin',
-  'tar',
-  'tarPlugin',
-  'vimball',
-  'vimballPlugin',
-  'zip',
-  'zipPlugin',
-}
-for _, plugin in pairs(disabled_plugins) do
-  g['loaded_' .. plugin] = 1
-end
-
--- Don't show hints in diagnostic lists (telescope, trouble)
-g.lsp_severity_limit = 3
 
 -- Better folding
-o.foldtext = 'v:lua.require("user.config.folding").foldtext()'
-o.foldcolumn = 'auto'
-o.fillchars:append('foldsep: ')
-o.fillchars:append('foldopen:▼')
-o.fillchars:append('foldclose:▶')
-o.fillchars:append('fold:-')
+vim.o.foldenable = false
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.o.foldcolumn = 'auto'
+vim.opt.fillchars:append('foldopen:▼')
+vim.opt.fillchars:append('foldclose:▶')
+vim.api.nvim_create_user_command('Fold', function()
+  vim.wo.foldenable = not vim.wo.foldenable
+end, {})
 
-vim.go.splitkeep = 'topline'
+-- General diagnostic config
+vim.diagnostic.config({
+  -- Faster update
+  update_in_insert = true,
 
-vim.lsp.log.set_format_func(vim.inspect)
+  -- Specify some diagnostic icons
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.INFO] = '',
+      [vim.diagnostic.severity.HINT] = '',
+    },
+  },
+})
+
+-- Highlight textwidth
+vim.opt.colorcolumn = { '+1' }
+
+-- Don't animate neovide cursor
+if vim.g.neovide then
+  vim.g.neovide_cursor_animation_length = 0
+end

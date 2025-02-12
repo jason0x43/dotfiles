@@ -1,30 +1,16 @@
--- Disable log by default
+-- Logging
 vim.lsp.set_log_level('error')
+vim.lsp.log.set_format_func(vim.inspect)
 
-vim.diagnostic.config({
-  -- faster update
-  update_in_insert = true,
-
-  -- specify some diagnostic icons
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = '',
-      [vim.diagnostic.severity.WARN] = '',
-      [vim.diagnostic.severity.INFO] = '',
-      [vim.diagnostic.severity.HINT] = '',
-    },
-  },
-})
-
--- rounded border for hover popups
+-- Rounded border for hover popups
 vim.lsp.handlers['textDocument/hover'] =
   vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 
--- rounded border for signature popups
+-- Rounded border for signature popups
 vim.lsp.handlers['textDocument/signatureHelp'] =
   vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
 
--- when an lsp returns multiple "goto definition" results, only keep the
+-- When an lsp returns multiple "goto definition" results, only keep the
 -- first one
 local origTextDocDef = vim.lsp.handlers['textDocument/definition']
 vim.lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
@@ -50,38 +36,40 @@ local function check_should_start(user_config, file)
 end
 
 ---Setup a language server
----@param server string
-local function setup(server)
+---@param server_name string
+local function setup(server_name)
   ---@type LspConfig
   local config = {
     autostart = false,
   }
 
   ---@type boolean, UserLspConfig
-  local status, user_config = pcall(require, 'user.lsp.' .. server)
+  local status, user_config = pcall(require, 'user.lsp.' .. server_name)
   if status and user_config and user_config.config then
     config = vim.tbl_deep_extend('force', config, user_config.config)
   end
 
-  -- add cmp capabilities
+  -- Add blink capabilities
   local ok, blink = pcall(require, 'blink.cmp')
   if ok then
     config.capabilities = blink.get_lsp_capabilities(config.capabilities)
   end
 
-  local lspconfig = require('lspconfig')[server]
-  lspconfig.setup(config)
+  -- Initialize the server
+  local server = require('lspconfig')[server_name]
+  server.setup(config)
 
-  if lspconfig.manager == nil then
-    error(server .. " is not a language server")
+  if server.manager == nil then
+    vim.notify(server_name .. ' is not a language server', vim.log.levels.ERROR)
+    return
   end
 
-  local exec = lspconfig.manager.config.cmd[1]
+  local exec = server.manager.config.cmd[1]
   if not vim.fn.executable(exec) then
     vim.notify(
       string.format(
         'Not setting up %s because %s is not installed',
-        server,
+        server_name,
         exec
       ),
       vim.log.levels.WARN
@@ -90,16 +78,17 @@ local function setup(server)
   end
 
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = lspconfig.manager.config.filetypes,
+    pattern = server.manager.config.filetypes,
     callback = function(event)
       if not check_should_start(user_config, event.file) then
         return
       end
-      lspconfig.launch()
+      server.launch()
     end,
   })
 end
 
+-- List of servers to setup
 local servers = {
   'angularls',
   'basedpyright',
@@ -117,6 +106,8 @@ local servers = {
   'jinja_lsp',
   'jsonls',
   'lua_ls',
+  -- Note that marksman may not initialize properly if there are too many files
+  -- in a project. Ensure that the .gitignore is correct.
   'marksman',
   'omnisharp',
   'phpactor',
@@ -135,6 +126,7 @@ local servers = {
   'yamlls',
 }
 
+-- Setup servers
 for _, server in ipairs(servers) do
   setup(server)
 end

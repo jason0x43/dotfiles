@@ -1,5 +1,3 @@
-local util = require('user.util')
-
 vim.api.nvim_create_augroup('init_autocmds', {})
 
 local function autocmd(type, pattern, callback)
@@ -10,103 +8,97 @@ local function autocmd(type, pattern, callback)
   })
 end
 
--- open files in readonly if they're already open instead of printing a huge
+-- Open files in readonly if they're already open instead of printing a huge
 -- warning message
-autocmd('SwapExists', '*', function()
+autocmd('SwapExists', '*', function(file)
   vim.v.swapchoice = 'o'
+  vim.notify('Swap file exists for ' .. file, vim.log.levels.WARN)
 end)
 
-autocmd('User', 'UiReady', function()
-  autocmd('BufEnter', '*.*', function()
-    -- show the current textwidth with color columns
-    util.show_view_width()
-  end)
-
-  -- Show the view width when the UI is ready in case that event was emitted
-  -- after a buffer had already been entered
-  util.show_view_width()
-end)
-
+-- Make the buffer name a relative path
 autocmd('BufReadPost', '*', function()
-  -- make the buffer name a relative path
   vim.cmd('silent! lcd .')
 end)
 
+-- Update settings when the vim window is resized
 autocmd('VimResized', '*', function()
-  -- automatically resize splits
+  -- Automatically resize splits
   vim.api.nvim_command('wincmd =')
 
-  -- show line numbers if the window is big enough
-  vim.opt.number = vim.go.columns > 88
+  -- Show line numbers if the window is big enough
+  vim.o.number = vim.o.columns > 88
 end)
 
--- make text files easier to work with
+-- Make text files easier to work with
 autocmd('FileType', 'text,textile,markdown,html', function()
-  util.text_mode()
+  vim.o.wrap = true
+  vim.o.linebreak = true
+  vim.o.list = false
+  vim.o.signcolumn = 'no'
+
+  -- Use visual movement instead of line based movement
+  vim.keymap.set('', 'k', 'gk', { buffer = 0 })
+  vim.keymap.set('', 'j', 'gj', { buffer = 0 })
+  vim.keymap.set('', '$', 'g$', { buffer = 0 })
+  vim.keymap.set('', '^', 'g^', { buffer = 0 })
 end)
 
--- disable yaml comment indent
+-- Disable yaml re-indent when commenting
 autocmd('FileType', 'yaml', function()
-  vim.cmd('set indentkeys-=0#"')
+  vim.opt.indentkeys = vim.opt.indentkeys - '0#'
 end)
 
--- better formatting for JavaScript
-autocmd('FileType', 'javascript', function()
-  vim.bo.formatprg = nil
-  vim.bo.formatexpr = nil
-end)
-
--- wrap lines in quickfix windows
+-- Wrap lines in quickfix windows
 autocmd('FileType', 'qf', function()
-  vim.wo.wrap = true
-  vim.wo.linebreak = true
-  vim.wo.list = false
-  vim.wo.breakindent = false
-  vim.wo.breakindentopt = 'shift:2'
-  vim.wo.colorcolumn = ''
+  vim.o.wrap = true
+  vim.o.linebreak = true
+  vim.o.list = false
+  vim.o.breakindent = false
+  vim.o.breakindentopt = 'shift:2'
+  vim.o.colorcolumn = ''
 end)
 
--- don't use the colorcolumn in Trouble windows
-autocmd('FileType', 'Trouble', function()
-  vim.wo.colorcolumn = ''
-end)
-
+---Remove extra information in a pane
 local function bare_text()
   vim.wo.signcolumn = 'no'
   vim.wo.number = false
 end
 
--- don't show number or sign column in popups, panes
+-- Don't show number or sign column in popups, panes
 autocmd('FileType', 'help', bare_text)
 
--- snacks sets the notification history filetype in a way that doesn't seem to
--- work well with FileType events
+-- No filetype event is emitted for Snacks notification history panes
 autocmd('BufEnter', '', function()
   if vim.o.filetype == 'snacks_notif_history' then
     bare_text()
   end
 end)
 
--- close qf panes and help tabs with 'q'
-autocmd('FileType', 'qf,help,fugitiveblame,lspinfo,startuptime', function()
+---Add a keymap to close the current window with 'q'
+local function close_with_q()
   vim.keymap.set('', 'q', function()
     vim.api.nvim_buf_delete(0, {})
   end, { buffer = true })
-end)
+end
 
--- auto-set quickfix height
+-- Close certain information panes with 'q'
+autocmd(
+  'FileType',
+  { 'qf', 'help', 'fugitiveblame', 'lspinfo', 'startuptime' },
+  close_with_q
+)
+
+-- Auto-set quickfix height
 autocmd('FileType', 'qf', function()
-  util.adjust_window_height(1, 10)
+  local line = vim.fn.line('$')
+  local val = vim.fn.max({ vim.fn.min({ line, 10 }), 1 })
+  vim.cmd(val .. 'wincmd _')
 end)
 
 -- q to close output panes
-autocmd('BufEnter', 'output:///info', function()
-  vim.keymap.set('', 'q', function()
-    vim.api.nvim_buf_delete(0, {})
-  end, { buffer = true })
-end)
+autocmd('BufEnter', 'output:///info', close_with_q)
 
--- highlight yanked text
+-- Highlight yanked text
 autocmd('TextYankPost', '*', function()
   vim.highlight.on_yank({
     higroup = 'IncSearch',
@@ -115,14 +107,45 @@ autocmd('TextYankPost', '*', function()
   })
 end)
 
--- restore cursor position when opening a file
--- run this in BufWinEnter instead of BufReadPost so that this won't override
--- a line number provided on the commandline
+-- Restore cursor position when opening a file.
+-- Run this in BufWinEnter instead of BufReadPost so that this won't override a
+-- line number provided on the commandline.
 autocmd('BufWinEnter', '*', function()
-  util.restore_cursor()
+  local filetype = vim.bo.filetype
+  local buftype = vim.bo.buftype
+
+  if
+    buftype == 'nofile'
+    or filetype:find('commit') ~= nil
+    or filetype == 'svn'
+  then
+    return
+  end
+
+  local line = vim.fn.line
+  if line('\'"') >= 1 and line('\'"') <= line('$') then
+    vim.cmd('normal! g`"zz')
+  end
 end)
 
--- autosave on exit
-autocmd({ 'ExitPre' }, '*', function()
-  vim.cmd('silent! wa')
-end)
+-- Autosave on exit
+-- autocmd('QuitPre', '*', function()
+--   local function some_is_modified()
+--     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+--       if vim.api.nvim_get_option_value('modified', { buf = buf }) then
+--         return true
+--       end
+--     end
+--   end
+--
+--   if some_is_modified() then
+--     local answer = vim.ui.input(
+--       { prompt = 'Exit for real?' },
+--       function(input)
+--         print('user answered ' .. input)
+--       end
+--     )
+--   end
+--
+--   -- vim.cmd('silent! wa')
+-- end)

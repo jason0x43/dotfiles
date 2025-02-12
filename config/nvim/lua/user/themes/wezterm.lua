@@ -382,6 +382,8 @@ local function apply_theme()
   hi('SnacksIndent', { fg = c.dim_0 })
   hi('SnacksPickerTree', { fg = c.dim_0 })
 
+  hilink('BlinkCmpGhostText', 'Comment')
+
   -- notify listeners that the colorscheme has been set
   vim.g.colors_name = 'wezterm'
   vim.api.nvim_exec_autocmds('ColorScheme', {})

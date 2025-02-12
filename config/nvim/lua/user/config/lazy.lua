@@ -13,12 +13,14 @@ end
 
 vim.opt.runtimepath:prepend(lazypath)
 
-local util = require('user.util')
 local defaults = require('lazy.core.config').defaults
+
+-- Note: For improved type safety, avoid `opts` in favor of `config` to
+-- configure plugins.
 
 require('lazy').setup(
   {
-    -- native LSP
+    -- Native LSP configurations --------------------------------------
     {
       'neovim/nvim-lspconfig',
       config = function()
@@ -27,15 +29,15 @@ require('lazy').setup(
       end,
     },
 
-    -- language server installer
+    -- Language server and tool installer -----------------------------
     {
       'williamboman/mason.nvim',
       priority = 100,
       build = ':MasonUpdate',
       config = function()
-        util.user_cmd('MasonUpgrade', function()
+        vim.api.nvim_create_user_command('MasonUpgrade', function()
           require('user.util.mason').upgrade()
-        end)
+        end, {})
         require('mason').setup({
           ui = {
             border = 'rounded',
@@ -44,24 +46,34 @@ require('lazy').setup(
       end,
     },
 
-    -- language server manager
+    -- Mason language server manager ----------------------------------
     {
       'williamboman/mason-lspconfig.nvim',
-      config = true,
+      config = function()
+        require('mason-lspconfig').setup()
+      end,
     },
 
-    -- mini
+    -- Mini -----------------------------------------------------------
     {
       'echasnovski/mini.nvim',
-
-      version = false,
-
-      dependencies = { 'glepnir/nerdicons.nvim' },
-
       config = function()
         local mini_util = require('user.util.mini')
 
-        -- status line
+        -- Git integration; used by statusline
+        require('mini.git').setup()
+
+        -- Diffing; used by status line
+        require('mini.diff').setup()
+        vim.api.nvim_create_user_command('Diff', function()
+          MiniDiff.toggle_overlay(0)
+        end, {})
+
+        -- Icons
+        require('mini.icons').setup()
+        MiniIcons.mock_nvim_web_devicons()
+
+        -- Status line
         local sl = require('mini.statusline')
         sl.setup({
           content = {
@@ -95,26 +107,18 @@ require('lazy').setup(
             end,
           },
         })
+        -- Don't show the mode on the last line since it's shown in the status line
+        vim.o.showmode = false
 
-        -- surround
+        -- Surround
         require('mini.surround').setup()
 
-        -- jumping around
+        -- Jumping around
         require('mini.jump2d').setup()
-
-        -- diffing
-        require('mini.diff').setup()
-        vim.api.nvim_create_user_command('Diff', function()
-          MiniDiff.toggle_overlay(0)
-        end, {})
-
-        -- icons
-        require('mini.icons').setup()
-        MiniIcons.mock_nvim_web_devicons()
       end,
     },
 
-    -- snacks
+    -- Snacks ---------------------------------------------------------
     {
       'folke/snacks.nvim',
       priority = 1000,
@@ -286,47 +290,44 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
         })
 
-        util.user_cmd('Highlights', function()
+        vim.api.nvim_create_user_command('Highlights', function()
           Snacks.picker.highlights()
-        end)
+        end, {})
 
-        util.user_cmd('Icons', function()
+        vim.api.nvim_create_user_command('Icons', function()
           ---@diagnostic disable-next-line: undefined-field
           Snacks.picker.icons()
-        end)
+        end, {})
 
-        util.user_cmd('Keys', function()
+        vim.api.nvim_create_user_command('Keys', function()
           Snacks.picker.keymaps()
-        end)
+        end, {})
 
-        util.user_cmd('Manpage', function()
-          Snacks.picker.man()
-        end)
-
-        util.user_cmd('Notifications', function()
+        vim.api.nvim_create_user_command('Notifications', function()
           Snacks.notifier.show_history()
-        end)
+        end, {})
 
-        util.user_cmd('Recent', function()
+        vim.api.nvim_create_user_command('Recent', function()
           Snacks.picker.recent()
-        end)
+        end, {})
 
-        util.user_cmd('Term', function()
+        vim.api.nvim_create_user_command('Term', function()
           Snacks.terminal.open()
-        end)
+        end, {})
       end,
     },
 
-    -- filetypes
+    -- Misc filetype support ------------------------------------------
     {
       'mustache/vim-mustache-handlebars',
       'jwalton512/vim-blade',
       'cfdrake/vim-pbxproj',
     },
 
-    -- treesitter
+    -- Treesitter -----------------------------------------------------
     {
       'nvim-treesitter/nvim-treesitter',
+      build = ':TSUpdate',
       config = function()
         require('nvim-treesitter.configs').setup({
           auto_install = true,
@@ -350,7 +351,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- helpers for editing neovim lua
+    -- Auto-configure lua-ls ------------------------------------------
     {
       'folke/lazydev.nvim',
       config = function()
@@ -370,13 +371,13 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- formatting
+    -- Code formatting ------------------------------------------------
     {
       'stevearc/conform.nvim',
       config = function()
-        util.user_cmd('Format', function()
+        vim.api.nvim_create_user_command('Format', function()
           require('conform').format({ lsp_fallback = true })
-        end)
+        end, {})
 
         require('conform').setup({
           formatters_by_ft = {
@@ -419,7 +420,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- copilot integration
+    -- Copilot integration --------------------------------------------
     {
       'zbirenbaum/copilot.lua',
       enabled = function()
@@ -442,40 +443,31 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- highlight color strings
+    -- Highlight color strings ----------------------------------------
     {
       'norcalli/nvim-colorizer.lua',
       cond = vim.go.termguicolors,
       config = function()
-        require('colorizer').setup({}, {
+        require('colorizer').setup({ '!bigfile', '*' }, {
           names = false,
           rgb_fn = true,
         })
-
-        vim.api.nvim_create_autocmd('FileType', {
-          pattern = '*',
-          callback = function(ev)
-            if ev.match == 'bigfile' then
-              return
-            end
-            require('colorizer').attach_to_buffer(ev.buf)
-          end,
-        })
       end,
     },
 
-    -- better start/end matching
+    -- Better start/end matching --------------------------------------
     {
       'andymass/vim-matchup',
       config = function()
-        vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+        vim.g.matchup_matchparen_offscreen =
+          { method = 'popup', border = 'rounded' }
       end,
     },
 
-    -- JSON schemas
+    -- JSON schemas ---------------------------------------------------
     'b0o/schemastore.nvim',
 
-    -- better git diff views
+    -- Better git diff views ------------------------------------------
     {
       'sindrets/diffview.nvim',
       cmd = 'DiffviewOpen',
@@ -484,10 +476,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- Git tools
+    -- Git tools ------------------------------------------------------
     'tpope/vim-fugitive',
 
-    -- Auto-set indentation
+    -- Auto-set indentation -------------------------------------------
     {
       'tpope/vim-sleuth',
       config = function()
@@ -497,7 +489,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- bacon diagnostics
+    -- Bacon diagnostics ----------------------------------------------
     {
       dir = '/Users/jason/.config/nvim/lua/bacon-diag',
       cond = vim.fn.findfile('.bacon-locations', '.;') ~= '',
@@ -506,7 +498,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- completions
+    -- Completions ----------------------------------------------------
     {
       'saghen/blink.cmp',
       version = 'v0.*',
@@ -523,22 +515,61 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         }
         local default = { 'lsp', 'path', 'buffer', 'lazydev' }
 
+        -- Only add the copilot provider if copilot is active
         local ok, _ = pcall(require, 'copilot.api')
         if ok then
+          -- Add a copilot kind to blink's list of completion kinds
+          local CompletionItemKind =
+            require('blink.cmp.types').CompletionItemKind
+          local copilot_kind = #CompletionItemKind + 1
+          CompletionItemKind[copilot_kind] = 'Copilot'
+
           providers.copilot = {
             name = 'copilot',
             module = 'blink-cmp-copilot',
             score_offset = 100,
             async = true,
+            transform_items = function(_, items)
+              return vim.tbl_map(function(item)
+                item.kind = copilot_kind
+                return item
+              end, items)
+            end,
           }
           table.insert(default, 2, 'copilot')
         end
 
         require('blink.cmp').setup({
-          sources = {
-            default = default,
-            cmdline = {},
-            providers = providers,
+          appearance = {
+            -- Add a copilot icon to the default set
+            kind_icons = vim.tbl_extend(
+              'force',
+              require('blink.cmp.config.appearance').default.kind_icons,
+              {
+                Copilot = '',
+              }
+            ),
+          },
+          completion = {
+            documentation = {
+              auto_show = true,
+              window = {
+                border = 'rounded',
+              },
+            },
+            ghost_text = {
+              enabled = true,
+            },
+            list = {
+              selection = {
+                preselect = false,
+                auto_insert = false,
+              },
+            },
+          },
+          keymap = {
+            preset = 'default',
+            ['<C-e>'] = { 'select_and_accept' },
           },
           signature = {
             enabled = true,
@@ -546,9 +577,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               border = 'rounded',
             },
           },
-          keymap = {
-            preset = 'default',
-            ['<C-e>'] = { 'select_and_accept' },
+          sources = {
+            default = default,
+            cmdline = {},
+            providers = providers,
           },
         })
       end,

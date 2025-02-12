@@ -1,6 +1,3 @@
-local util = require('user.util')
-local leader_map = util.leader_map
-
 ---Create a normal mode key mapping
 ---@param key string
 ---@param callback function | string
@@ -8,7 +5,7 @@ local function key_map(key, callback)
   vim.keymap.set('n', key, callback, {})
 end
 
--- toggle crosshairs
+-- Toggle crosshairs
 key_map('#', function()
   if vim.wo.cursorline and vim.wo.cursorcolumn then
     vim.wo.cursorline = false
@@ -20,108 +17,108 @@ key_map('#', function()
   end
 end)
 
--- space to clear search highlights
+-- Space to clear search highlights
 key_map('<space>', function()
   vim.go.hlsearch = false
 end)
 
--- disable "Entering Ex mode"
+-- Disable "Entering Ex mode"
 key_map('Q', '<nop>')
 
--- go to previous buffer
-leader_map('<leader>', '<C-^>')
+-- Go to previous buffer
+vim.keymap.set('n', '<leader><leader>', '<C-^>')
 
-leader_map('a', function()
+vim.keymap.set('n', '<leader>a', function()
   vim.lsp.buf.code_action()
 end)
 
-leader_map('b', function()
+vim.keymap.set('n', '<leader>b', function()
   require('snacks').picker.buffers()
 end)
 
--- close a window
-leader_map('c', function()
+-- Close a window
+vim.keymap.set('n', '<leader>c', function()
   vim.api.nvim_win_close(0, false)
 end)
 
-leader_map('e', function()
+vim.keymap.set('n', '<leader>e', function()
   require('snacks').picker.diagnostics()
 end)
 
-leader_map('d', function()
+vim.keymap.set('n', '<leader>d', function()
   vim.diagnostic.open_float({
     border = 'rounded',
   })
 end)
 
-leader_map('f', function()
+vim.keymap.set('n', '<leader>f', function()
   require('snacks').picker.files()
 end)
 
-leader_map('F', function()
+vim.keymap.set('n', '<leader>F', function()
   require('conform').format({ lsp_fallback = true })
 end)
 
-leader_map('g', function()
+vim.keymap.set('n', '<leader>g', function()
   Snacks.picker.grep()
 end)
 
-leader_map('h', function()
+vim.keymap.set('n', '<leader>h', function()
   Snacks.picker.help()
 end)
 
-leader_map('k', function()
+vim.keymap.set('n', '<leader>k', function()
   Snacks.bufdelete.delete()
 end)
 
-leader_map('K', function()
+vim.keymap.set('n', '<leader>K', function()
   Snacks.bufdelete.delete({ force = true })
 end)
 
-leader_map('ls', function()
+vim.keymap.set('n', '<leader>ls', function()
   Snacks.picker.lsp_symbols()
 end)
 
-leader_map('lr', function()
+vim.keymap.set('n', '<leader>lr', function()
   Snacks.picker.lsp_references()
 end)
 
-leader_map('m', function()
+vim.keymap.set('n', '<leader>m', function()
   Snacks.picker.git_status()
 end)
 
-leader_map('n', function()
+vim.keymap.set('n', '<leader>n', function()
   Snacks.picker.explorer({
     cwd = vim.fn.expand('%:p:h'),
   })
 end)
 
--- quit vim
-leader_map('q', '<cmd>qall<cr>')
-leader_map('Q', '<cmd>qall!<cr>')
+-- Quit vim
+vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>')
+vim.keymap.set('n', '<leader>Q', '<cmd>qall!<cr>')
 
-leader_map('r', function()
+vim.keymap.set('n', '<leader>r', function()
   vim.lsp.buf.rename()
 end)
 
-leader_map('s', function()
+vim.keymap.set('n', '<leader>s', function()
   ---@diagnostic disable-next-line: undefined-field
   Snacks.picker.smart()
 end)
 
-leader_map('t', function()
+vim.keymap.set('n', '<leader>t', function()
   Snacks.terminal.open()
 end)
 
-leader_map('u', function()
+vim.keymap.set('n', '<leader>u', function()
   ---@diagnostic disable-next-line: undefined-field
   Snacks.picker.undo()
 end)
 
-leader_map('z', function()
+vim.keymap.set('n', '<leader>z', function()
   Snacks.picker.zoxide()
 end)
 
--- save the current file
-leader_map('w', '<cmd>w<cr>')
-leader_map('W', '<cmd>w!<cr>')
+-- Save the current file
+vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
+vim.keymap.set('n', '<leader>W', '<cmd>w!<cr>')
