@@ -1,7 +1,6 @@
 vim.loader.enable()
 
 require('user.config.options')
--- require('user.config.mini')
 require('user.config.lazy')
 require('user.config.colorscheme')
 require('user.config.filetypes')

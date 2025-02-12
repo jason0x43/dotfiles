@@ -353,7 +353,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
     -- helpers for editing neovim lua
     {
       'folke/lazydev.nvim',
-      ft = 'lua',
       config = function()
         require('lazydev').setup({
           enabled = true,
