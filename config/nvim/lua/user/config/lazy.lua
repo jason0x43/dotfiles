@@ -107,7 +107,7 @@ require('lazy').setup(
             end,
           },
         })
-        -- Don't show the mode on the last line since it's shown in the status line
+        -- Don't show the mode on the last line since it's in the status line
         vim.o.showmode = false
 
         -- Surround
@@ -152,14 +152,14 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 },
                 {
                   icon = ' ',
-                  key = 'e',
-                  desc = 'Explore',
+                  key = 'b',
+                  desc = 'Browse',
                   action = function()
                     Snacks.dashboard.pick('explorer')
                   end,
                 },
                 {
-                  icon = ' ',
+                  icon = '󰐰',
                   key = 'g',
                   desc = 'Grep',
                   action = function()
@@ -171,7 +171,16 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   key = 'r',
                   desc = 'Recent',
                   action = function()
-                    Snacks.dashboard.pick('recent')
+                    Snacks.dashboard.pick('recent', {
+                      filter = {
+                        cwd = true,
+                        paths = {
+                          [vim.fn.stdpath('data')] = false,
+                          [vim.fn.stdpath('cache')] = false,
+                          [vim.fn.stdpath('state')] = false,
+                        },
+                      },
+                    })
                   end,
                 },
                 {
@@ -187,16 +196,23 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   key = 'c',
                   desc = 'Config',
                   action = function()
-                    Snacks.dashboard.pick('files', {
-                      dirs = { vim.fn.getenv('HOME') .. '/.config' },
+                    Snacks.dashboard.pick('explorer', {
+                      cwd = vim.fn.getenv('HOME') .. '/.config',
                     })
                   end,
                 },
                 {
-                  icon = '󰒲 ',
-                  key = 'l',
-                  desc = 'Lazy',
+                  icon = '',
+                  key = 'p',
+                  desc = 'Packages',
                   action = ':Lazy',
+                  enabled = package.loaded.lazy ~= nil,
+                },
+                {
+                  icon = '',
+                  key = 't',
+                  desc = 'Tools',
+                  action = ':Mason',
                   enabled = package.loaded.lazy ~= nil,
                 },
                 { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
