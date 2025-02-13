@@ -1,4 +1,4 @@
-local wezterm = require("wezterm")
+local wezterm = require("wezterm") --[[@as WezTerm]]
 local util = require("user.util")
 local action = require("user.action")
 local wez_action = wezterm.action

@@ -10,9 +10,9 @@ end
 
 -- Open files in readonly if they're already open instead of printing a huge
 -- warning message
-autocmd('SwapExists', '*', function(file)
+autocmd('SwapExists', '*', function(event)
   vim.v.swapchoice = 'o'
-  vim.notify('Swap file exists for ' .. file, vim.log.levels.WARN)
+  vim.notify('Swap file exists for ' .. event.file, vim.log.levels.WARN)
 end)
 
 -- Make the buffer name a relative path

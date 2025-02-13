@@ -233,6 +233,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
             },
           },
+          image = {},
           input = {
             enabled = true,
           },
@@ -399,9 +400,12 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             lspconfig = true,
           },
           library = {
-            -- See the configuration section for more details
             -- Load luvit types when the `vim.uv` word is found
             { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+            {
+              path = 'nvim-lspconfig/lua',
+              words = { 'lspconfig', 'lsp' },
+            },
           },
         })
       end,

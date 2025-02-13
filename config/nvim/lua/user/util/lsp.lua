@@ -1,3 +1,5 @@
+---@module 'lspconfig'
+
 ---@class(partial) PartialLspConfig: lspconfig.Config
 ---@field root_dir? string | (fun(filename: string, bufnr: number): string?)
 
