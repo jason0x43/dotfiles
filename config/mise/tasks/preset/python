@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+#MISE description="Initialize a Python project"
+#MISE dir="{{cwd}}"
+#USAGE arg "[version]"
+#USAGE flag "--venv" help="Use venv + pip instead of uv"
+
+if [[ $usage_venv ]] || ! hash uv 2>&1 >/dev/null; then
+  echo "🚚 Creating a pip project..."
+
+  mise use python@$usage_version
+  mise config set settings.python.venv_stdlib true -t bool
+  mise config set env._.python.venv.path .venv
+  mise config set env._.python.venv.create true -t bool
+  echo 'if __name__ == "__main__":' >> main.py
+  echo '    print("Hello, world!")' >> main.py
+else
+  echo "🚚 Creatig a uv project..."
+
+  # Initialize the project with uv
+  uv init \
+    --python "$usage_version" \
+    --no-readme \
+    --no-description \
+    --vcs git
+  uv sync
+
+  if [[ ! -e main.py ]]; then
+    mv hello.py main.py
+  fi
+
+  # Setup mise to use the uv environment
+  touch mise.toml
+  mise config set settings.experimental true -t bool
+  mise config set settings.python.uv_venv_auto true -t bool
+fi
