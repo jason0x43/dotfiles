@@ -109,60 +109,17 @@ local function setup(server_name)
   return true
 end
 
--- List of servers to setup
-local servers = {
-  'angularls',
-  'basedpyright',
-  'bashls',
-  'cssls',
-  'denols',
-  'docker_compose_language_service',
-  'dockerls',
-  'eslint',
-  'gopls',
-  'gradle_ls',
-  'html',
-  'intelephense',
-  'jdtls',
-  'jinja_lsp',
-  'jsonls',
-  'lua_ls',
-  -- Note that marksman may not initialize properly if there are too many files
-  -- in a project. Ensure that the .gitignore is correct.
-  'marksman',
-  'omnisharp',
-  'phpactor',
-  'ruff',
-  'rust_analyzer',
-  'solargraph',
-  'sourcekit',
-  'sqlls',
-  'svelte',
-  'tailwindcss',
-  'taplo',
-  'texlab',
-  'vacuum',
-  'vimls',
-  'vtsls',
-  'yamlls',
-}
+local ml = require('mason-lspconfig')
 
----@type string[]
-local unstarted = {}
+-- List of servers to setup
+local servers = ml.get_installed_servers()
+if vim.fn.executable('sourcekit-lsp') == 1 then
+  table.insert(servers, 'sourcekit')
+end
 
 -- Setup servers
 for _, server in ipairs(servers) do
   if not setup(server) then
-    unstarted[#unstarted + 1] = server
+    vim.notify('Failed to setup ' .. server, vim.log.levels.WARN)
   end
 end
-
-vim.api.nvim_create_user_command('LspMissing', function()
-  require('user.util.win').open_float({
-    title = 'Missing Language Servers',
-    width = 40,
-  }, {
-    lines = unstarted,
-    hide_cursor = true,
-  })
-end, { desc = 'Display a list of missing language servers' })
