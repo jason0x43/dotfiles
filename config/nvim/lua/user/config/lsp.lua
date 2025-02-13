@@ -83,7 +83,7 @@ local function setup(server_name)
   local base_server = require('lspconfig')[server_name] --[[@as BaseServer]]
   if base_server == nil then
     vim.notify('Unknown language server ' .. server_name, vim.log.levels.WARN)
-    return
+    return false
   end
 
   -- Initialize the server
@@ -92,8 +92,7 @@ local function setup(server_name)
 
   -- Check if the server executable is available
   if not is_available(server) then
-    vim.notify(server_name .. ' is not available', vim.log.levels.WARN)
-    return
+    return false
   end
 
   -- Setup an autocommand to start the server when a matching filetype is opened
@@ -106,6 +105,8 @@ local function setup(server_name)
       server.launch()
     end,
   })
+
+  return true
 end
 
 -- List of servers to setup
@@ -146,7 +147,22 @@ local servers = {
   'yamlls',
 }
 
+---@type string[]
+local unstarted = {}
+
 -- Setup servers
 for _, server in ipairs(servers) do
-  setup(server)
+  if not setup(server) then
+    unstarted[#unstarted + 1] = server
+  end
 end
+
+vim.api.nvim_create_user_command('LspMissing', function()
+  require('user.util.win').open_float({
+    title = 'Missing Language Servers',
+    width = 40,
+  }, {
+    lines = unstarted,
+    hide_cursor = true,
+  })
+end, {})

@@ -116,6 +116,9 @@ end
 -- Apply a theme in the Selenized format
 ---@return nil
 local function apply_theme()
+  -- Allow nvim to change the cursor color
+  vim.o.guicursor = 'n-v-c:block-Cursor/Cursor'
+
   local c = load_colors()
 
   -- A convenience function for setting highlight groups
@@ -185,7 +188,7 @@ local function apply_theme()
   hi('Comment', { fg = c.dim_0, italic = true })
   hi('Conceal', {})
   hi('Constant', { fg = c.cyan })
-  hi('Cursor', { reverse = true })
+  hi('Cursor', { fg = c.bg_0, bg = c.green })
   hi('CursorColumn', { bg = c.bg_1 })
   hi('CursorLine', { bg = c.bg_1 })
   hi('CursorLineNr', { fg = c.fg_1 })
@@ -432,6 +435,20 @@ function M.setup()
     update_background()
     apply_theme()
   end
+end
+
+---Hide the cursor by making its background the same as normal
+---@return nil
+function M.hide_cursor()
+  local c = load_colors()
+  vim.api.nvim_set_hl(0, 'Cursor', { fg = c.fg_0, bg = c.bg_0 })
+end
+
+---Show the cursor by restoring its normal background
+---@return nil
+function M.show_cursor()
+  local c = load_colors()
+  vim.api.nvim_set_hl(0, 'Cursor', { fg = c.bg_0, bg = c.green })
 end
 
 return M

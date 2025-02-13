@@ -48,24 +48,25 @@ autocmd('FileType', 'yaml', function()
   vim.opt.indentkeys = vim.opt.indentkeys - '0#'
 end)
 
+---Remove extra information in a pane
+local function bare_text()
+  vim.o.signcolumn = 'no'
+  vim.o.number = false
+  vim.o.colorcolumn = ''
+end
+
 -- Wrap lines in quickfix windows
 autocmd('FileType', 'qf', function()
+  bare_text()
   vim.o.wrap = true
   vim.o.linebreak = true
   vim.o.list = false
   vim.o.breakindent = false
   vim.o.breakindentopt = 'shift:2'
-  vim.o.colorcolumn = ''
 end)
 
----Remove extra information in a pane
-local function bare_text()
-  vim.wo.signcolumn = 'no'
-  vim.wo.number = false
-end
-
 -- Don't show number or sign column in popups, panes
-autocmd('FileType', 'help', bare_text)
+autocmd('FileType', { 'help', 'checkhealth' }, bare_text)
 
 -- No filetype event is emitted for Snacks notification history panes
 autocmd('BufEnter', '', function()
@@ -127,25 +128,3 @@ autocmd('BufWinEnter', '*', function()
     vim.cmd('normal! g`"zz')
   end
 end)
-
--- Autosave on exit
--- autocmd('QuitPre', '*', function()
---   local function some_is_modified()
---     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
---       if vim.api.nvim_get_option_value('modified', { buf = buf }) then
---         return true
---       end
---     end
---   end
---
---   if some_is_modified() then
---     local answer = vim.ui.input(
---       { prompt = 'Exit for real?' },
---       function(input)
---         print('user answered ' .. input)
---       end
---     )
---   end
---
---   -- vim.cmd('silent! wa')
--- end)
