@@ -1,9 +1,9 @@
----@class(partial) LspConfig: lspconfig.Config
+---@class(partial) PartialLspConfig: lspconfig.Config
 ---@field root_dir? string | (fun(filename: string, bufnr: number): string?)
 
 ---@class(exact) UserLspConfig
 ---@field should_start? boolean | (fun(file: string): boolean)
----@field config? LspConfig
+---@field config? PartialLspConfig
 
 local M = {}
 

@@ -21,24 +21,48 @@ vim.lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
 end
 
 ---Check whether a server should be started based on a user config
----@param user_config UserLspConfig
+---@param config UserLspConfig
 ---@param file string
-local function check_should_start(user_config, file)
-  if user_config.should_start == false then
+local function should_start(config, file)
+  if config.should_start == false then
     return false
   end
 
-  if type(user_config.should_start) == 'function' then
-    return user_config.should_start(file)
+  if type(config.should_start) == 'function' then
+    return config.should_start(file)
   end
 
   return true
 end
 
+---The basic config object returned by lspconfig[server]
+---@class(exact) BaseServer
+---@field setup fun(config: PartialLspConfig): nil
+---@field commands table<string, function>
+---@field name string
+---@field config_def lspconfig.Config
+
+---The config object after calling config.setup()
+---@class ConfiguredServer: BaseServer
+---@field autostart boolean?
+---@field cmd string[]?
+---@field filetypes string[]?
+---@field handlers table<string, function>?
+---@field get_root_dir string|(fun(filename: string, bufnr: number): string)
+---@field launch fun(): nil
+---@field make_config fun(path: string): lspconfig.Config
+---@field manager lspconfig.Manager
+
+---Check if the server executable is available
+---@param config ConfiguredServer
+local function is_available(config)
+  return config.cmd ~= nil and vim.fn.executable(config.cmd[1]) == 1
+end
+
 ---Setup a language server
 ---@param server_name string
 local function setup(server_name)
-  ---@type LspConfig
+  ---@type PartialLspConfig
   local config = {
     autostart = false,
   }
@@ -55,32 +79,28 @@ local function setup(server_name)
     config.capabilities = blink.get_lsp_capabilities(config.capabilities)
   end
 
+  -- Make sure the server name is valid
+  local base_server = require('lspconfig')[server_name] --[[@as BaseServer]]
+  if base_server == nil then
+    vim.notify('Unknown language server ' .. server_name, vim.log.levels.WARN)
+    return
+  end
+
   -- Initialize the server
-  local server = require('lspconfig')[server_name]
-  server.setup(config)
+  base_server.setup(config)
+  local server = base_server --[[@as ConfiguredServer]]
 
-  if server.manager == nil then
-    vim.notify(server_name .. ' is not a language server', vim.log.levels.ERROR)
+  -- Check if the server executable is available
+  if not is_available(server) then
+    vim.notify(server_name .. ' is not available', vim.log.levels.WARN)
     return
   end
 
-  local exec = server.manager.config.cmd[1]
-  if not vim.fn.executable(exec) then
-    vim.notify(
-      string.format(
-        'Not setting up %s because %s is not installed',
-        server_name,
-        exec
-      ),
-      vim.log.levels.WARN
-    )
-    return
-  end
-
+  -- Setup an autocommand to start the server when a matching filetype is opened
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = server.manager.config.filetypes,
+    pattern = server.filetypes,
     callback = function(event)
-      if not check_should_start(user_config, event.file) then
+      if not should_start(user_config, event.file) then
         return
       end
       server.launch()
