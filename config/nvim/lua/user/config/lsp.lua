@@ -165,4 +165,4 @@ vim.api.nvim_create_user_command('LspMissing', function()
     lines = unstarted,
     hide_cursor = true,
   })
-end, {})
+end, { desc = 'Display a list of missing language servers' })

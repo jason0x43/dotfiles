@@ -72,7 +72,7 @@ vim.opt.fillchars:append('foldopen:▼')
 vim.opt.fillchars:append('foldclose:▶')
 vim.api.nvim_create_user_command('Fold', function()
   vim.wo.foldenable = not vim.wo.foldenable
-end, {})
+end, { desc = 'Toggle semantic code folding' })
 
 -- General diagnostic config
 vim.diagnostic.config({

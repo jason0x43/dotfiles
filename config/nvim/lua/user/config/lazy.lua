@@ -37,7 +37,7 @@ require('lazy').setup(
       config = function()
         vim.api.nvim_create_user_command('MasonUpgrade', function()
           require('user.util.mason').upgrade()
-        end, {})
+        end, { desc = 'Upgrade Mason tools' })
         require('mason').setup({
           ui = {
             border = 'rounded',
@@ -67,7 +67,7 @@ require('lazy').setup(
         require('mini.diff').setup()
         vim.api.nvim_create_user_command('Diff', function()
           MiniDiff.toggle_overlay(0)
-        end, {})
+        end, { desc = 'Toggle a git diff overlay' })
 
         -- Icons
         require('mini.icons').setup()
@@ -307,30 +307,41 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
         })
 
+        vim.api.nvim_create_user_command('Commands', function()
+          Snacks.picker.commands()
+        end, { desc = 'List configured user commands' })
+
         vim.api.nvim_create_user_command('Highlights', function()
           Snacks.picker.highlights()
-        end, {})
+        end, { desc = 'List highlight groups' })
 
         vim.api.nvim_create_user_command('Icons', function()
-          ---@diagnostic disable-next-line: undefined-field
           Snacks.picker.icons()
-        end, {})
+        end, { desc = 'Open an icon picker' })
 
         vim.api.nvim_create_user_command('Keys', function()
           Snacks.picker.keymaps()
-        end, {})
+        end, { desc = 'List configured keymaps' })
 
         vim.api.nvim_create_user_command('Notifications', function()
           Snacks.notifier.show_history()
-        end, {})
+        end, { desc = 'Show a list of displayed notifications' })
 
         vim.api.nvim_create_user_command('Recent', function()
           Snacks.picker.recent()
-        end, {})
+        end, { desc = 'Open a recent-files picker' })
 
         vim.api.nvim_create_user_command('Term', function()
           Snacks.terminal.open()
-        end, {})
+        end, { desc = 'Open a terminal' })
+
+        vim.api.nvim_create_user_command('Dashboard', function()
+          Snacks.dashboard.open()
+        end, { desc = 'Open the startup screen' })
+
+        vim.api.nvim_create_user_command('Help', function()
+          Snacks.picker.help()
+        end, { desc = 'Open a help page picker' })
       end,
     },
 
@@ -394,7 +405,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       config = function()
         vim.api.nvim_create_user_command('Format', function()
           require('conform').format({ lsp_fallback = true })
-        end, {})
+        end, { desc = 'Format the current file' })
 
         require('conform').setup({
           formatters_by_ft = {
