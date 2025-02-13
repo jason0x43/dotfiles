@@ -46,13 +46,13 @@ M.open_float = function(config, opts)
   vim.wo[winnr].fillchars = 'eob: '
   vim.wo[winnr].signcolumn = 'no'
 
-  vim.keymap.set('n', 'j', '<c-e>', { buffer = bufnr })
+  vim.keymap.set('n', 'j', '<c-e>', { buffer = bufnr, desc = 'Scroll down' })
   vim.keymap.set('n', 'q', function()
     vim.api.nvim_win_close(winnr, true)
-  end, { buffer = bufnr })
+  end, { buffer = bufnr, desc = 'Close the window' })
   vim.keymap.set('n', '<esc>', function()
     vim.api.nvim_win_close(winnr, true)
-  end, { buffer = bufnr })
+  end, { buffer = bufnr, desc = 'Close the window' })
 
   if opts and opts.lines then
     for i, line in ipairs(opts.lines) do
