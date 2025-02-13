@@ -239,11 +239,11 @@ function dotfiles-brew {
         'bat'        # better cat
         'eza'        # better ls
         'fd'         # file finder
-        'mise'       # tool version manager
-        'nvim'       # editor
         'ripgrep'    # better grep
-        'tig'        # terminal git ui
         'zoxide'     # better cd
+        'mise'       # tool version manager
+        'tig'        # terminal git ui
+        'neovim'     # editor
     )
 
     if [[ $OSTYPE == darwin* ]]; then
@@ -372,6 +372,8 @@ function dotfiles-python {
 
 # Update global npm packages
 function dotfiles-node {
+    log "Updating node..."
+
     if (( ! $+commands[npm] )); then
         if [[ $INSTALL == 0 ]]; then
             warn "Node not installed"
@@ -381,13 +383,13 @@ function dotfiles-node {
         brew install node
     fi
 
-    # log "Updating package managers..."
+    logSub "Updating package managers..."
 
     if (( $+commands[corepack] )); then
         corepack prepare pnpm@latest --activate
     fi
 
-    log "Updating global node packages..."
+    logSub "Updating global node packages..."
 
     # get list of outdated global packages
     local mods=($(npm --registry=https://registry.npmjs.org outdated -g --parseable))
