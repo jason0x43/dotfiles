@@ -269,6 +269,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 layout = {
                   preset = 'ivy',
                 },
+                follow = true
               },
               files = {
                 follow = true,
