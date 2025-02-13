@@ -325,7 +325,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
 
         vim.api.nvim_create_user_command('Icons', function()
           Snacks.picker.icons()
-        end, { desc = 'Open an icon picker' })
+        end, { desc = 'List available icons' })
 
         vim.api.nvim_create_user_command('Keys', function()
           Snacks.picker.keymaps()
@@ -337,7 +337,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
 
         vim.api.nvim_create_user_command('Recent', function()
           Snacks.picker.recent()
-        end, { desc = 'Open a recent-files picker' })
+        end, { desc = 'Find recent files' })
 
         vim.api.nvim_create_user_command('Term', function()
           Snacks.terminal.open()
@@ -349,7 +349,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
 
         vim.api.nvim_create_user_command('Help', function()
           Snacks.picker.help()
-        end, { desc = 'Open a help page picker' })
+        end, { desc = 'Search for help pages' })
       end,
     },
 
