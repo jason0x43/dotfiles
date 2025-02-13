@@ -9,6 +9,9 @@ if vim.fn.has('clipboard') == 1 then
   vim.opt.clipboard = vim.opt.clipboard + 'unnamedplus'
 end
 
+-- Disable ruler display
+vim.o.ruler = false
+
 -- Use undo files for persistent undo
 vim.o.undofile = true
 

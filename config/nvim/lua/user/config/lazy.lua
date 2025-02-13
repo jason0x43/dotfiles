@@ -302,6 +302,14 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             enabled = true,
             left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
           },
+          styles = {
+            ---@diagnostic disable-next-line: missing-fields
+            dashboard = {
+              wo = {
+                fillchars = 'eob: ',
+              },
+            },
+          },
           words = {
             enabled = true,
           },
