@@ -78,7 +78,7 @@ end)
 ---Add a keymap to close the current window with 'q'
 local function close_with_q()
   vim.keymap.set('', 'q', function()
-    vim.api.nvim_buf_delete(0, {})
+    vim.api.nvim_win_close(0, false)
   end, { buffer = true })
 end
 
