@@ -543,7 +543,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       'saghen/blink.cmp',
       version = 'v0.*',
       dependencies = {
+        -- Copilot provider
         'giuxtaposition/blink-cmp-copilot',
+        -- Colorize menu items
+        'xzbdmw/colorful-menu.nvim',
       },
       config = function()
         local providers = {
@@ -606,13 +609,30 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 auto_insert = false,
               },
             },
+            menu = {
+              draw = {
+                columns = { { 'kind_icon' }, { 'label', gap = 1 } },
+                components = {
+                  label = {
+                    text = function(ctx)
+                      return require('colorful-menu').blink_components_text(ctx)
+                    end,
+                    highlight = function(ctx)
+                      return require('colorful-menu').blink_components_highlight(
+                        ctx
+                      )
+                    end,
+                  },
+                },
+              },
+            },
           },
           keymap = {
             preset = 'default',
             ['<C-e>'] = { 'select_and_accept' },
           },
           signature = {
-            enabled = true,
+            enabled = false,
             window = {
               border = 'rounded',
             },
