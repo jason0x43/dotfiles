@@ -327,6 +327,9 @@ config.font = wezterm.font("JetBrainsMonoNL NF")
 config.send_composed_key_when_left_alt_is_pressed = true
 config.send_composed_key_when_right_alt_is_pressed = false
 
-config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
+local shells = wezterm.glob("/opt/homebrew/bin/fish")
+if #shells == 1 then
+    config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
+end
 
 return config
