@@ -135,6 +135,9 @@ end)
 -- Convenience behavior for MiniGit buffers
 autocmd('FileType', 'git', function()
   vim.bo.readonly = true
+  vim.wo.number = false
+  vim.wo.signcolumn = 'no'
+
   close_with_q()
 
   vim.keymap.set('', '<enter>', function()

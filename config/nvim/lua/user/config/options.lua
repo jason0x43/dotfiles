@@ -1,6 +1,9 @@
 -- Leader for mappings
 vim.g.mapleader = ';'
 
+-- Don't wrap lines by default
+vim.o.wrap = false
+
 -- Ask for confirmation if exiting with modified files
 vim.o.confirm = true
 

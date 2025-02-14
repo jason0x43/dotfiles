@@ -63,86 +63,15 @@ require('lazy').setup(
         -- Git integration; used by statusline
         require('mini.git').setup()
 
+        -- Modify how blame output is displayed
         vim.api.nvim_create_autocmd('User', {
           pattern = 'MiniGitCommandSplit',
+          ---@param event MiniGitEvent
           callback = function(event)
             if event.data.git_subcommand ~= 'blame' then
               return
             end
-
-            -- Format the blame output
-            local str = require('user.util.string')
-            local random_rgb = require('user.util.theme').random_rgb
-            local hash_size = 0
-            local name_size = 0
-            local time_size = 0
-            ---@type table<string, string>
-            local hash_colors = {}
-            local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-            local line_parts = vim.tbl_map(function(line)
-              local parts = str.split(line, '\t')
-              local hash = parts[1]
-              if hash_colors[hash] == nil then
-                local group = 'blamehash_' .. hash
-                vim.api.nvim_set_hl(
-                  0,
-                  group,
-                  { fg = random_rgb(vim.o.background) }
-                )
-                hash_colors[hash] = group
-              end
-              hash_size = math.max(hash_size, #hash)
-              local name = parts[2]:sub(2)
-              name_size = math.max(name_size, #name)
-              local time = str.trim(parts[3])
-              time_size = math.max(time_size, #time)
-              return { hash = hash, name = name, time = time }
-            end, lines)
-            for i, lp in ipairs(line_parts) do
-              lines[i] = string.format(
-                '%s %s %s',
-                str.rpad(lp.hash, hash_size),
-                str.rpad(lp.name, name_size),
-                str.rpad(lp.time, time_size)
-              )
-            end
-            vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-            for i, parts in ipairs(line_parts) do
-              i = i - 1
-              vim.api.nvim_buf_add_highlight(
-                0,
-                0,
-                hash_colors[parts.hash],
-                i,
-                0,
-                hash_size
-              )
-              if parts.name:find('Not Committed') then
-                vim.api.nvim_buf_add_highlight(
-                  0,
-                  0,
-                  'Comment',
-                  i,
-                  hash_size + 1,
-                  hash_size + 1 + name_size
-                )
-              end
-            end
-
-            -- Setup the blame window
-            local blame_width = hash_size + 1 + name_size + 1 + time_size
-            vim.cmd(string.format('vertical-resize %d', blame_width))
-            vim.wo.number = false
-            vim.wo.signcolumn = 'no'
-
-            -- Align blame output with source
-            local win_src = event.data.win_source
-            vim.wo.wrap = false
-            vim.fn.winrestview({ topline = vim.fn.line('w0', win_src) })
-            vim.api.nvim_win_set_cursor(0, { vim.fn.line('.', win_src), 0 })
-
-            -- Bind both windows so that they scroll together
-            vim.wo[win_src].scrollbind, vim.wo.scrollbind = true, true
+            require('user.util.mini').show_git_blame(event.data)
           end,
         })
 
