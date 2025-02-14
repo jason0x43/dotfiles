@@ -3,7 +3,7 @@
 -- remote-expr functionality needs to call a function to get a useful return
 -- value.
 
-local directions = { up = 'k', down = 'j', left = 'h', right = ';' }
+local directions = { up = 'k', down = 'j', left = 'h', right = 'l' }
 
 local M = {}
 
