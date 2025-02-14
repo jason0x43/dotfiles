@@ -35,7 +35,14 @@ vim.keymap.set('n', '<leader>b', function()
 end, { desc = 'Open a buffer picker' })
 
 vim.keymap.set('n', '<leader>c', function()
-  vim.api.nvim_win_close(0, false)
+  local wins = vim.api.nvim_list_wins()
+  if #wins == 1 then
+    -- If only one window is open, delete the contained buffer to accomplish the
+    -- same goal as closing
+    Snacks.bufdelete.delete()
+  else
+    vim.api.nvim_win_close(0, false)
+  end
 end, { desc = 'Close the current pane' })
 
 vim.keymap.set('n', '<leader>d', function()
