@@ -293,10 +293,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   filter = function(item)
                     return item.file:find('COMMIT_EDITMSG') == nil
                   end,
-                  paths = {
-                    -- override the default filter
-                    [vim.fn.stdpath('data')] = true,
-                  },
                 },
               },
               lsp_symbols = {
@@ -332,6 +328,13 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             enabled = true,
           },
         })
+
+        -- Update the recent source because it's not possible to remove items
+        -- from the the default path filter
+        require('snacks.picker.config.sources').recent.filter.paths = {
+          [vim.fn.stdpath('cache')] = false,
+          [vim.fn.stdpath('state')] = false,
+        }
 
         vim.api.nvim_create_user_command('Commands', function()
           Snacks.picker.commands()
