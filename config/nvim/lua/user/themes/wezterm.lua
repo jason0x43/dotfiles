@@ -1,9 +1,51 @@
 local os = require('os')
 
----@alias Palette
----| { bg_0: string, bg_1: string, bg_2: string, dim_0: string, fg_0: string, fg_1: string, red: string, green: string, yellow: string, blue: string, magenta: string, cyan: string, br_red: string, br_green: string, br_yellow: string, br_blue: string, br_magenta: string, br_cyan: string, orange: string, br_orange: string, violet: string, br_violet: string }
----@alias CtermPalette
----| { bg_0: number | nil, bg_1: number | nil, bg_2: number | nil, dim_0: number | nil, fg_0: number | nil, fg_1: number | nil, red: number | nil, green: number | nil, yellow: number | nil, blue: number | nil, magenta: number | nil, cyan: number | nil, br_red: number | nil, br_green: number | nil, br_yellow: number | nil, br_blue: number | nil, br_magenta: number | nil, br_cyan: number | nil, orange: number | nil, br_orange: number | nil, violet: number | nil, br_violet: number | nil }
+---@alias Palette {
+---  bg_0: string,
+---  bg_1: string,
+---  bg_2: string,
+---  dim_0: string,
+---  fg_0: string,
+---  fg_1: string,
+---  red: string,
+---  green: string,
+---  yellow: string,
+---  blue: string,
+---  magenta: string,
+---  cyan: string,
+---  br_red: string,
+---  br_green: string,
+---  br_yellow: string,
+---  br_blue: string,
+---  br_magenta: string,
+---  br_cyan: string,
+---  orange: string,
+---  br_orange: string,
+---  violet: string,
+---  br_violet: string }
+---@alias CtermPalette {
+---  bg_0: number | nil,
+---  bg_1: number | nil,
+---  bg_2: number | nil,
+---  dim_0: number | nil,
+---  fg_0: number | nil,
+---  fg_1: number | nil,
+---  red: number | nil,
+---  green: number | nil,
+---  yellow: number | nil,
+---  blue: number | nil,
+---  magenta: number | nil,
+---  cyan: number | nil,
+---  br_red: number | nil,
+---  br_green: number | nil,
+---  br_yellow: number | nil,
+---  br_blue: number | nil,
+---  br_magenta: number | nil,
+---  br_cyan: number | nil,
+---  orange: number | nil,
+---  br_orange: number | nil,
+---  violet: number | nil,
+---  br_violet: number | nil }
 
 -- Default color palettes in the Selenized format
 ---@type { [string]: Palette }
