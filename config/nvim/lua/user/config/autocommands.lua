@@ -80,6 +80,9 @@ local function close_with_q()
   vim.keymap.set('', 'q', function()
     vim.api.nvim_win_close(0, false)
   end, { buffer = true })
+  vim.keymap.set('', '<esc>', function()
+    vim.api.nvim_win_close(0, false)
+  end, { buffer = true })
 end
 
 -- Close certain information panes with 'q'
@@ -127,4 +130,14 @@ autocmd('BufWinEnter', '*', function()
   if line('\'"') >= 1 and line('\'"') <= line('$') then
     vim.cmd('normal! g`"zz')
   end
+end)
+
+-- Convenience behavior for MiniGit buffers
+autocmd('FileType', 'git', function()
+  vim.bo.readonly = true
+  close_with_q()
+
+  vim.keymap.set('', '<enter>', function()
+    require('mini.git').show_at_cursor()
+  end, { buffer = true })
 end)
