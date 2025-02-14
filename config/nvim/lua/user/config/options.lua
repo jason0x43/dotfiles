@@ -103,3 +103,23 @@ vim.opt.colorcolumn = { '+1' }
 if vim.g.neovide then
   vim.g.neovide_cursor_animation_length = 0
 end
+
+-- Disable unneeded builtin plugins
+-- The value of the loaded var doesn't matter, just that it's defined
+local disabled_plugins = {
+  '2html_plugin',
+  'gzip',
+  'matchit',
+  'matchparen',
+  'netrw',
+  'netrwFileHandlers',
+  'netrwPlugin',
+  'netrwSettings',
+  'spellfile_plugin',
+  'tutor_mode_plugin',
+  'vimball',
+  'vimballPlugin',
+}
+for _, plugin in ipairs(disabled_plugins) do
+  vim.g['loaded_' .. plugin] = 1
+end
