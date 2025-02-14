@@ -428,6 +428,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               path = 'nvim-lspconfig/lua',
               words = { 'lspconfig', 'lsp' },
             },
+            {
+              path = vim.fn.stdpath('config') .. '/lua/user/types/wezterm',
+              words = { 'wezterm' },
+            },
           },
         })
       end,

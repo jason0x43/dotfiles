@@ -3,6 +3,7 @@
 local plugin = {}
 
 ---@return any
-function plugin.require() end
+---@param modpath string
+function plugin.require(modpath) end
 
 return plugin
