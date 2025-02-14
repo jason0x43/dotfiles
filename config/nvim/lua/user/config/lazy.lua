@@ -192,11 +192,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                     Snacks.dashboard.pick('recent', {
                       filter = {
                         cwd = true,
-                        paths = {
-                          [vim.fn.stdpath('data')] = false,
-                          [vim.fn.stdpath('cache')] = false,
-                          [vim.fn.stdpath('state')] = false,
-                        },
                       },
                     })
                   end,
@@ -298,6 +293,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   filter = function(item)
                     return item.file:find('COMMIT_EDITMSG') == nil
                   end,
+                  paths = {
+                    -- override the default filter
+                    [vim.fn.stdpath('data')] = true,
+                  },
                 },
               },
               lsp_symbols = {
