@@ -320,6 +320,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           Snacks.picker.commands()
         end, { desc = 'List configured user commands' })
 
+        vim.api.nvim_create_user_command('Config', function()
+          Snacks.picker.explorer({ cwd = '~/.config' })
+        end, { desc = 'Open an explorer in the config directory' })
+
         vim.api.nvim_create_user_command('Highlights', function()
           Snacks.picker.highlights()
         end, { desc = 'List highlight groups' })
