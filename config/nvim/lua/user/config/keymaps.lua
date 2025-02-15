@@ -32,7 +32,7 @@ end, { desc = 'Show a list of possible code actions' })
 
 vim.keymap.set('n', '<leader>b', function()
   require('snacks').picker.buffers()
-end, { desc = 'Open a buffer picker' })
+end, { desc = 'List open buffers' })
 
 vim.keymap.set('n', '<leader>c', function()
   local wins = vim.api.nvim_list_wins()
@@ -55,9 +55,15 @@ vim.keymap.set('n', '<leader>D', function()
   })
 end, { desc = 'Show diagnostics for the current line' })
 
+vim.keymap.set('n', '<leader>e', function()
+  require('snacks').picker.explorer({
+    cwd = vim.fn.expand('%:p:h'),
+  })
+end, { desc = 'Open a file explorer' })
+
 vim.keymap.set('n', '<leader>f', function()
-  require('snacks').picker.files()
-end, { desc = 'Open a file picker' })
+  require('snacks').picker.smart()
+end, { desc = 'Find files' })
 
 vim.keymap.set('n', '<leader>F', function()
   require('conform').format({ lsp_fallback = true })
@@ -69,7 +75,7 @@ end, { desc = 'Search for strings in files' })
 
 vim.keymap.set('n', '<leader>h', function()
   require('snacks').picker.help()
-end, { desc = 'Open a help page picker' })
+end, { desc = 'Find help pages' })
 
 vim.keymap.set('n', '<leader>k', function()
   require('snacks').bufdelete.delete()
@@ -93,13 +99,7 @@ end, { desc = 'List all symbols in the workspace' })
 
 vim.keymap.set('n', '<leader>m', function()
   require('snacks').picker.git_status()
-end, { desc = 'Open a modified-files picker' })
-
-vim.keymap.set('n', '<leader>n', function()
-  require('snacks').picker.explorer({
-    cwd = vim.fn.expand('%:p:h'),
-  })
-end, { desc = 'Open a file explorer' })
+end, { desc = 'Find modified files' })
 
 -- Quit vim
 vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>', { desc = 'Exit vim' })
@@ -113,10 +113,6 @@ vim.keymap.set(
 vim.keymap.set('n', '<leader>r', function()
   vim.lsp.buf.rename()
 end, { desc = 'Rename the symbol under the cursor' })
-
-vim.keymap.set('n', '<leader>s', function()
-  require('snacks').picker.smart()
-end, { desc = "Open the 'smart' picker" })
 
 vim.keymap.set('n', '<leader>t', function()
   require('snacks').terminal.open()

@@ -168,8 +168,8 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 },
                 {
                   icon = ' ',
-                  key = 'b',
-                  desc = 'Browse',
+                  key = 'e',
+                  desc = 'Explore',
                   action = function()
                     Snacks.dashboard.pick('explorer')
                   end,
@@ -180,26 +180,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   desc = 'Grep',
                   action = function()
                     Snacks.dashboard.pick('grep')
-                  end,
-                },
-                {
-                  icon = ' ',
-                  key = 'r',
-                  desc = 'Recent',
-                  action = function()
-                    Snacks.dashboard.pick('recent', {
-                      filter = {
-                        cwd = true,
-                      },
-                    })
-                  end,
-                },
-                {
-                  icon = ' ',
-                  key = 'm',
-                  desc = 'Modified',
-                  action = function()
-                    Snacks.dashboard.pick('git_status')
                   end,
                 },
                 {
