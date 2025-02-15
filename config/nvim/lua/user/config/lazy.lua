@@ -269,6 +269,21 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
             },
             sources = {
+              autocmds = {
+                -- Modify the default autocmd display to show the desc field
+                format = function(item)
+                  local format = require('snacks.picker.format').autocmd
+                  local formatted = format(item)
+
+                  ---@type vim.api.keyset.get_autocmds.ret
+                  local au = item.item
+                  if au.desc and formatted[#formatted][1] == 'callback' then
+                    formatted[#formatted] = { au.desc, 'SnacksPickerDesc' }
+                  end
+
+                  return formatted
+                end,
+              },
               explorer = {
                 auto_close = true,
                 win = {
@@ -333,46 +348,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           [vim.fn.stdpath('cache')] = false,
           [vim.fn.stdpath('state')] = false,
         }
-
-        vim.api.nvim_create_user_command('Commands', function()
-          Snacks.picker.commands()
-        end, { desc = 'List configured user commands' })
-
-        vim.api.nvim_create_user_command('Config', function()
-          Snacks.picker.explorer({ cwd = '~/.config' })
-        end, { desc = 'Open an explorer in the config directory' })
-
-        vim.api.nvim_create_user_command('Highlights', function()
-          Snacks.picker.highlights()
-        end, { desc = 'List highlight groups' })
-
-        vim.api.nvim_create_user_command('Icons', function()
-          Snacks.picker.icons()
-        end, { desc = 'List available icons' })
-
-        vim.api.nvim_create_user_command('Keys', function()
-          Snacks.picker.keymaps()
-        end, { desc = 'List configured keymaps' })
-
-        vim.api.nvim_create_user_command('Notifications', function()
-          Snacks.notifier.show_history()
-        end, { desc = 'Show a list of displayed notifications' })
-
-        vim.api.nvim_create_user_command('Recent', function()
-          Snacks.picker.recent()
-        end, { desc = 'Find recent files' })
-
-        vim.api.nvim_create_user_command('Term', function()
-          Snacks.terminal.open()
-        end, { desc = 'Open a terminal' })
-
-        vim.api.nvim_create_user_command('Dashboard', function()
-          Snacks.dashboard.open()
-        end, { desc = 'Open the startup screen' })
-
-        vim.api.nvim_create_user_command('Help', function()
-          Snacks.picker.help()
-        end, { desc = 'Search for help pages' })
       end,
     },
 

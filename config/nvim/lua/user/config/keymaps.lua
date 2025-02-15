@@ -39,7 +39,7 @@ vim.keymap.set('n', '<leader>c', function()
   if #wins == 1 then
     -- If only one window is open, delete the contained buffer to accomplish the
     -- same goal as closing
-    Snacks.bufdelete.delete()
+    require('snacks').bufdelete.delete()
   else
     vim.api.nvim_win_close(0, false)
   end
@@ -64,35 +64,35 @@ vim.keymap.set('n', '<leader>F', function()
 end, { desc = 'Format the current file' })
 
 vim.keymap.set('n', '<leader>g', function()
-  Snacks.picker.grep()
+  require('snacks').picker.grep()
 end, { desc = 'Search for strings in files' })
 
 vim.keymap.set('n', '<leader>h', function()
-  Snacks.picker.help()
+  require('snacks').picker.help()
 end, { desc = 'Open a help page picker' })
 
 vim.keymap.set('n', '<leader>k', function()
-  Snacks.bufdelete.delete()
+  require('snacks').bufdelete.delete()
 end, { desc = 'Close the current buffer' })
 
 vim.keymap.set('n', '<leader>K', function()
-  Snacks.bufdelete.delete({ force = true })
+  require('snacks').bufdelete.delete({ force = true })
 end, { desc = 'Close the current buffer with prejudice' })
 
 vim.keymap.set('n', '<leader>ls', function()
-  Snacks.picker.lsp_symbols()
+  require('snacks').picker.lsp_symbols()
 end, { desc = 'List symbols in the current project' })
 
 vim.keymap.set('n', '<leader>lr', function()
-  Snacks.picker.lsp_references()
+  require('snacks').picker.lsp_references()
 end, { desc = 'List references to the symbol under the cursor' })
 
 vim.keymap.set('n', '<leader>m', function()
-  Snacks.picker.git_status()
+  require('snacks').picker.git_status()
 end, { desc = 'Open a modified-files picker' })
 
 vim.keymap.set('n', '<leader>n', function()
-  Snacks.picker.explorer({
+  require('snacks').picker.explorer({
     cwd = vim.fn.expand('%:p:h'),
   })
 end, { desc = 'Open a file explorer' })
@@ -111,21 +111,19 @@ vim.keymap.set('n', '<leader>r', function()
 end, { desc = 'Rename the symbol under the cursor' })
 
 vim.keymap.set('n', '<leader>s', function()
-  ---@diagnostic disable-next-line: undefined-field
-  Snacks.picker.smart()
+  require('snacks').picker.smart()
 end, { desc = "Open the 'smart' picker" })
 
 vim.keymap.set('n', '<leader>t', function()
-  Snacks.terminal.open()
+  require('snacks').terminal.open()
 end, { desc = 'Open a terminal' })
 
 vim.keymap.set('n', '<leader>u', function()
-  ---@diagnostic disable-next-line: undefined-field
-  Snacks.picker.undo()
+  require('snacks').picker.undo()
 end, { desc = 'Open undo history' })
 
 vim.keymap.set('n', '<leader>z', function()
-  Snacks.picker.zoxide()
+  require('snacks').picker.zoxide()
 end, { desc = 'Open the zoxide picker' })
 
 -- Save the current file

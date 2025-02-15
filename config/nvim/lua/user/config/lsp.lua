@@ -104,6 +104,7 @@ local function setup(server_name)
       end
       server.launch()
     end,
+    desc = "Start a language server"
   })
 
   return true
