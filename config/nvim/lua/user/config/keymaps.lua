@@ -81,11 +81,15 @@ end, { desc = 'Close the current buffer with prejudice' })
 
 vim.keymap.set('n', '<leader>ls', function()
   require('snacks').picker.lsp_symbols()
-end, { desc = 'List symbols in the current project' })
+end, { desc = 'List symbols in the current file' })
 
 vim.keymap.set('n', '<leader>lr', function()
   require('snacks').picker.lsp_references()
 end, { desc = 'List references to the symbol under the cursor' })
+
+vim.keymap.set('n', '<leader>lw', function()
+  require('snacks').picker.lsp_workspace_symbols()
+end, { desc = 'List all symbols in the workspace' })
 
 vim.keymap.set('n', '<leader>m', function()
   require('snacks').picker.git_status()
