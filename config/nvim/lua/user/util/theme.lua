@@ -157,9 +157,9 @@ end
 ---@param background? 'light' | 'dark'
 M.random_rgb = function(background)
   local h = math.random(0, 359)
-  local s = math.random(50, 100) / 100
-  local l_min = background == 'dark' and 80 or 50
-  local l_max = background == 'light' and 70 or 100
+  local s = math.random(80, 100) / 100
+  local l_min = 40
+  local l_max = 60
   local l = math.random(l_min, l_max) / 100
   local hsl = { h = h, s = s, l = l }
   local rgb = hsl_to_rgb(hsl)

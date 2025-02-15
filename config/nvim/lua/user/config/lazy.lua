@@ -75,11 +75,9 @@ require('lazy').setup(
           end,
         })
 
-        vim.api.nvim_create_user_command(
-          'Blame',
-          'lefta vertical Git blame -c --date=relative %',
-          {}
-        )
+        vim.api.nvim_create_user_command('Blame', function()
+          vim.cmd('lefta vertical Git blame -c --date=relative %')
+        end, { desc = 'Show git blame info for the current file' })
 
         -- Diffing; used by status line
         require('mini.diff').setup()
