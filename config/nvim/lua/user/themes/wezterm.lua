@@ -151,15 +151,15 @@ local themefile = home .. '/.local/share/theme'
 local function update_background()
   local theme = vim.fn.readfile(themefile)[1]
   if theme then
-    vim.go.background = theme
+    vim.o.background = theme
   end
 end
 
 -- Apply a theme in the Selenized format
 ---@return nil
 local function apply_theme()
-  -- Allow nvim to change the cursor color
-  vim.o.guicursor = 'n-v-c:block-Cursor/Cursor'
+  -- Note: setting the cursor color using the Cursor group in guicursor will
+  -- break WezTerm's ability to dynamically update the theme in a pane.
 
   local c = load_colors()
 
@@ -230,7 +230,7 @@ local function apply_theme()
   hi('Comment', { fg = c.dim_0, italic = true })
   hi('Conceal', {})
   hi('Constant', { fg = c.cyan })
-  hi('Cursor', { fg = c.bg_0, bg = c.green })
+  hi('Cursor', { reverse = true })
   hi('CursorColumn', { bg = c.bg_1 })
   hi('CursorLine', { bg = c.bg_1 })
   hi('CursorLineNr', { fg = c.fg_1 })
@@ -438,7 +438,8 @@ local function apply_theme()
   if vim.fn.filereadable(themefile) == 1 then
     local w = vim.uv.new_fs_event()
     if w ~= nil then
-      local function watch_file(_) end
+      ---@type function
+      local watch_file
 
       local function on_change()
         update_background()

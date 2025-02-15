@@ -324,8 +324,14 @@ config.mouse_bindings = {
 -- https://github.com/wez/wezterm/issues/2818
 config.font = wezterm.font("JetBrainsMonoNL NF")
 
-config.send_composed_key_when_left_alt_is_pressed = true
-config.send_composed_key_when_right_alt_is_pressed = false
+-- Allow alt+key bindings to work when the left alt key is pressed. The right
+-- alt key will compose keys (to produce special characters).
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = true
+
+-- Always show the cursor as the reverse of the cell's text color, ignoring the
+-- fg and bg colors in the theme.
+config.force_reverse_video_cursor = true
 
 local shells = wezterm.glob("/opt/homebrew/bin/fish")
 if #shells == 1 then

@@ -23,8 +23,6 @@ brights = [
 	"#00978a",
 	"#3a4d53"
 ]
-cursor_bg = "#d2212d"
-cursor_fg = "#fbf3db"
 foreground = "#53676d"
 selection_fg = "none"
 selection_bg = "#cfcebe"
