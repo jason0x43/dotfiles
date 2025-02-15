@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#MISE description="Initialize a Node CLI project"
+#MISE dir="{{cwd}}"
+#USAGE arg "[version]"
+#USAGE flag "--npm" help="Use npm instead of pnpm"
+#USAGE flag "--ts" help="Use Typescript"
+
+pkg=pnpm
+
+if [[ $usage_npm ]]; then
+  echo "✅ Using npm..."
+  pkg=npm
+  npm init -y
+else
+  echo "✅ Using pnpm..."
+  pnpm init
+fi
+
+git init .
+echo "node_modules/" >> .gitignore
+
+if [[ $usage_ts ]]; then
+  $pkg add -D typescript
+  cat > tsconfig.json <<EOL
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "strict": true,
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
+EOL
+  mkdir src
+fi
+
+if [[ $usage_version ]]; then
+  mise use node@$usage_version
+fi
