@@ -16,16 +16,9 @@ local M = {}
 ---@param sl any
 ---@param args table
 M.section_lsps = function(sl, args)
-  local clients
-  local client_names = {}
-
-  if vim.lsp.get_clients ~= nil then
-    clients = vim.lsp.get_clients()
-  end
-
-  for _, client in pairs(clients) do
-    table.insert(client_names, client.name)
-  end
+  local client_names = vim.tbl_map(function(client)
+    return client.name
+  end, vim.lsp.get_clients({ bufnr = 0 }))
 
   if vim.tbl_isempty(client_names) then
     return ''
