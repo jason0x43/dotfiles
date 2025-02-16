@@ -7,8 +7,16 @@ vim.api.nvim_create_autocmd('SwapExists', {
   pattern = '*',
   group = group,
   callback = function(event)
-    vim.v.swapchoice = 'o'
-    vim.notify('Swap file exists for ' .. event.file, vim.log.levels.WARN)
+    if vim.fn.getftime(vim.v.swapname) < vim.fn.getftime(event.file) then
+      -- 	Swapfile is older than file itself -- delete it
+      vim.fn.delete(vim.v.swapname)
+      vim.notify('Deleted old swapfile', vim.log.levels.INFO)
+      vim.v.swapchoice = 'e'
+    else
+      -- Open in read-only mode
+      vim.notify('Swap file exists', vim.log.levels.WARN)
+      vim.v.swapchoice = 'o'
+    end
   end,
   desc = 'Open files in readonly if a swapfile exists',
 })
@@ -117,6 +125,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Don't show number or sign column in popups, panes
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'help', 'checkhealth' },
+  group = group,
   callback = bare_text,
   desc = 'Use basic text display in system info panes',
 })
@@ -124,6 +133,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- No filetype event is emitted for Snacks notification history panes
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '',
+  group = group,
   callback = function()
     if vim.o.filetype == 'snacks_notif_history' then
       bare_text()
@@ -145,6 +155,7 @@ end
 -- Close certain information panes with 'q'
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'qf', 'help', 'fugitiveblame', 'lspinfo', 'startuptime' },
+  group = group,
   callback = close_with_q,
   desc = 'Close system panes with q and esc',
 })
@@ -152,6 +163,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- q to close output panes
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = 'output:///info',
+  group = group,
   callback = close_with_q,
   desc = 'Close system panes with q and esc',
 })
@@ -159,6 +171,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- Highlight yanked text
 vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
+  group = group,
   callback = function()
     vim.highlight.on_yank({
       higroup = 'IncSearch',
@@ -174,6 +187,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- line number provided on the commandline.
 vim.api.nvim_create_autocmd('BufWinEnter', {
   pattern = '*',
+  group = group,
   callback = function()
     local filetype = vim.bo.filetype
     local buftype = vim.bo.buftype
@@ -197,6 +211,7 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
 -- Convenience behavior for MiniGit buffers
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'git',
+  group = group,
   callback = function()
     bare_text()
     close_with_q()
@@ -205,5 +220,5 @@ vim.api.nvim_create_autocmd('FileType', {
       require('mini.git').show_at_cursor()
     end, { buffer = true, desc = 'Show git information for the cursor' })
   end,
-  desc = "Setup MiniGit output buffers"
+  desc = 'Setup MiniGit output buffers',
 })
