@@ -28,13 +28,11 @@ C.config.on_attach = function(client, bufnr)
   client.server_capabilities.documentFormattingProvider = false
 
   -- use angular LS for renames
-  local clients = vim.lsp.get_clients({ bufnr = bufnr, nme = 'angularls' })
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'angularls' })
   if #clients > 0 then
     client.server_capabilities.renameProvider = false
   end
 end
-
-C.config.single_file_support = true
 
 C.should_start = function(file)
   local denols = require('user.lsp.denols')
