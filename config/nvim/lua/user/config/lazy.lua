@@ -572,7 +572,15 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               }
             ),
           },
+          cmdline = {
+            enabled = false,
+          },
           completion = {
+            accept = {
+              auto_brackets = {
+                enabled = false,
+              },
+            },
             documentation = {
               auto_show = true,
               window = {
@@ -580,12 +588,12 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
             },
             ghost_text = {
-              enabled = true,
+              enabled = false,
             },
             list = {
               selection = {
                 preselect = false,
-                auto_insert = false,
+                auto_insert = true,
               },
             },
             menu = {
@@ -608,7 +616,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
           keymap = {
             preset = 'default',
-            ['<C-e>'] = { 'select_and_accept' },
+            ['<Enter>'] = { 'select_and_accept', 'fallback' },
+            ['<Tab>'] = { 'select_next', 'fallback' },
+            ['<S-Tab>'] = { 'select_prev', 'fallback' },
           },
           signature = {
             enabled = false,
@@ -618,7 +628,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
           sources = {
             default = default,
-            cmdline = {},
             providers = providers,
           },
         })
