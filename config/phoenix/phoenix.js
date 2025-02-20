@@ -253,7 +253,7 @@ async function autoLayout() {
 		// Not Stage Manager
 		if (browserWins.length > 0) {
 			if (terminalWins.length > 0) {
-				if (simWins.length > 0) {
+				if (simWins.length + emuWins.length > 0) {
 					for (const window of browserWins) {
 						fill("left", {
 							window,
