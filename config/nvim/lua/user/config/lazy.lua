@@ -226,16 +226,19 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
           indent = {
             enabled = true,
-            indent = {
-              only_scope = true,
-              char = '┊',
-            },
             animate = {
               enabled = true,
               duration = {
                 step = 50, -- ms per step
                 total = 1000, -- maximum duration
               },
+            },
+            indent = {
+              only_scope = true,
+              char = '┊',
+            },
+            scope = {
+              enabled = false,
             },
           },
           image = {},
@@ -315,9 +318,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 },
               },
             },
-          },
-          scope = {
-            enabled = true,
           },
           statuscolumnn = {
             enabled = true,
