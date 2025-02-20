@@ -1,26 +1,16 @@
 vim.filetype.add({
   filename = {
-    ['.envrc'] = 'bash',
-    ['.jscsrc'] = 'json',
-    ['.bowerrc'] = 'json',
-    ['.tslintrc'] = 'json',
-    ['.eslintrc'] = 'json',
-    ['.dojorc'] = 'json',
-    ['.prettierrc'] = 'json',
     Fastfile = 'ruby',
     Podfile = 'ruby',
   },
+  extension = {
+    ['ejs'] = 'html',
+    ['dashtoc'] = 'json',
+  },
   pattern = {
-    ['*.dashtoc'] = 'json',
-    ['[tj]sconfig.json'] = 'jsonc',
-    ['Dockerfile.*'] = 'dockerfile',
-    ['fish_funced.*'] = 'fish',
-    ['*.ejs'] = 'html',
-    ['.*/git/config'] = 'gitconfig',
-    ['*/zsh/functions/*'] = 'zsh',
-    ['.*/ansible/.*%.yml'] = 'yaml.ansible',
-    ['.*'] = {
-      priority = -math.huge,
+    ['.-/ansible/.-%.yml'] = 'yaml.ansible',
+    -- Note: the suggested fallback pattern of [".*"] is never called
+    ['.-'] = {
       function()
         -- file content detection
         local first_line = vim.fn.getline(1)
@@ -37,10 +27,14 @@ vim.filetype.add({
           return 'javascript'
         end
 
-        if first_line:find('#!/usr/bin/env %-S deno') ~= nil then
+        if
+          first_line:find('#!/usr/bin/env %-S deno') ~= nil
+          or first_line:find('#!/usr/bin/env %-S npx tsx') ~= nil
+        then
           return 'typescript'
         end
       end,
+      { priority = -math.huge },
     },
   },
 })
