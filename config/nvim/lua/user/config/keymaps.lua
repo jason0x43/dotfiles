@@ -10,6 +10,10 @@ vim.keymap.set('n', '#', function()
   end
 end, { desc = 'Toggle line and column highlighting' })
 
+vim.keymap.set({ 'n', 'v' }, '`', function()
+  require('snacks').debug.run()
+end, { desc = 'Execute the buffer or selected lines as Lua code' })
+
 -- Space to clear search highlights
 vim.keymap.set('n', '<space>', function()
   vim.go.hlsearch = false
