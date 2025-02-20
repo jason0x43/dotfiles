@@ -643,24 +643,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           keymap = {
             preset = 'default',
             ['<C-e>'] = { 'select_and_accept', 'fallback' },
-            ['<Tab>'] = {
-              function(cmp)
-                if cmp.snippet_active() then
-                  return cmp.snippet_forward()
-                end
-                return cmp.select_next()
-              end,
-              'fallback',
-            },
-            ['<S-Tab>'] = {
-              function(cmp)
-                if cmp.snippet_active() then
-                  return cmp.snippet_backward()
-                end
-                return cmp.select_prev()
-              end,
-              'fallback',
-            },
           },
           signature = {
             enabled = false,
