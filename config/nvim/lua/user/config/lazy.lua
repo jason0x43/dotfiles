@@ -86,8 +86,10 @@ require('lazy').setup(
         end, { desc = 'Toggle a git diff overlay' })
 
         -- Icons
-        require('mini.icons').setup()
-        MiniIcons.mock_nvim_web_devicons()
+        local icons = require('mini.icons')
+        icons.setup()
+        icons.mock_nvim_web_devicons()
+
         -- Current file map
         local mini_map = require('mini.map')
         mini_map.setup({
@@ -224,6 +226,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
             },
           },
+          image = {
+            enabled = false,
+          },
           indent = {
             enabled = true,
             animate = {
@@ -241,7 +246,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               enabled = false,
             },
           },
-          image = {},
           input = {
             enabled = true,
           },
