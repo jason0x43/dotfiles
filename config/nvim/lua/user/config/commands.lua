@@ -36,6 +36,10 @@ vim.api.nvim_create_user_command('Lsps', function()
   require('snacks').picker.lsp_config()
 end, { desc = 'List known language servers' })
 
+vim.api.nvim_create_user_command('Map', function()
+  require('mini.map').toggle()
+end, { desc = 'Show or hide a file map' })
+
 vim.api.nvim_create_user_command('Modified', function()
   require('snacks').picker.git_status()
 end, { desc = 'List modified git files' })

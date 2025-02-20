@@ -88,6 +88,20 @@ require('lazy').setup(
         -- Icons
         require('mini.icons').setup()
         MiniIcons.mock_nvim_web_devicons()
+        -- Current file map
+        local mini_map = require('mini.map')
+        mini_map.setup({
+          integrations = {
+            mini_map.gen_integration.diagnostic(),
+            mini_map.gen_integration.builtin_search(),
+          },
+          symbols = {
+            encode = mini_map.gen_encode_symbols.dot('3x2'),
+          },
+          window = {
+            winblend = 0,
+          },
+        })
 
         -- Status line
         local sl = require('mini.statusline')

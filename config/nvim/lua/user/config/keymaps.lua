@@ -98,8 +98,8 @@ vim.keymap.set('n', '<leader>lw', function()
 end, { desc = 'List all symbols in the workspace' })
 
 vim.keymap.set('n', '<leader>m', function()
-  require('snacks').picker.git_status()
-end, { desc = 'Find modified files' })
+  require('mini.map').toggle()
+end, { desc = 'Toggle the file map' })
 
 -- Quit vim
 vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>', { desc = 'Exit vim' })
