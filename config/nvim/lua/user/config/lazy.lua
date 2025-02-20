@@ -342,6 +342,18 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           [vim.fn.stdpath('cache')] = false,
           [vim.fn.stdpath('state')] = false,
         }
+
+        -- When hitting enter on a file in explorer during a search, immediately
+        -- jump to the file instead of updating the explorer view
+        local explorer_actions = require('snacks.explorer.actions')
+        local explorer_confirm = explorer_actions.actions.confirm
+        explorer_actions.actions.confirm = function(picker, item, action)
+          if item and not item.dir then
+            Snacks.picker.actions.jump(picker, item, action)
+          else
+            explorer_confirm(picker, item, action)
+          end
+        end
       end,
     },
 
