@@ -187,14 +187,11 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   key = 'r',
                   desc = 'Recent',
                   action = function()
-                    Snacks.dashboard.pick(
-                      'recent',
-                      {
-                        filter = {
-                          cwd = vim.fn.getcwd(),
-                        },
-                      }
-                    )
+                    Snacks.dashboard.pick('recent', {
+                      filter = {
+                        cwd = vim.fn.getcwd(),
+                      },
+                    })
                   end,
                 },
                 {
@@ -539,7 +536,38 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       'sindrets/diffview.nvim',
       cmd = 'DiffviewOpen',
       config = function()
-        require('diffview').setup()
+        local last_status = vim.o.laststatus
+        local actions = require('diffview.actions')
+        local close_map = {
+          'n',
+          'q',
+          function()
+            vim.cmd('DiffviewClose')
+          end,
+          { desc = 'Close the diffview' },
+        }
+        require('diffview').setup({
+          file_panel = {
+            listing_style = 'list',
+          },
+          hooks = {
+            view_opened = function()
+              last_status = vim.o.laststatus
+              vim.o.laststatus = 3
+            end,
+            view_closed = function()
+              vim.o.laststatus = last_status
+            end
+          },
+          keymaps = {
+            file_panel = {
+              close_map,
+            },
+            view = {
+              close_map,
+            },
+          },
+        })
         require('user.util.diffview').patch_layout()
       end,
     },
