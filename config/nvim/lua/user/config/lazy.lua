@@ -540,6 +540,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       cmd = 'DiffviewOpen',
       config = function()
         require('diffview').setup()
+        require('user.util.diffview').patch_layout()
       end,
     },
 
