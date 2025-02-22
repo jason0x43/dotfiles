@@ -239,7 +239,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             },
           },
           image = {
-            enabled = false,
+            enabled = true
           },
           indent = {
             enabled = true,
@@ -541,9 +541,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         local close_map = {
           'n',
           'q',
-          function()
-            vim.cmd('DiffviewClose')
-          end,
+          actions.close,
           { desc = 'Close the diffview' },
         }
         require('diffview').setup({
@@ -557,11 +555,17 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             end,
             view_closed = function()
               vim.o.laststatus = last_status
-            end
+            end,
           },
           keymaps = {
             file_panel = {
               close_map,
+              {
+                'n',
+                '<cr>',
+                actions.focus_entry,
+                { desc = 'Open the diff for the selected entry' },
+              },
             },
             view = {
               close_map,
