@@ -183,6 +183,21 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   end,
                 },
                 {
+                  icon = ' ',
+                  key = 'r',
+                  desc = 'Recent',
+                  action = function()
+                    Snacks.dashboard.pick(
+                      'recent',
+                      {
+                        filter = {
+                          cwd = vim.fn.getcwd(),
+                        },
+                      }
+                    )
+                  end,
+                },
+                {
                   icon = ' ',
                   key = 'e',
                   desc = 'Explore',
