@@ -2,13 +2,15 @@
 vim.lsp.set_log_level('error')
 vim.lsp.log.set_format_func(vim.inspect)
 
--- Rounded border for hover popups
-vim.lsp.handlers['textDocument/hover'] =
-  vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+if not vim.fn.has('nvim-0.11') then
+  -- Rounded border for hover popups
+  vim.lsp.handlers['textDocument/hover'] =
+    vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 
--- Rounded border for signature popups
-vim.lsp.handlers['textDocument/signatureHelp'] =
-  vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+  -- Rounded border for signature popups
+  vim.lsp.handlers['textDocument/signatureHelp'] =
+    vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+end
 
 -- When an lsp returns multiple "goto definition" results, only keep the
 -- first one
@@ -104,7 +106,7 @@ local function setup(server_name)
       end
       server.launch()
     end,
-    desc = "Start a language server"
+    desc = 'Start a language server',
   })
 
   return true

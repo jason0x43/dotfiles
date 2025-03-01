@@ -127,3 +127,13 @@ local disabled_plugins = {
 for _, plugin in ipairs(disabled_plugins) do
   vim.g['loaded_' .. plugin] = 1
 end
+
+if vim.fn.has('nvim-0.11') then
+  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+  ---@diagnostic disable-next-line: duplicate-set-field
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or 'rounded'
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+  end
+end
