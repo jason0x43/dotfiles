@@ -62,10 +62,5 @@ function serve {
     python3 -m http.server --directory $dir --bind $addr $port
 }
 
-$scoopPath = $env:USERPROFILE + '\scoop\shims'
-$cleanedPath = ($env:PATH.split(';')) -notmatch ($scoopPath -replace '\\', '\\')
-$env:PATH = (@($scoopPath) + $cleanedPath) -join ';'
-$env:GIT_SSH = (scoop which ssh) 
-
-import-module ~\scoop\modules\posh-git
+Import-Module posh-git
 Invoke-Expression (& { (zoxide init powershell | Out-String) -replace "Set-Location", "Push-Location" })
