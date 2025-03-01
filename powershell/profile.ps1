@@ -6,8 +6,13 @@ if (test-path $ca_path) {
 if (test-path alias:gc) { remove-item -force alias:gc }
 if (test-path alias:gl) { remove-item -force alias:gl }
 if (test-path alias:gp) { remove-item -force alias:gp }
+if (test-path alias:cd) { remove-item -force alias:cd }
 
 set-alias -name vi -value nvim
+set-alias -name cd -value z
+set-alias -name b -value Pop-Location
+set-alias -name back -value Pop-Location
+set-alias -name grep -value findstr
 
 function ga { git add $args }
 function gb { git branch $args }
@@ -29,8 +34,24 @@ function gp { git pull $args }
 function gri { git rebase -i  $args }
 function grv { git remote -v }
 function gs { git status --short $args }
+function ln {
+    $type = $args[0]
+    $source = $args[1]
+    $dest = $args[2]
+    if ($type -ne "-s") {
+        echo "Unknown link type"
+        return -1
+    }
+    Get-ChildItem $source | ForEach-Object {
+        $abspath = $_.FullName
+        $filename = $_.Basename
+        New-Item -ItemType SymbolicLink -Path "$dest/$filename" -Target $abspath
+    }
+}
 function rgl { rg -l $args }
+function ts { tig status $args }
 function which { get-command $args }
+function .. { cd .. }
 
 function serve {
     param (
@@ -47,3 +68,4 @@ $env:PATH = (@($scoopPath) + $cleanedPath) -join ';'
 $env:GIT_SSH = (scoop which ssh) 
 
 import-module ~\scoop\modules\posh-git
+Invoke-Expression (& { (zoxide init powershell | Out-String) -replace "Set-Location", "Push-Location" })
