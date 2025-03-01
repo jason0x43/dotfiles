@@ -337,6 +337,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
             },
           },
+          quickfile = {},
           statuscolumnn = {
             enabled = true,
             left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
