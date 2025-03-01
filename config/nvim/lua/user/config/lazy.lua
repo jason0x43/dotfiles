@@ -216,7 +216,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   desc = 'Config',
                   action = function()
                     Snacks.dashboard.pick('explorer', {
-                      cwd = vim.fn.getenv('HOME') .. '/.config',
+                      cwd = vim.uv.os_homedir() .. '/.config',
                     })
                   end,
                 },

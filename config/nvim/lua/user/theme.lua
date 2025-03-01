@@ -145,7 +145,7 @@ local function hilink(group, other_group)
   vim.api.nvim_set_hl(0, group, { link = other_group })
 end
 
-local home = os.getenv('HOME')
+local home = vim.uv.os_homedir()
 local themefile = home .. '/.local/share/theme'
 
 local function update_background()
