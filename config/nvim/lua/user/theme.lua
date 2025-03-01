@@ -1,5 +1,3 @@
-local os = require('os')
-
 ---@alias Palette {
 ---  bg_0: string,
 ---  bg_1: string,
@@ -149,9 +147,11 @@ local home = vim.uv.os_homedir()
 local themefile = home .. '/.local/share/theme'
 
 local function update_background()
-  local theme = vim.fn.readfile(themefile)[1]
-  if theme then
-    vim.o.background = theme
+  if vim.fn.filereadable(themefile) == 1 then
+    local theme = vim.fn.readfile(themefile)[1]
+    if theme then
+      vim.o.background = theme
+    end
   end
 end
 
