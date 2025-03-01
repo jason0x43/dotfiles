@@ -477,7 +477,7 @@ function M.setup()
     end,
   })
 
-  if vim.g.neovide then
+  if vim.g.neovide or vim.fn.has('win32') then
     update_background()
     apply_theme()
   end
