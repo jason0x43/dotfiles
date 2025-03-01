@@ -239,7 +239,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             },
           },
           image = {
-            enabled = true
+            enabled = true,
           },
           indent = {
             enabled = true,
@@ -307,7 +307,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   },
                 },
                 layout = {
-                  preset = 'ivy',
+                  layout = {
+                    position = 'right',
+                  },
                 },
                 follow = true,
               },

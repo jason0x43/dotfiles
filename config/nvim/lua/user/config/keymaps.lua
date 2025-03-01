@@ -57,8 +57,9 @@ vim.keymap.set('n', '<leader>D', function()
 end, { desc = 'Show diagnostics for the current line' })
 
 vim.keymap.set('n', '<leader>e', function()
+  local root = require('user.util.file').project_root(vim.fn.expand('%'))
   require('snacks').picker.explorer({
-    cwd = vim.fn.expand('%:p:h'),
+    cwd = root or vim.fn.expand('%:p:h'),
   })
 end, { desc = 'Open a file explorer' })
 
