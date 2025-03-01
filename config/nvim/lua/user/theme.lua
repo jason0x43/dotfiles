@@ -430,7 +430,6 @@ local function apply_theme()
   hilink('BlinkCmpGhostText', 'Comment')
 
   -- notify listeners that the colorscheme has been set
-  vim.g.colors_name = 'wezterm'
   vim.api.nvim_exec_autocmds('ColorScheme', {})
 
   -- Check for a theme file. If it exists, it will be updated by a background
@@ -462,13 +461,17 @@ local M = {
 
 ---@return nil
 function M.setup()
+  -- Assume the terminal supports RGB colors, even if it's not detected (e.g.,
+  -- Windows Terminal).
+  vim.o.termguicolors = true
+
   -- initially clear the Normal group to prevent a flash of an incorrect
   -- background
   vim.api.nvim_set_hl(0, 'Normal', {})
 
   -- load the theme if the TUI color handling setup changes
   vim.api.nvim_create_autocmd('OptionSet', {
-    pattern = { 'background', 'termguicolors' },
+    pattern = { 'background' },
     callback = function()
       apply_theme()
     end,
