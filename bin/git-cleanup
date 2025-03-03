@@ -6,7 +6,8 @@ if [[ ! $1 == '-f' ]]; then
   args="$args -n"
 fi
 
-excludes=$(grep -v "^#" .git/info/exclude)
+root=$(git rev-parse --show-toplevel)
+excludes=$(grep -v "^#" $root/.git/info/exclude)
 for e in $excludes; do
   args="$args -e $e"
 done
