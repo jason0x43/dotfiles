@@ -298,7 +298,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 end,
               },
               explorer = {
-                auto_close = true,
                 win = {
                   input = {
                     keys = {
@@ -448,6 +447,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         require('conform').setup({
           formatters_by_ft = {
             blade = { 'prettier' },
+            cs = { 'csharpier' },
             css = { 'prettier' },
             fish = { 'fish_indent' },
             html = { 'prettier' },
