@@ -3,22 +3,27 @@ if (test-path $ca_path) {
     $env:NODE_EXTRA_CA_CERTS = $ca_path
 }
 
+$env:Path = "$HOME\.local\bin;$env:Path"
+
 if (test-path alias:gc) { remove-item -force alias:gc }
 if (test-path alias:gl) { remove-item -force alias:gl }
 if (test-path alias:gp) { remove-item -force alias:gp }
 if (test-path alias:cd) { remove-item -force alias:cd }
+if (test-path alias:gcb) { remove-item -force alias:gcb }
 
 set-alias -name vi -value nvim
 set-alias -name cd -value z
 set-alias -name b -value Pop-Location
 set-alias -name back -value Pop-Location
 set-alias -name grep -value findstr
+set-alias -name open -value start
 
 function ga { git add $args }
 function gb { git branch $args }
 function gba { git branch -a $args }
 function gc { git commit $args }
 function gca { git commit -a $args }
+function gcb { git checkout -b $args }
 function gco { git checkout $args }
 function gd { git diff $args }
 function gf { git fetch $args }
@@ -62,10 +67,10 @@ function serve {
     python3 -m http.server --directory $dir --bind $addr $port
 }
 
-
-if (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll" -PathType Leaf) {
-    Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-    Enter-VsDevShell 53dd91bd -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
+$vstools = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+if (Test-Path $vstools -PathType Leaf) {
+    Import-Module $vstools
+    Enter-VsDevShell  b34e4cc2 -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
 }
 
 Import-Module posh-git
