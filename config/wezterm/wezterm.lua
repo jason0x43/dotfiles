@@ -35,10 +35,117 @@ end)
 -- Return the config
 local config = wezterm.config_builder()
 
+-- Don't change window size when changing font size
 config.adjust_window_size_when_changing_font_size = false
-config.color_scheme = util.get_appearance() == "dark"
-        and "Selenized Black (selenized)"
-    or "Selenized White (selenized)"
+
+config.window_frame = {
+    font = wezterm.font({ family = "Roboto", weight = "Bold" }),
+    font_size = 12.0,
+}
+
+---@param bg string
+---@param fg string
+---@return _.wezterm.TabBarColor
+local function tab_cfg(bg, fg)
+    return {
+        bg_color = bg,
+        fg_color = fg,
+        intensity = "Normal",
+        italic = false,
+        underline = "None",
+        strikethrough = false,
+    }
+end
+
+-- Set color scheme basd on system appearance
+if util.get_appearance() == "dark" then
+    -- Dark theme
+    config.window_frame.active_titlebar_bg = "#333333"
+    config.colors = {
+        ansi = {
+            "#252525",
+            "#ed4a46",
+            "#70b433",
+            "#dbb32d",
+            "#368aeb",
+            "#eb6eb7",
+            "#3fc5b7",
+            "#777777",
+        },
+        background = "#181818",
+        brights = {
+            "#505050",
+            "#ff5e56",
+            "#83c746",
+            "#efc541",
+            "#4f9cfe",
+            "#ff81ca",
+            "#56d8c9",
+            "#dedede",
+        },
+        foreground = "#b9b9b9",
+        selection_bg = "#3b3b3b",
+        selection_fg = "none",
+        indexed = {
+            [16] = "#e67f43",
+            [17] = "#fa9153",
+            [18] = "#a580e2",
+            [19] = "#b891f5",
+        },
+        tab_bar = {
+            background = "#181818",
+            active_tab = tab_cfg("#181818", "#dedede"),
+            inactive_tab = tab_cfg("#2b2b2b", "#777777"),
+            inactive_tab_hover = tab_cfg("#202020", "#777777"),
+            new_tab = tab_cfg("#333333", "#ffffff"),
+            new_tab_hover = tab_cfg("#202020", "#ffffff"),
+        },
+    }
+else
+    -- Light theme
+    config.window_frame.active_titlebar_bg = "#dddddd"
+    config.colors = {
+        ansi = {
+            "#ebebeb",
+            "#d6000c",
+            "#1d9700",
+            "#c49700",
+            "#0064e4",
+            "#dd0f9d",
+            "#00ad9c",
+            "#878787",
+        },
+        background = "#ffffff",
+        brights = {
+            "#cdcdcd",
+            "#bf0000",
+            "#008400",
+            "#af8500",
+            "#0054cf",
+            "#c7008b",
+            "#009a8a",
+            "#282828",
+        },
+        foreground = "#474747",
+        selection_fg = "none",
+        selection_bg = "#cdcdcd",
+        indexed = {
+            [16] = "#d04a00",
+            [17] = "#ba3700",
+            [18] = "#7f51d6",
+            [19] = "#6b40c3",
+        },
+        tab_bar = {
+            background = "#ffffff",
+            inactive_tab_edge = "#dddddd",
+            active_tab = tab_cfg("#ffffff", "#474747"),
+            inactive_tab = tab_cfg("#dddddd", "#474747"),
+            inactive_tab_hover = tab_cfg("#eeeeee", "#474747"),
+            new_tab = tab_cfg("#dddddd", "#474747"),
+            new_tab_hover = tab_cfg("#eeeeee", "#474747"),
+        },
+    }
+end
 
 -- Use a smaller font when stage manager is active
 config.font_size = util.is_stage_manager_active() and 12 or 13
@@ -284,9 +391,10 @@ config.keys = {
 }
 
 config.scrollback_lines = 20000
+
 config.term = "wezterm"
-config.use_fancy_tab_bar = false
-config.window_decorations = "RESIZE"
+
+-- Reduce window padding
 config.window_padding = {
     left = 4,
     right = 4,
