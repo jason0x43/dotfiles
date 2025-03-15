@@ -33,7 +33,7 @@ vim.o.smartcase = true
 vim.o.scrolloff = 5
 
 -- always show the sign column
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = 'number'
 
 -- Open splits below and to the right, and don't scroll
 vim.o.splitbelow = true
@@ -77,11 +77,17 @@ end
 vim.o.foldenable = false
 vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.o.foldcolumn = 'auto'
+vim.o.foldcolumn = '0'
+vim.o.numberwidth = 2
 vim.opt.fillchars:append('foldopen:▼')
 vim.opt.fillchars:append('foldclose:▶')
 vim.api.nvim_create_user_command('Fold', function()
   vim.wo.foldenable = not vim.wo.foldenable
+  if vim.wo.foldenable then
+    vim.wo.foldcolumn = 'auto'
+  else
+    vim.wo.foldcolumn = '0'
+  end
 end, { desc = 'Toggle semantic code folding' })
 
 -- General diagnostic config
