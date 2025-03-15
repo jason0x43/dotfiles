@@ -457,10 +457,8 @@ if [[ -n $GROUP ]]; then
 else
     dotfiles-home
     dotfiles-brew
-    dotfiles-node
     dotfiles-rust
     dotfiles-bat
-    dotfiles-zsh
     dotfiles-fish
     dotfiles-nvim
 
