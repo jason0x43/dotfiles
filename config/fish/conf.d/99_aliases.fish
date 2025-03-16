@@ -16,6 +16,7 @@ alias reload="exec $SHELL"
 
 # moving around
 alias b="prevd"
+alias back="prevd"
 alias f="nextd"
 
 # docker
