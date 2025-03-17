@@ -143,3 +143,10 @@ vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', {
 vim.keymap.set('n', '<leader>W', '<cmd>w!<cr>', {
   desc = 'Save all open files',
 })
+
+if vim.fn.has('win32') then
+  vim.keymap.set({'n', 'i'}, '<c-h>', '<cmd>wincmd h<cr>')
+  vim.keymap.set({'n', 'i'}, '<c-j>', '<cmd>wincmd j<cr>')
+  vim.keymap.set({'n', 'i'}, '<c-k>', '<cmd>wincmd k<cr>')
+  vim.keymap.set({'n', 'i'}, '<c-l>', '<cmd>wincmd l<cr>')
+end
