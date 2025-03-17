@@ -441,7 +441,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       'stevearc/conform.nvim',
       config = function()
         vim.api.nvim_create_user_command('Format', function()
-          require('conform').format({ lsp_fallback = true })
+          require('conform').format({ lsp_fallback = true, async = true })
         end, { desc = 'Format the current file' })
 
         require('conform').setup({

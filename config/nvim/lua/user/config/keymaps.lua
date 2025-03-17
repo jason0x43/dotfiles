@@ -68,7 +68,7 @@ vim.keymap.set('n', '<leader>f', function()
 end, { desc = 'Find files' })
 
 vim.keymap.set('n', '<leader>F', function()
-  require('conform').format({ lsp_fallback = true })
+  require('conform').format({ lsp_fallback = true, async = true })
 end, { desc = 'Format the current file' })
 
 vim.keymap.set('n', '<leader>g', function()
