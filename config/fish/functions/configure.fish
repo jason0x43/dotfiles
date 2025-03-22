@@ -24,6 +24,10 @@ function configure
     set -U fish_greeting ""
     set -U tide_git_icon 
 
+    set -U tide_dotnet_icon 
+    set -U tide_dotnet_color blue
+    set -U tide_dotnet_bg_color normal
+
     if ! contains mise $tide_right_prompt_items
         array_insert mise -2 tide_right_prompt_items
     end
