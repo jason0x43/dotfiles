@@ -147,6 +147,9 @@ require('lazy').setup(
 
         -- Jumping around
         require('mini.jump2d').setup()
+
+        -- Move text
+        require('mini.move').setup()
       end,
     },
 
