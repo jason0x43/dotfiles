@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
 from subprocess import check_output
-from typing import Dict, List
 
 output = check_output(['brew', 'deps', '--installed']).decode()
 lines = output.splitlines()
 
-packages = {}
-dependents: Dict[str, List[str]] = {}
+packages: dict[str, list[str]] = {}
+dependents: dict[str, list[str]] = {}
 
 for line in lines:
     (pkg, dep_str) = line.split(': ')
