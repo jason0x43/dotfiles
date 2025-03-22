@@ -301,6 +301,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 end,
               },
               explorer = {
+                auto_close = true,
                 win = {
                   input = {
                     keys = {
