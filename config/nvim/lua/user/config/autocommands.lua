@@ -154,7 +154,14 @@ end
 
 -- Close certain information panes with 'q'
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'qf', 'help', 'fugitiveblame', 'lspinfo', 'startuptime' },
+  pattern = {
+    'qf',
+    'help',
+    'fugitiveblame',
+    'lspinfo',
+    'startuptime',
+    'messages',
+  },
   group = group,
   callback = close_with_q,
   desc = 'Close system panes with q and esc',

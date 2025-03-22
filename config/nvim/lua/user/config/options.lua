@@ -1,6 +1,9 @@
 -- Leader for mappings
 vim.g.mapleader = ';'
 
+-- Prevent 'press enter' message
+vim.o.messagesopt = 'wait:500,history:500'
+
 -- Default tabstop and shiftwidth
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4

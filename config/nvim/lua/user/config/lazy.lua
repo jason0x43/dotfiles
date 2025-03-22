@@ -598,6 +598,22 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
+    -- Messages -------------------------------------------------------
+    {
+      'AckslD/messages.nvim',
+      config = function()
+        require('messages').setup({
+          prepare_buffer = function(opts)
+            local buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_set_option_value('filetype', 'messages', { buf = buf })
+            local win = vim.api.nvim_open_win(buf, true, opts)
+            vim.api.nvim_set_option_value('wrap', true, { win = win })
+            return win
+          end,
+        })
+      end,
+    },
+
     -- Completions ----------------------------------------------------
     {
       'saghen/blink.cmp',
