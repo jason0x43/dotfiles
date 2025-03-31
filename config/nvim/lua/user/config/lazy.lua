@@ -270,11 +270,23 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           picker = {
             ui_select = true,
             layout = {
-              preset = 'ivy',
+              preset = 'vscode',
               ---@diagnostic disable-next-line: assign-type-mismatch
               preview = false,
               layout = {
-                height = 15,
+                height = 0.4,
+                width = 0.4,
+                min_width = 80,
+                box = 'vertical',
+                {
+                  win = 'input',
+                  height = 1,
+                  border = 'rounded',
+                  title = '{title} {live} {flags}',
+                  title_pos = 'center',
+                },
+                { win = 'list', border = 'rounded' },
+                { win = 'preview', title = '{preview}', border = 'rounded' },
               },
             },
             win = {
