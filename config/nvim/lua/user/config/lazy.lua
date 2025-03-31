@@ -514,6 +514,60 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
+    -- LLM coding support ---------------------------------------------
+    {
+      'olimorris/codecompanion.nvim',
+      config = function()
+        require('codecompanion').setup({
+          adapters = {
+            copilot = function()
+              return require('codecompanion.adapters').extend('copilot', {
+                -- Use a model that supports streaming output
+                schema = { model = { default = 'gpt-4o-2024-11-20' } },
+              })
+            end,
+          },
+          display = {
+            chat = {
+              window = {
+                layout = 'horizontal',
+                height = 0.4,
+                opts = {
+                  number = false,
+                },
+              },
+            },
+          },
+          strategies = {
+            chat = {
+              adapter = 'copilot',
+              keymaps = {
+                close = {
+                  modes = { n = 'q', i = '<C-c>' },
+                },
+                stop = {
+                  modes = { n = '<C-c>' },
+                },
+              },
+            },
+            inline = {
+              adapter = 'copilot',
+            },
+            cmd = {
+              adapter = 'copilot',
+            },
+          },
+        })
+
+        require('user.util.spinner').init_code_companion()
+      end,
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+        'nvim-treesitter/nvim-treesitter',
+        'j-hui/fidget.nvim',
+      },
+    },
+
     -- Highlight color strings ----------------------------------------
     {
       'norcalli/nvim-colorizer.lua',

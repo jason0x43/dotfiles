@@ -132,10 +132,6 @@ vim.keymap.set('n', '<leader>u', function()
   require('snacks').picker.undo()
 end, { desc = 'Open undo history' })
 
-vim.keymap.set('n', '<leader>z', function()
-  require('snacks').picker.zoxide()
-end, { desc = 'Open the zoxide picker' })
-
 -- Save the current file
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', {
   desc = 'Save the current file',
@@ -144,9 +140,21 @@ vim.keymap.set('n', '<leader>W', '<cmd>w!<cr>', {
   desc = 'Save all open files',
 })
 
+-- Window movement keys for Windows
 if vim.fn.has('win32') then
   vim.keymap.set({'n', 'i'}, '<c-h>', '<cmd>wincmd h<cr>')
   vim.keymap.set({'n', 'i'}, '<c-j>', '<cmd>wincmd j<cr>')
   vim.keymap.set({'n', 'i'}, '<c-k>', '<cmd>wincmd k<cr>')
   vim.keymap.set({'n', 'i'}, '<c-l>', '<cmd>wincmd l<cr>')
 end
+
+-- AI integration
+vim.keymap.set('n', '<leader>zz', '<cmd>CodeCompanionActions<cr>', {
+  desc = 'Open the CodeCompanion actions menu',
+})
+vim.keymap.set('n', '<leader>zc', '<cmd>CodeCompanionChat Toggle<cr>', {
+  desc = 'Chat with CodeCompanion',
+})
+vim.keymap.set('v', 'ga', '<cmd>CodeCompanionChat Add<cr>', {
+  desc = 'Add the selection to a CodeCompanion chat',
+})
