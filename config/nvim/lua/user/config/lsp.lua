@@ -2,14 +2,13 @@
 vim.lsp.set_log_level('error')
 vim.lsp.log.set_format_func(vim.inspect)
 
-if not vim.fn.has('nvim-0.11') then
-  -- Rounded border for hover popups
-  vim.lsp.handlers['textDocument/hover'] =
-    vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
-
-  -- Rounded border for signature popups
-  vim.lsp.handlers['textDocument/signatureHelp'] =
-    vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+-- Give signature and hover floats a rounded border
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line: duplicate-set-field
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or 'rounded'
+  return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
 -- When an lsp returns multiple "goto definition" results, only keep the
