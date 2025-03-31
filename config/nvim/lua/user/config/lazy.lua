@@ -807,6 +807,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
     -- Key mapping hints ----------------------------------------------
     {
       'folke/which-key.nvim',
+      enabled = false,
       event = 'VeryLazy',
       opts = {},
       keys = {
