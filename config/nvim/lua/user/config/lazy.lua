@@ -659,6 +659,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
     -- Messages -------------------------------------------------------
     {
       'AckslD/messages.nvim',
+      enabled = false,
       config = function()
         require('messages').setup({
           prepare_buffer = function(opts)
@@ -669,6 +670,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             return win
           end,
         })
+      end,
+      init = function()
+        -- Prevent 'press enter' message
+        vim.o.messagesopt = 'wait:500,history:500'
       end,
     },
 
