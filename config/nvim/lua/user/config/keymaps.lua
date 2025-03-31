@@ -51,8 +51,19 @@ vim.keymap.set('n', '<leader>d', function()
 end, { desc = 'Show all diagnostics' })
 
 vim.keymap.set('n', '<leader>D', function()
-  vim.diagnostic.open_float({
-    border = 'rounded',
+  -- vim.diagnostic.open_float({
+  --   border = 'rounded',
+  -- })
+
+  vim.diagnostic.config({
+    virtual_lines = { current_line = true },
+  })
+  vim.api.nvim_create_autocmd('CursorMoved', {
+    callback = function()
+      vim.diagnostic.config({ virtual_lines = false })
+      return true
+    end,
+    once = true
   })
 end, { desc = 'Show diagnostics for the current line' })
 
@@ -142,10 +153,10 @@ vim.keymap.set('n', '<leader>W', '<cmd>w!<cr>', {
 
 -- Window movement keys for Windows
 if vim.fn.has('win32') then
-  vim.keymap.set({'n', 'i'}, '<c-h>', '<cmd>wincmd h<cr>')
-  vim.keymap.set({'n', 'i'}, '<c-j>', '<cmd>wincmd j<cr>')
-  vim.keymap.set({'n', 'i'}, '<c-k>', '<cmd>wincmd k<cr>')
-  vim.keymap.set({'n', 'i'}, '<c-l>', '<cmd>wincmd l<cr>')
+  vim.keymap.set({ 'n', 'i' }, '<c-h>', '<cmd>wincmd h<cr>')
+  vim.keymap.set({ 'n', 'i' }, '<c-j>', '<cmd>wincmd j<cr>')
+  vim.keymap.set({ 'n', 'i' }, '<c-k>', '<cmd>wincmd k<cr>')
+  vim.keymap.set({ 'n', 'i' }, '<c-l>', '<cmd>wincmd l<cr>')
 end
 
 -- AI integration
