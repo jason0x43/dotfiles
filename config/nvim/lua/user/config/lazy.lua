@@ -803,6 +803,22 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         })
       end,
     },
+
+    -- Key mapping hints ----------------------------------------------
+    {
+      'folke/which-key.nvim',
+      event = 'VeryLazy',
+      opts = {},
+      keys = {
+        {
+          '<leader>?',
+          function()
+            require('which-key').show({ global = false })
+          end,
+          desc = 'Buffer Local Keymaps (which-key)',
+        },
+      },
+    },
   },
   vim.tbl_extend('force', defaults, {
     checker = {
