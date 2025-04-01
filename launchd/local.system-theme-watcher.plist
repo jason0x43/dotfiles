@@ -10,7 +10,7 @@
 
     <key>ProgramArguments</key>
     <array>
-      <string>/bin/sh</string>
+      <string>/bin/zsh</string>
       <string>-c</string>
       <string>exec system-theme-watcher</string>
     </array>
