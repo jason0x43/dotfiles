@@ -38,3 +38,6 @@ indent_style = space
 
 [*.svelte]
 max_line_length = 80
+
+[*.sql]
+indent_size = 4
