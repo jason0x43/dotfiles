@@ -150,6 +150,10 @@ require('lazy').setup(
 
         -- Move text
         require('mini.move').setup()
+
+        vim.keymap.set('n', '<leader>m', function()
+          require('mini.map').toggle()
+        end, { desc = 'Toggle the file map' })
       end,
     },
 
@@ -275,6 +279,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               preview = false,
               layout = {
                 height = 0.4,
+                min_height = 7,
                 width = 0.4,
                 min_width = 80,
                 box = 'vertical',
@@ -388,6 +393,76 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             explorer_confirm(picker, item, action)
           end
         end
+
+        vim.keymap.set({ 'n', 'v' }, '`', function()
+          require('snacks').debug.run()
+        end, {
+          desc = 'Execute the buffer or selected lines as Lua code',
+        })
+
+        vim.keymap.set('n', '<leader>b', function()
+          require('snacks').picker.buffers()
+        end, { desc = 'List open buffers' })
+
+        vim.keymap.set('n', '<leader>c', function()
+          local ok = pcall(vim.api.nvim_win_close, 0, false)
+          if not ok then
+            -- If the window couldn't be closed, delete the buffer
+            require('snacks').bufdelete.delete()
+          end
+        end, { desc = 'Close the current pane' })
+
+        vim.keymap.set('n', '<leader>d', function()
+          require('snacks').picker.diagnostics()
+        end, { desc = 'Show all diagnostics' })
+
+        vim.keymap.set('n', '<leader>e', function()
+          local root =
+            require('user.util.file').project_root(vim.fn.expand('%'))
+          require('snacks').picker.explorer({
+            cwd = root or vim.fn.expand('%:p:h'),
+          })
+        end, { desc = 'Open a file explorer' })
+
+        vim.keymap.set('n', '<leader>f', function()
+          require('snacks').picker.smart()
+        end, { desc = 'Find files' })
+
+        vim.keymap.set('n', '<leader>g', function()
+          require('snacks').picker.grep()
+        end, { desc = 'Search for strings in files' })
+
+        vim.keymap.set('n', '<leader>h', function()
+          require('snacks').picker.help()
+        end, { desc = 'Find help pages' })
+
+        vim.keymap.set('n', '<leader>k', function()
+          require('snacks').bufdelete.delete()
+        end, { desc = 'Close the current buffer' })
+
+        vim.keymap.set('n', '<leader>K', function()
+          require('snacks').bufdelete.delete({ force = true })
+        end, { desc = 'Close the current buffer with prejudice' })
+
+        vim.keymap.set('n', '<leader>ls', function()
+          require('snacks').picker.lsp_symbols()
+        end, { desc = 'List symbols in the current file' })
+
+        vim.keymap.set('n', '<leader>lr', function()
+          require('snacks').picker.lsp_references()
+        end, { desc = 'List references to the symbol under the cursor' })
+
+        vim.keymap.set('n', '<leader>lw', function()
+          require('snacks').picker.lsp_workspace_symbols()
+        end, { desc = 'List all symbols in the workspace' })
+
+        vim.keymap.set('n', '<leader>t', function()
+          require('snacks').terminal.open()
+        end, { desc = 'Open a terminal' })
+
+        vim.keymap.set('n', '<leader>u', function()
+          require('snacks').picker.undo()
+        end, { desc = 'Open undo history' })
       end,
     },
 
@@ -499,6 +574,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             },
           },
         })
+
+        vim.keymap.set('n', '<leader>F', function()
+          require('conform').format({ lsp_fallback = true, async = true })
+        end, { desc = 'Format the current file' })
       end,
     },
 
@@ -554,9 +633,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             chat = {
               adapter = 'copilot',
               keymaps = {
-                close = {
-                  modes = { n = 'q', i = '<C-c>' },
-                },
                 stop = {
                   modes = { n = '<C-c>' },
                 },
@@ -572,6 +648,33 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         })
 
         require('user.util.spinner').init_code_companion()
+
+        vim.keymap.set('n', '<leader>zz', '<cmd>CodeCompanionActions<cr>', {
+          desc = 'Open the CodeCompanion actions menu',
+        })
+
+        vim.keymap.set('n', '<leader>zc', '<cmd>CodeCompanionChat Toggle<cr>', {
+          desc = 'Chat with CodeCompanion',
+        })
+
+        vim.keymap.set('n', '<leader>zf', '<cmd>CodeCompanion /fix<cr>', {
+          desc = 'Fix the selected code with CodeCompanion',
+        })
+
+        vim.keymap.set('v', 'ga', '<cmd>CodeCompanionChat Add<cr>', {
+          desc = 'Add the selection to a CodeCompanion chat',
+        })
+
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = 'codecompanion',
+          callback = function()
+            vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
+              desc = 'Close the chat window',
+              buffer = 0,
+            })
+          end,
+          desc = 'Toggle CodeCompanion chat windows with q.',
+        })
       end,
       dependencies = {
         'nvim-lua/plenary.nvim',
