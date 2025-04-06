@@ -46,6 +46,15 @@ vim.keymap.set('n', '<leader>iu', function()
   vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { uuid })
 end, { desc = 'Insert a UUID at the cursor position' })
 
+-- Insert a capitalized UUID
+vim.keymap.set('n', '<leader>iU', function()
+  local uuid = vim.fn.system('uuidgen')
+  uuid = require('user.util.string').trim(uuid)
+  uuid = vim.fn.toupper(uuid)
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { uuid })
+end, { desc = 'Insert an all-caps UUID at the cursor position' })
+
 -- Quit vim
 vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>', { desc = 'Exit vim' })
 vim.keymap.set(
