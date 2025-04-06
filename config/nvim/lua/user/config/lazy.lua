@@ -163,6 +163,40 @@ require('lazy').setup(
       priority = 1000,
       lazy = false,
       config = function()
+        ---@type snacks.picker.layout.Config
+        local vscode_center = {
+          preset = 'vscode',
+          ---@diagnostic disable-next-line: assign-type-mismatch
+          preview = false,
+          layout = {
+            height = 0.6,
+            min_height = 7,
+            width = 0.4,
+            min_width = 80,
+            box = 'vertical',
+            {
+              win = 'input',
+              height = 1,
+              border = 'rounded',
+              title = '{title} {live} {flags}',
+              title_pos = 'center',
+            },
+            { win = 'list', border = 'rounded' },
+            { win = 'preview', title = '{preview}', border = 'rounded' },
+          },
+        }
+
+        ---@type snacks.picker.layout.Config
+        local short_ivy = {
+          preset = 'ivy',
+          ---@diagnostic disable-next-line: assign-type-mismatch
+          preview = false,
+          layout = {
+            height = 0.25,
+            min_height = 7,
+          }
+        }
+
         require('snacks').setup({
           bigfile = {
             enabled = true,
@@ -273,27 +307,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
           picker = {
             ui_select = true,
-            layout = {
-              preset = 'vscode',
-              ---@diagnostic disable-next-line: assign-type-mismatch
-              preview = false,
-              layout = {
-                height = 0.4,
-                min_height = 7,
-                width = 0.4,
-                min_width = 80,
-                box = 'vertical',
-                {
-                  win = 'input',
-                  height = 1,
-                  border = 'rounded',
-                  title = '{title} {live} {flags}',
-                  title_pos = 'center',
-                },
-                { win = 'list', border = 'rounded' },
-                { win = 'preview', title = '{preview}', border = 'rounded' },
-              },
-            },
             win = {
               input = {
                 keys = {
@@ -317,6 +330,12 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                   return formatted
                 end,
               },
+              buffers = {
+                layout = vscode_center,
+              },
+              diagnostics = {
+                layout = short_ivy,
+              },
               explorer = {
                 auto_close = true,
                 win = {
@@ -335,6 +354,27 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               },
               files = {
                 follow = true,
+                layout = vscode_center,
+              },
+              grep = {
+                layout = vscode_center,
+              },
+              help = {
+                layout = vscode_center,
+              },
+              smart = {
+                layout = vscode_center,
+              },
+              lsp_references = {
+                layout = short_ivy,
+              },
+              lsp_symbols = {
+                layout = {
+                  preset = 'sidebar',
+                  layout = {
+                    position = 'right',
+                  },
+                },
               },
               recent = {
                 filter = {
@@ -342,12 +382,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                     return item.file:find('COMMIT_EDITMSG') == nil
                   end,
                 },
-              },
-              lsp_symbols = {
-                layout = {
-                  ---@diagnostic disable-next-line: assign-type-mismatch
-                  preview = true,
-                },
+                layout = vscode_center,
               },
               undo = {
                 layout = {
@@ -672,6 +707,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               desc = 'Close the chat window',
               buffer = 0,
             })
+            vim.o.conceallevel = 2
           end,
           desc = 'Toggle CodeCompanion chat windows with q.',
         })
