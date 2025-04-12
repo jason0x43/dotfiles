@@ -194,7 +194,7 @@ require('lazy').setup(
           layout = {
             height = 0.25,
             min_height = 7,
-          }
+          },
         }
 
         require('snacks').setup({
@@ -656,10 +656,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           display = {
             chat = {
               window = {
-                layout = 'horizontal',
-                height = 0.4,
                 opts = {
                   number = false,
+                  concealcursor = 'n',
+                  conceallevel = 2,
                 },
               },
             },
@@ -707,9 +707,8 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               desc = 'Close the chat window',
               buffer = 0,
             })
-            vim.o.conceallevel = 2
           end,
-          desc = 'Toggle CodeCompanion chat windows with q.',
+          desc = 'Enhance CodeCompanion windows.',
         })
       end,
       dependencies = {
@@ -717,6 +716,27 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
         'nvim-treesitter/nvim-treesitter',
         'j-hui/fidget.nvim',
       },
+    },
+
+    -- Better markdown ------------------------------------------------
+    {
+      'MeanderingProgrammer/render-markdown.nvim',
+      ft = { 'markdown', 'codecompanion' },
+      config = function()
+        require('render-markdown').setup({
+          anti_conceal = { enabled = false },
+          win_options = {
+            conceallevel = {
+              default = vim.o.conceallevel,
+              rendered = 3,
+            },
+            concealcursor = {
+              default = vim.o.concealcursor,
+              rendered = 'n',
+            },
+          },
+        })
+      end,
     },
 
     -- Highlight color strings ----------------------------------------

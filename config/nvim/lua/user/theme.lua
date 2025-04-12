@@ -426,6 +426,7 @@ local function apply_theme()
 
   hi('SnacksIndent', { fg = c.dim_0 })
   hi('SnacksPickerTree', { fg = c.dim_0 })
+  hi('SnacksPickerTitle', { fg = c.br_blue, bg = c.bg_0 })
 
   hilink('BlinkCmpGhostText', 'Comment')
 
