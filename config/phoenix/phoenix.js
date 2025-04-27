@@ -227,7 +227,7 @@ async function autoLayout() {
 	if (await isStageManagerEnabled()) {
 		// Stage Manager
 		for (const win of terminalWins) {
-			fill("center", { window: win, width: 750 });
+			fill("center", { window: win, width: 800 });
 		}
 
 		const hassWins = getWindowsInSpace("Home Assistant", space);
