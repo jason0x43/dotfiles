@@ -3,6 +3,9 @@ functions/tide
 functions/fisher.fish
 functions/fish_prompt.fish
 functions/fish_mode_prompt.fish
+functions/_fish_ai*.fish
+functions/fish_ai*.fish
+conf.d/fish_ai.fish
 **/tide.fish
 **/_tide_*.fish
 !functions/_tide_item_mise.fish
