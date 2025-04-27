@@ -501,13 +501,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- Misc filetype support ------------------------------------------
-    {
-      'mustache/vim-mustache-handlebars',
-      'jwalton512/vim-blade',
-      'cfdrake/vim-pbxproj',
-    },
-
     -- Treesitter -----------------------------------------------------
     {
       'nvim-treesitter/nvim-treesitter',
@@ -533,6 +526,48 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
         })
       end,
+    },
+
+    -- General UI improvements ----------------------------------------
+    {
+      'folke/noice.nvim',
+      event = 'VeryLazy',
+      dependencies = {
+        'MunifTanjim/nui.nvim',
+      },
+      config = function()
+        ---@diagnostic disable-next-line: missing-fields
+        require('noice').setup({
+          lsp = {
+            -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+            override = {
+              ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+              ['vim.lsp.util.stylize_markdown'] = true,
+              ['cmp.entry.get_documentation'] = true, -- requires hrsh7th/nvim-cmp
+            },
+            signature = {
+              auto_open = { enabled = false },
+            },
+          },
+          messages = {
+            view_search = false,
+          },
+          presets = {
+            bottom_search = true, -- use a classic bottom cmdline for search
+            command_palette = false, -- position the cmdline and popupmenu together
+            long_message_to_split = true, -- long messages will be sent to a split
+            inc_rename = false, -- enables an input dialog for inc-rename.nvim
+            lsp_doc_border = true, -- add a border to hover docs and signature help
+          },
+        })
+      end,
+    },
+
+    -- Misc filetype support ------------------------------------------
+    {
+      'mustache/vim-mustache-handlebars',
+      'jwalton512/vim-blade',
+      'cfdrake/vim-pbxproj',
     },
 
     -- Auto-configure lua-ls ------------------------------------------
@@ -721,7 +756,7 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
     -- Better markdown ------------------------------------------------
     {
       'MeanderingProgrammer/render-markdown.nvim',
-      ft = { 'markdown', 'codecompanion' },
+      ft = { 'codecompanion' },
       config = function()
         require('render-markdown').setup({
           anti_conceal = { enabled = false },
@@ -735,14 +770,28 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               rendered = 'n',
             },
           },
+          completions = {
+            blink = { enabled = true },
+          },
         })
       end,
+    },
+    {
+      'OXY2DEV/markview.nvim',
+      enabled = false,
+      lazy = false,
+      opts = {
+        preview = {
+          filetypes = { 'markdown', 'codecompanion' },
+          ignore_buftypes = {},
+        },
+      },
     },
 
     -- Highlight color strings ----------------------------------------
     {
       'norcalli/nvim-colorizer.lua',
-      cond = vim.go.termguicolors,
+      event = 'VeryLazy',
       config = function()
         require('colorizer').setup({ '!bigfile', '*' }, {
           names = false,

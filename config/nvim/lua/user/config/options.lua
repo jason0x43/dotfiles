@@ -109,9 +109,6 @@ vim.diagnostic.config({
   -- virtual_text = { current_line = true },
 })
 
--- Highlight textwidth
-vim.opt.colorcolumn = { '+1' }
-
 -- Don't animate neovide cursor
 if vim.g.neovide then
   vim.g.neovide_cursor_animation_length = 0
