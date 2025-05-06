@@ -74,11 +74,11 @@ function serve {
     python3 -m http.server --directory $dir --bind $addr $port
 }
 
-#$vstools = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-#if (Test-Path $vstools -PathType Leaf) {
-#    Import-Module $vstools
-#    Enter-VsDevShell  b34e4cc2 -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
-#}
+$vstools = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+if (Test-Path $vstools -PathType Leaf) {
+    Import-Module $vstools
+    Enter-VsDevShell  b34e4cc2 -SkipAutomaticLocation -DevCmdArguments "-arch=x64 -host_arch=x64"
+}
 
 Import-Module posh-git
 Invoke-Expression (& { (zoxide init powershell | Out-String) -replace "Set-Location", "Push-Location" })
