@@ -642,6 +642,10 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
             latexindent = {
               prepend_args = { '-m' },
             },
+            csharpier = {
+              command = "csharpier",
+              args = { "format", "--write-stdout" }
+            }
           },
         })
 
