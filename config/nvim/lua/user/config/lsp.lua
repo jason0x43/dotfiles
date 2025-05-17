@@ -96,18 +96,6 @@ local function setup(server_name)
     return false
   end
 
-  -- Setup an autocommand to start the server when a matching filetype is opened
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = server.filetypes,
-    callback = function(event)
-      if not should_start(user_config, event.file) then
-        return
-      end
-      server.launch()
-    end,
-    desc = 'Start a language server',
-  })
-
   return true
 end
 

@@ -1,13 +1,17 @@
 local C = require('user.util.lsp').make_user_config()
 
+C.config.enabled = false
+
 C.config.root_dir = function(file)
   return vim.fs.root(file, { 'deno.json', 'deno.jsonc' })
 end
+
 C.config.init_options = {
   formatter = true,
   lint = true,
   unstable = true,
 }
+
 C.config.single_file_support = true
 
 C.should_start = function(file)

@@ -1,4 +1,5 @@
 local C = require('user.util.lsp').make_user_config()
+local organize_imports = require('user.util.lsp').organize_imports
 
 C.config.handlers = {
   ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
@@ -26,6 +27,10 @@ C.config.handlers = {
 C.config.on_attach = function(client, bufnr)
   -- disable formatting in favor of conform
   client.server_capabilities.documentFormattingProvider = false
+
+  vim.api.nvim_buf_create_user_command(bufnr, 'OrganizeImports', function()
+    organize_imports(bufnr)
+  end, { desc = 'Organize imports' })
 
   -- use angular LS for renames
   local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'angularls' })

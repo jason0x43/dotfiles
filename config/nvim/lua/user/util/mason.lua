@@ -50,34 +50,34 @@ M.upgrade = function()
         updating = updating + 1
         to_check = to_check - 1
 
-        pkg:check_new_version(function(new_available, version)
-          if new_available then
-            pkg:on('install:success', function()
-              io.write(
-                ('Updated %s to %s\n'):format(pkg.name, version.latest_version)
-              )
-              updating = updating - 1
-              check_done()
-            end)
-
-            pkg:on('install:failure', function()
-              io.write(('Error updating %s\n'):format(pkg.name))
-              updating = updating - 1
-              check_done()
-            end)
-
-            io.write(
-              ('Updating %s to %s...\n'):format(
-                pkg.name,
-                version.latest_version
-              )
-            )
-            pkg:install({ version = version.latest_version, force = true })
-          else
-            updating = updating - 1
-            check_done()
-          end
-        end)
+        -- pkg:check_new_version(function(new_available, version)
+        --   if new_available then
+        --     pkg:on('install:success', function()
+        --       io.write(
+        --         ('Updated %s to %s\n'):format(pkg.name, version.latest_version)
+        --       )
+        --       updating = updating - 1
+        --       check_done()
+        --     end)
+        --
+        --     pkg:on('install:failure', function()
+        --       io.write(('Error updating %s\n'):format(pkg.name))
+        --       updating = updating - 1
+        --       check_done()
+        --     end)
+        --
+        --     io.write(
+        --       ('Updating %s to %s...\n'):format(
+        --         pkg.name,
+        --         version.latest_version
+        --       )
+        --     )
+        --     pkg:install({ version = version.latest_version, force = true })
+        --   else
+        --     updating = updating - 1
+        --     check_done()
+        --   end
+        -- end)
       end
     end
   end)
