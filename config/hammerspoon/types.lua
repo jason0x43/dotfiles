@@ -1,0 +1,1 @@
+---@alias Layout table<number, { app: string, display: string, frame: table<string, number> }>

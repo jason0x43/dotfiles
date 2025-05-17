@@ -1,7 +1,7 @@
 ---@meta
 
----@class hs.logger
-local logger = {
+---@class logger
+local Logger = {
   ---Log an info message
   ---@param ... string message strings
   ---@return nil
@@ -47,10 +47,11 @@ local logger = {
   wf = function(fmt, ...) end,
 }
 
----@class logger
-return {
-  ---@param id string identifier
-  ---@param loglevel? 'nothing'|'error'|'warning'|'info'|'debug'|'verbose'|0|1|2|3|4|5
-  ---@return hs.logger
-  new = function(id, loglevel) end
-}
+logger = {}
+
+---@param id string identifier
+---@param loglevel? 'nothing'|'error'|'warning'|'info'|'debug'|'verbose'|0|1|2|3|4|5
+---@return logger
+logger.new = function(id, loglevel) end
+
+return logger

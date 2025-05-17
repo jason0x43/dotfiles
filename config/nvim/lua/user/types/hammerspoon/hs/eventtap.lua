@@ -1,59 +1,60 @@
 ---@meta
 
----@class eventtap.event.types
+---@class hs.eventtap.event.types
 ---@field nullEvent integer
 ---@field keyDown integer
 ---@field keyUp integer
-local eventtapEventTypes = {}
+---@field leftMouseDown integer
+---@field leftMouseUp integer
+local EventTapEventTypes = {}
 
 ---@class hs.eventtap.event
-local event = {
-  ---@return table<string, boolean>
-  getFlags = function() end,
-
-  ---@return number
-  getKeyCode = function() end,
-
-  ---@param table table<string, boolean>
+---@field getFlags fun(): table<string, boolean>
+---@field getKeyCode fun(): number
+---@field setFlags fun(self, table: table<string, boolean>): hs.eventtap.event
+---@field setKeyCode fun(self, keycode: number): hs.eventtap.event
+local Event = {
+  ---@param self hs.eventtap.event
+  ---@param app? hs.application
   ---@return hs.eventtap.event
-  setFlags = function(self, table) end,
-
-  ---@param keycode number
-  ---@return hs.eventtap.event
-  setKeyCode = function(self, keycode) end,
+  post = function(self, app) end
 }
 
----@class eventtap.event
-local eventtapEvent = {
-  types = eventtapEventTypes,
+---@class event
+---@field types hs.eventtap.event.types
+local EventTapEvent = {
+  ---@param eventType integer
+  ---@param point hs.geometry.point
+  ---@param modifiers? ('cmd'|'alt'|'shift'|'ctrl'|'fn')[]
+  ---@return hs.eventtap.event
+  newMouseEvent = function(eventType, point, modifiers) end
 }
 
 ---@class hs.eventtap
-local eventtap = {
-  ---@return boolean
-  isEnabled = function() end,
+---@field isEnabled fun(): boolean
+---@field start fun(): hs.eventtap
+---@field stop fun(): hs.eventtap
+local EventTap = {}
 
-  ---@return hs.eventtap
-  start = function() end,
+eventtap = {}
 
-  ---@return hs.eventtap
-  stop = function() end,
-}
+---@param types integer[]
+---@param fn fun(event: event): boolean|nil, table|nil
+---@return hs.eventtap
+eventtap.new = function(types, fn) end
 
----@class eventtap
-return {
-  ---@param types integer[]
-  ---@param fn fun(event: hs.eventtap.event): boolean|nil, table|nil
-  ---@return hs.eventtap
-  new = function(types, fn) end,
+eventtap.event = EventTapEvent
 
-  event = eventtapEvent,
+---@param modifiers table keyboard modifiers
+---@param character string a character to be emitted
+---@param delay? integer delay in microseconds
+---@param application? hs.application app to send the keystroke to
+---@return nil
+eventtap.keyStroke = function(modifiers, character, delay, application) end
 
-  ---@param modifiers table keyboard modifiers
-  ---@param character string a character to be emitted
-  ---@param delay? integer delay in microseconds
-  ---@param application? hs.application app to send the keystroke to
-  ---@return nil
-  keyStroke = function(modifiers, character, delay, application) end,
-}
+---@param point hs.geometry absolution position to click
+---@param delay? integer delay in microseconds
+---@return nil
+eventtap.leftClick = function(point, delay) end
 
+return eventtap

@@ -1,7 +1,7 @@
 ---@meta
 
 ---@class hs.screen
-local screen = {
+local Screen = {
   ---Return the screen frame, without the dock and menu
   ---@return hs.geometry.rect
   frame = function() end,
@@ -15,13 +15,14 @@ local screen = {
   name = function() end,
 }
 
----@class screen
-return {
-  ---Return all the screens
-  ---@return hs.screen[]
-  allScreens = function() end,
+screen = {}
 
-  ---Return the screen with the currently focused window
-  ---@return hs.screen
-  mainScreen = function() end,
-}
+---Return all the screens
+---@return hs.screen[]
+screen.allScreens = function() end
+
+---Return the screen with the currently focused window
+---@return hs.screen
+screen.mainScreen = function() end
+
+return screen

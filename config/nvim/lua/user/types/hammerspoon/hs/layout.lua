@@ -22,9 +22,11 @@ local LayoutEntry = {}
 ---@field right50 hs.geometry
 ---@field right70 hs.geometry
 ---@field right75 hs.geometry
-return {
-  ---Apply a layout to applications/windows
-  ---@param table LayoutEntry[]
-  ---@param windowTitleComparator? fun(windowTitle: string, layoutWindowTitle: string, options?: {absolute_x: boolean, absolute_y: boolean}): boolean
-  apply = function(table, windowTitleComparator) end
-}
+layout = {}
+
+---Apply a layout to applications/windows
+---@param table LayoutEntry[]
+---@param windowTitleComparator? fun(windowTitle: string, layoutWindowTitle: string, options?: {absolute_x: boolean, absolute_y: boolean}): boolean
+layout.apply = function(table, windowTitleComparator) end
+
+return layout

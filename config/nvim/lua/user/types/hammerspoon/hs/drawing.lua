@@ -1,4 +1,5 @@
 ---@meta
+drawing = {}
 
 ---@class hs.drawing.color.rgb
 ---@field red number
@@ -61,10 +62,9 @@ local Drawing = {
   show = function() end,
 }
 
----@class drawing
-return {
-  ---Create a new circle
-  ---@param sizeRect hs.geometry a rect that contains the circle
-  ---@return hs.drawing
-  circle = function(sizeRect) end,
-}
+---Create a new circle
+---@param sizeRect hs.geometry a rect that contains the circle
+---@return hs.drawing
+drawing.circle = function(sizeRect) end
+
+return drawing

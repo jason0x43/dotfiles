@@ -1,18 +1,18 @@
 ---@meta
+application = {}
 
----@class hs.application.watcher
+---@class watcher
 local watcher = {
-  ---@return hs.application.watcher
+  ---@return watcher
   start = function() end,
 
-  ---@return hs.application.watcher
+  ---@return watcher
   stop = function() end,
 }
 
----@class application.watcher
-local appwatcher = {
+local app_watcher = {
   ---@param fn fun(name: string, evtType: string, app: hs.application): nil
-  ---@return hs.application.watcher
+  ---@return watcher
   new = function(fn) end,
 
   activated = '',
@@ -25,7 +25,7 @@ local appwatcher = {
 }
 
 ---@class hs.application
-local application = {
+local Application = {
   ---Ativate this application
   ---@return nil
   activate = function() end,
@@ -43,20 +43,19 @@ local application = {
   visibleWindows = function() end,
 }
 
----@class application
-return {
-  ---Return the application matching a given hint
-  ---@param hint number|string pid, bundleID, or name
-  ---@return hs.application|nil
-  get = function(hint) end,
+---Return the application matching a given hint
+---@param hint number|string pid, bundleID, or name
+---@return hs.application|nil
+application.get = function(hint) end
 
-  ---Return all running applications
-  ---@return hs.application[]
-  runningApplications = function() end,
+---Return all running applications
+---@return hs.application[]
+application.runningApplications = function() end
 
-  ---Enable or disable using Spotlight for name searches
-  ---@param enable boolean
-  enableSpotlightForNameSearches = function(enable) end,
+---Enable or disable using Spotlight for name searches
+---@param enable boolean
+application.enableSpotlightForNameSearches = function(enable) end
 
-  watcher = appwatcher,
-}
+application.watcher = app_watcher
+
+return application

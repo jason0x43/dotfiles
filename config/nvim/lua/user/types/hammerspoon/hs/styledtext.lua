@@ -3,5 +3,11 @@
 ---@class hs.styledtext
 local StyledText = {}
 
----@class styledtext
-return {}
+styledtext = {}
+
+---@param desc string
+---@param attrs? table<string, string>
+---@return hs.styledtext
+styledtext.new = function(desc, attrs) end
+
+return styledtext

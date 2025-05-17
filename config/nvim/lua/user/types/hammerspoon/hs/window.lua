@@ -1,12 +1,12 @@
 ---@meta
 
 ---@alias EventCallback fun(win: hs.window, app: string, event: string): nil
----
+
 ---@alias FilterTable
 ---| { visible?: boolean, currentSpace?: boolean, fullscreen?: boolean, hasTitlebar?: boolean, focused?: boolean, activeApplication?: boolean, allowTitles?: number|string|string[], rejectTitles?: string|string[], allowRegions?: hs.geometry|hs.geometry[], rejectRegions?: hs.geometry|hs.geometry[], allowScreens?: number|string|hs.geometry, rejectScreens?: number|string|hs.geometry, allowRoles?: string|string[] }
 
 ---@class hs.window.filter
-local filter = {
+local Filter = {
   ---@param appname string
   ---@param filter boolean|nil|FilterTable
   ---@return hs.window.filter
@@ -20,10 +20,10 @@ local filter = {
   subscribe = function(self, event, fn, immediate) end,
 }
 
----@class window.filter
+---@class HsWindowFilter
 ---@field windowVisible string
 ---@field windowNotVisible string
-local winfilter = {
+local HsWindowFilter = {
   ---@param fn nil|boolean|string|string[]|table|fun(win: hs.window):boolean
   ---@param logname? string
   ---@param loglevel? string
@@ -32,7 +32,7 @@ local winfilter = {
 }
 
 ---@class hs.window
-local window = {
+local Window = {
   ---Return the application that the window belongs to
   ---@return hs.application|nil
   application = function() end,
@@ -93,14 +93,16 @@ local window = {
   title = function() end,
 }
 
----@class window
----@field filter window.filter
-return {
-  ---Return the currently focused window
-  ---@return hs.window
-  focusedWindow = function() end,
+window = {}
 
-  ---Return all visible windows
-  ---@return hs.window[]
-  visibleWindows = function() end,
-}
+---Return the currently focused window
+---@return hs.window
+window.focusedWindow = function() end
+
+---Return all visible windows
+---@return hs.window[]
+window.visibleWindows = function() end
+
+window.filter = HsWindowFilter
+
+return window
