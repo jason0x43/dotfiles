@@ -55,7 +55,7 @@ if [[ -e ~/.bash_completion ]]; then
 	. ~/.bash_completion
 fi
 
-PS1="\[\033[5;32m\]\u@\h\[\033[5;33m\] \W \[\033[5;31m\]\$(get_git_ref)\[\033[00m\]\$ "
+PS1="\[\033[1;32m\]\u@\h\[\033[1;33m\] \W \[\033[1;31m\]\$(get_git_ref)\[\033[00m\]\$ "
 
 export CLICOLOR=1
 export LC_ALL=C
