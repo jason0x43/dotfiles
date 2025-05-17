@@ -8,3 +8,7 @@ require('user.config.filetypes')
 require('user.config.keymaps')
 require('user.config.commands')
 require('user.config.lsp')
+
+if vim.g.neovide then
+    require('user.config.neovide')
+end

@@ -109,11 +109,6 @@ vim.diagnostic.config({
   -- virtual_text = { current_line = true },
 })
 
--- Don't animate neovide cursor
-if vim.g.neovide then
-  vim.g.neovide_cursor_animation_length = 0
-end
-
 -- Disable unneeded builtin plugins
 -- The value of the loaded var doesn't matter, just that it's defined
 local disabled_plugins = {
