@@ -40,7 +40,9 @@ vim.api.nvim_create_autocmd('VimResized', {
     vim.api.nvim_command('wincmd =')
 
     -- Show line numbers if the window is big enough
-    vim.o.number = vim.o.columns > 88
+    if vim.bo.buftype ~= 'nofile' then
+      vim.o.number = vim.o.columns > 88
+    end
   end,
   desc = 'Update settings when vim window is resized',
 })
