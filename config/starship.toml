@@ -10,7 +10,6 @@ $git_branch\
 $git_state\
 $git_status\
 $fill\
-${custom.direnv}\
 $package\
 $deno\
 $golang\
@@ -19,12 +18,22 @@ $lua\
 $nodejs\
 $python\
 $line_break\
-$character"""
+${custom.character_fish}${custom.character_nu}"""
+
+# leave out $character in nushell
 
 [character]
 success_symbol = "[➜](bold green)"
 error_symbol = "[✗](bold red)"
 vimcmd_symbol = "[:](bold blue)"
+
+[custom.character_fish]
+format = """$character"""
+when = ''' test "$SHELL" =~ "/fish" '''
+
+[custom.character_nu]
+format = ""
+when = ''' test -n "$NU_LIB_DIRS" '''
 
 [aws]
 symbol = "  "
@@ -37,11 +46,6 @@ symbol = " "
 
 [conda]
 symbol = " "
-
-[custom.direnv]
-when = """ test "$DIRENV_DIR" != "" """
-style = "bold red"
-symbol = " "
 
 [dart]
 symbol = " "
