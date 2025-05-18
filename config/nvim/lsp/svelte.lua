@@ -1,6 +1,6 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
-C.config.capabilities = {
+C.capabilities = {
   workspace = {
     didChangeWatchedFiles = {
       dynamicRegistration = true,

@@ -1,6 +1,6 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
-C.config.init_options = {
+C.init_options = {
   globalStoragePath = vim.uv.os_homedir() .. '/.local/share/intelephense',
   licenceKey = os.getenv('INTELEPHENSE_KEY'),
 }

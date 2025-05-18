@@ -2,6 +2,10 @@
 vim.lsp.set_log_level('error')
 vim.lsp.log.set_format_func(vim.inspect)
 
+vim.lsp.config('ts_ls', {
+  root_markers = { 'tsconfig.json', 'jsonconfig.json' },
+});
+
 -- Give signature and hover floats a rounded border
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 ---@diagnostic disable-next-line: duplicate-set-field
@@ -63,6 +67,7 @@ end
 ---Setup a language server
 ---@param server_name string
 local function setup(server_name)
+  print("setting up " .. server_name)
   ---@type PartialLspConfig
   local config = {
     autostart = false,
@@ -107,9 +112,9 @@ if vim.fn.executable('sourcekit-lsp') == 1 then
   table.insert(servers, 'sourcekit')
 end
 
--- Setup servers
-for _, server in ipairs(servers) do
-  if not setup(server) then
-    vim.notify('Failed to setup ' .. server, vim.log.levels.WARN)
-  end
-end
+-- -- Setup servers
+-- for _, server in ipairs(servers) do
+--   if not setup(server) then
+--     vim.notify('Failed to setup ' .. server, vim.log.levels.WARN)
+--   end
+-- end

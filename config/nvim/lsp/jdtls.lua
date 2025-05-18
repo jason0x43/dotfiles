@@ -1,7 +1,7 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
 -- Update the server config when a new root directory is detected
-C.config.settings = {
+C.settings = {
   java = {
     symbols = {
       includeSourceMethodDeclarations = true,
@@ -9,7 +9,7 @@ C.config.settings = {
   },
 }
 
-C.config.handlers = {
+C.handlers = {
   ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
     ---@param diag vim.Diagnostic
     result.diagnostics = vim.tbl_filter(function(diag)

@@ -1,6 +1,6 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
-C.config.on_attach = function(client)
+C.on_attach = function(client)
   -- disable hover in favor of Pyright
   client.server_capabilities.hoverProvider = false
 end

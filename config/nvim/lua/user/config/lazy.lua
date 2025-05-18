@@ -31,7 +31,7 @@ require('lazy').setup(
 
     -- Language server and tool installer -----------------------------
     {
-      'williamboman/mason.nvim',
+      'mason-org/mason.nvim',
       priority = 100,
       build = ':MasonUpdate',
       config = function()
@@ -48,9 +48,12 @@ require('lazy').setup(
 
     -- Mason language server manager ----------------------------------
     {
-      'williamboman/mason-lspconfig.nvim',
+      'mason-org/mason-lspconfig.nvim',
       config = function()
-        require('mason-lspconfig').setup()
+        require('mason-lspconfig').setup({
+          automatic_enable = true,
+          ensure_installed = {}
+        })
       end,
     },
 

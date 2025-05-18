@@ -1,14 +1,14 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
-C.config.filetypes = { 'json', 'jsonc' }
-C.config.init_options = {
+C.filetypes = { 'json', 'jsonc' }
+C.init_options = {
   -- disable formatting for JSON; we'll use prettier through null-ls instead
   provideFormatter = false,
 }
 
 local schemastore = require('schemastore')
 if schemastore then
-  C.config.settings = {
+  C.settings = {
     json = {
       schemas = schemastore.json.schemas(),
       validate = { enable = true },

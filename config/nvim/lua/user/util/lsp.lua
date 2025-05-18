@@ -1,12 +1,5 @@
 ---@module 'lspconfig'
 
----@class(partial) PartialLspConfig: lspconfig.Config
----@field root_dir? string | (fun(filename: string, bufnr: number): string?)
-
----@class(exact) UserLspConfig
----@field should_start? boolean | (fun(file: string): boolean)
----@field config? PartialLspConfig
-
 ---@param buffer integer
 ---@param method string
 local function lsp_method_supported(buffer, method)
@@ -22,9 +15,9 @@ end
 
 local M = {}
 
----@return UserLspConfig
-M.make_user_config = function()
-  return { config = {} }
+---@return vim.lsp.Config
+M.make_config = function()
+  return {}
 end
 
 ---Organize imports for the given buffer.
@@ -41,6 +34,24 @@ M.organize_imports = function(buffer)
     },
     apply = true,
   })
+end
+
+---Return the project root if this is a deno project
+---@param bufnr integer
+---@return string | nil
+M.get_deno_root = function(bufnr)
+  local file = vim.api.nvim_buf_get_name(bufnr)
+  local root = vim.fs.root(file, { 'deno.json', 'deno.jsonc' })
+  if root then
+    return root
+  end
+
+  local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1]
+  if first_line:find('#!/usr/bin/env %-S deno') ~= nil then
+    return vim.fn.getcwd()
+  end
+
+  return nil
 end
 
 return M

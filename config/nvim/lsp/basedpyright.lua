@@ -1,6 +1,6 @@
-local C = require('user.util.lsp').make_user_config()
+local C = require('user.util.lsp').make_config()
 
-C.config.on_attach = function(client)
+C.on_attach = function(client)
   -- Let neovim know about custom basedpyright commands that may be used by code
   -- actions
   local provider = client.server_capabilities.executeCommandProvider
@@ -11,7 +11,7 @@ C.config.on_attach = function(client)
   end
 end
 
-C.config.handlers = {
+C.handlers = {
   ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
     result.diagnostics = vim.tbl_filter(function(diag)
       -- ignore 'not accessed' diags
