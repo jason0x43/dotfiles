@@ -15,6 +15,9 @@ settings.init("settings.json")
 
 hs.application.enableSpotlightForNameSearches(true)
 
+-- Speed up window animations
+hs.window.animationDuration = 0
+
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	logger.i("Laying out")
