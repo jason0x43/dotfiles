@@ -1,7 +1,7 @@
 local wezterm = require("wezterm") --[[@as WezTerm]]
 local util = require("user.util")
 local action = require("user.action")
-local wez_action = wezterm.action
+local act = wezterm.action
 local resurrect =
     wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
 
@@ -158,50 +158,50 @@ config.key_tables = {
         {
             key = "y",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyTo("ClipboardAndPrimarySelection"),
-                wez_action.CopyMode("ClearPattern"),
-                wez_action.CopyMode("Close"),
+            action = act.Multiple({
+                act.CopyTo("ClipboardAndPrimarySelection"),
+                act.CopyMode("ClearPattern"),
+                act.CopyMode("Close"),
             }),
         },
         {
             key = "/",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("ClearPattern"),
-                wez_action.Search({ CaseSensitiveString = "" }),
+            action = act.Multiple({
+                act.CopyMode("ClearPattern"),
+                act.Search({ CaseSensitiveString = "" }),
             }),
         },
         {
             key = "n",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("PriorMatch"),
-                wez_action.CopyMode("ClearSelectionMode"),
+            action = act.Multiple({
+                act.CopyMode("PriorMatch"),
+                act.CopyMode("ClearSelectionMode"),
             }),
         },
         {
             key = "N",
             mods = "SHIFT",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("NextMatch"),
-                wez_action.CopyMode("ClearSelectionMode"),
+            action = act.Multiple({
+                act.CopyMode("NextMatch"),
+                act.CopyMode("ClearSelectionMode"),
             }),
         },
         {
             key = "Escape",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("ClearPattern"),
-                wez_action.CopyMode("Close"),
+            action = act.Multiple({
+                act.CopyMode("ClearPattern"),
+                act.CopyMode("Close"),
             }),
         },
         {
             key = "q",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("ClearPattern"),
-                wez_action.CopyMode("Close"),
+            action = act.Multiple({
+                act.CopyMode("ClearPattern"),
+                act.CopyMode("Close"),
             }),
         },
     }),
@@ -210,17 +210,17 @@ config.key_tables = {
         {
             key = "Enter",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.ActivateCopyMode,
-                wez_action.CopyMode("ClearSelectionMode"),
+            action = act.Multiple({
+                act.ActivateCopyMode,
+                act.CopyMode("ClearSelectionMode"),
             }),
         },
         {
             key = "Escape",
             mods = "NONE",
-            action = wez_action.Multiple({
-                wez_action.CopyMode("ClearPattern"),
-                wez_action.CopyMode("Close"),
+            action = act.Multiple({
+                act.CopyMode("ClearPattern"),
+                act.CopyMode("Close"),
             }),
         },
     }),
@@ -233,40 +233,40 @@ config.key_tables = {
         {
             key = "j",
             mods = "SHIFT",
-            action = wez_action.AdjustPaneSize({ "Down", 4 }),
+            action = act.AdjustPaneSize({ "Down", 4 }),
         },
         {
             key = "k",
             mods = "SHIFT",
-            action = wez_action.AdjustPaneSize({ "Up", 4 }),
+            action = act.AdjustPaneSize({ "Up", 4 }),
         },
         {
             key = "h",
             mods = "SHIFT",
-            action = wez_action.AdjustPaneSize({ "Left", 4 }),
+            action = act.AdjustPaneSize({ "Left", 4 }),
         },
         {
             key = "l",
             mods = "SHIFT",
-            action = wez_action.AdjustPaneSize({ "Right", 4 }),
+            action = act.AdjustPaneSize({ "Right", 4 }),
         },
         {
             key = "m",
             mods = "",
-            action = wez_action.PaneSelect({ mode = "SwapWithActive" }),
+            action = act.PaneSelect({ mode = "SwapWithActive" }),
         },
         { key = "-", mods = "", action = action.split_action("vertical") },
         { key = "\\", mods = "", action = action.split_action("horizontal") },
         { key = "|", mods = "", action = action.split_action("horizontal") },
-        { key = "Escape", mods = "", action = wez_action.PopKeyTable },
+        { key = "Escape", mods = "", action = act.PopKeyTable },
         { key = "c", mods = "", action = action.copy_mode_action() },
-        { key = "c", mods = "CTRL", action = wez_action.PopKeyTable },
-        { key = "q", mods = "", action = wez_action.QuickSelect },
-        { key = "z", mods = "", action = wez_action.TogglePaneZoomState },
+        { key = "c", mods = "CTRL", action = act.PopKeyTable },
+        { key = "q", mods = "", action = act.QuickSelect },
+        { key = "z", mods = "", action = act.TogglePaneZoomState },
         {
             key = "w",
             mods = "",
-            action = wez_action.CloseCurrentPane({ confirm = true }),
+            action = act.CloseCurrentPane({ confirm = true }),
         },
         {
             key = "s",
@@ -311,17 +311,25 @@ config.key_tables = {
         {
             key = "t",
             mods = "",
-            action = wez_action.PromptInputLine({
-                description = "Tab name",
-                action = wezterm.action_callback(function(window, _, line)
-                    -- line will be `nil` if they hit escape without entering anything
-                    -- An empty string if they just hit enter
-                    -- Or the actual line of text they wrote
-                    if line then
-                        window:active_tab():set_title(line)
-                    end
-                end),
-            }),
+            action = wezterm.action_callback(function(window, pane)
+                window:perform_action(act.PopKeyTable, pane)
+                window:perform_action(
+                    act.PromptInputLine({
+                        description = "Tab name",
+                        action = wezterm.action_callback(
+                            function(win, _, line)
+                                -- line will be `nil` if they hit escape without entering anything
+                                -- An empty string if they just hit enter
+                                -- Or the actual line of text they wrote
+                                if line then
+                                    win:active_tab():set_title(line)
+                                end
+                            end
+                        ),
+                    }),
+                    pane
+                )
+            end),
         },
     },
 }
@@ -331,41 +339,41 @@ config.keys = {
     { key = "k", mods = "CTRL", action = action.move_action("Up") },
     { key = "h", mods = "CTRL", action = action.move_action("Left") },
     { key = "l", mods = "CTRL", action = action.move_action("Right") },
-    { key = "t", mods = "CMD", action = wez_action.SpawnTab("DefaultDomain") },
+    { key = "t", mods = "CMD", action = act.SpawnTab("DefaultDomain") },
     {
         key = "\\",
         mods = "CMD|CTRL",
-        action = wez_action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+        action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
     },
     {
         key = "-",
         mods = "CMD|CTRL",
-        action = wez_action.SplitVertical({ domain = "CurrentPaneDomain" }),
+        action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
     },
     {
         key = "LeftArrow",
         mods = "SHIFT",
-        action = wez_action.ActivateTabRelative(-1),
+        action = act.ActivateTabRelative(-1),
     },
     {
         key = "RightArrow",
         mods = "SHIFT",
-        action = wez_action.ActivateTabRelative(1),
+        action = act.ActivateTabRelative(1),
     },
     {
         key = "LeftArrow",
         mods = "CMD|SHIFT",
-        action = wez_action.MoveTabRelative(-1),
+        action = act.MoveTabRelative(-1),
     },
     {
         key = "RightArrow",
         mods = "CMD|SHIFT",
-        action = wez_action.MoveTabRelative(1),
+        action = act.MoveTabRelative(1),
     },
     {
         key = "s",
         mods = "CTRL",
-        action = wez_action.ActivateKeyTable({
+        action = act.ActivateKeyTable({
             name = "window_ops",
             one_shot = false,
             timeout_milliseconds = 1000,
@@ -376,11 +384,11 @@ config.keys = {
     {
         key = "/",
         mods = "ALT",
-        action = wez_action.ShowLauncherArgs({
+        action = act.ShowLauncherArgs({
             flags = "FUZZY|COMMANDS|LAUNCH_MENU_ITEMS",
         }),
     },
-    { key = "/", mods = "CMD", action = wez_action.ShowDebugOverlay },
+    { key = "/", mods = "CMD", action = act.ShowDebugOverlay },
 
     -- Turn off the default CMD-d action
     {
