@@ -359,6 +359,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
                 follow = true,
                 layout = vscode_center,
               },
+              git_status = {
+                layout = vscode_center,
+              },
               grep = {
                 layout = vscode_center,
               },
