@@ -117,6 +117,11 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 				display = built_in_display,
 				frame = { "right", 95 },
 			},
+			Chat = {
+				app = "Chat",
+				display = built_in_display,
+				frame = { "right", 0.5 },
+			},
 		}
 	end
 
