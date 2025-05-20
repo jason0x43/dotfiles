@@ -26,6 +26,7 @@ vim.keymap.set(
   { desc = 'Go to the previous buffer' }
 )
 
+-- Show code actions
 vim.keymap.set('n', '<leader>a', function()
   vim.lsp.buf.code_action()
 end, { desc = 'Show a list of possible code actions' })
