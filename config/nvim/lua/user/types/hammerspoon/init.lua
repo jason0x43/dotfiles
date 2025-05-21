@@ -2,6 +2,9 @@
 
 hs = {}
 
+---@module 'user.types.hammerspoon.hs.fnutils'
+hs.fnutils = fnutils
+
 ---@module 'user.types.hammerspoon.hs.mouse'
 hs.mouse = mouse
 

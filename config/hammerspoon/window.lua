@@ -23,82 +23,6 @@ local function getScreenFrame(screen)
 		pad
 end
 
----Return the first matching window in a given app
----@param winTitle string
----@param negative? boolean
----@return fun(appName:string):hs.window[]
-local function winMatcher(winTitle, negative)
-	return function(appName)
-		local app = hs.application.get(appName)
-		if app then
-			for _, w in pairs(app:visibleWindows()) do
-				if w:title():find(winTitle) and not negative then
-					return { w }
-				end
-				if not w:title():find(winTitle) and negative then
-					return { w }
-				end
-			end
-		end
-		return {}
-	end
-end
-
----Resize the focused window to fill an area
----@param area 'left'|'right'|'top'|'bottom'|'center'
----@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset (not for center)
----@param win? hs.window
-local function fill(area, pctOrOffset, win)
-	win = win or hs.window.focusedWindow()
-	local screenFrame, pad = getScreenFrame(win:screen())
-
-	local left = screenFrame.x
-	local top = screenFrame.y
-	local width = screenFrame.w
-	local height = screenFrame.h
-
-	if area == "left" or area == "right" or area == "center" then
-		if pctOrOffset <= 1 then
-			width = pctOrOffset * screenFrame.w - 0.5 * pad
-		else
-			width = screenFrame.w - pctOrOffset
-		end
-	else
-		if pctOrOffset <= 1 then
-			height = pctOrOffset * screenFrame.h - 1.5 * pad
-		else
-			height = screenFrame.h - pctOrOffset
-		end
-	end
-
-	if area == "right" then
-		if pctOrOffset <= 1 then
-			left = screenFrame.x + screenFrame.w * (1 - pctOrOffset) + 0.5 * pad
-		else
-			left = screenFrame.x + pctOrOffset
-		end
-	elseif area == "bottom" then
-		if pctOrOffset <= 1 then
-			top = screenFrame.y + screenFrame.h * (1 - pctOrOffset)
-		else
-			top = screenFrame.y + pctOrOffset + 0.5 * pad
-		end
-	elseif area == "center" then
-		local margin = (screenFrame.w - width) / 2
-		left = screenFrame.x + margin
-	end
-
-	return hs.geometry.rect(left, top, width, height)
-end
-
----@param area 'left'|'right'|'top'|'bottom'
----@param pctOrOffset number 0..1 is a percent, > 1 is a left/top offset
-local function frame(area, pctOrOffset)
-	return function(win)
-		return fill(area, pctOrOffset, win)
-	end
-end
-
 ---Return the padded frame for a screen
 ---@param screen hs.screen
 ---@return hs.geometry
@@ -116,87 +40,93 @@ M.isStageManagerEnabled = function()
 end
 
 ---@param area 'left'|'right'|'center'
----@param options? { window?: hs.window, portion?: number, width?: number, widthMinus?: number }
+---@param options? {
+---  window?: hs.window,
+---  marginLeft?: number,
+---  marginRight?: number,
+---  marginTop?: number,
+---  marginBottom?: number,
+---  width?: number }
 M.fill = function(area, options)
 	options = options or {}
+
 	local window = options.window or hs.window.focusedWindow()
 	local width = options.width
-	local portion = options.portion
-	local widthMinus = options.widthMinus
+	local marginTop = options.marginTop or 0
+	local marginLeft = options.marginLeft or 0
+	local marginRight = options.marginRight or 0
+	local marginBottom = options.marginBottom or 0
 
-	local screenFrame = window:screen():frame()
-	local isLargeScreen = screenFrame.w > 2000
+	local screenFrame = getScreenFrame(window:screen())
 	local winFrame = window:frame()
 	local pad = screenFrame.h * 0.03
 
-	if portion then
-		width = screenFrame.w * portion
-	elseif widthMinus then
-		width = screenFrame.w - widthMinus
-	end
-
-	if width == nil then
-		width = screenFrame.w / 2
-	end
-
-	---@type {h: number, w: number, x: number, y: number}
-	local bounds = {}
-
-	-- size
-	if area == const.LEFT or area == const.RIGHT then
-		bounds.h = screenFrame.h
-		bounds.w = width
-	else
-		bounds.h = screenFrame.h / 2
-		bounds.w = screenFrame.w / 2
-	end
-
-	winFrame.h = bounds.h
-	winFrame.w = bounds.w
-
-	if isLargeScreen then
-		if area == const.LEFT or area == const.RIGHT then
-			winFrame.h = screenFrame.h - 2 * pad
-			winFrame.w = winFrame.w - 2 * pad
+	if width ~= nil then
+		if width < 0 then
+			winFrame.w = screenFrame.w + width
+		elseif width < 1 then
+			winFrame.w = screenFrame.w * width
+		else
+			winFrame.w = width
 		end
 	end
 
+	winFrame.h = screenFrame.h - marginTop - marginBottom
+	winFrame.w = winFrame.w - marginLeft - marginRight
+
 	-- x-coordinate
 	if area == const.LEFT then
-		winFrame.x = screenFrame.x + pad
+		winFrame.x = screenFrame.x
 	elseif area == const.RIGHT then
 		winFrame.x = screenFrame.x
-			+ (screenFrame.w - bounds.w)
-			+ (bounds.w - winFrame.w - const.PADDING) / 2
+			+ (screenFrame.w - winFrame.w)
+			- const.PADDING / 2
 	else
-		winFrame.x = screenFrame.x + (screenFrame.w / 2 - bounds.w / 2)
+		winFrame.x = screenFrame.x + (screenFrame.w / 2 - winFrame.w / 2)
 	end
 
 	-- y-coordinate
-	if area == const.LEFT or area == const.RIGHT then
-		winFrame.y = screenFrame.y + pad
-	else
-		winFrame.y = screenFrame.y + (screenFrame.h / 2 - bounds.h / 2)
-	end
+	winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h) / 2
+
+	winFrame.x = winFrame.x + marginLeft
+	winFrame.y = winFrame.y + marginTop
 
 	window:setFrame(winFrame)
 end
 
 ---Move the focused window to an area
----@param area 'left'|'right'|'center'
+---@param area 'left'|'right'|'center'|'top-left'|'top-right'|'bottom-left'|'bottom-right'
+---@param window? hs.window
 ---@return hs.window
-M.moveTo = function(area)
-	local win = hs.window.focusedWindow()
+M.moveTo = function(area, window)
+	local win = window or hs.window.focusedWindow()
 	local winFrame = win:frame()
 	local screenFrame = getScreenFrame(win:screen())
 
-	if area == "left" then
+	-- x coord
+	if area == "left" or area == "top-left" or area == "bottom-left" then
 		winFrame.x = screenFrame.x
-	elseif area == "center" then
-		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
-		winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h) / 2
-	elseif area == "right" then
+	elseif area == "right" or area == "top-right" or area == "bottom-right" then
 		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
+  else
+		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
+  end
+
+  -- y coord
+	if area == "left" or area == "top-left" or area == "bottom-left" then
+		winFrame.x = screenFrame.x
+	elseif area == "right" or area == "top-right" or area == "bottom-right" then
+		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
+  else
+		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
+  end
+
+  if area == "top" or area == "top-left" or area == "top-right" then
+    winFrame.y = screenFrame.y
+  elseif area == "bottom" or area == "bottom-left" or area == "bottom-right" then
+		winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h)
+  else
+		winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h) / 2
 	end
 
 	win:setFrame(winFrame)
@@ -215,7 +145,7 @@ M.moveToSpace = function(direction)
 
 	local origCursorPosition = hs.mouse.absolutePosition()
 	local coords = win:frame()
-  local dir = direction == "next" and "right" or "left"
+	local dir = direction == "next" and "right" or "left"
 	local target = hs.geometry.point(coords.x + 70, coords.y + 10)
 
 	hs.eventtap.event
@@ -229,40 +159,6 @@ M.moveToSpace = function(direction)
 		:post()
 
 	hs.mouse.absolutePosition(origCursorPosition)
-end
-
----@alias LayoutFrame {[1]: string, [2]: number} | (fun(hs.window): hs.geometry)
-
----Shim over hs.layout.apply with a simpler API
----@param layout {app: string, win: string | {[1]: string, negative?: boolean} | (fun(app:string):hs.window[]), display: string, frame: LayoutFrame}[]
----@return nil
-M.layout = function(layout)
-	---@type LayoutEntry[]
-	local entries = {}
-
-	for _, e in pairs(layout) do
-		local frm = e.frame
-		if type(e.frame) == "table" then
-			frm = frame(e.frame[1], e.frame[2])
-		end
-
-		local win = e.win
-		if type(e.win) == "table" then
-			win = winMatcher(e.win[1], e.win.negative)
-		end
-
-		entries[#entries + 1] = {
-			e.app,
-			win,
-			e.display,
-			nil,
-			frm,
-			nil,
-			options = { absolute_x = true, absolute_y = true },
-		}
-	end
-
-	hs.layout.apply(entries)
 end
 
 ---Resize the focused window. If width or height are <= 1, the value is treated

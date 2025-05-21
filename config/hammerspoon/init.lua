@@ -11,6 +11,21 @@ local logger = hs.logger.new("init", "info")
 local monitor = "PHL 272P7VU"
 local built_in_display = "Built-in Retina Display"
 
+---@param windows hs.window[]
+---@param appNames string[]
+---@return hs.window[]
+local function getWindows(windows, appNames)
+	return hs.fnutils.ifilter(windows, function(win)
+		local app = win:application():name()
+		for _, name in ipairs(appNames) do
+			if app == name then
+				return true
+			end
+		end
+		return false
+	end)
+end
+
 settings.init("settings.json")
 
 hs.application.enableSpotlightForNameSearches(true)
@@ -25,117 +40,89 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	---@type Layout
 	local layout = {}
 
-	---@type Layout
-	local layouts = {}
+	local windows = hs.window.visibleWindows()
 
-	---@type table<string, boolean>
-	local apps = {}
-
-	for _, app in pairs(hs.application.runningApplications()) do
-		apps[app:name()] = true
-	end
+	local terminalWins =
+		getWindows(windows, { "kitty", "WezTerm", "Terminal.app" })
+	local browserWins =
+		getWindows(windows, { "Safari", "Wavebox", "Google Chrome", "Firefox" })
+	local mailWins = getWindows(windows, { "Mail" })
+	local simWins = getWindows(windows, { "Simulator" })
+	local emuWins = getWindows(windows, { "qemu-system-aarch64" })
+	local messagesWins = getWindows(windows, { "Messages" })
+	local slackWins = getWindows(windows, { "Slack" })
+	local gptWins = getWindows(windows, { "ChatGPT" })
 
 	-- If Stage Manager is enabled, assume only the built-in display is in use.
 	-- Otherwise, assume the external display is in use.
 	if window.isStageManagerEnabled() then
-		layouts = {
-			Safari = {
-				app = "Safari",
-				display = built_in_display,
-				frame = { "right", 0.9 },
-			},
-			Chrome = {
-				app = "Chrome",
-				display = built_in_display,
-				frame = { "right", 0.9 },
-			},
-			Fastmail = {
-				app = "Fastmail",
-				display = built_in_display,
-				frame = { "right", 0.9 },
-			},
-			WezTerm = {
-				app = "WezTerm",
-				display = built_in_display,
-				frame = { "center", 0.6 },
-			},
-			kitty = {
-				app = "kitty",
-				display = built_in_display,
-				frame = { "center", 0.6 },
-			},
-			Messages = {
-				app = "Messages",
-				display = built_in_display,
-				frame = { "center", 0.4 },
-			},
-			Slack = {
-				app = "Slack",
-				display = built_in_display,
-				frame = { "right", 160 },
-			},
-			Mail = {
-				app = "Mail",
-				display = built_in_display,
-				frame = { "right", 160 },
-			},
-			CARROTweather = {
-				app = "CARROTweather",
-				display = built_in_display,
-				frame = { "right", 160 },
-			},
-		}
+		for _, win in ipairs(terminalWins) do
+			window.fill("center", { window = win, width = 800 })
+		end
+
+		for _, win in ipairs(browserWins) do
+			window.fill("center", { window = win, width = -300 })
+		end
+
+		for _, win in ipairs(mailWins) do
+			window.fill("center", { window = win, width = -300 })
+		end
+
+		for _, win in ipairs(gptWins) do
+			window.fill("center", { window = win, width = 700 })
+		end
 	else
-		layouts = {
-			Safari = {
-				app = "Safari",
-				display = monitor,
-				frame = { "left", 0.6 },
-			},
-			Chrome = {
-				app = "Chrome",
-				display = monitor,
-				frame = { "left", 0.6 },
-			},
-			kitty = {
-				app = "kitty",
-				display = monitor,
-				frame = { "right", 0.4 },
-			},
-			WezTerm = {
-				app = "WezTerm",
-				display = monitor,
-				frame = { "right", 0.4 },
-			},
-			Messages = {
-				app = "Messages",
-				display = built_in_display,
-				frame = { "left", 0.3 },
-			},
-			Slack = {
-				app = "Slack",
-				display = built_in_display,
-				frame = { "right", 95 },
-			},
-			Chat = {
-				app = "Chat",
-				display = built_in_display,
-				frame = { "right", 0.5 },
-			},
-		}
-	end
+		if #browserWins > 0 then
+			if #terminalWins > 0 then
+				if #simWins + #emuWins > 0 then
+					for _, win in ipairs(browserWins) do
+						window.fill("left", {
+							window = win,
+							width = 0.48,
+							marginLeft = 350,
+						})
+					end
+					for _, win in ipairs(simWins) do
+						window.moveTo("top-left", window)
+					end
+					for _, win in ipairs(emuWins) do
+						window.moveTo("bottom-left", window)
+					end
+					for _, win in ipairs(terminalWins) do
+						window.fill("right", { window = win, width = const.THIN_WIDTH })
+					end
+				else
+					for _, win in ipairs(browserWins) do
+						window.fill("left", { window = win, width = 1 - const.THIN_WIDTH })
+					end
+					for _, win in ipairs(terminalWins) do
+						window.fill("right", { window = win, width = const.THIN_WIDTH })
+					end
+				end
+			else
+				for _, win in ipairs(browserWins) do
+					window.fill("center", { window = win })
+				end
+			end
+		end
 
-	---@type table<string, boolean>
-	local laid_out_apps = {}
+		if #messagesWins > 0 then
+			window.fill("left", { window = messagesWins[0], width = 0.4 })
+		end
 
-	for app, _ in pairs(apps) do
-		if layouts[app] ~= nil and laid_out_apps[app] == nil then
-			table.insert(layout, layouts[app])
-			laid_out_apps[app] = true
+		if #slackWins > 0 then
+			if #messagesWins > 0 then
+				window.fill("right", { window = slackWins[0], width = -84 })
+			else
+				window.fill("center", { window = slackWins[0] })
+			end
+		end
+
+		local chatWins = getWindows(windows, { "Chat" })
+		if #chatWins > 0 then
+			window.fill("right", { window = chatWins[0], width = 0.58 })
 		end
 	end
-
-	window.layout(layout)
 end)
 
 -- Move the active window to the center of the display
