@@ -6,10 +6,7 @@ local const = require("const")
 local settings = require("settings")
 local ui = require("ui")
 local media = require("media")
-
 local logger = hs.logger.new("init", "info")
-local monitor = "PHL 272P7VU"
-local built_in_display = "Built-in Retina Display"
 
 ---@param windows hs.window[]
 ---@param appNames string[]
@@ -35,13 +32,7 @@ hs.window.animationDuration = 0
 
 -- Layout the active display
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
-	logger.i("Laying out")
-
-	---@type Layout
-	local layout = {}
-
 	local windows = hs.window.visibleWindows()
-
 	local terminalWins =
 		getWindows(windows, { "kitty", "WezTerm", "Terminal.app" })
 	local browserWins =
@@ -71,6 +62,14 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 		for _, win in ipairs(gptWins) do
 			window.fill("center", { window = win, width = 700 })
 		end
+
+    for _, win in ipairs(simWins) do
+      window.moveTo("center", win)
+    end
+
+    for _, win in ipairs(emuWins) do
+      window.moveTo("center", win)
+    end
 	else
 		if #browserWins > 0 then
 			if #terminalWins > 0 then
@@ -83,10 +82,10 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 						})
 					end
 					for _, win in ipairs(simWins) do
-						window.moveTo("top-left", window)
+						window.moveTo("top-left", win)
 					end
 					for _, win in ipairs(emuWins) do
-						window.moveTo("bottom-left", window)
+						window.moveTo("bottom-left", win)
 					end
 					for _, win in ipairs(terminalWins) do
 						window.fill("right", { window = win, width = const.THIN_WIDTH })
