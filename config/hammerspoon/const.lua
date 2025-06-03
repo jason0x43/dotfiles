@@ -9,8 +9,8 @@ return {
   SE = "se",
 
   -- Dimensions
-  THIN_WIDTH = (1020 / 3840) * 1.6,
-  PADDING = 50,
+  THIN_WIDTH = (1020 / 3840) * 1.4,
+  PADDING = 30,
 
   INCREMENT = 0.05,
 }

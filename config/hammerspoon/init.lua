@@ -14,12 +14,7 @@ local logger = hs.logger.new("init", "info")
 local function getWindows(windows, appNames)
 	return hs.fnutils.ifilter(windows, function(win)
 		local app = win:application():name()
-		for _, name in ipairs(appNames) do
-			if app == name then
-				return true
-			end
-		end
-		return false
+		return hs.fnutils.contains(appNames, app)
 	end)
 end
 
@@ -63,13 +58,13 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 			window.fill("center", { window = win, width = 700 })
 		end
 
-    for _, win in ipairs(simWins) do
-      window.moveTo("center", win)
-    end
+		for _, win in ipairs(simWins) do
+			window.moveTo("center", win)
+		end
 
-    for _, win in ipairs(emuWins) do
-      window.moveTo("center", win)
-    end
+		for _, win in ipairs(emuWins) do
+			window.moveTo("center", win)
+		end
 	else
 		if #browserWins > 0 then
 			if #terminalWins > 0 then
@@ -77,8 +72,8 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 					for _, win in ipairs(browserWins) do
 						window.fill("left", {
 							window = win,
-							width = 0.48,
-							marginLeft = 350,
+							width = 1570,
+							marginLeft = 370,
 						})
 					end
 					for _, win in ipairs(simWins) do
@@ -91,6 +86,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 						window.fill("right", { window = win, width = const.THIN_WIDTH })
 					end
 				else
+          logger.i("using non-emu sizing")
 					for _, win in ipairs(browserWins) do
 						window.fill("left", { window = win, width = 1 - const.THIN_WIDTH })
 					end
@@ -103,23 +99,27 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 					window.fill("center", { window = win })
 				end
 			end
+		else
+			for _, win in ipairs(terminalWins) do
+				window.fill("center", { window = win, width = 900 })
+			end
 		end
 
 		if #messagesWins > 0 then
-			window.fill("left", { window = messagesWins[0], width = 0.4 })
+			window.fill("left", { window = messagesWins[1], width = 0.4 })
 		end
 
 		if #slackWins > 0 then
 			if #messagesWins > 0 then
-				window.fill("right", { window = slackWins[0], width = -84 })
+				window.fill("right", { window = slackWins[1], width = -80 })
 			else
-				window.fill("center", { window = slackWins[0] })
+				window.fill("center", { window = slackWins[1] })
 			end
 		end
 
 		local chatWins = getWindows(windows, { "Chat" })
 		if #chatWins > 0 then
-			window.fill("right", { window = chatWins[0], width = 0.58 })
+			window.fill("right", { window = chatWins[1], width = 600 })
 		end
 	end
 end)

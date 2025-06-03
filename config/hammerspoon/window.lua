@@ -10,25 +10,21 @@ local M = {}
 ---Return the screen frame with edge padding
 ---@param screen hs.screen
 ---@return hs.geometry frame
----@return integer padding
 local function getScreenFrame(screen)
 	local frame = screen:frame()
-	local pad = frame.h * 0.03
 	return hs.geometry.rect(
-		frame.x + pad,
-		frame.y + pad,
-		frame.w - 2 * pad,
-		frame.h - 2 * pad
-	),
-		pad
+		frame.x + const.PADDING,
+		frame.y + const.PADDING,
+		frame.w - 2 * const.PADDING,
+		frame.h - 2 * const.PADDING
+	)
 end
 
 ---Return the padded frame for a screen
 ---@param screen hs.screen
 ---@return hs.geometry
 M.screenFrame = function(screen)
-	local f = getScreenFrame(screen)
-	return f
+	return getScreenFrame(screen)
 end
 
 ---Return true if Stage Manager is enabled.
@@ -59,7 +55,6 @@ M.fill = function(area, options)
 
 	local screenFrame = getScreenFrame(window:screen())
 	local winFrame = window:frame()
-	local pad = screenFrame.h * 0.03
 
 	if width ~= nil then
 		if width < 0 then
@@ -69,18 +64,18 @@ M.fill = function(area, options)
 		else
 			winFrame.w = width
 		end
+  else
+    winFrame.w = screenFrame.w / 2
 	end
 
 	winFrame.h = screenFrame.h - marginTop - marginBottom
-	winFrame.w = winFrame.w - marginLeft - marginRight
+	winFrame.w = winFrame.w - marginLeft - marginRight - const.PADDING / 2
 
 	-- x-coordinate
 	if area == const.LEFT then
 		winFrame.x = screenFrame.x
 	elseif area == const.RIGHT then
-		winFrame.x = screenFrame.x
-			+ (screenFrame.w - winFrame.w)
-			- const.PADDING / 2
+		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
 	else
 		winFrame.x = screenFrame.x + (screenFrame.w / 2 - winFrame.w / 2)
 	end
@@ -108,24 +103,28 @@ M.moveTo = function(area, window)
 		winFrame.x = screenFrame.x
 	elseif area == "right" or area == "top-right" or area == "bottom-right" then
 		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
-  else
+	else
 		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
-  end
+	end
 
-  -- y coord
+	-- y coord
 	if area == "left" or area == "top-left" or area == "bottom-left" then
 		winFrame.x = screenFrame.x
 	elseif area == "right" or area == "top-right" or area == "bottom-right" then
 		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w)
-  else
+	else
 		winFrame.x = screenFrame.x + (screenFrame.w - winFrame.w) / 2
-  end
+	end
 
-  if area == "top" or area == "top-left" or area == "top-right" then
-    winFrame.y = screenFrame.y
-  elseif area == "bottom" or area == "bottom-left" or area == "bottom-right" then
+	if area == "top" or area == "top-left" or area == "top-right" then
+		winFrame.y = screenFrame.y
+	elseif
+		area == "bottom"
+		or area == "bottom-left"
+		or area == "bottom-right"
+	then
 		winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h)
-  else
+	else
 		winFrame.y = screenFrame.y + (screenFrame.h - winFrame.h) / 2
 	end
 
