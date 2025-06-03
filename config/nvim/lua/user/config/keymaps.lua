@@ -100,3 +100,36 @@ if vim.fn.has('win32') then
     { desc = 'Focus the window to the right' }
   )
 end
+
+vim.keymap.set(
+  { 'n', 'i' },
+  '<c-h>',
+  function()
+    require('user.terminal').focus_kitty('left')
+  end,
+  { desc = 'Focus the window to the left' }
+)
+vim.keymap.set(
+  { 'n', 'i' },
+  '<c-j>',
+  function()
+    require('user.terminal').focus_kitty('down')
+  end,
+  { desc = 'Focus the window below' }
+)
+vim.keymap.set(
+  { 'n', 'i' },
+  '<c-k>',
+  function()
+    require('user.terminal').focus_kitty('up')
+  end,
+  { desc = 'Focus the window above' }
+)
+vim.keymap.set(
+  { 'n', 'i' },
+  '<c-l>',
+  function()
+    require('user.terminal').focus_kitty('right')
+  end,
+  { desc = 'Focus the window to the right' }
+)

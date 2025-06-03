@@ -77,7 +77,7 @@ local palettes = {
     bg_1 = '#ebebeb',
     bg_2 = '#cdcdcd',
     dim_0 = '#878787',
-    fg_0 = '#474747',
+    fg_0 = '#575757',
     fg_1 = '#282828',
     red = '#d6000c',
     green = '#1d9700',
@@ -203,7 +203,6 @@ local function apply_theme()
   hilink('ErrorMsg', 'Error')
   hilink('Exception', 'Statement')
   hilink('Float', 'Constant')
-  hilink('FloatBorder', 'NormalFloat')
   hilink('Include', 'PreProc')
   hilink('Keyword', 'Statement')
   hilink('Label', 'Statement')
@@ -238,6 +237,7 @@ local function apply_theme()
   hi('Directory', {})
   hi('EndOfBuffer', {})
   hi('Error', { fg = error, bold = true })
+  hi('FloatBorder', { fg = c.bg_2 })
   hi('FoldColumn', {})
   hi('Folded', { bg = c.bg_1 })
   hi('Function', { fg = c.br_blue })
