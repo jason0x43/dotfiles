@@ -460,7 +460,7 @@ else
     dotfiles-rust
     dotfiles-bat
     dotfiles-fish
-    dotfiles-nvim
+    # dotfiles-nvim
 
     if [[ $OSTYPE == darwin* ]]; then
         dotfiles-launchd
