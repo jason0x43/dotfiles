@@ -7,8 +7,6 @@ fish/fishd.*
 fish/fish_history
 .vscode/
 .mypy_cache/
-config/kitty/kitty.d/*.conf
-config/kitty/colors.conf
 config/direnv/allow
 .tool-versions
 zsh/.zsh_sessions
