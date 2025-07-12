@@ -3,6 +3,7 @@ alias fda="fd -I"
 alias rgl="rg -l"
 alias rgla="rg -l -u"
 alias rga="rg -u"
+alias ldl="recent-downloads"
 
 # better ls
 if command -q eza
@@ -35,6 +36,7 @@ alias gcb="git cb"
 alias gco="git co"
 alias gcp="git cp"
 alias gd="git diff"
+alias gdt="git difftool"
 alias gds="git ds"
 alias gf="git fetch"
 alias gfp="git fetch --prune"
@@ -56,3 +58,7 @@ alias ts='tig status'
 alias view='vi -R'
 alias vim='vi'
 alias vimdiff='vi -d'
+
+# kitty
+alias kt='kitten @ set-tab-title'
+alias icat='kitten icat'

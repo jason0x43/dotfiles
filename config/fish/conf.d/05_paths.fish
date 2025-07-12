@@ -14,4 +14,5 @@ fish_add_path --path ~/.cargo/bin
 fish_add_path --path ~/.dotnet
 fish_add_path --path ~/.dotnet/tools
 fish_add_path --path ~/.deno/bin
+fish_add_path --path ~/.local/bin
 fish_add_path --path ~/.dotfiles/bin
