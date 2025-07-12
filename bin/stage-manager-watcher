@@ -10,9 +10,10 @@ let env = ProcessInfo.processInfo.environment
 let home = env["HOME"] ?? ""
 
 class Observer: NSObject {
-  func checkStatus() {
+  func isStageManagerEnabled() -> Bool {
     let isEnabled = wmDefaults.bool(forKey: "GloballyEnabled")
     print("Stage manager \(isEnabled ? "is" : "is not") enabled")
+    return isEnabled
   }
 
   override func observeValue(
@@ -21,7 +22,7 @@ class Observer: NSObject {
     change: [NSKeyValueChangeKey: Any]?,
     context: UnsafeMutableRawPointer?
   ) {
-    checkStatus()
+    let isEnabled = isStageManagerEnabled()
 
     let manager = FileManager.default
     var filename = manager.homeDirectoryForCurrentUser
@@ -32,12 +33,30 @@ class Observer: NSObject {
     var resourceValues = URLResourceValues()
     resourceValues.contentModificationDate = Date()
     try? filename.setResourceValues(resourceValues)
+
+    let process = Process()
+    let pipe = Pipe()
+
+    process.standardOutput = pipe
+    process.standardError = pipe
+    process.standardInput = pipe
+    process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/kitten")
+    process.arguments = ["@", "--to", "unix:/tmp/kitty.sock", "set-font-size", "--all"]
+
+    if isEnabled {
+      process.arguments?.append("11.5")
+    } else {
+      process.arguments?.append("13.0")
+    }
+
+    try! process.run()
+    process.waitUntilExit()
   }
 }
 
 let observer = Observer()
 
-observer.checkStatus()
+_ = observer.isStageManagerEnabled()
 
 wmDefaults.addObserver(
   observer,

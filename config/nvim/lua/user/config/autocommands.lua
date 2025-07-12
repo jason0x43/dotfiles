@@ -231,15 +231,3 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
   desc = 'Setup MiniGit output buffers',
 })
-
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'kitty',
-  callback = function()
-    vim.go.laststatus = 0
-    vim.wo.winbar = ' Scrollback'
-    require('user.terminal').colorize()
-    vim.defer_fn(function()
-      vim.cmd('normal! 0')
-    end, 100)
-  end,
-})
