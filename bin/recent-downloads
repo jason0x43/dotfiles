@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd ~/Downloads
+fd --changed-within=1d . \
+	| eza --stdin --long --time-style=relative --no-permissions --no-user
