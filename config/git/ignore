@@ -39,3 +39,7 @@ __pycache__/
 
 # neoconf files
 .neoconf.json
+
+**/CLAUDE.local.md
+
+**/.claude/settings.local.json
