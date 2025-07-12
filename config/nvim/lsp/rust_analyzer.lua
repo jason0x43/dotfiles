@@ -3,10 +3,10 @@ local C = require('user.util.lsp').make_config()
 C.settings = {
   ['rust-analyzer'] = {
     checkOnSave = {
-      enable = false,
+      enable = true,
     },
     diagnostics = {
-      enable = false,
+      enable = true,
     },
   },
 }
