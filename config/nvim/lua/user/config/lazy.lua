@@ -52,7 +52,7 @@ require('lazy').setup(
       config = function()
         require('mason-lspconfig').setup({
           automatic_enable = true,
-          ensure_installed = {}
+          ensure_installed = {},
         })
       end,
     },
@@ -79,8 +79,106 @@ require('lazy').setup(
         })
 
         vim.api.nvim_create_user_command('Blame', function()
-          vim.cmd('lefta vertical Git blame -c --date=relative %')
+          vim.cmd('lefta vertical Git blame -c --date=relative -- %:p')
         end, { desc = 'Show git blame info for the current file' })
+
+        -- Start screen
+        local starter = require('mini.starter')
+        starter.setup({
+          evaluate_single = true,
+          items = {
+            {
+              {
+                action = 'Pick explorer',
+                name = 'Explorer',
+                section = 'Pick',
+              },
+              {
+                action = 'Pick files',
+                name = 'Files',
+                section = 'Pick',
+              },
+              {
+                action = 'Pick grep_live',
+                name = 'Grep',
+                section = 'Pick',
+              },
+              {
+                action = 'Pick oldfiles current_dir=true',
+                name = 'Recent',
+                section = 'Pick',
+              },
+              {
+                action = 'Pick help',
+                name = 'Help',
+                section = 'Pick',
+              },
+            },
+            {
+              {
+                name = 'New buffer',
+                action = 'enew',
+                section = 'Actions',
+              },
+              {
+                name = 'Quit',
+                action = 'qall',
+                section = 'Actions',
+              },
+            },
+          },
+          header = '',
+          footer = '',
+        })
+
+        -- Pickers
+        require('mini.pick').setup()
+        require('mini.extra').setup()
+
+        vim.keymap.set('n', '<leader>b', function()
+          MiniPick.builtin.buffers()
+        end, { desc = 'Find buffers' })
+
+        vim.keymap.set('n', '<leader>d', function()
+          MiniExtra.pickers.diagnostic()
+        end, { desc = 'List diagnostics' })
+
+        vim.keymap.set('n', '<leader>f', function()
+          MiniPick.builtin.files()
+        end, { desc = 'Find files' })
+
+        vim.keymap.set('n', '<leader>h', function()
+          MiniPick.builtin.help()
+        end, { desc = 'Find help' })
+
+        vim.keymap.set('n', '<leader>r', function()
+          MiniExtra.pickers.oldfiles({ current_dir = true })
+        end, { desc = 'Find recent files' })
+
+        -- Buffer removal
+        require('mini.bufremove').setup()
+
+        vim.keymap.set('n', '<leader>k', function()
+          MiniBufremove.delete()
+        end, { desc = 'Close the current buffer' })
+
+        vim.keymap.set('n', '<leader>K', function()
+          MiniBufremove.delete(0, true)
+        end, { desc = 'Close the current buffer with prejudice' })
+
+        -- File manager
+        require('mini.files').setup({
+          mappings = {
+            go_in = 'L',
+            go_in_plus = 'l',
+            go_out = 'H',
+            go_out_plus = 'h',
+          },
+        })
+
+        vim.keymap.set('n', '<leader>e', function()
+          MiniFiles.open()
+        end, { desc = 'Open a file explorer' })
 
         -- Diffing; used by status line
         require('mini.diff').setup()
@@ -92,21 +190,6 @@ require('lazy').setup(
         local icons = require('mini.icons')
         icons.setup()
         icons.mock_nvim_web_devicons()
-
-        -- Current file map
-        local mini_map = require('mini.map')
-        mini_map.setup({
-          integrations = {
-            mini_map.gen_integration.diagnostic(),
-            mini_map.gen_integration.builtin_search(),
-          },
-          symbols = {
-            encode = mini_map.gen_encode_symbols.dot('3x2'),
-          },
-          window = {
-            winblend = 0,
-          },
-        })
 
         -- Status line
         local sl = require('mini.statusline')
@@ -154,356 +237,13 @@ require('lazy').setup(
         -- Move text
         require('mini.move').setup()
 
-        vim.keymap.set('n', '<leader>m', function()
-          require('mini.map').toggle()
-        end, { desc = 'Toggle the file map' })
-      end,
-    },
+        -- Notifications
+        require('mini.notify').setup()
 
-    -- Snacks ---------------------------------------------------------
-    {
-      'folke/snacks.nvim',
-      priority = 1000,
-      lazy = false,
-      config = function()
-        ---@type snacks.picker.layout.Config
-        local vscode_center = {
-          preset = 'vscode',
-          ---@diagnostic disable-next-line: assign-type-mismatch
-          preview = false,
-          layout = {
-            height = 0.6,
-            min_height = 7,
-            width = 0.4,
-            min_width = 80,
-            box = 'vertical',
-            {
-              win = 'input',
-              height = 1,
-              border = 'rounded',
-              title = '{title} {live} {flags}',
-              title_pos = 'center',
-            },
-            { win = 'list', border = 'rounded' },
-            { win = 'preview', title = '{preview}', border = 'rounded' },
-          },
-        }
-
-        ---@type snacks.picker.layout.Config
-        local short_ivy = {
-          preset = 'ivy',
-          ---@diagnostic disable-next-line: assign-type-mismatch
-          preview = false,
-          layout = {
-            height = 0.25,
-            min_height = 7,
-          },
-        }
-
-        require('snacks').setup({
-          bigfile = {
-            enabled = true,
-          },
-          dashboard = {
-            preset = {
-              header = [[                           _|
- _|_|      _|_|      _|_|    _|      _|        _|_|  _|_|
-_|    _|  _|_|_|_|  _|    _|  _|      _|  _|  _|    _|    _|
-_|    _|  _|        _|    _|    _|  _|    _|  _|    _|    _|
-_|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
-              keys = {
-                {
-                  icon = ' ',
-                  key = 'n',
-                  desc = 'New',
-                  action = ':ene',
-                },
-                {
-                  icon = ' ',
-                  key = 'f',
-                  desc = 'Find',
-                  action = function()
-                    Snacks.dashboard.pick('smart')
-                  end,
-                },
-                {
-                  icon = ' ',
-                  key = 'r',
-                  desc = 'Recent',
-                  action = function()
-                    Snacks.dashboard.pick('recent', {
-                      filter = {
-                        cwd = vim.fn.getcwd(),
-                      },
-                    })
-                  end,
-                },
-                {
-                  icon = ' ',
-                  key = 'e',
-                  desc = 'Explore',
-                  action = function()
-                    Snacks.dashboard.pick('explorer')
-                  end,
-                },
-                {
-                  icon = '󰐰',
-                  key = 'g',
-                  desc = 'Grep',
-                  action = function()
-                    Snacks.dashboard.pick('grep')
-                  end,
-                },
-                {
-                  icon = ' ',
-                  key = 'c',
-                  desc = 'Config',
-                  action = function()
-                    Snacks.dashboard.pick('explorer', {
-                      cwd = vim.uv.os_homedir() .. '/.config',
-                    })
-                  end,
-                },
-                {
-                  icon = '',
-                  key = 'p',
-                  desc = 'Packages',
-                  action = ':Lazy',
-                  enabled = package.loaded.lazy ~= nil,
-                },
-                {
-                  icon = '',
-                  key = 't',
-                  desc = 'Tools',
-                  action = ':Mason',
-                  enabled = package.loaded.lazy ~= nil,
-                },
-                { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
-              },
-            },
-          },
-          image = {
-            enabled = true,
-          },
-          indent = {
-            enabled = true,
-            animate = {
-              enabled = true,
-              duration = {
-                step = 50, -- ms per step
-                total = 1000, -- maximum duration
-              },
-            },
-            indent = {
-              only_scope = true,
-              char = '┊',
-            },
-            scope = {
-              enabled = false,
-            },
-          },
-          input = {
-            enabled = true,
-          },
-          notifier = {
-            enabled = true,
-          },
-          picker = {
-            ui_select = true,
-            win = {
-              input = {
-                keys = {
-                  ['<Esc>'] = { 'close', mode = { 'n', 'i' } },
-                },
-              },
-            },
-            sources = {
-              autocmds = {
-                -- Modify the default autocmd display to show the desc field
-                format = function(item)
-                  local format = require('snacks.picker.format').autocmd
-                  local formatted = format(item)
-
-                  ---@type vim.api.keyset.get_autocmds.ret
-                  local au = item.item
-                  if au.desc and formatted[#formatted][1] == 'callback' then
-                    formatted[#formatted] = { au.desc, 'SnacksPickerDesc' }
-                  end
-
-                  return formatted
-                end,
-              },
-              buffers = {
-                layout = vscode_center,
-              },
-              diagnostics = {
-                layout = short_ivy,
-              },
-              explorer = {
-                auto_close = true,
-                win = {
-                  input = {
-                    keys = {
-                      ['<Esc>'] = 'close',
-                    },
-                  },
-                },
-                layout = {
-                  layout = {
-                    position = 'right',
-                  },
-                },
-                follow = true,
-              },
-              files = {
-                follow = true,
-                layout = vscode_center,
-              },
-              git_status = {
-                layout = vscode_center,
-              },
-              grep = {
-                layout = vscode_center,
-              },
-              help = {
-                layout = vscode_center,
-              },
-              smart = {
-                layout = vscode_center,
-              },
-              lsp_references = {
-                layout = short_ivy,
-              },
-              lsp_symbols = {
-                layout = {
-                  preset = 'sidebar',
-                  layout = {
-                    position = 'right',
-                  },
-                },
-              },
-              recent = {
-                filter = {
-                  filter = function(item)
-                    return item.file:find('COMMIT_EDITMSG') == nil
-                  end,
-                },
-                layout = vscode_center,
-              },
-              undo = {
-                layout = {
-                  ---@diagnostic disable-next-line: assign-type-mismatch
-                  preview = true,
-                },
-              },
-            },
-          },
-          quickfile = {},
-          statuscolumnn = {
-            enabled = true,
-            left = { 'mark', 'sign' }, -- priority of signs on the left (high to low)
-          },
-          styles = {
-            ---@diagnostic disable-next-line: missing-fields
-            dashboard = {
-              wo = {
-                fillchars = 'eob: ',
-              },
-            },
-          },
-          words = {
-            enabled = true,
-          },
+        -- Indent guides
+        require('mini.indentscope').setup({
+          symbol = '│',
         })
-
-        -- Update the recent source because it's not possible to remove items
-        -- from the the default path filter
-        require('snacks.picker.config.sources').recent.filter.paths = {
-          [vim.fn.stdpath('cache')] = false,
-          [vim.fn.stdpath('state')] = false,
-        }
-
-        -- When hitting enter on a file in explorer during a search, immediately
-        -- jump to the file instead of updating the explorer view
-        local explorer_actions = require('snacks.explorer.actions')
-        local explorer_confirm = explorer_actions.actions.confirm
-        explorer_actions.actions.confirm = function(picker, item, action)
-          if item and not item.dir then
-            Snacks.picker.actions.jump(picker, item, action)
-          else
-            explorer_confirm(picker, item, action)
-          end
-        end
-
-        vim.keymap.set({ 'n', 'v' }, '`', function()
-          require('snacks').debug.run()
-        end, {
-          desc = 'Execute the buffer or selected lines as Lua code',
-        })
-
-        vim.keymap.set('n', '<leader>b', function()
-          require('snacks').picker.buffers()
-        end, { desc = 'List open buffers' })
-
-        vim.keymap.set('n', '<leader>c', function()
-          local ok = pcall(vim.api.nvim_win_close, 0, false)
-          if not ok then
-            -- If the window couldn't be closed, delete the buffer
-            require('snacks').bufdelete.delete()
-          end
-        end, { desc = 'Close the current pane' })
-
-        vim.keymap.set('n', '<leader>d', function()
-          require('snacks').picker.diagnostics()
-        end, { desc = 'Show all diagnostics' })
-
-        vim.keymap.set('n', '<leader>e', function()
-          local root =
-            require('user.util.file').project_root(vim.fn.expand('%'))
-          require('snacks').picker.explorer({
-            cwd = root or vim.fn.expand('%:p:h'),
-          })
-        end, { desc = 'Open a file explorer' })
-
-        vim.keymap.set('n', '<leader>f', function()
-          require('snacks').picker.smart()
-        end, { desc = 'Find files' })
-
-        vim.keymap.set('n', '<leader>g', function()
-          require('snacks').picker.grep()
-        end, { desc = 'Search for strings in files' })
-
-        vim.keymap.set('n', '<leader>h', function()
-          require('snacks').picker.help()
-        end, { desc = 'Find help pages' })
-
-        vim.keymap.set('n', '<leader>k', function()
-          require('snacks').bufdelete.delete()
-        end, { desc = 'Close the current buffer' })
-
-        vim.keymap.set('n', '<leader>K', function()
-          require('snacks').bufdelete.delete({ force = true })
-        end, { desc = 'Close the current buffer with prejudice' })
-
-        vim.keymap.set('n', '<leader>ls', function()
-          require('snacks').picker.lsp_symbols()
-        end, { desc = 'List symbols in the current file' })
-
-        vim.keymap.set('n', '<leader>lr', function()
-          require('snacks').picker.lsp_references()
-        end, { desc = 'List references to the symbol under the cursor' })
-
-        vim.keymap.set('n', '<leader>lw', function()
-          require('snacks').picker.lsp_workspace_symbols()
-        end, { desc = 'List all symbols in the workspace' })
-
-        vim.keymap.set('n', '<leader>t', function()
-          require('snacks').terminal.open()
-        end, { desc = 'Open a terminal' })
-
-        vim.keymap.set('n', '<leader>u', function()
-          require('snacks').picker.undo()
-        end, { desc = 'Open undo history' })
       end,
     },
 
@@ -529,41 +269,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           },
           context_commentstring = {
             enable = true,
-          },
-        })
-      end,
-    },
-
-    -- General UI improvements ----------------------------------------
-    {
-      'folke/noice.nvim',
-      event = 'VeryLazy',
-      dependencies = {
-        'MunifTanjim/nui.nvim',
-      },
-      config = function()
-        ---@diagnostic disable-next-line: missing-fields
-        require('noice').setup({
-          lsp = {
-            -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-            override = {
-              ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-              ['vim.lsp.util.stylize_markdown'] = true,
-              ['cmp.entry.get_documentation'] = true, -- requires hrsh7th/nvim-cmp
-            },
-            signature = {
-              auto_open = { enabled = false },
-            },
-          },
-          messages = {
-            view_search = false,
-          },
-          presets = {
-            bottom_search = true, -- use a classic bottom cmdline for search
-            command_palette = false, -- position the cmdline and popupmenu together
-            long_message_to_split = true, -- long messages will be sent to a split
-            inc_rename = false, -- enables an input dialog for inc-rename.nvim
-            lsp_doc_border = true, -- add a border to hover docs and signature help
           },
         })
       end,
@@ -649,9 +354,9 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
               prepend_args = { '-m' },
             },
             csharpier = {
-              command = "csharpier",
-              args = { "format", "--write-stdout" }
-            }
+              command = 'csharpier',
+              args = { 'format', '--write-stdout' },
+            },
           },
         })
 
@@ -1028,6 +733,26 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
           desc = 'Buffer Local Keymaps (which-key)',
         },
       },
+    },
+
+    -- Use vim as kitty's scrollback handler --------------------------
+    {
+      'mikesmithgh/kitty-scrollback.nvim',
+      cmd = {
+        'KittyScrollbackGenerateKittens',
+        'KittyScrollbackCheckHealth',
+        'KittyScrollbackGenerateCommandLineEditing',
+      },
+      event = { 'User KittyScrollbackLaunch' },
+      config = function()
+        require('kitty-scrollback').setup()
+      end,
+    },
+
+    -- Kitty config filetype ------------------------------------------
+    {
+      'fladson/vim-kitty',
+      ft = 'kitty',
     },
   },
   vim.tbl_extend('force', defaults, {

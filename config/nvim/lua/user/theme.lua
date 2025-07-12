@@ -281,7 +281,7 @@ local function apply_theme()
   hi('VisualNOS', {})
   hi('WarningMsg', {})
   hi('WildMenu', {})
-  hi('WinBar', { bg = c.green, fg = c.bg_0, bold = true})
+  hi('WinBar', { bg = c.green, fg = c.bg_0, bold = true })
 
   hi('DiagnosticError', { fg = error })
   hi('DiagnosticWarn', { fg = warn })
@@ -378,11 +378,17 @@ local function apply_theme()
   hi('MiniStatuslineHint', { fg = hint, bg = c.bg_2 })
   hi('MiniStarterCurrent', { bg = c.bg_2 })
 
+  hi('MiniStarterSection', { fg = c.blue })
+  hi('MiniStarterItemPrefix', { fg = c.yellow })
+  hi('MiniStarterCurrent', { bg = nil })
+
   hi('MiniJump2dSpot', { bg = c.bg_1, fg = c.fg_1, bold = true })
 
   hi('MiniCursorWord', { bg = c.bg_1, underline = false })
 
   hi('MiniPickMatchRanges', { fg = c.magenta })
+
+  hi('MiniIndentScopeSymbol', { fg = c.bg_2 })
 
   hilink('LspDiagnosticsDefaultHint', 'DiagnosticHint')
   hilink('LspDiagnosticsDefaultInformation', 'DiagnosticInfo')

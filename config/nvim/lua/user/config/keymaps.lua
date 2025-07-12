@@ -31,6 +31,17 @@ vim.keymap.set('n', '<leader>a', function()
   vim.lsp.buf.code_action()
 end, { desc = 'Show a list of possible code actions' })
 
+-- Close the current window
+vim.keymap.set('n', '<leader>c', function()
+  ---@type boolean, string | nil
+  local ok, err = pcall(function()
+    vim.cmd('close')
+  end)
+  if not ok and err and string.match(err, 'E444') then
+    vim.cmd('quit')
+  end
+end, { desc = 'Close the current window' })
+
 -- Show diagnostics
 vim.keymap.set('n', '<leader>D', function()
   vim.diagnostic.open_float({
@@ -101,35 +112,15 @@ if vim.fn.has('win32') then
   )
 end
 
-vim.keymap.set(
-  { 'n', 'i' },
-  '<c-h>',
-  function()
-    require('user.terminal').focus_kitty('left')
-  end,
-  { desc = 'Focus the window to the left' }
-)
-vim.keymap.set(
-  { 'n', 'i' },
-  '<c-j>',
-  function()
-    require('user.terminal').focus_kitty('down')
-  end,
-  { desc = 'Focus the window below' }
-)
-vim.keymap.set(
-  { 'n', 'i' },
-  '<c-k>',
-  function()
-    require('user.terminal').focus_kitty('up')
-  end,
-  { desc = 'Focus the window above' }
-)
-vim.keymap.set(
-  { 'n', 'i' },
-  '<c-l>',
-  function()
-    require('user.terminal').focus_kitty('right')
-  end,
-  { desc = 'Focus the window to the right' }
-)
+vim.keymap.set({ 'n', 'i' }, '<c-h>', function()
+  require('user.terminal').focus_kitty('left')
+end, { desc = 'Focus the window to the left' })
+vim.keymap.set({ 'n', 'i' }, '<c-j>', function()
+  require('user.terminal').focus_kitty('down')
+end, { desc = 'Focus the window below' })
+vim.keymap.set({ 'n', 'i' }, '<c-k>', function()
+  require('user.terminal').focus_kitty('up')
+end, { desc = 'Focus the window above' })
+vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
+  require('user.terminal').focus_kitty('right')
+end, { desc = 'Focus the window to the right' })
