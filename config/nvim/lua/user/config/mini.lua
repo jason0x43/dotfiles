@@ -74,7 +74,7 @@ end
       },
       {
         {
-          name = 'New buffer',
+          name = 'Close',
           action = 'enew',
           section = 'Actions',
         },
