@@ -17,6 +17,8 @@ end
 
 -- Mini -----------------------------------------------------------
 (function()
+  local mini_util = require('user.util.mini')
+
   require('mini.deps').setup({ path = { package = path_package } })
 
   -- Git integration; used by statusline
@@ -30,7 +32,7 @@ end
       if event.data.git_subcommand ~= 'blame' then
         return
       end
-      require('user.util.mini').show_git_blame(event.data)
+      mini_util.show_git_blame(event.data)
     end,
   })
 
@@ -60,7 +62,7 @@ end
           section = 'Pickers',
         },
         {
-          action = 'Pick oldfiles current_dir=true',
+          action = 'Pick recent current_dir=true',
           name = 'Recent',
           section = 'Pickers',
         },
@@ -126,20 +128,19 @@ end
   require('mini.pick').setup()
   require('mini.extra').setup()
 
-  vim.ui.select = MiniPick.ui_select
-
-  -- Better diagnostic formatting
-  MiniPick.registry.clean_diagnostic =
-    require('user.util.mini').picker_diagnostics
-
+  MiniPick.registry.diagnostic = mini_util.picker_diagnostics
+  MiniPick.registry.recent = mini_util.picker_recent
   MiniPick.registry.undotree = require('undotree-nvim').picker_undotree
+
+  -- Use mini.pick as vim selector UI
+  vim.ui.select = MiniPick.ui_select
 
   vim.keymap.set('n', '<leader>b', function()
     MiniPick.builtin.buffers()
   end, { desc = 'Find buffers' })
 
   vim.keymap.set('n', '<leader>d', function()
-    MiniPick.registry.clean_diagnostic({ scope = 'current' })
+    MiniPick.registry.diagnostic({ scope = 'current' })
   end, { desc = 'List diagnostics' })
 
   vim.keymap.set('n', '<leader>f', function()
@@ -159,7 +160,7 @@ end
   end, { desc = 'Find help' })
 
   vim.keymap.set('n', '<leader>r', function()
-    MiniExtra.pickers.oldfiles({ current_dir = true })
+    require('user.util.mini').picker_recent({ current_dir = true })
   end, { desc = 'Find recent files' })
 
   vim.keymap.set('n', '<leader>u', function()
@@ -207,7 +208,6 @@ end
   sl.setup({
     content = {
       active = function()
-        local mini_util = require('user.util.mini')
         local mode, mode_hl = sl.section_mode({ trunc_width = 120 })
         local git = sl.section_git({ trunc_width = 75 })
         local diagnostics =
@@ -270,8 +270,7 @@ local add = MiniDeps.add
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'minideps-confirm',
-  ---@param event MiniGitEvent
-  callback = function(event)
+  callback = function()
     vim.wo.foldlevel = 0
     vim.keymap.set('n', 'q', function()
       vim.cmd('close')

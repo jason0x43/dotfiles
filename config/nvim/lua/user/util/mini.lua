@@ -154,6 +154,7 @@ end
 
 local severity_names = { 'Error', 'Warn', 'Info', 'Hint' }
 
+---A diagnostic picker using a custom format
 M.picker_diagnostics = function(local_opts)
   local single_file = local_opts and local_opts.scope == 'current' or false
   return MiniExtra.pickers.diagnostic(local_opts, {
@@ -228,31 +229,16 @@ M.picker_diagnostics = function(local_opts)
           )
         end
       end,
-
-      ---@param buf_id number
-      ---@param item vim.Diagnostic
-      preview = function(buf_id, item)
-        local message = item.message
-        local severity = item.severity
-        local hl_group = 'Diagnostic' .. severity_names[severity]
-        local text = message
-        local source = item.source .. (item.code and ': ' .. item.code or '')
-        local hl_ns = vim.api.nvim_create_namespace('picker_diag')
-
-        vim.api.nvim_set_option_value('wrap', true, {})
-        vim.api.nvim_set_option_value('linebreak', true, {})
-        vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, { text, source })
-        vim.hl.range(buf_id, hl_ns, hl_group, { 0, 0 }, { 0, -1 })
-        vim.hl.range(
-          buf_id,
-          hl_ns,
-          'DiagnosticVirtualTextHint',
-          { 1, 0 },
-          { 1, -1 }
-        )
-      end,
     },
   })
+end
+
+---A recent files picker
+M.picker_recent = function(local_opts)
+  vim.v.oldfiles = vim.tbl_filter(function(item)
+    return not vim.endswith(item, 'COMMIT_EDITMSG')
+  end, vim.v.oldfiles)
+  return MiniExtra.pickers.oldfiles(local_opts)
 end
 
 return M
