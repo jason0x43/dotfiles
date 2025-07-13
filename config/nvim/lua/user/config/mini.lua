@@ -77,6 +77,16 @@ end
           section = 'Actions',
         },
         {
+          name = 'Dependencies',
+          action = 'DepsUpdate',
+          section = 'Actions',
+        },
+        {
+          name = 'Tools',
+          action = 'Mason',
+          section = 'Actions',
+        },
+        {
           name = 'Quit',
           action = 'qall',
           section = 'Actions',
