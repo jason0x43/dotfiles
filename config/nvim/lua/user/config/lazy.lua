@@ -877,15 +877,6 @@ _|    _|    _|_|_|    _|_|        _|      _|  _|    _|    _|]],
       end,
     },
 
-    -- Bacon diagnostics ----------------------------------------------
-    {
-      dir = '/Users/jason/.config/nvim/lua/bacon-diag',
-      cond = vim.fn.findfile('.bacon-locations', '.;') ~= '',
-      config = function()
-        require('bacon-diag').setup()
-      end,
-    },
-
     -- Messages -------------------------------------------------------
     {
       'AckslD/messages.nvim',
