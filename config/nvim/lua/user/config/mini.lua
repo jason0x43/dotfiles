@@ -189,7 +189,9 @@ end
   })
 
   vim.keymap.set('n', '<leader>e', function()
-    MiniFiles.open()
+    local bufname = vim.api.nvim_buf_get_name(0)
+    local dir = vim.fn.fnamemodify(bufname, ":p:h")
+    MiniFiles.open(dir)
   end, { desc = 'Open a file explorer' })
 
   -- Diffing; used by status line
@@ -262,6 +264,7 @@ end
   hipatterns.setup({
     highlighters = {
       hex_color = hipatterns.gen_highlighter.hex_color(),
+      todo = { pattern = 'TODO', group = 'MiniHipatternsTodo' },
     },
   })
 end)()

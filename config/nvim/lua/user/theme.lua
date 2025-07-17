@@ -390,6 +390,8 @@ local function apply_theme()
 
   hi('MiniIndentScopeSymbol', { fg = c.bg_2 })
 
+  hi('MiniHiPatternsTodo', { fg = c.magenta, bold = true })
+
   hilink('LspDiagnosticsDefaultHint', 'DiagnosticHint')
   hilink('LspDiagnosticsDefaultInformation', 'DiagnosticInfo')
   hilink('LspDiagnosticsDefaultWarning', 'DiagnosticWarn')
