@@ -470,18 +470,25 @@ later(function()
   end
 
   add({
-    source = 'CopilotC-Nvim/CopilotChat.nvim',
+    source = 'olimorris/codecompanion.nvim',
     depends = {
-      'zbirenbaum/copilot.lua',
       'nvim-lua/plenary.nvim',
-    },
-    hooks = {
-      post_checkout = function()
-        vim.fn.system('make tiktoken')
-      end,
+      'nvim-treesitter/nvim-treesitter',
     },
   })
-  require('CopilotChat').setup()
+  require('codecompanion').setup({
+    strategies = {
+      chat = {
+        adapter = "copilot"
+      },
+      inline = {
+        adapter = "copilot"
+      },
+      cmd = {
+        adapter = "copilot"
+      },
+    }
+  })
 end)
 
 -- Better start/end matching --------------------------------------
