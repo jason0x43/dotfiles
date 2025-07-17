@@ -15,14 +15,17 @@ if not vim.loop.fs_stat(mini_path) then
   vim.cmd('echo "Installed `mini.nvim`" | redraw')
 end
 
--- Mini -----------------------------------------------------------
-(function()
-  local mini_util = require('user.util.mini')
+require('mini.deps').setup({ path = { package = path_package } })
 
-  require('mini.deps').setup({ path = { package = path_package } })
+local add = MiniDeps.add
+local now = MiniDeps.now
+local later = MiniDeps.later
 
-  -- Git integration; used by statusline
+-- Git integration; used by statusline
+now(function()
   require('mini.git').setup()
+
+  local mini_util = require('user.util.mini')
 
   -- Modify how blame output is displayed
   vim.api.nvim_create_autocmd('User', {
@@ -39,8 +42,10 @@ end
   vim.api.nvim_create_user_command('Blame', function()
     vim.cmd('lefta vertical Git blame -c --date=relative -- %:p')
   end, { desc = 'Show git blame info for the current file' })
+end)
 
-  -- Start screen
+-- Start screen
+now(function()
   local starter = require('mini.starter')
   starter.setup({
     evaluate_single = true,
@@ -124,9 +129,23 @@ end
     end,
   })
 
-  -- Pickers
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'minideps-confirm',
+    callback = function()
+      vim.wo.foldlevel = 0
+      vim.keymap.set('n', 'q', function()
+        vim.cmd('close')
+      end, { buffer = 0, desc = 'Close the deps pane' })
+    end,
+  })
+end)
+
+-- Pickers
+now(function()
   require('mini.pick').setup()
   require('mini.extra').setup()
+
+  local mini_util = require('user.util.mini')
 
   MiniPick.registry.diagnostic = mini_util.picker_diagnostics
   MiniPick.registry.recent = mini_util.picker_recent
@@ -177,8 +196,10 @@ end
   vim.keymap.set('n', '<leader>K', function()
     MiniBufremove.delete(0, true)
   end, { desc = 'Close the current buffer with prejudice' })
+end)
 
-  -- File manager
+-- File manager
+now(function()
   require('mini.files').setup({
     mappings = {
       go_in = 'L',
@@ -187,26 +208,33 @@ end
       go_out_plus = 'h',
     },
   })
-
   vim.keymap.set('n', '<leader>e', function()
     local bufname = vim.api.nvim_buf_get_name(0)
-    local dir = vim.fn.fnamemodify(bufname, ":p:h")
+    local dir = vim.fn.fnamemodify(bufname, ':p:h')
     MiniFiles.open(dir)
   end, { desc = 'Open a file explorer' })
+end)
 
-  -- Diffing; used by status line
+-- Diffing; used by status line
+later(function()
   require('mini.diff').setup()
   vim.api.nvim_create_user_command('Diff', function()
     MiniDiff.toggle_overlay(0)
   end, { desc = 'Toggle a git diff overlay' })
+end)
 
-  -- Icons
+-- Icons
+now(function()
   local icons = require('mini.icons')
   icons.setup()
   icons.mock_nvim_web_devicons()
+end)
 
-  -- Status line
+-- Status line
+now(function()
   local sl = require('mini.statusline')
+  local mini_util = require('user.util.mini')
+
   sl.setup({
     content = {
       active = function()
@@ -241,25 +269,37 @@ end
   })
   -- Don't show the mode on the last line since it's in the status line
   vim.o.showmode = false
+end)
 
-  -- Surround
+-- Surround
+later(function()
   require('mini.surround').setup()
+end)
 
-  -- Jumping around
+-- Jumping around
+later(function()
   require('mini.jump2d').setup()
+end)
 
-  -- Move text
+-- Move text
+later(function()
   require('mini.move').setup()
+end)
 
-  -- Notifications
+-- Notifications
+now(function()
   require('mini.notify').setup()
+end)
 
-  -- Indent guides
+-- Indent guides
+later(function()
   require('mini.indentscope').setup({
     symbol = '│',
   })
+end)
 
-  -- Colorizing
+-- Colorizing
+now(function()
   local hipatterns = require('mini.hipatterns')
   hipatterns.setup({
     highlighters = {
@@ -267,96 +307,96 @@ end
       todo = { pattern = 'TODO', group = 'MiniHipatternsTodo' },
     },
   })
-end)()
-
-local add = MiniDeps.add
-
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'minideps-confirm',
-  callback = function()
-    vim.wo.foldlevel = 0
-    vim.keymap.set('n', 'q', function()
-      vim.cmd('close')
-    end, { buffer = 0, desc = 'Close the deps pane' })
-  end,
-})
+end)
 
 -- Native LSP configurations --------------------------------------
-add({ source = 'neovim/nvim-lspconfig' })
+now(function()
+  add({ source = 'neovim/nvim-lspconfig' })
+end)
 
 -- Language server and tool installer -----------------------------
-add({ source = 'mason-org/mason.nvim' })
-require('mason').setup({
-  ui = { border = 'single' },
-})
+now(function()
+  add({ source = 'mason-org/mason.nvim' })
+  require('mason').setup({
+    ui = { border = 'single' },
+  })
+end)
 
 -- Mason language server manager ----------------------------------
-add({ source = 'mason-org/mason-lspconfig.nvim' })
-require('mason-lspconfig').setup({
-  automatic_enable = true,
-  ensure_installed = {},
-})
+now(function()
+  add({ source = 'mason-org/mason-lspconfig.nvim' })
+  require('mason-lspconfig').setup({
+    automatic_enable = true,
+    ensure_installed = {},
+  })
+end)
 
 -- Treesitter -----------------------------------------------------
-add({
-  source = 'nvim-treesitter/nvim-treesitter',
-  hooks = {
-    post_checkout = function()
-      vim.cmd('TSUpdate')
-    end,
-  },
-})
-require('nvim-treesitter.configs').setup({
-  auto_install = true,
-  sync_install = true,
-  ensure_installed = {},
-  modules = {},
-  ignore_install = {},
-  highlight = {
-    enable = true,
-  },
-  indent = {
-    enable = true,
-  },
-  matchup = {
-    enable = true,
-  },
-  context_commentstring = {
-    enable = true,
-  },
-})
+now(function()
+  add({
+    source = 'nvim-treesitter/nvim-treesitter',
+    hooks = {
+      post_checkout = function()
+        vim.cmd('TSUpdate')
+      end,
+    },
+  })
+  require('nvim-treesitter.configs').setup({
+    auto_install = true,
+    sync_install = true,
+    ensure_installed = {},
+    modules = {},
+    ignore_install = {},
+    highlight = {
+      enable = true,
+    },
+    indent = {
+      enable = true,
+    },
+    matchup = {
+      enable = true,
+    },
+    context_commentstring = {
+      enable = true,
+    },
+  })
+end)
 
 -- Misc filetype support ------------------------------------------
-add({ source = 'mustache/vim-mustache-handlebars' })
-add({ source = 'jwalton512/vim-blade' })
-add({ source = 'cfdrake/vim-pbxproj' })
+now(function()
+  add({ source = 'mustache/vim-mustache-handlebars' })
+  add({ source = 'jwalton512/vim-blade' })
+  add({ source = 'cfdrake/vim-pbxproj' })
+end)
 
 -- Auto-configure lua-ls ------------------------------------------
-add({ source = 'folke/lazydev.nvim' })
-require('lazydev').setup({
-  enabled = true,
-  debug = false,
-  runtime = vim.env.VIMRUNTIME,
-  integrations = {
-    lspconfig = true,
-  },
-  library = {
-    -- Load luvit types when the `vim.uv` word is found
-    { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-    {
-      path = 'nvim-lspconfig/lua',
-      words = { 'lspconfig', 'lsp' },
+later(function()
+  add({ source = 'folke/lazydev.nvim' })
+  require('lazydev').setup({
+    enabled = true,
+    debug = false,
+    runtime = vim.env.VIMRUNTIME,
+    integrations = {
+      lspconfig = true,
     },
-    {
-      path = vim.fn.stdpath('config') .. '/lua/user/types/wezterm',
-      words = { 'wezterm' },
+    library = {
+      -- Load luvit types when the `vim.uv` word is found
+      { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      {
+        path = 'nvim-lspconfig/lua',
+        words = { 'lspconfig', 'lsp' },
+      },
+      {
+        path = vim.fn.stdpath('config') .. '/lua/user/types/wezterm',
+        words = { 'wezterm' },
+      },
     },
-  },
-})
+  })
+end)
 
 -- Code formatting ------------------------------------------------
-add({ source = 'stevearc/conform.nvim' });
-(function()
+later(function()
+  add({ source = 'stevearc/conform.nvim' })
   require('conform').setup({
     formatters_by_ft = {
       blade = { 'prettier' },
@@ -408,25 +448,41 @@ add({ source = 'stevearc/conform.nvim' });
   vim.keymap.set('n', '<leader>F', function()
     require('conform').format({ lsp_fallback = true, async = true })
   end, { desc = 'Format the current file' })
-end)()
+end)
 
 -- Copilot integration --------------------------------------------
-if vim.fn.executable('node') == 1 then
-  add({ source = 'zbirenbaum/copilot.lua' })
-  require('copilot').setup({
-    event = 'InsertEnter',
-    suggestion = {
-      enabled = false,
-      auto_trigger = true,
+later(function()
+  if vim.fn.executable('node') == 1 then
+    add({ source = 'zbirenbaum/copilot.lua' })
+    require('copilot').setup({
+      event = 'InsertEnter',
+      suggestion = {
+        enabled = false,
+        auto_trigger = true,
+      },
+      panel = { enabled = false },
+      filetypes = {
+        ['*'] = function()
+          return vim.bo.filetype ~= 'bigfile'
+        end,
+      },
+    })
+  end
+
+  add({
+    source = 'CopilotC-Nvim/CopilotChat.nvim',
+    depends = {
+      'zbirenbaum/copilot.lua',
+      'nvim-lua/plenary.nvim',
     },
-    panel = { enabled = false },
-    filetypes = {
-      ['*'] = function()
-        return vim.bo.filetype ~= 'bigfile'
+    hooks = {
+      post_checkout = function()
+        vim.fn.system('make tiktoken')
       end,
     },
   })
-end
+  require('CopilotChat').setup()
+end)
 
 -- Better start/end matching --------------------------------------
 add({ source = 'andymass/vim-matchup' })
