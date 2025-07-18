@@ -217,7 +217,11 @@ end)
 
 -- Diffing; used by status line
 later(function()
-  require('mini.diff').setup()
+  local diff = require('mini.diff')
+  diff.setup({
+    source = { diff.gen_source.git(), diff.gen_source.none() },
+  })
+
   vim.api.nvim_create_user_command('Diff', function()
     MiniDiff.toggle_overlay(0)
   end, { desc = 'Toggle a git diff overlay' })
@@ -479,15 +483,85 @@ later(function()
   require('codecompanion').setup({
     strategies = {
       chat = {
-        adapter = "copilot"
+        adapter = 'copilot',
+        keymaps = {
+          -- use C-c for stop so we can use q for close
+          stop = {
+            modes = { n = '<C-c>' },
+          },
+        },
       },
       inline = {
-        adapter = "copilot"
+        adapter = 'copilot',
       },
       cmd = {
-        adapter = "copilot"
+        adapter = 'copilot',
       },
-    }
+    },
+    display = {
+      chat = {
+        window = {
+          layout = 'float',
+          height = 0.75,
+          width = 0.75,
+          opts = {
+            number = false,
+            concealcursor = 'n',
+            conceallevel = 2,
+          },
+        },
+      },
+    },
+  })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'codecompanion',
+    callback = function()
+      vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
+        desc = 'Close the chat window',
+        buffer = 0,
+      })
+    end,
+    desc = 'Enhance CodeCompanion windows.',
+  })
+
+  vim.keymap.set(
+    'n',
+    '<leader>z',
+    '<cmd>CodeCompanionChat Toggle<cr>',
+    { desc = 'Open a CodeCompanion chat window' }
+  )
+
+  vim.keymap.set(
+    'n',
+    '<leader>Z',
+    '<cmd>CodeCompanionActions<cr>',
+    { desc = 'Open CodeCompanion actions panel' }
+  )
+
+  add({
+    source = 'MeanderingProgrammer/render-markdown.nvim',
+    depends = {
+      'nvim-treesitter',
+      'echasnovski/mini.nvim',
+    },
+  })
+  require('render-markdown').setup({
+    anti_conceal = { enabled = false },
+    file_types = {
+      'markdown',
+      'codecompanion',
+    },
+    win_options = {
+      conceallevel = {
+        default = vim.o.conceallevel,
+        rendered = 3,
+      },
+      concealcursor = {
+        default = vim.o.concealcursor,
+        rendered = 'n',
+      },
+    },
   })
 end)
 
