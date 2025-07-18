@@ -21,16 +21,6 @@ vim.api.nvim_create_autocmd('SwapExists', {
   desc = 'Open files in readonly if a swapfile exists',
 })
 
--- Make the buffer name a relative path
-vim.api.nvim_create_autocmd('BufReadPost', {
-  pattern = '*',
-  group = group,
-  callback = function()
-    vim.cmd('silent! lcd .')
-  end,
-  desc = "Make buffer's name a relative path",
-})
-
 -- Update settings when the vim window is resized
 vim.api.nvim_create_autocmd('VimResized', {
   pattern = '*',
