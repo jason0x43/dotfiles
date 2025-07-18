@@ -21,6 +21,18 @@ local add = MiniDeps.add
 local now = MiniDeps.now
 local later = MiniDeps.later
 
+later(function()
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'minideps-confirm',
+    callback = function()
+      vim.wo.foldlevel = 0
+      vim.keymap.set('n', 'q', function()
+        vim.cmd('close')
+      end, { buffer = 0, desc = 'Close the deps pane' })
+    end,
+  })
+end)
+
 -- Git integration; used by statusline
 now(function()
   require('mini.git').setup()
@@ -129,15 +141,13 @@ now(function()
     end,
   })
 
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'minideps-confirm',
-    callback = function()
-      vim.wo.foldlevel = 0
-      vim.keymap.set('n', 'q', function()
-        vim.cmd('close')
-      end, { buffer = 0, desc = 'Close the deps pane' })
-    end,
-  })
+  vim.api.nvim_create_user_command('Start', function()
+    MiniStarter.open()
+  end, { desc = 'Open the mini starter screen' })
+
+  vim.keymap.set('n', '<leader>s', function()
+    MiniStarter.open()
+  end, { desc = 'Open the mini starter screen' })
 end)
 
 -- Pickers
@@ -216,7 +226,7 @@ now(function()
 end)
 
 -- Diffing; used by status line
-later(function()
+now(function()
   local diff = require('mini.diff')
   diff.setup({
     source = { diff.gen_source.git(), diff.gen_source.none() },
@@ -566,15 +576,20 @@ later(function()
 end)
 
 -- Better start/end matching --------------------------------------
-add({ source = 'andymass/vim-matchup' })
-vim.g.matchup_matchparen_offscreen = { method = 'popup', border = 'rounded' }
+later(function()
+  add({ source = 'andymass/vim-matchup' })
+  vim.g.matchup_matchparen_offscreen = { method = 'popup', border = 'rounded' }
+end)
 
 -- JSON schemas ---------------------------------------------------
-add({ source = 'b0o/schemastore.nvim' })
+now(function()
+  add({ source = 'b0o/schemastore.nvim' })
+end)
 
 -- Better git diff views ------------------------------------------
-add({ source = 'sindrets/diffview.nvim' });
-(function()
+later(function()
+  add({ source = 'sindrets/diffview.nvim' })
+
   local last_status = vim.o.laststatus
   local actions = require('diffview.actions')
   local close_map = {
@@ -613,26 +628,28 @@ add({ source = 'sindrets/diffview.nvim' });
     },
   })
   require('user.util.diffview').patch_layout()
-end)()
+end)
 
 -- Auto-set indentation -------------------------------------------
-add({ source = 'tpope/vim-sleuth' })
--- Disable sleuth for markdown files as it slows the load time significantly
-vim.g.sleuth_markdown_heuristics = 0
+now(function()
+  add({ source = 'tpope/vim-sleuth' })
+  -- Disable sleuth for markdown files as it slows the load time significantly
+  vim.g.sleuth_markdown_heuristics = 0
+end)
 
 -- Completions ----------------------------------------------------
-add({
-  source = 'saghen/blink.cmp',
-  depends = {
-    -- Copilot provider
-    'giuxtaposition/blink-cmp-copilot',
-    -- Colorize menu items
-    'xzbdmw/colorful-menu.nvim',
-  },
-  -- Checkout a specific version of blink to get pre-compiled rust part
-  checkout = 'v1.4.1',
-});
-(function()
+later(function()
+  add({
+    source = 'saghen/blink.cmp',
+    depends = {
+      -- Copilot provider
+      'giuxtaposition/blink-cmp-copilot',
+      -- Colorize menu items
+      'xzbdmw/colorful-menu.nvim',
+    },
+    -- Checkout a specific version of blink to get pre-compiled rust part
+    checkout = 'v1.4.1',
+  })
   local providers = {
     lazydev = {
       name = 'LazyDev',
@@ -731,11 +748,15 @@ add({
       providers = providers,
     },
   })
-end)()
+end)
 
 -- Use vim as kitty's scrollback handler --------------------------
-add({ source = 'mikesmithgh/kitty-scrollback.nvim' })
-require('kitty-scrollback').setup()
+now(function()
+  add({ source = 'mikesmithgh/kitty-scrollback.nvim' })
+  require('kitty-scrollback').setup()
+end)
 
 -- Kitty config filetype ------------------------------------------
-add({ source = 'fladson/vim-kitty' })
+now(function()
+  add({ source = 'fladson/vim-kitty' })
+end)
