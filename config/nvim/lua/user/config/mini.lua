@@ -21,17 +21,7 @@ local add = MiniDeps.add
 local now = MiniDeps.now
 local later = MiniDeps.later
 
-later(function()
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'minideps-confirm',
-    callback = function()
-      vim.wo.foldlevel = 0
-      vim.keymap.set('n', 'q', function()
-        vim.cmd('close')
-      end, { buffer = 0, desc = 'Close the deps pane' })
-    end,
-  })
-end)
+-- Now ----------------------------------------------------------------
 
 -- Git integration; used by statusline
 now(function()
@@ -54,6 +44,66 @@ now(function()
   vim.api.nvim_create_user_command('Blame', function()
     vim.cmd('lefta vertical Git blame -c --date=relative -- %:p')
   end, { desc = 'Show git blame info for the current file' })
+end)
+
+-- Diffing; used by status line
+now(function()
+  local diff = require('mini.diff')
+  diff.setup({
+    source = { diff.gen_source.git(), diff.gen_source.none() },
+  })
+
+  vim.api.nvim_create_user_command('Diff', function()
+    MiniDiff.toggle_overlay(0)
+  end, { desc = 'Toggle a git diff overlay' })
+end)
+
+-- Icons; used by status line
+now(function()
+  local icons = require('mini.icons')
+  icons.setup()
+  icons.mock_nvim_web_devicons()
+end)
+
+-- Status line
+now(function()
+  local sl = require('mini.statusline')
+  local mini_util = require('user.util.mini')
+
+  sl.setup({
+    content = {
+      active = function()
+        local mode, mode_hl = sl.section_mode({ trunc_width = 120 })
+        local git = sl.section_git({ trunc_width = 75 })
+        local diagnostics =
+          mini_util.section_diagnostics(sl, { trunc_width = 75 })
+        local filename = sl.section_filename({ trunc_width = 140 })
+        local location = sl.section_location({ trunc_width = 140 })
+        local lsps = mini_util.section_lsps(sl, { trunc_width = 140 })
+
+        return sl.combine_groups({
+          { hl = mode_hl, strings = { mode } },
+          {
+            hl = 'MiniStatuslineDevInfo',
+            strings = { git, diagnostics },
+          },
+          '%<', -- begin left alignment
+          { hl = 'MiniStatuslineFilename', strings = { filename } },
+          '%=', -- end left alignment
+          { hl = 'MiniStatuslineDevInfo', strings = { lsps } },
+          { hl = mode_hl, strings = { location } },
+        })
+      end,
+      inactive = function()
+        local filename = sl.section_filename({})
+        return sl.combine_groups({
+          { hl = 'MiniStatuslineFilename', strings = { filename } },
+        })
+      end,
+    },
+  })
+  -- Don't show the mode on the last line since it's in the status line
+  vim.o.showmode = false
 end)
 
 -- Start screen
@@ -150,8 +200,114 @@ now(function()
   end, { desc = 'Open the mini starter screen' })
 end)
 
--- Pickers
+-- Use vim as kitty's scrollback handler
 now(function()
+  add({ source = 'mikesmithgh/kitty-scrollback.nvim' })
+  require('kitty-scrollback').setup()
+end)
+
+-- Kitty config filetype
+now(function()
+  add({ source = 'fladson/vim-kitty' })
+end)
+
+-- Colorizing
+now(function()
+  local hipatterns = require('mini.hipatterns')
+  hipatterns.setup({
+    highlighters = {
+      hex_color = hipatterns.gen_highlighter.hex_color(),
+      todo = { pattern = 'TODO', group = 'MiniHipatternsTodo' },
+    },
+  })
+end)
+
+-- Native LSP configurations
+now(function()
+  add({ source = 'neovim/nvim-lspconfig' })
+end)
+
+-- Language server and tool installer
+now(function()
+  add({ source = 'mason-org/mason.nvim' })
+  require('mason').setup({
+    ui = { border = 'single' },
+  })
+
+  add({ source = 'mason-org/mason-lspconfig.nvim' })
+  require('mason-lspconfig').setup({
+    automatic_enable = true,
+    ensure_installed = {},
+  })
+end)
+
+-- Treesitter
+now(function()
+  add({
+    source = 'nvim-treesitter/nvim-treesitter',
+    hooks = {
+      post_checkout = function()
+        vim.cmd('TSUpdate')
+      end,
+    },
+  })
+  require('nvim-treesitter.configs').setup({
+    auto_install = true,
+    sync_install = true,
+    ensure_installed = { 'diff' },
+    modules = {},
+    ignore_install = {},
+    highlight = {
+      enable = true,
+    },
+    indent = {
+      enable = true,
+    },
+    matchup = {
+      enable = true,
+    },
+    context_commentstring = {
+      enable = true,
+    },
+  })
+end)
+
+-- Misc filetype support
+now(function()
+  add({ source = 'mustache/vim-mustache-handlebars' })
+  add({ source = 'jwalton512/vim-blade' })
+  add({ source = 'cfdrake/vim-pbxproj' })
+end)
+
+-- JSON schemas
+now(function()
+  add({ source = 'b0o/schemastore.nvim' })
+end)
+
+-- Auto-set indentation
+now(function()
+  add({ source = 'tpope/vim-sleuth' })
+  -- Disable sleuth for markdown files as it slows the load time significantly
+  vim.g.sleuth_markdown_heuristics = 0
+end)
+
+-- Later --------------------------------------------------------------
+
+-- Use 'q' to close mini.deps windows
+later(function()
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'minideps-confirm',
+    callback = function()
+      vim.wo.foldlevel = 0
+      vim.keymap.set('n', 'q', function()
+        vim.cmd('close')
+      end, { buffer = 0, desc = 'Close the deps pane' })
+    end,
+  })
+end)
+
+-- Pickers
+later(function()
   require('mini.pick').setup()
   require('mini.extra').setup()
 
@@ -171,6 +327,12 @@ now(function()
   vim.keymap.set('n', '<leader>d', function()
     MiniPick.registry.diagnostic({ scope = 'current' })
   end, { desc = 'List diagnostics' })
+
+  vim.keymap.set('n', '<leader>e', function()
+    local bufname = vim.api.nvim_buf_get_name(0)
+    local dir = vim.fn.fnamemodify(bufname, ':p:h')
+    MiniExtra.pickers.explorer({ cwd = dir })
+  end, { desc = 'Open a file explorer' })
 
   vim.keymap.set('n', '<leader>f', function()
     MiniPick.builtin.files()
@@ -209,7 +371,7 @@ now(function()
 end)
 
 -- File manager
-now(function()
+later(function()
   require('mini.files').setup({
     mappings = {
       go_in = 'L',
@@ -218,71 +380,12 @@ now(function()
       go_out_plus = 'h',
     },
   })
-  vim.keymap.set('n', '<leader>e', function()
+
+  vim.keymap.set('n', '<leader>n', function()
     local bufname = vim.api.nvim_buf_get_name(0)
     local dir = vim.fn.fnamemodify(bufname, ':p:h')
     MiniFiles.open(dir)
-  end, { desc = 'Open a file explorer' })
-end)
-
--- Diffing; used by status line
-now(function()
-  local diff = require('mini.diff')
-  diff.setup({
-    source = { diff.gen_source.git(), diff.gen_source.none() },
-  })
-
-  vim.api.nvim_create_user_command('Diff', function()
-    MiniDiff.toggle_overlay(0)
-  end, { desc = 'Toggle a git diff overlay' })
-end)
-
--- Icons
-now(function()
-  local icons = require('mini.icons')
-  icons.setup()
-  icons.mock_nvim_web_devicons()
-end)
-
--- Status line
-now(function()
-  local sl = require('mini.statusline')
-  local mini_util = require('user.util.mini')
-
-  sl.setup({
-    content = {
-      active = function()
-        local mode, mode_hl = sl.section_mode({ trunc_width = 120 })
-        local git = sl.section_git({ trunc_width = 75 })
-        local diagnostics =
-          mini_util.section_diagnostics(sl, { trunc_width = 75 })
-        local filename = sl.section_filename({ trunc_width = 140 })
-        local location = sl.section_location({ trunc_width = 140 })
-        local lsps = mini_util.section_lsps(sl, { trunc_width = 140 })
-
-        return sl.combine_groups({
-          { hl = mode_hl, strings = { mode } },
-          {
-            hl = 'MiniStatuslineDevInfo',
-            strings = { git, diagnostics },
-          },
-          '%<', -- begin left alignment
-          { hl = 'MiniStatuslineFilename', strings = { filename } },
-          '%=', -- end left alignment
-          { hl = 'MiniStatuslineDevInfo', strings = { lsps } },
-          { hl = mode_hl, strings = { location } },
-        })
-      end,
-      inactive = function()
-        local filename = sl.section_filename({})
-        return sl.combine_groups({
-          { hl = 'MiniStatuslineFilename', strings = { filename } },
-        })
-      end,
-    },
-  })
-  -- Don't show the mode on the last line since it's in the status line
-  vim.o.showmode = false
+  end, { desc = 'Open a file manager' })
 end)
 
 -- Surround
@@ -301,7 +404,7 @@ later(function()
 end)
 
 -- Notifications
-now(function()
+later(function()
   require('mini.notify').setup()
 end)
 
@@ -312,78 +415,7 @@ later(function()
   })
 end)
 
--- Colorizing
-now(function()
-  local hipatterns = require('mini.hipatterns')
-  hipatterns.setup({
-    highlighters = {
-      hex_color = hipatterns.gen_highlighter.hex_color(),
-      todo = { pattern = 'TODO', group = 'MiniHipatternsTodo' },
-    },
-  })
-end)
-
--- Native LSP configurations --------------------------------------
-now(function()
-  add({ source = 'neovim/nvim-lspconfig' })
-end)
-
--- Language server and tool installer -----------------------------
-now(function()
-  add({ source = 'mason-org/mason.nvim' })
-  require('mason').setup({
-    ui = { border = 'single' },
-  })
-end)
-
--- Mason language server manager ----------------------------------
-now(function()
-  add({ source = 'mason-org/mason-lspconfig.nvim' })
-  require('mason-lspconfig').setup({
-    automatic_enable = true,
-    ensure_installed = {},
-  })
-end)
-
--- Treesitter -----------------------------------------------------
-now(function()
-  add({
-    source = 'nvim-treesitter/nvim-treesitter',
-    hooks = {
-      post_checkout = function()
-        vim.cmd('TSUpdate')
-      end,
-    },
-  })
-  require('nvim-treesitter.configs').setup({
-    auto_install = true,
-    sync_install = true,
-    ensure_installed = { 'diff' },
-    modules = {},
-    ignore_install = {},
-    highlight = {
-      enable = true,
-    },
-    indent = {
-      enable = true,
-    },
-    matchup = {
-      enable = true,
-    },
-    context_commentstring = {
-      enable = true,
-    },
-  })
-end)
-
--- Misc filetype support ------------------------------------------
-now(function()
-  add({ source = 'mustache/vim-mustache-handlebars' })
-  add({ source = 'jwalton512/vim-blade' })
-  add({ source = 'cfdrake/vim-pbxproj' })
-end)
-
--- Auto-configure lua-ls ------------------------------------------
+-- Auto-configure lua-ls
 later(function()
   add({ source = 'folke/lazydev.nvim' })
   require('lazydev').setup({
@@ -408,7 +440,7 @@ later(function()
   })
 end)
 
--- Code formatting ------------------------------------------------
+-- Code formatting
 later(function()
   add({ source = 'stevearc/conform.nvim' })
   require('conform').setup({
@@ -464,7 +496,7 @@ later(function()
   end, { desc = 'Format the current file' })
 end)
 
--- Copilot integration --------------------------------------------
+-- Copilot integration
 later(function()
   if vim.fn.executable('node') == 1 then
     add({ source = 'zbirenbaum/copilot.lua' })
@@ -575,18 +607,13 @@ later(function()
   })
 end)
 
--- Better start/end matching --------------------------------------
+-- Better start/end matching
 later(function()
   add({ source = 'andymass/vim-matchup' })
   vim.g.matchup_matchparen_offscreen = { method = 'popup', border = 'rounded' }
 end)
 
--- JSON schemas ---------------------------------------------------
-now(function()
-  add({ source = 'b0o/schemastore.nvim' })
-end)
-
--- Better git diff views ------------------------------------------
+-- Better git diff views
 later(function()
   add({ source = 'sindrets/diffview.nvim' })
 
@@ -630,14 +657,7 @@ later(function()
   require('user.util.diffview').patch_layout()
 end)
 
--- Auto-set indentation -------------------------------------------
-now(function()
-  add({ source = 'tpope/vim-sleuth' })
-  -- Disable sleuth for markdown files as it slows the load time significantly
-  vim.g.sleuth_markdown_heuristics = 0
-end)
-
--- Completions ----------------------------------------------------
+-- Completions
 later(function()
   add({
     source = 'saghen/blink.cmp',
@@ -748,15 +768,4 @@ later(function()
       providers = providers,
     },
   })
-end)
-
--- Use vim as kitty's scrollback handler --------------------------
-now(function()
-  add({ source = 'mikesmithgh/kitty-scrollback.nvim' })
-  require('kitty-scrollback').setup()
-end)
-
--- Kitty config filetype ------------------------------------------
-now(function()
-  add({ source = 'fladson/vim-kitty' })
 end)
