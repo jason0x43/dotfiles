@@ -496,117 +496,6 @@ later(function()
   end, { desc = 'Format the current file' })
 end)
 
--- Copilot integration
-later(function()
-  if vim.fn.executable('node') == 1 then
-    add({ source = 'zbirenbaum/copilot.lua' })
-    require('copilot').setup({
-      event = 'InsertEnter',
-      suggestion = {
-        enabled = false,
-        auto_trigger = true,
-      },
-      panel = { enabled = false },
-      filetypes = {
-        ['*'] = function()
-          return vim.bo.filetype ~= 'bigfile'
-        end,
-      },
-    })
-  end
-
-  add({
-    source = 'olimorris/codecompanion.nvim',
-    depends = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-  })
-  require('codecompanion').setup({
-    strategies = {
-      chat = {
-        adapter = 'copilot',
-        keymaps = {
-          -- use C-c for stop so we can use q for close
-          stop = {
-            modes = { n = '<C-c>' },
-          },
-        },
-      },
-      inline = {
-        adapter = 'copilot',
-      },
-      cmd = {
-        adapter = 'copilot',
-      },
-    },
-    display = {
-      chat = {
-        window = {
-          layout = 'float',
-          height = 0.75,
-          width = 0.75,
-          opts = {
-            number = false,
-            concealcursor = 'n',
-            conceallevel = 2,
-          },
-        },
-      },
-    },
-  })
-
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'codecompanion',
-    callback = function()
-      vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
-        desc = 'Close the chat window',
-        buffer = 0,
-      })
-    end,
-    desc = 'Enhance CodeCompanion windows.',
-  })
-
-  vim.keymap.set(
-    'n',
-    '<leader>z',
-    '<cmd>CodeCompanionChat Toggle<cr>',
-    { desc = 'Open a CodeCompanion chat window' }
-  )
-
-  vim.keymap.set(
-    'n',
-    '<leader>Z',
-    '<cmd>CodeCompanionActions<cr>',
-    { desc = 'Open CodeCompanion actions panel' }
-  )
-
-  add({
-    source = 'MeanderingProgrammer/render-markdown.nvim',
-    depends = {
-      'nvim-treesitter',
-      'echasnovski/mini.nvim',
-    },
-  })
-  require('render-markdown').setup({
-    anti_conceal = { enabled = false },
-    file_types = {
-      'markdown',
-      'codecompanion',
-    },
-    win_options = {
-      conceallevel = {
-        default = vim.o.conceallevel,
-        rendered = 3,
-      },
-      concealcursor = {
-        default = vim.o.concealcursor,
-        rendered = 'n',
-      },
-    },
-  })
-end)
-
 -- Better start/end matching
 later(function()
   add({ source = 'andymass/vim-matchup' })
@@ -655,6 +544,24 @@ later(function()
     },
   })
   require('user.util.diffview').patch_layout()
+end)
+
+-- Copilot
+later(function()
+  add({ source = 'zbirenbaum/copilot.lua' })
+  require('copilot').setup({
+    event = 'InsertEnter',
+    suggestion = {
+      enabled = false,
+      auto_trigger = true,
+    },
+    panel = { enabled = false },
+    filetypes = {
+      ['*'] = function()
+        return vim.bo.filetype ~= 'bigfile'
+      end,
+    },
+  })
 end)
 
 -- Completions
@@ -766,6 +673,101 @@ later(function()
     sources = {
       default = default,
       providers = providers,
+    },
+  })
+end)
+
+-- CodeCompanion
+-- This should be loaded after blink for proper integration
+later(function()
+  add({
+    source = 'olimorris/codecompanion.nvim',
+    depends = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+  })
+  require('codecompanion').setup({
+    strategies = {
+      chat = {
+        adapter = 'copilot',
+        keymaps = {
+          -- use C-c for stop so we can use q for close
+          stop = {
+            modes = { n = '<C-c>' },
+          },
+        },
+      },
+      inline = {
+        adapter = 'copilot',
+      },
+      cmd = {
+        adapter = 'copilot',
+      },
+    },
+    display = {
+      chat = {
+        window = {
+          layout = 'float',
+          height = 0.75,
+          width = 0.75,
+          opts = {
+            number = false,
+            concealcursor = 'n',
+            conceallevel = 2,
+          },
+        },
+      },
+    },
+  })
+
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'codecompanion',
+    callback = function()
+      vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
+        desc = 'Close the chat window',
+        buffer = 0,
+      })
+    end,
+    desc = 'Enhance CodeCompanion windows.',
+  })
+
+  vim.keymap.set(
+    'n',
+    '<leader>z',
+    '<cmd>CodeCompanionChat Toggle<cr>',
+    { desc = 'Open a CodeCompanion chat window' }
+  )
+
+  vim.keymap.set(
+    'n',
+    '<leader>Z',
+    '<cmd>CodeCompanionActions<cr>',
+    { desc = 'Open CodeCompanion actions panel' }
+  )
+
+  add({
+    source = 'MeanderingProgrammer/render-markdown.nvim',
+    depends = {
+      'nvim-treesitter',
+      'echasnovski/mini.nvim',
+    },
+  })
+  require('render-markdown').setup({
+    anti_conceal = { enabled = false },
+    file_types = {
+      'markdown',
+      'codecompanion',
+    },
+    win_options = {
+      conceallevel = {
+        default = vim.o.conceallevel,
+        rendered = 3,
+      },
+      concealcursor = {
+        default = vim.o.concealcursor,
+        rendered = 'n',
+      },
     },
   })
 end)
