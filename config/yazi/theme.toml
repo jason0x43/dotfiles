@@ -1,0 +1,6 @@
+[mode]
+normal_main = { fg = "black", bg = "blue" }
+normal_alt = { fg = "black", bg = "gray" }
+
+[status]
+overall = { fg = "white", bg = "black" }
