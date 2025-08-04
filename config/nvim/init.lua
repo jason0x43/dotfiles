@@ -12,7 +12,3 @@ require('user.config.lsp')
 if vim.g.neovide then
     require('user.config.neovide')
 end
-
-if vim.fn.findfile('.bacon-locations', '.;') ~= '' then
-  require('bacon-diag').setup()
-end
