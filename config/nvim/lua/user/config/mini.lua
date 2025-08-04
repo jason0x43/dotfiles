@@ -23,6 +23,33 @@ local later = MiniDeps.later
 
 -- Now ----------------------------------------------------------------
 
+-- Track file visits
+now(function()
+  require('mini.visits').setup()
+end)
+
+-- File manager
+-- Load now to allow mini.files to open directories
+now(function()
+  require('mini.files').setup({
+    mappings = {
+      go_in = 'L',
+      go_in_plus = 'l',
+      go_out = 'H',
+      go_out_plus = 'h',
+    },
+  })
+
+  vim.keymap.set('n', '<leader>n', function()
+    local bufname = vim.api.nvim_buf_get_name(0)
+    local dir = vim.fn.getcwd()
+    if vim.uv.fs_stat(bufname) then
+      dir = vim.fn.fnamemodify(bufname, ':p:h')
+    end
+    MiniFiles.open(dir)
+  end, { desc = 'Open a file manager' })
+end)
+
 -- Git integration; used by statusline
 now(function()
   require('mini.git').setup()
@@ -131,6 +158,18 @@ now(function()
         {
           action = 'Pick recent current_dir=true',
           name = 'Recent',
+          section = 'Pickers',
+        },
+        {
+          action = function()
+            MiniExtra.pickers.visit_paths({
+              filter = function(opts)
+                local suffix = 'COMMIT_EDITMSG'
+                return opts.path:sub(-#suffix) ~= suffix
+              end,
+            })
+          end,
+          name = 'Visited',
           section = 'Pickers',
         },
         {
@@ -330,8 +369,12 @@ later(function()
 
   vim.keymap.set('n', '<leader>e', function()
     local bufname = vim.api.nvim_buf_get_name(0)
-    local dir = vim.fn.fnamemodify(bufname, ':p:h')
-    MiniExtra.pickers.explorer({ cwd = dir })
+    if vim.uv.fs_stat(bufname) then
+      local dir = vim.fn.fnamemodify(bufname, ':p:h')
+      MiniExtra.pickers.explorer({ cwd = dir })
+    else
+      MiniExtra.pickers.explorer()
+    end
   end, { desc = 'Open a file explorer' })
 
   vim.keymap.set('n', '<leader>f', function()
@@ -368,24 +411,6 @@ later(function()
   vim.keymap.set('n', '<leader>K', function()
     MiniBufremove.delete(0, true)
   end, { desc = 'Close the current buffer with prejudice' })
-end)
-
--- File manager
-later(function()
-  require('mini.files').setup({
-    mappings = {
-      go_in = 'L',
-      go_in_plus = 'l',
-      go_out = 'H',
-      go_out_plus = 'h',
-    },
-  })
-
-  vim.keymap.set('n', '<leader>n', function()
-    local bufname = vim.api.nvim_buf_get_name(0)
-    local dir = vim.fn.fnamemodify(bufname, ':p:h')
-    MiniFiles.open(dir)
-  end, { desc = 'Open a file manager' })
 end)
 
 -- Surround
