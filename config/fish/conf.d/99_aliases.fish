@@ -4,6 +4,7 @@ alias rgl="rg -l"
 alias rgla="rg -l -u"
 alias rga="rg -u"
 alias ldl="recent-downloads"
+alias f="fzf"
 
 # better ls
 if command -q eza
@@ -18,7 +19,7 @@ alias reload="exec $SHELL"
 # moving around
 alias b="prevd"
 alias back="prevd"
-alias f="nextd"
+alias forward="nextd"
 
 # docker
 alias dps="docker ps --format '{{.Names}}'"
@@ -52,6 +53,7 @@ alias grc="git rebase --continue"
 alias gri="git ri"
 alias grv="git remote -v"
 alias gs="git -c status.color=always status --short"
+alias gui="gitui"
 alias ts='tig status'
 
 # vim
