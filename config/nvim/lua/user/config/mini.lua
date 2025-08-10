@@ -33,14 +33,14 @@ end)
 now(function()
   require('mini.files').setup({
     mappings = {
-      go_in = 'L',
-      go_in_plus = 'l',
+      go_in = 'l',
+      go_in_plus = '<CR>',
       go_out = 'H',
       go_out_plus = 'h',
     },
   })
 
-  vim.keymap.set('n', '<leader>n', function()
+  vim.keymap.set('n', '<leader>e', function()
     local bufname = vim.api.nvim_buf_get_name(0)
     local dir = vim.fn.getcwd()
     if vim.uv.fs_stat(bufname) then
@@ -141,12 +141,14 @@ now(function()
     items = {
       {
         {
-          action = 'Pick explorer',
-          name = 'Explorer',
+          action = function()
+            MiniFiles.open()
+          end,
+          name = 'Explore',
           section = 'Pickers',
         },
         {
-          action = 'Pick files',
+          action = 'Pick frecency',
           name = 'Files',
           section = 'Pickers',
         },
@@ -355,6 +357,7 @@ later(function()
   MiniPick.registry.diagnostic = mini_util.picker_diagnostics
   MiniPick.registry.recent = mini_util.picker_recent
   MiniPick.registry.undotree = require('undotree-nvim').picker_undotree
+  MiniPick.registry.frecency = mini_util.picker_frecency
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
@@ -367,18 +370,8 @@ later(function()
     MiniPick.registry.diagnostic({ scope = 'current' })
   end, { desc = 'List diagnostics' })
 
-  vim.keymap.set('n', '<leader>e', function()
-    local bufname = vim.api.nvim_buf_get_name(0)
-    if vim.uv.fs_stat(bufname) then
-      local dir = vim.fn.fnamemodify(bufname, ':p:h')
-      MiniExtra.pickers.explorer({ cwd = dir })
-    else
-      MiniExtra.pickers.explorer()
-    end
-  end, { desc = 'Open a file explorer' })
-
   vim.keymap.set('n', '<leader>f', function()
-    MiniPick.builtin.files()
+    MiniPick.registry.frecency()
   end, { desc = 'Find files' })
 
   vim.keymap.set('n', '<leader>g', function()
