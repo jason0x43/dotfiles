@@ -238,7 +238,59 @@ M.picker_recent = function(local_opts)
   vim.v.oldfiles = vim.tbl_filter(function(item)
     return not vim.endswith(item, 'COMMIT_EDITMSG')
   end, vim.v.oldfiles)
-  return MiniExtra.pickers.oldfiles(local_opts)
+  return require('mini.extra').pickers.oldfiles(local_opts)
+end
+
+---A 'frecency' picker
+M.picker_frecency = function(local_opts)
+  local inf = math.huge
+  local paths = MiniVisits.list_paths()
+
+  -- Make paths relative to the current directory
+  paths = vim.tbl_map(function(path)
+    return vim.fn.fnamemodify(path, ':.')
+  end, paths)
+
+  -- Create a path-to-score table. Lower scores are higher priority.
+  local path_scores = {}
+  for k, v in pairs(paths) do
+    path_scores[v:lower()] = k
+  end
+
+  -- Deprioritize the current file
+  local current_file = vim.fn.expand('%:.')
+  if path_scores[current_file] then
+    path_scores[current_file] = inf
+  end
+
+  MiniPick.builtin.files(nil, {
+    source = {
+      name = 'Frecency',
+      match = function(stritems, indices, query)
+        local indexes = MiniPick.default_match(
+          stritems,
+          indices,
+          query,
+          { sync = true, preserve_order = true }
+        ) or {}
+
+        table.sort(indexes, function(item1, item2)
+          local path1 = stritems[item1]
+          local path2 = stritems[item2]
+          local score1 = path_scores[path1] or inf
+          local score2 = path_scores[path2] or inf
+          return score1 < score2
+        end)
+
+        return indexes
+      end,
+    },
+  })
+end
+
+---An icon picker
+M.picker_icons = function(local_opts)
+  -- todo
 end
 
 return M
