@@ -1,9 +1,10 @@
-local C = require('user.util.lsp').make_config()
-
-C.filetypes = { 'html', 'svg', 'xml' }
-C.init_options = {
-  -- disable formatting for html; we'll use prettier instead
-  provideFormatter = false,
+---@type vim.lsp.Config
+local config = {
+  filetypes = { 'html', 'svg', 'xml' },
+  init_options = {
+    -- disable formatting for html; we'll use prettier instead
+    provideFormatter = false,
+  },
 }
 
-return C
+vim.lsp.config('html', config)

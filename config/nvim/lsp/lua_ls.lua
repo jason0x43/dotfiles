@@ -1,24 +1,25 @@
-local C = require('user.util.lsp').make_config()
+---@type vim.lsp.Config
+local config = {
+  settings = {
+    Lua = {
+      format = {
+        -- disable formatting in favor of stylua
+        enable = vim.fn.executable('stylua') == 0,
+      },
 
-C.settings = {
-  Lua = {
-    format = {
-      -- disable formatting in favor of stylua
-      enable = vim.fn.executable('stylua') == 0,
-    },
+      workspace = {
+        checkThirdParty = false,
+      },
 
-    workspace = {
-      checkThirdParty = false,
-    },
+      runtime = {
+        pathStrict = true,
+      },
 
-    runtime = {
-      pathStrict = true,
-    },
-
-    type = {
-      checkTableShape = true,
+      type = {
+        checkTableShape = true,
+      },
     },
   },
 }
 
-return C
+vim.lsp.config('lua_ls', config)

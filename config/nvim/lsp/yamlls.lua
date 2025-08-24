@@ -1,9 +1,10 @@
-local C = require('user.util.lsp').make_config()
-
-C.settings = {
-  yaml = {
-    keyOrdering = false,
+---@type vim.lsp.Config
+local config = {
+  settings = {
+    yaml = {
+      keyOrdering = false,
+    },
   },
 }
 
-return C
+vim.lsp.config('yamlls', config)

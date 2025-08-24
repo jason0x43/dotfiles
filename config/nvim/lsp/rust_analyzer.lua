@@ -1,14 +1,15 @@
-local C = require('user.util.lsp').make_config()
-
-C.settings = {
-  ['rust-analyzer'] = {
-    checkOnSave = {
-      enable = true,
-    },
-    diagnostics = {
-      enable = true,
+---@type vim.lsp.Config
+local config = {
+  settings = {
+    ['rust-analyzer'] = {
+      checkOnSave = {
+        enable = true,
+      },
+      diagnostics = {
+        enable = true,
+      },
     },
   },
 }
 
-return C
+vim.lsp.config('rust_analyzer', config)

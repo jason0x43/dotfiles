@@ -1,11 +1,12 @@
-local C = require('user.util.lsp').make_config()
+---@type vim.lsp.Config
+local config = {
+  capabilities = {
+    workspace = {
+      didChangeWatchedFiles = {
+        dynamicRegistration = true,
+      },
+    },
+  },
+}
 
--- C.capabilities = {
---   workspace = {
---     didChangeWatchedFiles = {
---       dynamicRegistration = true,
---     },
---   },
--- }
-
-return C
+vim.lsp.config('svelte', config)

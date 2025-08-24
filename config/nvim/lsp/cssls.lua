@@ -1,18 +1,19 @@
-local C = require('user.util.lsp').make_config()
-
-C.settings = {
-  css = {
-    validate = true,
-    lint = {
-      unknownAtRules = 'ignore',
+---@type vim.lsp.Config
+local config = {
+  settings = {
+    css = {
+      validate = true,
+      lint = {
+        unknownAtRules = 'ignore',
+      },
     },
-  },
-  less = {
-    validate = true,
-  },
-  scss = {
-    validate = true,
+    less = {
+      validate = true,
+    },
+    scss = {
+      validate = true,
+    },
   },
 }
 
-return C
+vim.lsp.config('cssls', config)
