@@ -22,8 +22,6 @@ class Observer: NSObject {
     change: [NSKeyValueChangeKey: Any]?,
     context: UnsafeMutableRawPointer?
   ) {
-    let isEnabled = isStageManagerEnabled()
-
     let manager = FileManager.default
     var filename = manager.homeDirectoryForCurrentUser
       .appendingPathComponent(".config")
@@ -34,6 +32,7 @@ class Observer: NSObject {
     resourceValues.contentModificationDate = Date()
     try? filename.setResourceValues(resourceValues)
 
+    let isEnabled = isStageManagerEnabled()
     let process = Process()
     let pipe = Pipe()
 
@@ -44,7 +43,7 @@ class Observer: NSObject {
     process.arguments = ["@", "--to", "unix:/tmp/kitty.sock", "set-font-size", "--all"]
 
     if isEnabled {
-      process.arguments?.append("11.5")
+      process.arguments?.append("12.0")
     } else {
       process.arguments?.append("13.0")
     }
