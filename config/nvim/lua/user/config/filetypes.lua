@@ -8,6 +8,7 @@ vim.filetype.add({
     ['dashtoc'] = 'json',
   },
   pattern = {
+    ['appsettings.*.json'] = 'jsonc',
     ['.-/ansible/.-%.yml'] = 'yaml.ansible',
     -- Note: the suggested fallback pattern of [".*"] is never called
     ['.-'] = {
@@ -17,6 +18,10 @@ vim.filetype.add({
 
         if first_line == '#!/usr/bin/osascript' then
           return 'applescript'
+        end
+
+        if first_line == '#!/usr/bin/env -S uv run --script' then
+          return 'python'
         end
 
         if
