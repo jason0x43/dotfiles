@@ -148,7 +148,7 @@ now(function()
           section = 'Pickers',
         },
         {
-          action = 'Pick frecency',
+          action = 'Pick smart',
           name = 'Files',
           section = 'Pickers',
         },
@@ -357,7 +357,7 @@ later(function()
   MiniPick.registry.diagnostic = mini_util.picker_diagnostics
   MiniPick.registry.recent = mini_util.picker_recent
   MiniPick.registry.undotree = require('undotree-nvim').picker_undotree
-  MiniPick.registry.frecency = mini_util.picker_frecency
+  MiniPick.registry.smart = mini_util.picker_smart
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
@@ -371,7 +371,7 @@ later(function()
   end, { desc = 'List diagnostics' })
 
   vim.keymap.set('n', '<leader>f', function()
-    MiniPick.registry.frecency()
+    MiniPick.registry.smart()
   end, { desc = 'Find files' })
 
   vim.keymap.set('n', '<leader>g', function()
