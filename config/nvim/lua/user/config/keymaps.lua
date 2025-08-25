@@ -126,40 +126,40 @@ vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
 end, { desc = 'Focus the window to the right' })
 
 -- Override the default "goto definition" handler to use relative paths
-vim.keymap.set('n', '<c-]>', function()
-  local params = vim.lsp.util.make_position_params(0, 'utf-16')
-
-  vim.lsp.buf_request(
-    0,
-    'textDocument/definition',
-    params,
-    function(err, result, _, _)
-      if
-        err
-        or not result
-        or (type(result) == 'table' and vim.tbl_isempty(result))
-      then
-        print("No results")
-        return
-      end
-
-      -- pick first location
-      local loc = vim.islist(result) and result[1] or result
-      local uri = loc.targetUri or loc.uri
-      local abs = vim.uri_to_fname(uri)
-      local rel = vim.fn.fnamemodify(abs, ':.')
-
-      -- open the file if it's different than the current file
-      local curr_file = vim.api.nvim_buf_get_name(0)
-      local rel_curr_file = vim.fn.fnamemodify(curr_file, ':.')
-      if rel ~= rel_curr_file then
-        vim.cmd.edit(rel)
-      end
-
-      -- place the cursor to the target location
-      local range = loc.targetSelectionRange or loc.range
-      local start = range.start
-      vim.api.nvim_win_set_cursor(0, { start.line + 1, start.character })
-    end
-  )
-end, { desc = 'Open definitions with relative paths.' })
+-- vim.keymap.set('n', '<c-]>', function()
+--   local params = vim.lsp.util.make_position_params(0, 'utf-16')
+--
+--   vim.lsp.buf_request(
+--     0,
+--     'textDocument/definition',
+--     params,
+--     function(err, result, _, _)
+--       if
+--         err
+--         or not result
+--         or (type(result) == 'table' and vim.tbl_isempty(result))
+--       then
+--         print('No results')
+--         return
+--       end
+--
+--       -- pick first location
+--       local loc = vim.islist(result) and result[1] or result
+--       local uri = loc.targetUri or loc.uri
+--       local abs = vim.uri_to_fname(uri)
+--       local rel = vim.fn.fnamemodify(abs, ':.')
+--
+--       -- open the file if it's different than the current file
+--       local curr_file = vim.api.nvim_buf_get_name(0)
+--       local rel_curr_file = vim.fn.fnamemodify(curr_file, ':.')
+--       if rel ~= rel_curr_file then
+--         vim.cmd(":e " .. rel)
+--       end
+--
+--       -- place the cursor to the target location
+--       local range = loc.targetSelectionRange or loc.range
+--       local start = range.start
+--       vim.api.nvim_win_set_cursor(0, { start.line + 1, start.character })
+--     end
+--   )
+-- end, { desc = 'Open definitions with relative paths.' })
