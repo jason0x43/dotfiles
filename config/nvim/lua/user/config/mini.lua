@@ -402,8 +402,10 @@ later(function()
   vim.keymap.set('n', '<leader>u', function()
     MiniPick.registry.undotree()
   end, { desc = 'List diagnostics' })
+end)
 
-  -- Buffer removal
+-- Buffer removal
+later(function()
   require('mini.bufremove').setup()
 
   vim.keymap.set('n', '<leader>k', function()
