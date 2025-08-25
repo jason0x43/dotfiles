@@ -588,7 +588,7 @@ later(function()
     source = 'saghen/blink.cmp',
     depends = {
       -- Copilot provider
-      'giuxtaposition/blink-cmp-copilot',
+      'fang2hou/blink-copilot',
       -- Colorize menu items
       'xzbdmw/colorful-menu.nvim',
     },
@@ -607,22 +607,11 @@ later(function()
   -- Only add the copilot provider if copilot is active
   local ok, _ = pcall(require, 'copilot.api')
   if ok then
-    -- Add a copilot kind to blink's list of completion kinds
-    local CompletionItemKind = require('blink.cmp.types').CompletionItemKind
-    local copilot_kind = #CompletionItemKind + 1
-    CompletionItemKind[copilot_kind] = 'Copilot'
-
     providers.copilot = {
       name = 'copilot',
-      module = 'blink-cmp-copilot',
+      module = 'blink-copilot',
       score_offset = 100,
       async = true,
-      transform_items = function(_, items)
-        return vim.tbl_map(function(item)
-          item.kind = copilot_kind
-          return item
-        end, items)
-      end,
     }
     table.insert(default, 2, 'copilot')
   end
