@@ -386,6 +386,15 @@ later(function()
     MiniExtra.pickers.lsp({ scope = 'references' })
   end, { desc = 'Find help' })
 
+  vim.keymap.set('n', '<leader>ls', function()
+    MiniExtra.pickers.lsp({ scope = 'document_symbol' })
+  end, { desc = 'Find help' })
+
+  vim.keymap.set('n', '<leader>lS', function()
+    local query = vim.fn.input('Symbol query: ')
+    MiniExtra.pickers.lsp({ scope = 'workspace_symbol', symbol_query = query })
+  end, { desc = 'Find help' })
+
   vim.keymap.set('n', '<leader>r', function()
     require('user.util.mini').picker_recent({ current_dir = true })
   end, { desc = 'Find recent files' })
