@@ -255,17 +255,23 @@ local function build_visits_rank()
   return rank
 end
 
--- Subsequence match; returns positions of matched chars (or nil if no match)
+---Subsequence match; returns positions of matched runs of chars (or nil if no match)
 ---@param s string The string to search in
 ---@param q string The query to match
----@return { [number]: number } | nil pos a position map
+---@return { [number]: number } | nil pos a mapping of positions to match lengths
 local function subseq_positions(s, q)
-  local i, j, pos = 1, 1, {}
+  local i = 1
+  local j = 1
+  local pos = {}
+  local cur_len = 0
 
   while i <= #s and j <= #q do
     if s:sub(i, i) == q:sub(j, j) then
-      pos[#pos + 1] = i
+      cur_len = (i > 1 and pos[i - 1] or 0) + 1
+      pos[i] = cur_len
       j = j + 1
+    else
+      cur_len = 0
     end
     i = i + 1
   end
@@ -279,49 +285,50 @@ end
 
 -- Fuzzy score emphasizing contiguous runs in the BASENAME.
 -- Higher is better.
----@param basename string The basename to score
+---@param string string The basename to score
 ---@param query string The query to match against
 ---@return number score a fuzzy score
-local function fuzzy_score_basename(basename, query)
+local function fuzzy_score(string, query)
   if query == '' then
     return 0
   end
 
   -- exact match is highest priority
-  if basename == query then
+  if string == query then
     return 1e9
   end
 
   -- starting with a match is next
-  if basename:sub(1, #query) == query then
+  if string:sub(1, #query) == query then
     return 5e8
   end
 
+  local matches = subseq_positions(string, query)
+
   -- non-matching queries are bad
-  local pos = subseq_positions(basename, query)
-  if not pos then
+  if not matches then
     return -math.huge
   end
 
-  -- longest contiguous run among matched positions
-  local longest, cur = 1, 1
-  for k = 2, #pos do
-    if pos[k] == pos[k - 1] + 1 then
-      cur = cur + 1
-      if cur > longest then
-        longest = cur
-      end
-    else
-      cur = 1
+  -- find the longest match
+  local longest = 0
+  local positions = {}
+  for pos, len in pairs(matches) do
+    table.insert(positions, pos)
+
+    if longest == 0 then
+      longest = pos
+    elseif len > matches[longest] then
+      longest = pos
     end
   end
 
   -- compute gaps - how spread out the subsequence is inside the basename
-  local span = pos[#pos] - pos[1] + 1
+  local span = positions[#positions] - positions[1] + 1
   local gaps = span - #query
 
-  -- boost contiguous runs heavily, then penalize gaps slightly
-  return 10000 * longest - 50 * gaps
+  -- boost contiguous runs heavily, then penalize gaps and the number of runs
+  return 10000 * longest - 50 * gaps - 50 * #positions
 end
 
 ---@param stritems string[] List of strings to match against
@@ -350,7 +357,7 @@ local function smart_match(stritems, indices, query, opts)
   local query_str = table.concat(query, '')
   for _, f in ipairs(filtered) do
     local basename = vim.fn.fnamemodify(stritems[f], ':t')
-    fname_score[f] = fuzzy_score_basename(basename, query_str)
+    fname_score[f] = fuzzy_score(basename, query_str)
     rel_paths[f] = vim.fn.fnamemodify(stritems[f], ':.')
     full_paths[f] = vim.fn.fnamemodify(stritems[f], ':p')
   end
