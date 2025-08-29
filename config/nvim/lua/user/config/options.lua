@@ -45,6 +45,7 @@ vim.o.fixendofline = false
 
 -- Formatting while typing
 vim.opt.formatoptions = vim.opt.formatoptions
+  - 't' -- don't auto-wrap text
   + 'r' -- automatically insert comment leader after CR
   + 'o' -- automatically insert comment leader for o/O
   + 'n' -- recognize numbered lists
