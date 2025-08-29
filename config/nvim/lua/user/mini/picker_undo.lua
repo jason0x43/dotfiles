@@ -262,7 +262,7 @@ local function highlight_line(buf_id, ns, line, group)
   vim.hl.range(buf_id, ns, group, { line, 0 }, { line, -1 })
 end
 
-M.picker_undotree = function()
+return function()
   local buf = vim.api.nvim_get_current_buf()
 
   ---@type UndoTree
@@ -284,7 +284,7 @@ M.picker_undotree = function()
     lines[#lines + 1] = render_undo_entry(entry, ut.seq_cur)
   end
 
-  MiniPick.start({
+  require('mini.pick').start({
     source = {
       items = lines,
       choose = function(item)
@@ -335,5 +335,3 @@ M.picker_undotree = function()
     },
   })
 end
-
-return M

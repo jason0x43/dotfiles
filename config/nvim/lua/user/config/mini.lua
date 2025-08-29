@@ -54,8 +54,6 @@ end)
 now(function()
   require('mini.git').setup()
 
-  local mini_util = require('user.util.mini')
-
   -- Modify how blame output is displayed
   vim.api.nvim_create_autocmd('User', {
     pattern = 'MiniGitCommandSplit',
@@ -64,7 +62,7 @@ now(function()
       if event.data.git_subcommand ~= 'blame' then
         return
       end
-      mini_util.show_git_blame(event.data)
+      require('user.mini.git').show_git_blame(event.data)
     end,
   })
 
@@ -95,7 +93,7 @@ end)
 -- Status line
 now(function()
   local sl = require('mini.statusline')
-  local mini_util = require('user.util.mini')
+  local mini_status = require('user.mini.status')
 
   sl.setup({
     content = {
@@ -103,10 +101,10 @@ now(function()
         local mode, mode_hl = sl.section_mode({ trunc_width = 120 })
         local git = sl.section_git({ trunc_width = 75 })
         local diagnostics =
-          mini_util.section_diagnostics(sl, { trunc_width = 75 })
+          mini_status.section_diagnostics(sl, { trunc_width = 75 })
         local filename = sl.section_filename({ trunc_width = 140 })
         local location = sl.section_location({ trunc_width = 140 })
-        local lsps = mini_util.section_lsps(sl, { trunc_width = 140 })
+        local lsps = mini_status.section_lsps(sl, { trunc_width = 140 })
 
         return sl.combine_groups({
           { hl = mode_hl, strings = { mode } },
@@ -243,13 +241,13 @@ end)
 
 -- Use vim as kitty's scrollback handler
 now(function()
-  add({ source = 'mikesmithgh/kitty-scrollback.nvim' })
+  add('mikesmithgh/kitty-scrollback.nvim')
   require('kitty-scrollback').setup()
 end)
 
 -- Kitty config filetype
 now(function()
-  add({ source = 'fladson/vim-kitty' })
+  add('fladson/vim-kitty')
 end)
 
 -- Colorizing
@@ -265,17 +263,17 @@ end)
 
 -- Native LSP configurations
 now(function()
-  add({ source = 'neovim/nvim-lspconfig' })
+  add('neovim/nvim-lspconfig')
 end)
 
 -- Language server and tool installer
 now(function()
-  add({ source = 'mason-org/mason.nvim' })
+  add('mason-org/mason.nvim')
   require('mason').setup({
     ui = { border = 'single' },
   })
 
-  add({ source = 'mason-org/mason-lspconfig.nvim' })
+  add('mason-org/mason-lspconfig.nvim')
   require('mason-lspconfig').setup({
     automatic_enable = true,
     ensure_installed = {},
@@ -315,19 +313,19 @@ end)
 
 -- Misc filetype support
 now(function()
-  add({ source = 'mustache/vim-mustache-handlebars' })
-  add({ source = 'jwalton512/vim-blade' })
-  add({ source = 'cfdrake/vim-pbxproj' })
+  add('mustache/vim-mustache-handlebars')
+  add('jwalton512/vim-blade')
+  add('cfdrake/vim-pbxproj')
 end)
 
 -- JSON schemas
 now(function()
-  add({ source = 'b0o/schemastore.nvim' })
+  add('b0o/schemastore.nvim')
 end)
 
 -- Auto-set indentation
 now(function()
-  add({ source = 'tpope/vim-sleuth' })
+  add('tpope/vim-sleuth')
   -- Disable sleuth for markdown files as it slows the load time significantly
   vim.g.sleuth_markdown_heuristics = 0
 end)
@@ -349,15 +347,27 @@ end)
 
 -- Pickers
 later(function()
-  require('mini.pick').setup()
+  require('mini.pick').setup({
+    window = {
+      config = function()
+        local height = math.min(10, math.floor(0.4 * vim.o.lines))
+        local width = vim.o.columns - 2
+        return {
+          anchor = 'NW',
+          height = height,
+          width = width,
+          row = vim.o.lines - height - 4,
+          col = 0,
+        }
+      end,
+    },
+  })
   require('mini.extra').setup()
 
-  local mini_util = require('user.util.mini')
-
-  MiniPick.registry.diagnostic = mini_util.picker_diagnostics
-  MiniPick.registry.recent = mini_util.picker_recent
-  MiniPick.registry.undotree = require('undotree-nvim').picker_undotree
-  MiniPick.registry.smart = mini_util.picker_smart
+  MiniPick.registry.diagnostic = require('user.mini.picker_diagnostics')
+  MiniPick.registry.recent = require('user.mini.picker_recent')
+  MiniPick.registry.undotree = require('user.mini.picker_undo')
+  MiniPick.registry.smart = require('user.mini.picker_smart')
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
@@ -396,7 +406,7 @@ later(function()
   end, { desc = 'Find help' })
 
   vim.keymap.set('n', '<leader>r', function()
-    require('user.util.mini').picker_recent({ current_dir = true })
+    MiniPick.registry.recent({ current_dir = true })
   end, { desc = 'Find recent files' })
 
   vim.keymap.set('n', '<leader>u', function()
@@ -446,7 +456,7 @@ end)
 
 -- Auto-configure lua-ls
 later(function()
-  add({ source = 'folke/lazydev.nvim' })
+  add('folke/lazydev.nvim')
   require('lazydev').setup({
     enabled = true,
     debug = false,
@@ -471,7 +481,7 @@ end)
 
 -- Code formatting
 later(function()
-  add({ source = 'stevearc/conform.nvim' })
+  add('stevearc/conform.nvim')
   require('conform').setup({
     formatters_by_ft = {
       blade = { 'prettier' },
@@ -527,13 +537,13 @@ end)
 
 -- Better start/end matching
 later(function()
-  add({ source = 'andymass/vim-matchup' })
+  add('andymass/vim-matchup')
   vim.g.matchup_matchparen_offscreen = { method = 'popup', border = 'rounded' }
 end)
 
 -- Better git diff views
 later(function()
-  add({ source = 'sindrets/diffview.nvim' })
+  add('sindrets/diffview.nvim')
 
   local last_status = vim.o.laststatus
   local actions = require('diffview.actions')
@@ -577,7 +587,7 @@ end)
 
 -- Copilot
 later(function()
-  add({ source = 'zbirenbaum/copilot.lua' })
+  add('zbirenbaum/copilot.lua')
   require('copilot').setup({
     event = 'InsertEnter',
     suggestion = {
@@ -726,15 +736,27 @@ later(function()
     display = {
       chat = {
         window = {
-          layout = 'float',
-          height = 0.75,
-          width = 0.75,
           opts = {
             number = false,
             concealcursor = 'n',
             conceallevel = 2,
           },
         },
+        -- window = {
+        --   layout = 'horizontal',
+        --   position = 'bottom',
+        --   height = 0.4,
+        -- },
+        -- window = {
+        --   layout = 'float',
+        --   height = 0.75,
+        --   width = 0.75,
+        --   opts = {
+        --     number = false,
+        --     concealcursor = 'n',
+        --     conceallevel = 2,
+        --   },
+        -- },
       },
     },
   })
@@ -768,7 +790,7 @@ later(function()
     source = 'MeanderingProgrammer/render-markdown.nvim',
     depends = {
       'nvim-treesitter',
-      'echasnovski/mini.nvim',
+      'nvim-mini/mini.nvim',
     },
   })
   require('render-markdown').setup({
