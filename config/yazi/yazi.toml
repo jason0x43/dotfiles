@@ -6,11 +6,19 @@ max_width = 2000
 max_height = 2000
 
 [[plugin.prepend_fetchers]]
-id   = "git"
+id = "git"
 name = "*"
-run  = "git"
+run = "git"
 
 [[plugin.prepend_fetchers]]
-id   = "git"
+id = "git"
 name = "*/"
-run  = "git"
+run = "git"
+
+[[opener.edit]]
+run = """/opt/homebrew/bin/nvim \
+	--server "${NVIM_SERVER}" \
+	--remote-expr "v:lua.vim.cmd.edit('$@')" && /opt/homebrew/bin/ya emit quit"""
+block = false
+desc = "Edit in Neovim"
+for = "unix"

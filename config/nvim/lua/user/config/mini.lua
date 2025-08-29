@@ -195,6 +195,13 @@ now(function()
           section = 'Actions',
         },
         {
+          name = 'Yazi',
+          action = function()
+            require('user.config.yazi').open_yazi()
+          end,
+          section = 'Actions',
+        },
+        {
           name = 'Quit',
           action = 'qall',
           section = 'Actions',

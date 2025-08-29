@@ -125,6 +125,10 @@ vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
   require('user.terminal').focus_kitty('right')
 end, { desc = 'Focus the window to the right' })
 
+vim.keymap.set('n', '<leader>y', function()
+  require('user.config.yazi').open_yazi()
+end)
+
 -- Override the default "goto definition" handler to use relative paths
 -- vim.keymap.set('n', '<c-]>', function()
 --   local params = vim.lsp.util.make_position_params(0, 'utf-16')
