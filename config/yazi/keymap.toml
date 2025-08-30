@@ -7,3 +7,8 @@ desc = "Quit"
 on = "Q"
 run = "quit"
 desc = "Quit, possibly changing CWD"
+
+[[mgr.prepend_keymap]]
+on   = "<Enter>"
+run  = "plugin nvim"
+desc = "Open the file in nvim if yazi was started by nvim"

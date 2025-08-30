@@ -15,10 +15,9 @@ id = "git"
 name = "*/"
 run = "git"
 
-[[opener.edit]]
+[[opener.nvim]]
 run = """/opt/homebrew/bin/nvim \
 	--server "${NVIM_SERVER}" \
-	--remote-expr "v:lua.vim.cmd.edit('$@')" && /opt/homebrew/bin/ya emit quit"""
+	--remote-expr "v:lua.vim.cmd.edit('$@')""""
 block = false
 desc = "Edit in Neovim"
-for = "unix"
