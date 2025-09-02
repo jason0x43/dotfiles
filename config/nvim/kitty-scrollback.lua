@@ -23,6 +23,19 @@ vim.keymap.set({ 'n' }, 'Y', '<Plug>(KsbNormalYankEnd)', {})
 vim.keymap.set({ 'n' }, 'y', '<Plug>(KsbNormalYank)', {})
 vim.keymap.set({ 'n' }, 'yy', '<Plug>(KsbYankLine)', {})
 
+vim.keymap.set({ 'n', 'i' }, '<c-h>', function()
+  require('user.terminal').focus_kitty('left')
+end)
+vim.keymap.set({ 'n', 'i' }, '<c-j>', function()
+  require('user.terminal').focus_kitty('down')
+end)
+vim.keymap.set({ 'n', 'i' }, '<c-k>', function()
+  require('user.terminal').focus_kitty('up')
+end)
+vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
+  require('user.terminal').focus_kitty('right')
+end)
+
 require('kitty-scrollback').setup({
   keymaps_enabled = false,
 })
