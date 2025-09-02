@@ -12,6 +12,8 @@ function M.open_yazi()
   -- Neovim RPC socket path / address
   local addr = vim.v.servername
 
+  local path = os.getenv('PATH')
+
   -- Pass NVIM (or NVIM_LISTEN_ADDRESS) so nvr knows which instance to target
   vim.fn.jobstart({
     'kitty',
@@ -22,6 +24,8 @@ function M.open_yazi()
     vim.fn.getcwd(),
     '--env',
     'NVIM_SERVER=' .. addr,
+    '--env',
+    'PATH="' .. path .. '"',
     'yazi',
   }, { detach = true })
 end
