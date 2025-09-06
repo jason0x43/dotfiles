@@ -26,13 +26,24 @@ vim.keymap.set(
   { desc = 'Go to the previous buffer' }
 )
 
--- Show code actions
+vim.keymap.set('n', '<leader>_', function()
+  require('dropbar.api').pick()
+end, { desc = 'Pick symbols in winbar' })
+
+vim.keymap.set('n', '[_', function()
+  require('dropbar.api').goto_context_start()
+end, { desc = 'Go to start of current context' })
+
+vim.keymap.set('n', ']_', function()
+  require('dropbar.api').select_next_context()
+end, { desc = 'Select next context' })
+
 vim.keymap.set('n', '<leader>a', function()
   vim.lsp.buf.code_action()
 end, { desc = 'Show a list of possible code actions' })
 
 vim.keymap.set('n', '<leader>b', function()
-  MiniPick.builtin.buffers()
+  require('mini.pick').builtin.buffers()
 end, { desc = 'Find buffers' })
 
 -- Close the current window
@@ -47,7 +58,7 @@ vim.keymap.set('n', '<leader>c', function()
 end, { desc = 'Close the current window' })
 
 vim.keymap.set('n', '<leader>d', function()
-  MiniPick.registry.diagnostic({ scope = 'current' })
+  require('mini.pick').registry.diagnostic({ scope = 'current' })
 end, { desc = 'List diagnostics' })
 
 -- Show diagnostics
@@ -63,11 +74,11 @@ vim.keymap.set('n', '<leader>e', function()
   if vim.uv.fs_stat(bufname) then
     dir = vim.fn.fnamemodify(bufname, ':p:h')
   end
-  MiniFiles.open(dir)
+  require('mini.files').open(dir)
 end, { desc = 'Open a file manager' })
 
 vim.keymap.set('n', '<leader>f', function()
-  MiniPick.registry.smart()
+  require('mini.pick').registry.smart()
 end, { desc = 'Find files' })
 
 vim.keymap.set('n', '<leader>F', function()
@@ -75,11 +86,11 @@ vim.keymap.set('n', '<leader>F', function()
 end, { desc = 'Format the current file' })
 
 vim.keymap.set('n', '<leader>g', function()
-  MiniPick.builtin.grep_live()
+  require('mini.pick').builtin.grep_live()
 end, { desc = 'Find strings in files' })
 
 vim.keymap.set('n', '<leader>h', function()
-  MiniPick.builtin.help()
+  require('mini.pick').builtin.help()
 end, { desc = 'Find help' })
 
 -- Insert a UUID
@@ -101,11 +112,11 @@ vim.keymap.set('n', '<leader>iU', function()
 end, { desc = 'Insert an all-caps UUID at the cursor position' })
 
 vim.keymap.set('n', '<leader>k', function()
-  MiniBufremove.delete()
+  require('mini.bufremove').delete()
 end, { desc = 'Close the current buffer' })
 
 vim.keymap.set('n', '<leader>K', function()
-  MiniBufremove.delete(0, true)
+  require('mini.bufremove').delete(0, true)
 end, { desc = 'Close the current buffer with prejudice' })
 
 vim.keymap.set('n', '<leader>li', function()
@@ -117,28 +128,31 @@ vim.keymap.set('n', '<leader>ll', function()
 end, { desc = 'Find help' })
 
 vim.keymap.set('n', '<leader>lr', function()
-  MiniExtra.pickers.lsp({ scope = 'references' })
+  require('mini.extra').pickers.lsp({ scope = 'references' })
 end, { desc = 'Find help' })
 
 vim.keymap.set('n', '<leader>ls', function()
-  MiniExtra.pickers.lsp({ scope = 'document_symbol' })
+  require('mini.extra').pickers.lsp({ scope = 'document_symbol' })
 end, { desc = 'Find help' })
 
 vim.keymap.set('n', '<leader>lS', function()
   local query = vim.fn.input('Symbol query: ')
-  MiniExtra.pickers.lsp({ scope = 'workspace_symbol', symbol_query = query })
+  require('mini.extra').pickers.lsp({
+    scope = 'workspace_symbol',
+    symbol_query = query,
+  })
 end, { desc = 'Find help' })
 
 vim.keymap.set('n', '<leader>r', function()
-  MiniPick.registry.recent({ current_dir = true })
+  require('mini.pick').registry.recent({ current_dir = true })
 end, { desc = 'Find recent files' })
 
 vim.keymap.set('n', '<leader>s', function()
-  MiniStarter.open()
+  require('mini.starter').open()
 end, { desc = 'Open the mini starter screen' })
 
 vim.keymap.set('n', '<leader>u', function()
-  MiniPick.registry.undotree()
+  require('mini.pick').registry.undotree()
 end, { desc = 'List diagnostics' })
 
 -- Quit vim

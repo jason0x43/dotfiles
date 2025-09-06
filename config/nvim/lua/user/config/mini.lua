@@ -698,6 +698,17 @@ later(function()
   })
 end)
 
+later(function()
+  add('Bekaboo/dropbar.nvim')
+  require('dropbar').setup({
+    sources = {
+      path = {
+        preview = false
+      }
+    }
+  })
+end)
+
 -- CodeCompanion
 -- This should be loaded after blink for proper integration
 later(function()

@@ -281,7 +281,7 @@ local function apply_theme()
   hi('VisualNOS', {})
   hi('WarningMsg', {})
   hi('WildMenu', {})
-  hi('WinBar', { bg = c.green, fg = c.bg_0, bold = true })
+  hi('WinBar', { bg = c.bg_1, fg = c.fg_0 })
 
   hi('DiagnosticError', { fg = error })
   hi('DiagnosticWarn', { fg = warn })
