@@ -21,7 +21,12 @@ local add = MiniDeps.add
 local now = MiniDeps.now
 local later = MiniDeps.later
 
--- Now ----------------------------------------------------------------
+-- Load now -----------------------------------------------------------
+
+-- Extra functions
+now(function()
+  add('nvim-lua/plenary.nvim')
+end)
 
 -- Track file visits
 now(function()
@@ -39,15 +44,6 @@ now(function()
       go_out_plus = 'h',
     },
   })
-
-  vim.keymap.set('n', '<leader>e', function()
-    local bufname = vim.api.nvim_buf_get_name(0)
-    local dir = vim.fn.getcwd()
-    if vim.uv.fs_stat(bufname) then
-      dir = vim.fn.fnamemodify(bufname, ':p:h')
-    end
-    MiniFiles.open(dir)
-  end, { desc = 'Open a file manager' })
 end)
 
 -- Git integration; used by statusline
@@ -240,10 +236,6 @@ now(function()
   vim.api.nvim_create_user_command('Start', function()
     MiniStarter.open()
   end, { desc = 'Open the mini starter screen' })
-
-  vim.keymap.set('n', '<leader>s', function()
-    MiniStarter.open()
-  end, { desc = 'Open the mini starter screen' })
 end)
 
 -- Use vim as kitty's scrollback handler
@@ -337,7 +329,7 @@ now(function()
   vim.g.sleuth_markdown_heuristics = 0
 end)
 
--- Later --------------------------------------------------------------
+-- Load later ---------------------------------------------------------
 
 -- Use 'q' to close mini.deps windows
 later(function()
@@ -359,11 +351,16 @@ later(function()
       config = function()
         local height = math.min(10, math.floor(0.4 * vim.o.lines))
         local width = vim.o.columns - 2
+        local row = vim.o.lines - height - 4
+        if vim.o.filetype == 'ministarter' then
+          row = row + 2
+        end
+
         return {
           anchor = 'NW',
           height = height,
           width = width,
-          row = vim.o.lines - height - 4,
+          row = row,
           col = 0,
         }
       end,
@@ -378,60 +375,11 @@ later(function()
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
-
-  vim.keymap.set('n', '<leader>b', function()
-    MiniPick.builtin.buffers()
-  end, { desc = 'Find buffers' })
-
-  vim.keymap.set('n', '<leader>d', function()
-    MiniPick.registry.diagnostic({ scope = 'current' })
-  end, { desc = 'List diagnostics' })
-
-  vim.keymap.set('n', '<leader>f', function()
-    MiniPick.registry.smart()
-  end, { desc = 'Find files' })
-
-  vim.keymap.set('n', '<leader>g', function()
-    MiniPick.builtin.grep_live()
-  end, { desc = 'Find strings in files' })
-
-  vim.keymap.set('n', '<leader>h', function()
-    MiniPick.builtin.help()
-  end, { desc = 'Find help' })
-
-  vim.keymap.set('n', '<leader>lr', function()
-    MiniExtra.pickers.lsp({ scope = 'references' })
-  end, { desc = 'Find help' })
-
-  vim.keymap.set('n', '<leader>ls', function()
-    MiniExtra.pickers.lsp({ scope = 'document_symbol' })
-  end, { desc = 'Find help' })
-
-  vim.keymap.set('n', '<leader>lS', function()
-    local query = vim.fn.input('Symbol query: ')
-    MiniExtra.pickers.lsp({ scope = 'workspace_symbol', symbol_query = query })
-  end, { desc = 'Find help' })
-
-  vim.keymap.set('n', '<leader>r', function()
-    MiniPick.registry.recent({ current_dir = true })
-  end, { desc = 'Find recent files' })
-
-  vim.keymap.set('n', '<leader>u', function()
-    MiniPick.registry.undotree()
-  end, { desc = 'List diagnostics' })
 end)
 
 -- Buffer removal
 later(function()
   require('mini.bufremove').setup()
-
-  vim.keymap.set('n', '<leader>k', function()
-    MiniBufremove.delete()
-  end, { desc = 'Close the current buffer' })
-
-  vim.keymap.set('n', '<leader>K', function()
-    MiniBufremove.delete(0, true)
-  end, { desc = 'Close the current buffer with prejudice' })
 end)
 
 -- Surround
@@ -536,10 +484,6 @@ later(function()
   vim.api.nvim_create_user_command('Format', function()
     require('conform').format({ lsp_fallback = true, async = true })
   end, { desc = 'Format the current file' })
-
-  vim.keymap.set('n', '<leader>F', function()
-    require('conform').format({ lsp_fallback = true, async = true })
-  end, { desc = 'Format the current file' })
 end)
 
 -- Better start/end matching
@@ -612,6 +556,44 @@ end)
 
 -- Completions
 later(function()
+  ---@type string | nil
+  local checkout = 'v.1.6.0'
+
+  if vim.fn.executable('rustc') then
+    checkout = nil
+  else
+    -- Get latest pre-build version of blink
+    local curl = require('plenary.curl')
+    local res = curl.get(
+      'https://api.github.com/repos/Saghen/blink.cmp/releases/latest',
+      {
+        headers = { ['User-Agent'] = 'neovim-lua' },
+      }
+    )
+    if res.status ~= 200 then
+      vim.notify(
+        'Failed to get latest blink.cmp version: ' .. res.status,
+        vim.log.levels.WARN
+      )
+    else
+      local data = vim.fn.json_decode(res.body)
+      checkout = data.tag_name
+    end
+  end
+
+  -- build from source, requires nightly rust
+  local function build_blink(params)
+    vim.notify('Building blink.cmp', vim.log.levels.INFO)
+    local obj = vim
+      .system({ 'cargo', 'build', '--release' }, { cwd = params.path })
+      :wait()
+    if obj.code == 0 then
+      vim.notify('Building blink.cmp done', vim.log.levels.INFO)
+    else
+      vim.notify('Building blink.cmp failed', vim.log.levels.ERROR)
+    end
+  end
+
   add({
     source = 'saghen/blink.cmp',
     depends = {
@@ -621,7 +603,11 @@ later(function()
       'xzbdmw/colorful-menu.nvim',
     },
     -- Checkout a specific version of blink to get pre-compiled rust part
-    checkout = 'v1.4.1',
+    checkout = checkout,
+    hooks = {
+      post_checkout = build_blink,
+      post_install = build_blink,
+    },
   })
   local providers = {
     lazydev = {
@@ -778,20 +764,6 @@ later(function()
     end,
     desc = 'Enhance CodeCompanion windows.',
   })
-
-  vim.keymap.set(
-    'n',
-    '<leader>z',
-    '<cmd>CodeCompanionChat Toggle<cr>',
-    { desc = 'Open a CodeCompanion chat window' }
-  )
-
-  vim.keymap.set(
-    'n',
-    '<leader>Z',
-    '<cmd>CodeCompanionActions<cr>',
-    { desc = 'Open CodeCompanion actions panel' }
-  )
 
   add({
     source = 'MeanderingProgrammer/render-markdown.nvim',

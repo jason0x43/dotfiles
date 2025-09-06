@@ -31,6 +31,10 @@ vim.keymap.set('n', '<leader>a', function()
   vim.lsp.buf.code_action()
 end, { desc = 'Show a list of possible code actions' })
 
+vim.keymap.set('n', '<leader>b', function()
+  MiniPick.builtin.buffers()
+end, { desc = 'Find buffers' })
+
 -- Close the current window
 vim.keymap.set('n', '<leader>c', function()
   ---@type boolean, string | nil
@@ -42,12 +46,41 @@ vim.keymap.set('n', '<leader>c', function()
   end
 end, { desc = 'Close the current window' })
 
+vim.keymap.set('n', '<leader>d', function()
+  MiniPick.registry.diagnostic({ scope = 'current' })
+end, { desc = 'List diagnostics' })
+
 -- Show diagnostics
 vim.keymap.set('n', '<leader>D', function()
   vim.diagnostic.open_float({
     border = 'rounded',
   })
 end, { desc = 'Show diagnostics for the current line' })
+
+vim.keymap.set('n', '<leader>e', function()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local dir = vim.fn.getcwd()
+  if vim.uv.fs_stat(bufname) then
+    dir = vim.fn.fnamemodify(bufname, ':p:h')
+  end
+  MiniFiles.open(dir)
+end, { desc = 'Open a file manager' })
+
+vim.keymap.set('n', '<leader>f', function()
+  MiniPick.registry.smart()
+end, { desc = 'Find files' })
+
+vim.keymap.set('n', '<leader>F', function()
+  require('conform').format({ lsp_fallback = true, async = true })
+end, { desc = 'Format the current file' })
+
+vim.keymap.set('n', '<leader>g', function()
+  MiniPick.builtin.grep_live()
+end, { desc = 'Find strings in files' })
+
+vim.keymap.set('n', '<leader>h', function()
+  MiniPick.builtin.help()
+end, { desc = 'Find help' })
 
 -- Insert a UUID
 vim.keymap.set('n', '<leader>iu', function()
@@ -66,6 +99,47 @@ vim.keymap.set('n', '<leader>iU', function()
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { uuid })
 end, { desc = 'Insert an all-caps UUID at the cursor position' })
+
+vim.keymap.set('n', '<leader>k', function()
+  MiniBufremove.delete()
+end, { desc = 'Close the current buffer' })
+
+vim.keymap.set('n', '<leader>K', function()
+  MiniBufremove.delete(0, true)
+end, { desc = 'Close the current buffer with prejudice' })
+
+vim.keymap.set('n', '<leader>li', function()
+  vim.lsp.buf.implementation()
+end, { desc = 'Go to the implementation of a symbol' })
+
+vim.keymap.set('n', '<leader>ll', function()
+  require('user.util.lsp').get_document_location()
+end, { desc = 'Find help' })
+
+vim.keymap.set('n', '<leader>lr', function()
+  MiniExtra.pickers.lsp({ scope = 'references' })
+end, { desc = 'Find help' })
+
+vim.keymap.set('n', '<leader>ls', function()
+  MiniExtra.pickers.lsp({ scope = 'document_symbol' })
+end, { desc = 'Find help' })
+
+vim.keymap.set('n', '<leader>lS', function()
+  local query = vim.fn.input('Symbol query: ')
+  MiniExtra.pickers.lsp({ scope = 'workspace_symbol', symbol_query = query })
+end, { desc = 'Find help' })
+
+vim.keymap.set('n', '<leader>r', function()
+  MiniPick.registry.recent({ current_dir = true })
+end, { desc = 'Find recent files' })
+
+vim.keymap.set('n', '<leader>s', function()
+  MiniStarter.open()
+end, { desc = 'Open the mini starter screen' })
+
+vim.keymap.set('n', '<leader>u', function()
+  MiniPick.registry.undotree()
+end, { desc = 'List diagnostics' })
 
 -- Quit vim
 vim.keymap.set('n', '<leader>q', '<cmd>qall<cr>', { desc = 'Exit vim' })
@@ -128,6 +202,20 @@ end, { desc = 'Focus the window to the right' })
 vim.keymap.set('n', '<leader>y', function()
   require('user.config.yazi').open_yazi()
 end)
+
+vim.keymap.set(
+  'n',
+  '<leader>z',
+  '<cmd>CodeCompanionChat Toggle<cr>',
+  { desc = 'Open a CodeCompanion chat window' }
+)
+
+vim.keymap.set(
+  'n',
+  '<leader>Z',
+  '<cmd>CodeCompanionActions<cr>',
+  { desc = 'Open CodeCompanion actions panel' }
+)
 
 -- Override the default "goto definition" handler to use relative paths
 -- vim.keymap.set('n', '<c-]>', function()
