@@ -277,7 +277,7 @@ local function apply_theme()
   hi('Underlined', { fg = c.violet, underline = true })
   hi('VertSplit', { fg = c.dim_0 })
   hi('VimCommand', { fg = c.yellow })
-  hi('Visual', { bg = c.bg_2 })
+  hi('Visual', { bg = c.bg_1 })
   hi('VisualNOS', {})
   hi('WarningMsg', {})
   hi('WildMenu', {})
@@ -436,6 +436,9 @@ local function apply_theme()
   hi('SnacksIndent', { fg = c.dim_0 })
   hi('SnacksPickerTree', { fg = c.dim_0 })
   hi('SnacksPickerTitle', { fg = c.br_blue, bg = c.bg_0 })
+
+  hi('DropBarMenuNormalFloat', { fg = c.fg_1, bg = c.bg_1 })
+  hi('DropBarMenuHoverEntry', { fg = c.fg_1, bg = c.bg_2 })
 
   hilink('BlinkCmpGhostText', 'Comment')
 

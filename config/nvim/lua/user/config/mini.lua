@@ -703,9 +703,19 @@ later(function()
   require('dropbar').setup({
     sources = {
       path = {
-        preview = false
-      }
-    }
+        preview = false,
+      },
+    },
+  })
+
+  -- Convenience behavior for DropBar menu buffers
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'dropbar_menu',
+    group = "dropbar_setup",
+    callback = function()
+      vim.b.miniindentscope_disable = true
+    end,
+    desc = 'Setup DropBar menu buffers',
   })
 end)
 
