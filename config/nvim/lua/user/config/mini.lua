@@ -17,6 +17,8 @@ end
 
 require('mini.deps').setup({ path = { package = path_package } })
 
+vim.api.nvim_create_augroup('plugin_autocmds', {})
+
 local add = MiniDeps.add
 local now = MiniDeps.now
 local later = MiniDeps.later
@@ -711,7 +713,7 @@ later(function()
   -- Convenience behavior for DropBar menu buffers
   vim.api.nvim_create_autocmd('FileType', {
     pattern = 'dropbar_menu',
-    group = "dropbar_setup",
+    group = "plugin_autocmds",
     callback = function()
       vim.b.miniindentscope_disable = true
     end,
