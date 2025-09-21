@@ -53,6 +53,7 @@ alias grc="git rebase --continue"
 alias gri="git ri"
 alias grv="git remote -v"
 alias gs="git -c status.color=always status --short"
+alias gsu="git -c status.color=always status --short | grep U"
 alias gui="gitui"
 alias ts='tig status'
 
