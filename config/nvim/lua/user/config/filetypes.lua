@@ -32,6 +32,10 @@ vim.filetype.add({
           return 'javascript'
         end
 
+        if first_line:find('#!/usr/bin/env node') then
+          return 'javascript'
+        end
+
         if
           first_line:find('#!/usr/bin/env %-S deno') ~= nil
           or first_line:find('#!/usr/bin/env %-S npx tsx') ~= nil
