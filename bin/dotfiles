@@ -177,6 +177,21 @@ function dotfiles-home {
     fixterm
 }
 
+# Upgrade Mac App Store packages
+function dotfiles-mas {
+    if (( ! $+commands[mas] )); then
+        if [[ $INSTALL == 0 ]]; then
+            warn "mas not installed"
+            return
+        fi
+
+        brew install mas
+    fi
+
+    log "Upgrading Mac App Store apps..."
+    mas upgrade
+}
+
 # Link and activate launchd scripts
 function dotfiles-launchd {
     log "Linking and bootstrapping launchd scripts..."
@@ -464,6 +479,7 @@ else
 
     if [[ $OSTYPE == darwin* ]]; then
         dotfiles-launchd
+        dotfiles-mas
     fi
 fi
 
