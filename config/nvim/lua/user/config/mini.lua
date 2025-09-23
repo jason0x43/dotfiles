@@ -374,6 +374,7 @@ later(function()
   MiniPick.registry.recent = require('user.mini.picker_recent')
   MiniPick.registry.undotree = require('user.mini.picker_undo')
   MiniPick.registry.smart = require('user.mini.picker_smart')
+  -- MiniPick.registry.smart = require('user.mini.picker_smartpick')
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
@@ -408,6 +409,18 @@ end)
 later(function()
   require('mini.indentscope').setup({
     symbol = '│',
+  })
+
+  -- Only use indentscope with real files
+  vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '*',
+    group = 'plugin_autocmds',
+    callback = function()
+      if vim.o.buftype == "nofile" then
+        vim.b.miniindentscope_disable = true
+      end
+    end,
+    desc = 'Setup DropBar menu buffers',
   })
 end)
 
@@ -709,21 +722,44 @@ later(function()
       },
     },
   })
-
-  -- Convenience behavior for DropBar menu buffers
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'dropbar_menu',
-    group = "plugin_autocmds",
-    callback = function()
-      vim.b.miniindentscope_disable = true
-    end,
-    desc = 'Setup DropBar menu buffers',
-  })
 end)
 
 -- CodeCompanion
 -- This should be loaded after blink for proper integration
 later(function()
+  local function build_mcphub()
+    vim.notify('Installing mcp-hub', vim.log.levels.INFO)
+    local obj = vim.system({ 'npm', 'install', '-g', 'mcp-hub@latest' }):wait()
+    if obj.code == 0 then
+      vim.notify('Installed mcp-hub', vim.log.levels.INFO)
+    else
+      vim.notify('Error installing mcp-hub', vim.log.levels.ERROR)
+    end
+  end
+
+  add({
+    source = 'ravitemer/mcphub.nvim',
+    depends = { 'nvim-lua/plenary.nvim' },
+    hooks = {
+      post_checkout = build_mcphub,
+      post_install = build_mcphub,
+    },
+  })
+
+  require('mcphub').setup()
+
+  -- Formatting for mcphub buffers
+  vim.api.nvim_create_autocmd('BufEnter', {
+    pattern = '*',
+    group = 'plugin_autocmds',
+    callback = function()
+      if vim.o.filetype == "mcphub" then
+        vim.o.linebreak = true
+      end
+    end,
+    desc = 'Setup DropBar menu buffers',
+  })
+
   add({
     source = 'olimorris/codecompanion.nvim',
     depends = {
@@ -731,7 +767,13 @@ later(function()
       'nvim-treesitter/nvim-treesitter',
     },
   })
+
   require('codecompanion').setup({
+    extensions = {
+      mcphub = {
+        callback = 'mcphub.extensions.codecompanion',
+      },
+    },
     strategies = {
       chat = {
         adapter = 'copilot',
@@ -751,28 +793,29 @@ later(function()
     },
     display = {
       chat = {
-        window = {
-          opts = {
-            number = false,
-            concealcursor = 'n',
-            conceallevel = 2,
-          },
-        },
         -- window = {
-        --   layout = 'horizontal',
-        --   position = 'bottom',
-        --   height = 0.4,
-        -- },
-        -- window = {
-        --   layout = 'float',
-        --   height = 0.75,
-        --   width = 0.75,
+        --   width = 0.5,
         --   opts = {
         --     number = false,
         --     concealcursor = 'n',
         --     conceallevel = 2,
         --   },
         -- },
+        -- window = {
+        --   layout = 'horizontal',
+        --   position = 'bottom',
+        --   height = 0.4,
+        -- },
+        window = {
+          layout = 'float',
+          height = 0.75,
+          width = 0.75,
+          opts = {
+            number = false,
+            concealcursor = 'n',
+            conceallevel = 2,
+          },
+        },
       },
     },
   })
