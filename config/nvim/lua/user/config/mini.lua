@@ -373,8 +373,8 @@ later(function()
   MiniPick.registry.diagnostic = require('user.mini.picker_diagnostics')
   MiniPick.registry.recent = require('user.mini.picker_recent')
   MiniPick.registry.undotree = require('user.mini.picker_undo')
-  MiniPick.registry.smart = require('user.mini.picker_smart')
-  -- MiniPick.registry.smart = require('user.mini.picker_smartpick')
+  -- MiniPick.registry.smart = require('user.mini.picker_smart')
+  MiniPick.registry.smart = require('user.mini.picker_smarter')
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
@@ -416,7 +416,7 @@ later(function()
     pattern = '*',
     group = 'plugin_autocmds',
     callback = function()
-      if vim.o.buftype == "nofile" then
+      if vim.o.buftype == 'nofile' then
         vim.b.miniindentscope_disable = true
       end
     end,
@@ -754,25 +754,25 @@ later(function()
     pattern = '*',
     group = 'plugin_autocmds',
     callback = function()
-      if vim.o.filetype == "mcphub" then
+      if vim.o.filetype == 'mcphub' then
         vim.o.linebreak = true
       end
     end,
     desc = 'Setup DropBar menu buffers',
   })
 
-  add({
-    source = 'olimorris/codecompanion.nvim',
-    depends = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
-  })
-
-  require('codecompanion').setup({
+  -- Declare the initial CodeCompanion config. This may be modified before it's
+  -- passed to CodeCompanion's setup.
+  local code_companion_config = {
     extensions = {
+      history = {
+        enabled = true,
+      },
       mcphub = {
         callback = 'mcphub.extensions.codecompanion',
+      },
+      spinner = {
+        style = 'cursor-relative',
       },
     },
     strategies = {
@@ -791,26 +791,21 @@ later(function()
       cmd = {
         adapter = 'copilot',
       },
+      memory = {
+        opts = {
+          chat = {
+            enabled = true,
+          },
+        },
+      },
     },
     display = {
       chat = {
-        -- window = {
-        --   width = 0.5,
-        --   opts = {
-        --     number = false,
-        --     concealcursor = 'n',
-        --     conceallevel = 2,
-        --   },
-        -- },
-        -- window = {
-        --   layout = 'horizontal',
-        --   position = 'bottom',
-        --   height = 0.4,
-        -- },
         window = {
           layout = 'float',
           height = 0.75,
           width = 0.75,
+          border = 'rounded',
           opts = {
             number = false,
             concealcursor = 'n',
@@ -819,15 +814,101 @@ later(function()
         },
       },
     },
+  }
+
+  -- If uv is available, install the VectorCode plugin and it's CLI app.
+  if vim.fn.executable('uv') then
+    local function install_vectorcode_cli()
+      vim.notify('Installing VectorCode CLI', vim.log.levels.INFO)
+      local obj =
+        vim.system({ 'uv', 'tool', 'install', '-U', 'vectorcode' }):wait()
+      if obj.code == 0 then
+        vim.notify('Installed VectorCode CLI', vim.log.levels.INFO)
+      else
+        vim.notify('Error installing VectorCode CLI', vim.log.levels.ERROR)
+      end
+    end
+
+    add({
+      source = 'Davidyz/VectorCode',
+      depends = { 'nvim-lua/plenary.nvim' },
+      hooks = {
+        post_checkout = install_vectorcode_cli,
+        post_install = install_vectorcode_cli,
+      },
+    })
+
+    ---@module "vectorcode"
+    code_companion_config.extensions.vectorcode = {
+      ---@type VectorCode.CodeCompanion.ExtensionOpts
+      opts = {
+        tool_group = {
+          -- this will register a tool group called `@vectorcode_toolbox` that
+          -- contains all 3 tools
+          enabled = true,
+          -- a list of extra tools that you want to include in
+          -- `@vectorcode_toolbox`. if you use @vectorcode_vectorise, it'll be
+          -- very handy to include `file_search` here.
+          extras = {},
+          collapse = false, -- whether the individual tools should be shown in the chat
+        },
+        tool_opts = {
+          ---@type VectorCode.CodeCompanion.ToolOpts
+          ['*'] = {},
+          ---@type VectorCode.CodeCompanion.LsToolOpts
+          ls = {},
+          ---@type VectorCode.CodeCompanion.VectoriseToolOpts
+          vectorise = {},
+          ---@type VectorCode.CodeCompanion.QueryToolOpts
+          query = {
+            max_num = { chunk = -1, document = -1 },
+            default_num = { chunk = 50, document = 10 },
+            include_stderr = false,
+            use_lsp = false,
+            no_duplicate = true,
+            chunk_mode = false,
+            ---@type VectorCode.CodeCompanion.SummariseOpts
+            summarise = {
+              ---@type boolean|(fun(chat: CodeCompanion.Chat, results: VectorCode.QueryResult[]):boolean)|nil
+              enabled = false,
+              adapter = nil,
+              query_augmented = true,
+            },
+          },
+          files_ls = {},
+          files_rm = {},
+        },
+      },
+    }
+  end
+
+  add({
+    source = 'olimorris/codecompanion.nvim',
+    depends = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'lalitmee/codecompanion-spinners.nvim',
+      'ravitemer/codecompanion-history.nvim',
+    },
   })
 
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'codecompanion',
+  require('codecompanion').setup(code_companion_config)
+
+  vim.api.nvim_create_autocmd('BufEnter', {
     callback = function()
-      vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
-        desc = 'Close the chat window',
-        buffer = 0,
-      })
+      local buf = vim.api.nvim_get_current_buf()
+      if vim.bo[buf].filetype == 'codecompanion' then
+        local win = vim.api.nvim_get_current_win()
+        vim.api.nvim_set_option_value(
+          'fillchars',
+          'eob: ',
+          { scope = 'local', win = win }
+        )
+        vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
+          desc = 'Close the chat window',
+          buffer = buf,
+        })
+      end
     end,
     desc = 'Enhance CodeCompanion windows.',
   })
