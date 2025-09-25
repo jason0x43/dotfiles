@@ -664,6 +664,7 @@ later(function()
         auto_brackets = {
           enabled = false,
         },
+        dot_repeat = false,
       },
       documentation = {
         auto_show = true,
