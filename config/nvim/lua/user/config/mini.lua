@@ -778,6 +778,7 @@ later(function()
     strategies = {
       chat = {
         adapter = 'copilot',
+        model = 'gpt-5',
         keymaps = {
           -- use C-c for stop so we can use q for close
           stop = {
@@ -787,6 +788,7 @@ later(function()
       },
       inline = {
         adapter = 'copilot',
+        model = 'claude-sonnet-4',
       },
       cmd = {
         adapter = 'copilot',
