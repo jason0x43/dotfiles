@@ -250,7 +250,7 @@ local function apply_theme()
   hi('NonText', {})
   hi('Normal', { fg = c.fg_0 })
   hi('NormalNC', { fg = c.dim_0 })
-  hi('Pmenu', { fg = c.fg_0, bg = c.bg_1 })
+  hi('Pmenu', { fg = c.fg_0 })
   hi('PmenuSbar', { fg = c.bg_2 })
   hi('PmenuSel', { bg = c.bg_2 })
   hi('PmenuThumb', { bg = c.dim_0 })
@@ -441,6 +441,18 @@ local function apply_theme()
   hi('DropBarMenuHoverEntry', { fg = c.fg_1, bg = c.bg_2 })
 
   hilink('BlinkCmpGhostText', 'Comment')
+
+  -- Ensure RenderMarkdownCode doesn't get linked to ColorColumn, then set its
+  -- background to the normal background.
+  hilink('RenderMarkdownCode', 'NONE')
+  hi('RenderMarkdownCode', { bg = c.bg_0 })
+
+  hilink('RenderMarkdownH1Bg', 'NONE')
+  hilink('RenderMarkdownH2Bg', 'NONE')
+  hilink('RenderMarkdownH3Bg', 'NONE')
+  hilink('RenderMarkdownH4Bg', 'NONE')
+  hilink('RenderMarkdownH5Bg', 'NONE')
+  hilink('RenderMarkdownH6Bg', 'NONE')
 
   -- notify listeners that the colorscheme has been set
   vim.api.nvim_exec_autocmds('ColorScheme', {})
