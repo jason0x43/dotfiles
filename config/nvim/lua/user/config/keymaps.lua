@@ -85,9 +85,17 @@ vim.keymap.set('n', '<leader>F', function()
   require('conform').format({ lsp_fallback = true, async = true })
 end, { desc = 'Format the current file' })
 
-vim.keymap.set('n', '<leader>g', function()
-  require('mini.pick').builtin.grep_live()
-end, { desc = 'Find strings in files' })
+vim.keymap.set('n', '<leader>gc', function()
+  MiniPick.registry.conflicts()
+end, { desc = 'Find files with merge conflictes' })
+
+vim.keymap.set('n', '<leader>gf', function()
+  MiniExtra.pickers.git_files()
+end, { desc = 'Find all git-tracked files' })
+
+vim.keymap.set('n', '<leader>gm', function()
+  MiniPick.registry.modified()
+end, { desc = 'Find modified files' })
 
 vim.keymap.set('n', '<leader>h', function()
   require('mini.pick').builtin.help()
@@ -148,6 +156,10 @@ vim.keymap.set('n', '<leader>r', function()
 end, { desc = 'Find recent files' })
 
 vim.keymap.set('n', '<leader>s', function()
+  require('mini.pick').builtin.grep_live()
+end, { desc = 'Search for strings in files' })
+
+vim.keymap.set('n', '<leader>S', function()
   require('mini.starter').open()
 end, { desc = 'Open the mini starter screen' })
 

@@ -150,7 +150,7 @@ now(function()
         },
         {
           action = 'Pick grep_live',
-          name = 'Grep',
+          name = 'Search',
           section = 'Pickers',
         },
         {
@@ -375,6 +375,8 @@ later(function()
   MiniPick.registry.undotree = require('user.mini.picker_undo')
   -- MiniPick.registry.smart = require('user.mini.picker_smart')
   MiniPick.registry.smart = require('user.mini.picker_smarter')
+  MiniPick.registry.modified = require('user.mini.picker_modified')
+  MiniPick.registry.conflicts = require('user.mini.picker_conflicts')
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select
