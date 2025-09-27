@@ -221,3 +221,15 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
   desc = 'Setup MiniGit output buffers',
 })
+
+-- Close mininotify history panes with 'q'
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'mininotify-history',
+  group = group,
+  callback = function()
+    vim.keymap.set('', 'q', function()
+      MiniBufremove.delete(0, true)
+    end, { buffer = true, desc = 'Close the current window' })
+  end,
+  desc = 'Close notify history panes with q',
+})
