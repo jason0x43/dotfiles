@@ -6,7 +6,7 @@ vim.lsp.log.set_format_func(vim.inspect)
 
 vim.lsp.config('ts_ls', {
   root_markers = { 'tsconfig.json', 'jsonconfig.json' },
-});
+})
 
 -- Give signature and hover floats a rounded border
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
@@ -16,7 +16,8 @@ function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
   opts.border = opts.border or 'rounded'
   opts.max_width = vim.api.nvim_win_get_width(0) - 10
 
-  local bufnr, winid = orig_util_open_floating_preview(contents, syntax, opts, ...)
+  local bufnr, winid =
+    orig_util_open_floating_preview(contents, syntax, opts, ...)
   vim.api.nvim_set_option_value('linebreak', true, { win = winid })
 
   return bufnr, winid
@@ -33,4 +34,5 @@ vim.lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
 end
 
 -- Manually enable language servers not managed by Mason
-vim.lsp.enable("sourcekit");
+vim.lsp.enable('sourcekit')
+vim.lsp.enable('fish_lsp')
