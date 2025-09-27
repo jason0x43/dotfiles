@@ -6,6 +6,7 @@ vim.filetype.add({
   extension = {
     ['ejs'] = 'html',
     ['dashtoc'] = 'json',
+    ['podspec'] = 'ruby',
   },
   pattern = {
     ['appsettings.*.json'] = 'jsonc',
