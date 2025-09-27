@@ -375,6 +375,7 @@ later(function()
   MiniPick.registry.undotree = require('user.mini.picker_undo')
   -- MiniPick.registry.smart = require('user.mini.picker_smart')
   MiniPick.registry.smart = require('user.mini.picker_smarter')
+  MiniPick.registry.icons = require('user.mini.picker_icons')
   MiniPick.registry.modified = require('user.mini.picker_modified')
   MiniPick.registry.conflicts = require('user.mini.picker_conflicts')
 
