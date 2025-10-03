@@ -65,3 +65,6 @@ alias vimdiff='vi -d'
 # kitty
 alias kt='kitten @ set-tab-title'
 alias icat='kitten icat'
+
+# grip
+alias grip='go-grip -H grip.local'
