@@ -553,22 +553,19 @@ later(function()
   require('user.util.diffview').patch_layout()
 end)
 
--- Copilot
+-- Sidekick
 later(function()
-  add('zbirenbaum/copilot.lua')
-  require('copilot').setup({
-    event = 'InsertEnter',
-    suggestion = {
-      enabled = false,
-      auto_trigger = true,
-    },
-    panel = { enabled = false },
-    filetypes = {
-      ['*'] = function()
-        return vim.bo.filetype ~= 'bigfile'
-      end,
-    },
-  })
+  add('folke/sidekick.nvim')
+
+  require('sidekick').setup()
+
+  -- For Sidekick
+  vim.keymap.set('n', '<Tab>', function()
+    -- if there is a next edit, jump to it, otherwise apply it if any
+    if not require('sidekick').nes_jump_or_apply() then
+      return '<Tab>'
+    end
+  end, { desc = 'Goto/Apply Next Edit Suggestion' })
 end)
 
 -- Completions
@@ -636,16 +633,16 @@ later(function()
   local default = { 'lsp', 'path', 'buffer', 'lazydev' }
 
   -- Only add the copilot provider if copilot is active
-  local ok, _ = pcall(require, 'copilot.api')
-  if ok then
-    providers.copilot = {
-      name = 'copilot',
-      module = 'blink-copilot',
-      score_offset = 100,
-      async = true,
-    }
-    table.insert(default, 2, 'copilot')
-  end
+  -- local ok, _ = pcall(require, 'copilot.api')
+  -- if ok then
+  --   providers.copilot = {
+  --     name = 'copilot',
+  --     module = 'blink-copilot',
+  --     score_offset = 100,
+  --     async = true,
+  --   }
+  --   table.insert(default, 2, 'copilot')
+  -- end
 
   require('blink.cmp').setup({
     appearance = {
@@ -702,6 +699,13 @@ later(function()
     keymap = {
       preset = 'default',
       ['<C-e>'] = { 'select_and_accept', 'fallback' },
+      ['<Tab>'] = {
+        'snippet_forward',
+        function()
+          return require('sidekick').nes_jump_or_apply()
+        end,
+        'fallback',
+      },
     },
     signature = {
       enabled = false,
@@ -729,216 +733,220 @@ end)
 
 -- CodeCompanion
 -- This should be loaded after blink for proper integration
-later(function()
-  local function build_mcphub()
-    vim.notify('Installing mcp-hub', vim.log.levels.INFO)
-    local obj = vim.system({ 'npm', 'install', '-g', 'mcp-hub@latest' }):wait()
-    if obj.code == 0 then
-      vim.notify('Installed mcp-hub', vim.log.levels.INFO)
-    else
-      vim.notify('Error installing mcp-hub', vim.log.levels.ERROR)
-    end
-  end
-
-  add({
-    source = 'ravitemer/mcphub.nvim',
-    depends = { 'nvim-lua/plenary.nvim' },
-    hooks = {
-      post_checkout = build_mcphub,
-      post_install = build_mcphub,
-    },
-  })
-
-  require('mcphub').setup()
-
-  -- Formatting for mcphub buffers
-  vim.api.nvim_create_autocmd('BufEnter', {
-    pattern = '*',
-    group = 'plugin_autocmds',
-    callback = function()
-      if vim.o.filetype == 'mcphub' then
-        vim.o.linebreak = true
-      end
-    end,
-    desc = 'Setup DropBar menu buffers',
-  })
-
-  -- Declare the initial CodeCompanion config. This may be modified before it's
-  -- passed to CodeCompanion's setup.
-  local code_companion_config = {
-    extensions = {
-      history = {
-        enabled = true,
-      },
-      mcphub = {
-        callback = 'mcphub.extensions.codecompanion',
-      },
-      spinner = {
-        style = 'cursor-relative',
-      },
-    },
-    strategies = {
-      chat = {
-        adapter = 'copilot',
-        model = 'gpt-5',
-        keymaps = {
-          -- use C-c for stop so we can use q for close
-          stop = {
-            modes = { n = '<C-c>' },
-          },
-        },
-      },
-      inline = {
-        adapter = 'copilot',
-        model = 'claude-sonnet-4',
-      },
-      cmd = {
-        adapter = 'copilot',
-      },
-      memory = {
-        opts = {
-          chat = {
-            enabled = true,
-          },
-        },
-      },
-    },
-    display = {
-      chat = {
-        window = {
-          layout = 'float',
-          height = 0.75,
-          width = 0.75,
-          border = 'rounded',
-          opts = {
-            number = false,
-            concealcursor = 'n',
-            conceallevel = 2,
-          },
-        },
-      },
-    },
-  }
-
-  -- If uv is available, install the VectorCode plugin and it's CLI app.
-  if vim.fn.executable('uv') then
-    local function install_vectorcode_cli()
-      vim.notify('Installing VectorCode CLI', vim.log.levels.INFO)
-      local obj =
-        vim.system({ 'uv', 'tool', 'install', '-U', 'vectorcode' }):wait()
-      if obj.code == 0 then
-        vim.notify('Installed VectorCode CLI', vim.log.levels.INFO)
-      else
-        vim.notify('Error installing VectorCode CLI', vim.log.levels.ERROR)
-      end
-    end
-
-    add({
-      source = 'Davidyz/VectorCode',
-      depends = { 'nvim-lua/plenary.nvim' },
-      hooks = {
-        post_checkout = install_vectorcode_cli,
-        post_install = install_vectorcode_cli,
-      },
-    })
-
-    ---@module "vectorcode"
-    code_companion_config.extensions.vectorcode = {
-      ---@type VectorCode.CodeCompanion.ExtensionOpts
-      opts = {
-        tool_group = {
-          -- this will register a tool group called `@vectorcode_toolbox` that
-          -- contains all 3 tools
-          enabled = true,
-          -- a list of extra tools that you want to include in
-          -- `@vectorcode_toolbox`. if you use @vectorcode_vectorise, it'll be
-          -- very handy to include `file_search` here.
-          extras = {},
-          collapse = false, -- whether the individual tools should be shown in the chat
-        },
-        tool_opts = {
-          ---@type VectorCode.CodeCompanion.ToolOpts
-          ['*'] = {},
-          ---@type VectorCode.CodeCompanion.LsToolOpts
-          ls = {},
-          ---@type VectorCode.CodeCompanion.VectoriseToolOpts
-          vectorise = {},
-          ---@type VectorCode.CodeCompanion.QueryToolOpts
-          query = {
-            max_num = { chunk = -1, document = -1 },
-            default_num = { chunk = 50, document = 10 },
-            include_stderr = false,
-            use_lsp = false,
-            no_duplicate = true,
-            chunk_mode = false,
-            ---@type VectorCode.CodeCompanion.SummariseOpts
-            summarise = {
-              ---@type boolean|(fun(chat: CodeCompanion.Chat, results: VectorCode.QueryResult[]):boolean)|nil
-              enabled = false,
-              adapter = nil,
-              query_augmented = true,
-            },
-          },
-          files_ls = {},
-          files_rm = {},
-        },
-      },
-    }
-  end
-
-  add({
-    source = 'olimorris/codecompanion.nvim',
-    depends = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'lalitmee/codecompanion-spinners.nvim',
-      'ravitemer/codecompanion-history.nvim',
-    },
-  })
-
-  require('codecompanion').setup(code_companion_config)
-
-  vim.api.nvim_create_autocmd('BufEnter', {
-    callback = function()
-      local buf = vim.api.nvim_get_current_buf()
-      if vim.bo[buf].filetype == 'codecompanion' then
-        local win = vim.api.nvim_get_current_win()
-        vim.api.nvim_set_option_value(
-          'fillchars',
-          'eob: ',
-          { scope = 'local', win = win }
-        )
-        vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
-          desc = 'Close the chat window',
-          buffer = buf,
-        })
-      end
-    end,
-    desc = 'Enhance CodeCompanion windows.',
-  })
-
-  add({
-    source = 'MeanderingProgrammer/render-markdown.nvim',
-    depends = {
-      'nvim-treesitter',
-      'nvim-mini/mini.nvim',
-    },
-  })
-  require('render-markdown').setup({
-    anti_conceal = { enabled = false },
-    file_types = {
-      'markdown',
-      'codecompanion',
-    },
-    win_options = {
-      conceallevel = {
-        default = vim.o.conceallevel,
-        rendered = 3,
-      },
-      concealcursor = {
-        default = vim.o.concealcursor,
-        rendered = 'n',
-      },
-    },
-  })
-end)
+-- later(function()
+--   local function build_mcphub()
+--     vim.notify('Installing mcp-hub', vim.log.levels.INFO)
+--     local obj = vim.system({ 'npm', 'install', '-g', 'mcp-hub@latest' }):wait()
+--     if obj.code == 0 then
+--       vim.notify('Installed mcp-hub', vim.log.levels.INFO)
+--     else
+--       vim.notify('Error installing mcp-hub', vim.log.levels.ERROR)
+--     end
+--   end
+--
+--   add({
+--     source = 'ravitemer/mcphub.nvim',
+--     depends = { 'nvim-lua/plenary.nvim' },
+--     hooks = {
+--       post_checkout = build_mcphub,
+--       post_install = build_mcphub,
+--     },
+--   })
+--
+--   require('mcphub').setup()
+--
+--   -- Formatting for mcphub buffers
+--   vim.api.nvim_create_autocmd('BufEnter', {
+--     pattern = '*',
+--     group = 'plugin_autocmds',
+--     callback = function()
+--       if vim.o.filetype == 'mcphub' then
+--         vim.o.linebreak = true
+--       end
+--     end,
+--     desc = 'Setup DropBar menu buffers',
+--   })
+--
+--   -- Declare the initial CodeCompanion config. This may be modified before it's
+--   -- passed to CodeCompanion's setup.
+--   local code_companion_config = {
+--     extensions = {
+--       history = {
+--         enabled = true,
+--       },
+--       mcphub = {
+--         callback = 'mcphub.extensions.codecompanion',
+--       },
+--       spinner = {
+--         style = 'cursor-relative',
+--       },
+--     },
+--     strategies = {
+--       chat = {
+--         adapter = 'copilot',
+--         model = 'gpt-5',
+--         keymaps = {
+--           -- use C-c for stop so we can use q for close
+--           stop = {
+--             modes = { n = '<C-c>' },
+--           },
+--         },
+--       },
+--       inline = {
+--         adapter = 'copilot',
+--         model = 'claude-sonnet-4',
+--       },
+--       cmd = {
+--         adapter = 'copilot',
+--       },
+--       memory = {
+--         opts = {
+--           chat = {
+--             enabled = true,
+--           },
+--         },
+--       },
+--     },
+--     display = {
+--       chat = {
+--         window = {
+--           layout = 'float',
+--           height = 0.75,
+--           width = 0.75,
+--           border = 'rounded',
+--           opts = {
+--             number = false,
+--             concealcursor = 'n',
+--             conceallevel = 2,
+--           },
+--         },
+--       },
+--     },
+--   }
+--
+--   -- If uv is available, install the VectorCode plugin and it's CLI app.
+--   if vim.fn.executable('uv') then
+--     local function install_vectorcode_cli()
+--       vim.notify('Installing VectorCode CLI', vim.log.levels.INFO)
+--       local obj =
+--         vim.system({ 'uv', 'tool', 'install', '-U', 'vectorcode' }):wait()
+--       if obj.code == 0 then
+--         vim.notify('Installed VectorCode CLI', vim.log.levels.INFO)
+--       else
+--         vim.notify('Error installing VectorCode CLI', vim.log.levels.ERROR)
+--       end
+--     end
+--
+--     add({
+--       source = 'Davidyz/VectorCode',
+--       depends = { 'nvim-lua/plenary.nvim' },
+--       hooks = {
+--         post_checkout = install_vectorcode_cli,
+--         post_install = install_vectorcode_cli,
+--       },
+--     })
+--
+--     ---@module "vectorcode"
+--     code_companion_config.extensions.vectorcode = {
+--       ---@type VectorCode.CodeCompanion.ExtensionOpts
+--       opts = {
+--         tool_group = {
+--           -- this will register a tool group called `@vectorcode_toolbox` that
+--           -- contains all 3 tools
+--           enabled = true,
+--           -- a list of extra tools that you want to include in
+--           -- `@vectorcode_toolbox`. if you use @vectorcode_vectorise, it'll be
+--           -- very handy to include `file_search` here.
+--           extras = {},
+--           collapse = false, -- whether the individual tools should be shown in the chat
+--         },
+--         tool_opts = {
+--           ---@type VectorCode.CodeCompanion.ToolOpts
+--           ['*'] = {},
+--           ---@type VectorCode.CodeCompanion.LsToolOpts
+--           ls = {},
+--           ---@type VectorCode.CodeCompanion.VectoriseToolOpts
+--           vectorise = {},
+--           ---@type VectorCode.CodeCompanion.QueryToolOpts
+--           query = {
+--             max_num = { chunk = -1, document = -1 },
+--             default_num = { chunk = 50, document = 10 },
+--             include_stderr = false,
+--             use_lsp = false,
+--             no_duplicate = true,
+--             chunk_mode = false,
+--             ---@type VectorCode.CodeCompanion.SummariseOpts
+--             summarise = {
+--               ---@type boolean|(fun(chat: CodeCompanion.Chat, results: VectorCode.QueryResult[]):boolean)|nil
+--               enabled = false,
+--               adapter = nil,
+--               query_augmented = true,
+--             },
+--           },
+--           files_ls = {},
+--           files_rm = {},
+--         },
+--       },
+--     }
+--   end
+--
+--   add({
+--     source = 'olimorris/codecompanion.nvim',
+--     depends = {
+--       'nvim-lua/plenary.nvim',
+--       'nvim-treesitter/nvim-treesitter',
+--       'lalitmee/codecompanion-spinners.nvim',
+--       'ravitemer/codecompanion-history.nvim',
+--     },
+--   })
+--
+--   require('codecompanion').setup(code_companion_config)
+--
+--   vim.api.nvim_create_autocmd('BufEnter', {
+--     callback = function()
+--       local buf = vim.api.nvim_get_current_buf()
+--       if vim.bo[buf].filetype == 'codecompanion' then
+--         local win = vim.api.nvim_get_current_win()
+--         vim.api.nvim_set_option_value(
+--           'fillchars',
+--           'eob: ',
+--           { scope = 'local', win = win }
+--         )
+--         vim.keymap.set('n', 'q', '<cmd>CodeCompanionChat Toggle<cr>', {
+--           desc = 'Close the chat window',
+--           buffer = buf,
+--         })
+--       end
+--     end,
+--     desc = 'Enhance CodeCompanion windows.',
+--   })
+--
+--   add({
+--     source = 'MeanderingProgrammer/render-markdown.nvim',
+--     depends = {
+--       'nvim-treesitter',
+--       'nvim-mini/mini.nvim',
+--     },
+--   })
+--   require('render-markdown').setup({
+--     enabled = false,
+--     anti_conceal = { enabled = false },
+--     code = {
+--       conceal_delimiters = false,
+--     },
+--     file_types = {
+--       'markdown',
+--       'codecompanion',
+--     },
+--     win_options = {
+--       conceallevel = {
+--         default = vim.o.conceallevel,
+--         rendered = 2,
+--       },
+--       concealcursor = {
+--         default = vim.o.concealcursor,
+--         rendered = '',
+--       },
+--     },
+--   })
+-- end)

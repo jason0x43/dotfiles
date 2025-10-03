@@ -36,3 +36,4 @@ end
 -- Manually enable language servers not managed by Mason
 vim.lsp.enable('sourcekit')
 vim.lsp.enable('fish_lsp')
+vim.lsp.enable('copilot')
