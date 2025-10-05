@@ -379,8 +379,8 @@ function dotfiles-node {
 
     logSub "Updating package managers..."
 
-    if (( $+commands[corepack] )); then
-        corepack prepare pnpm@latest --activate
+    if (( $+commands[pnpm] )); then
+        pnpm self-update
     fi
 
     logSub "Updating global node packages..."
@@ -418,7 +418,12 @@ function dotfiles-node {
             };
         }; then
             local npm=$(which npm)
-            $npm install --registry=https://registry.npmjs.org --progress=false -g $latestPkg > /dev/null
+            $npm install \
+                --registry=https://registry.npmjs.org \
+                --progress=false \
+                -g \
+                $latestPkg \
+                --no-ignore-scripts > /dev/null
             logSub "Installed $latestPkg"
         fi
     done
