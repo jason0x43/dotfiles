@@ -13,7 +13,7 @@ end, { desc = 'Toggle line and column highlighting' })
 -- Space to clear search highlights
 vim.keymap.set('n', '<space>', function()
   vim.go.hlsearch = false
-end, { desc = 'Go the previous buffer' })
+end, { desc = 'Clear search highlights' })
 
 -- Disable "Entering Ex mode"
 vim.keymap.set('n', 'Q', '<nop>', { desc = 'Disable entering Ex mode' })
@@ -185,7 +185,7 @@ vim.keymap.set('n', '<leader>W', '<cmd>w!<cr>', {
 })
 
 -- Window movement keys for Windows
-if vim.fn.has('win32') then
+if vim.fn.has('win32') ~= 0 then
   vim.keymap.set(
     { 'n', 'i' },
     '<c-h>',
@@ -210,20 +210,20 @@ if vim.fn.has('win32') then
     '<cmd>wincmd l<cr>',
     { desc = 'Focus the window to the right' }
   )
+else
+  vim.keymap.set({ 'n', 'i' }, '<c-h>', function()
+    require('user.terminal').focus_kitty('left')
+  end, { desc = 'Focus the window to the left' })
+  vim.keymap.set({ 'n', 'i' }, '<c-j>', function()
+    require('user.terminal').focus_kitty('down')
+  end, { desc = 'Focus the window below' })
+  vim.keymap.set({ 'n', 'i' }, '<c-k>', function()
+    require('user.terminal').focus_kitty('up')
+  end, { desc = 'Focus the window above' })
+  vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
+    require('user.terminal').focus_kitty('right')
+  end, { desc = 'Focus the window to the right' })
 end
-
-vim.keymap.set({ 'n', 'i' }, '<c-h>', function()
-  require('user.terminal').focus_kitty('left')
-end, { desc = 'Focus the window to the left' })
-vim.keymap.set({ 'n', 'i' }, '<c-j>', function()
-  require('user.terminal').focus_kitty('down')
-end, { desc = 'Focus the window below' })
-vim.keymap.set({ 'n', 'i' }, '<c-k>', function()
-  require('user.terminal').focus_kitty('up')
-end, { desc = 'Focus the window above' })
-vim.keymap.set({ 'n', 'i' }, '<c-l>', function()
-  require('user.terminal').focus_kitty('right')
-end, { desc = 'Focus the window to the right' })
 
 vim.keymap.set('n', '<leader>y', function()
   require('user.config.yazi').open_yazi()
