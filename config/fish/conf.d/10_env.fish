@@ -8,4 +8,5 @@ set -gx FISH_AI_KEYMAP_2 'ctrl-o'
 set -gx DOTNET_ROOT ~/.dotnet
 set -gx XDG_CONFIG_HOME ~/.config
 set -gx XDG_DATA_HOME ~/.local/share
+set -gx XDG_STATE_HOME ~/.local/state
 set -gx GOPATH ~/Code/go
