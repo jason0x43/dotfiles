@@ -10,4 +10,5 @@ conf.d/fish_ai.fish
 **/_tide_*.fish
 !functions/_tide_item_mise.fish
 fish_variables
+fish_variables.*
 fishd.tmp.*
