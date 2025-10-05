@@ -296,7 +296,7 @@ local function apply_theme()
   hi('DiagnosticUnderlineInfo', { undercurl = true, sp = info })
   hi('DiagnosticUnderlineHint', { undercurl = true, sp = hint })
   hi('DiagnosticVirtualTextError', { fg = error, italic = true })
-  hi('DiagnosticVirtualTextWawrn', { fg = warn, italic = true })
+  hi('DiagnosticVirtualTextWarn', { fg = warn, italic = true })
   hi('DiagnosticVirtualTextInfo', { fg = info, italic = true })
   hi('DiagnosticVirtualTextHint', { fg = hint, italic = true })
   hi('DiagnosticVirtualTextOk', { italic = true })
@@ -476,6 +476,8 @@ local function apply_theme()
       end
 
       watch_file()
+    else
+      vim.notify('Unable to read theme file ' .. themefile, vim.log.levels.WARN)
     end
   end
 end
