@@ -160,3 +160,4 @@ FastAPI
 S3
 uv
 MSVC
+migrations
