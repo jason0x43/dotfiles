@@ -6,9 +6,10 @@
 import Cocoa
 
 func updateTheme() {
-  let isDark = UserDefaults.standard.string(
-    forKey: "AppleInterfaceStyle"
-  ) == "Dark"
+  let isDark =
+    UserDefaults.standard.string(
+      forKey: "AppleInterfaceStyle"
+    ) == "Dark"
   let theme = isDark ? "dark" : "light"
   let filename = FileManager.default.homeDirectoryForCurrentUser
     .appendingPathComponent(".local")
@@ -22,14 +23,19 @@ func updateTheme() {
     atomically: true,
     encoding: String.Encoding.utf8
   )
+
+  let task = Process()
+  task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/fish")
+  task.arguments = ["-c", "set -U theme \(theme)"]
+  try? task.run()
 }
 
 updateTheme()
 
 DistributedNotificationCenter.default.addObserver(
-    forName: Notification.Name("AppleInterfaceThemeChangedNotification"),
-    object: nil,
-    queue: nil
+  forName: Notification.Name("AppleInterfaceThemeChangedNotification"),
+  object: nil,
+  queue: nil
 ) { _ in updateTheme() }
 
 let sigintSrc = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
