@@ -54,7 +54,6 @@
 ---  violet: number,
 ---  br_violet: number }
 
-
 local ansi_dark = {
   '#252525',
   '#ed4a46',
@@ -184,15 +183,99 @@ local function update_background()
   end
 end
 
+-- Attempt to extract palette from kitty terminal colors
+---@return Palette | nil
+local function get_kitty_palette()
+  -- Check if we're running in kitty
+  if vim.env.TERM ~= 'xterm-kitty' then
+    return nil
+  end
+
+  -- Try to get colors from kitty
+  local result = vim
+    .system({ 'kitty', '@', 'get-colors' }, { text = true })
+    :wait()
+  if result.code ~= 0 or not result.stdout or result.stdout == '' then
+    return nil
+  end
+
+  -- Parse kitty color output
+  local colors = {}
+  for line in result.stdout:gmatch('[^\r\n]+') do
+    local key, value = line:match('^([%w_]+)%s+(.+)$')
+    if key and value then
+      colors[key] = value
+    end
+  end
+
+  -- Check that we got valid colors
+  if not colors.background or not colors.foreground then
+    return nil
+  end
+
+  local is_dark = require('user.util.theme').is_dark(colors.background)
+  local default_palette = is_dark and dark_palette or light_palette
+
+  -- Map kitty colors to our palette format
+  ---@type Palette
+  local palette = {
+    bg_0 = colors.background,
+    bg_1 = colors.color0,
+    bg_2 = colors.color8,
+    dim_0 = colors.color7,
+    fg_0 = colors.foreground,
+    fg_1 = colors.color15,
+    red = colors.color1,
+    green = colors.color2,
+    yellow = colors.color3,
+    blue = colors.color4,
+    magenta = colors.color5,
+    cyan = colors.color6,
+    br_red = colors.color9,
+    br_green = colors.color10,
+    br_yellow = colors.color11,
+    br_blue = colors.color12,
+    br_magenta = colors.color13,
+    br_cyan = colors.color14,
+    orange = default_palette.orange,
+    br_orange = default_palette.br_orange,
+    violet = default_palette.violet,
+    br_violet = default_palette.br_violet,
+  }
+
+  return palette
+end
+
+-- Cache the current palette
+---@type 'light' | 'dark'
+local current_bg = nil
+---@type Palette | CtermPalette
+local current_palette = nil
+
+-- Get the palette for the current background color
 ---@return Palette | CtermPalette
 local function get_palette()
-  if vim.go.termguicolors then
-    if vim.go.background == 'light' then
-      return light_palette
-    end
-    return dark_palette
+  if current_bg == vim.go.background then
+    return current_palette
   end
-  return cterm_palette
+
+  current_bg = vim.go.background
+
+  if vim.go.termguicolors then
+    -- Try to get kitty palette if we haven't already attempted
+    local kitty_palette = get_kitty_palette()
+    if kitty_palette then
+      current_palette = kitty_palette
+    elseif vim.go.background == 'light' then
+      current_palette = light_palette
+    else
+      current_palette = dark_palette
+    end
+  else
+    current_palette = cterm_palette
+  end
+
+  return current_palette
 end
 
 -- A convenience function for linking highlight groups
