@@ -38,58 +38,58 @@
 
 # Standard LS_COLORS file types
 set -l ls_base "\
-bd=1;33;40\
+bd=1;33\
 :ca=0\
-:cd=1;33;40\
+:cd=1;33\
 :di=1;94\
-:do=1;35;40\
+:do=1;35\
 :ex=1;32\
 :fi=0;37\
-:ln=1;36\
+:ln=0;35\
 :mh=0\
-:mi=1;31;40\
+:mi=1;31\
 :no=0;37\
-:or=1;31;40\
+:or=1;31\
 :ow=0\
-:pi=1;33;40\
+:pi=1;33\
 :rs=0;37\
 :sg=0\
-:so=1;35;40\
+:so=1;35\
 :st=0\
 :su=0\
 :tw=0"
 
 # Archive and compressed files (red, bold)
 set -l ls_archives "\
-*.7z=1;31\
-:*.apk=1;31\
-:*.arj=1;31\
-:*.bag=1;31\
-:*.bin=1;31\
-:*.bz=1;31\
-:*.bz2=1;31\
-:*.db=1;31\
-:*.deb=1;31\
-:*.dmg=1;31\
-:*.img=1;31\
-:*.iso=1;31\
-:*.jar=1;31\
-:*.msi=1;31\
-:*.pkg=1;31\
-:*.rar=1;31\
-:*.rpm=1;31\
-:*.tar=1;31\
-:*.tbz=1;31\
-:*.tbz2=1;31\
-:*.tgz=1;31\
-:*.toast=1;31\
-:*.vcd=1;31\
-:*.xbps=1;31\
-:*.xz=1;31\
-:*.z=1;31\
-:*.zip=1;31\
-:*.zst=1;31\
-:*.gz=1;31"
+*.7z=1;36\
+:*.apk=1;36\
+:*.arj=1;36\
+:*.bag=1;36\
+:*.bin=1;36\
+:*.bz=1;36\
+:*.bz2=1;36\
+:*.db=1;36\
+:*.deb=1;36\
+:*.dmg=1;36\
+:*.img=1;36\
+:*.iso=1;36\
+:*.jar=1;36\
+:*.msi=1;36\
+:*.pkg=1;36\
+:*.rar=1;36\
+:*.rpm=1;36\
+:*.tar=1;36\
+:*.tbz=1;36\
+:*.tbz2=1;36\
+:*.tgz=1;36\
+:*.toast=1;36\
+:*.vcd=1;36\
+:*.xbps=1;36\
+:*.xz=1;36\
+:*.z=1;36\
+:*.zip=1;36\
+:*.zst=1;36\
+:*.gz=1;36"
 
 # Source code files (white/light gray)
 set -l ls_source "\
@@ -272,8 +272,6 @@ set -l ls_source "\
 :*LICENSE=0;37\
 :*Makefile=0;37\
 :*NOTICE=0;37\
-:*README=0;37\
-:*TODO=1;37\
 :*VERSION=0;37\
 :*configure=0;37\
 :*go.mod=0;37\
@@ -328,6 +326,12 @@ set -l ls_source "\
 :*requirements.txt=0;37\
 :*CODE_OF_CONDUCT.md=0;37\
 :*CODE_OF_CONDUCT.txt=0;37"
+
+# Various special files
+set -l ls_special "\
+:*README=1;33\
+:*README.md=1;33\
+:*TODO=1;33"
 
 # Temporary and build artifacts (bright black/dark gray)
 set -l ls_temp "\
@@ -385,4 +389,7 @@ set -l ls_temp "\
 :*.CFUserTextEncoding=0;90"
 
 # Combine all groups into LS_COLORS
-set -gx LS_COLORS "$ls_base:$ls_archives:$ls_source:$ls_temp"
+set -gx LS_COLORS "$ls_base:$ls_archives:$ls_source:$ls_temp:$ls_special"
+
+# Disable EZA's default highlighting in favor of this one
+set -gx EZA_COLORS "reset"
