@@ -138,10 +138,10 @@ local light_palette = {
   br_blue = ansi_light[13],
   br_magenta = ansi_light[14],
   br_cyan = ansi_light[15],
-  orange = '#d04a00',
-  violet = '#7f51d6',
-  br_orange = '#ba3700',
-  br_violet = '#6b40c3',
+  orange = '#d45c19',
+  violet = '#8b62da',
+  br_orange = '#c04b19',
+  br_violet = '#7953c9',
 }
 
 ---@type CtermPalette
@@ -246,7 +246,6 @@ local function get_kitty_palette()
   return palette
 end
 
--- Cache the current palette
 ---@type 'light' | 'dark'
 local current_bg = nil
 ---@type Palette | CtermPalette
