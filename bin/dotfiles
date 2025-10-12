@@ -140,7 +140,8 @@ function dotfiles-fish {
         fi
     fi
 
-    fish -c configure
+    log "Updating fish config..."
+    UV_VENV_CLEAR=1 fish -c configure
 }
 
 # Link dotfiles into $HOME, update terminfo
@@ -480,7 +481,6 @@ else
     dotfiles-rust
     dotfiles-bat
     dotfiles-fish
-    # dotfiles-nvim
 
     if [[ $OSTYPE == darwin* ]]; then
         dotfiles-launchd
