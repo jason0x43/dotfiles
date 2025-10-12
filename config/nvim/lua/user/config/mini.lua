@@ -624,37 +624,21 @@ later(function()
     },
   })
   local providers = {
+    copilot = {
+      name = 'copilot',
+      module = 'blink-copilot',
+      score_offset = 100,
+      async = true,
+    },
     lazydev = {
       name = 'LazyDev',
       module = 'lazydev.integrations.blink',
       fallbacks = { 'lsp' },
     },
   }
-  local default = { 'lsp', 'path', 'buffer', 'lazydev' }
-
-  -- Only add the copilot provider if copilot is active
-  -- local ok, _ = pcall(require, 'copilot.api')
-  -- if ok then
-  --   providers.copilot = {
-  --     name = 'copilot',
-  --     module = 'blink-copilot',
-  --     score_offset = 100,
-  --     async = true,
-  --   }
-  --   table.insert(default, 2, 'copilot')
-  -- end
+  local default = { 'copilot', 'lsp', 'path', 'buffer', 'lazydev' }
 
   require('blink.cmp').setup({
-    appearance = {
-      -- Add a copilot icon to the default set
-      kind_icons = vim.tbl_extend(
-        'force',
-        require('blink.cmp.config.appearance').default.kind_icons,
-        {
-          Copilot = '',
-        }
-      ),
-    },
     cmdline = {
       enabled = false,
     },
