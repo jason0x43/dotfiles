@@ -17,7 +17,7 @@ local M = {}
 M.show_git_blame = function(data)
   -- Format the blame output
   local str = require('user.util.string')
-  local random_rgb = require('user.util.theme').random_rgb
+  local random_rgb = require('user.util.color').random_rgb
   local hash_size = 0
   local name_size = 0
   local time_size = 0
