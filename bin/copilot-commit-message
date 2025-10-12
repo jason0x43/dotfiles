@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+prompt="Update .git/COMMIT_EDITMSG with an appropriate commit message. All the
+information you need is in the COMMIT_EDITMSG file.
+
+- The file already exists -- don't try to create it.
+- Do not try to run any tools.
+- Do not take any action other than updating the COMMIT_EDITMSG file."
+
+copilot --allow-tool write -p "$prompt"
