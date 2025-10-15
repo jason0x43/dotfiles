@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   root_dir = function(bufnr, on_dir)
     local file = vim.api.nvim_buf_get_name(bufnr)
     local root = vim.fs.root(file, {
@@ -13,5 +13,3 @@ local config = {
     end
   end,
 }
-
-vim.lsp.config('tailwindcss', config)

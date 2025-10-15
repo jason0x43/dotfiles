@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   settings = {
     ['rust-analyzer'] = {
       checkOnSave = {
@@ -11,5 +11,3 @@ local config = {
     },
   },
 }
-
-vim.lsp.config('rust_analyzer', config)

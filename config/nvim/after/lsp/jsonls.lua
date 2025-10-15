@@ -17,4 +17,4 @@ if schemastore then
   }
 end
 
-vim.lsp.config('jsonls', config)
+return config

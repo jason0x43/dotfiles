@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   settings = {
     Lua = {
       format = {
@@ -21,5 +21,3 @@ local config = {
     },
   },
 }
-
-vim.lsp.config('lua_ls', config)

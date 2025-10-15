@@ -11,7 +11,8 @@ vim.filetype.add({
   pattern = {
     ['appsettings.*.json'] = 'jsonc',
     ['.-/ansible/.-%.yml'] = 'yaml.ansible',
-    -- Note: the suggested fallback pattern of [".*"] is never called
+    -- Note: use '.-' so this block will be tried even if a '.*' pattern is
+    -- added later
     ['.-'] = {
       function()
         -- file content detection
@@ -28,12 +29,8 @@ vim.filetype.add({
         if
           first_line == '#!/usr/bin/osascript -l JavaScript'
           or first_line == '#!/usr/bin/env zx'
-          or first_line == '#!/usr/bin/env node'
+          or first_line:find('#!/usr/bin/env node')
         then
-          return 'javascript'
-        end
-
-        if first_line:find('#!/usr/bin/env node') then
           return 'javascript'
         end
 
@@ -82,28 +79,4 @@ vim.filetype.add({
       end,
     },
   },
-})
-
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-  group = vim.api.nvim_create_augroup('bigfile', { clear = true }),
-  pattern = 'bigfile',
-  callback = function(ev)
-    local buf = ev.buf
-    local ft = vim.filetype.match({ buf = buf }) or ''
-
-    vim.api.nvim_buf_call(buf, function()
-      if vim.fn.exists(':NoMatchParen') ~= 0 then
-        vim.cmd([[NoMatchParen]])
-      end
-      vim.wo.foldmethod = 'manual'
-      vim.wo.statuscolumn = ''
-      vim.wo.conceallevel = 0
-      vim.b.minianimate_disable = true
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(ev.buf) then
-          vim.bo[buf].syntax = ft
-        end
-      end)
-    end)
-  end,
 })

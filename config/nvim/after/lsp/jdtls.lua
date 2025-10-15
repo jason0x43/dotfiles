@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   -- Update the server config when a new root directory is detected
   settings = {
     java = {
@@ -30,5 +30,3 @@ local config = {
     end,
   },
 }
-
-vim.lsp.config('jdtls', config)

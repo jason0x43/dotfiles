@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   on_attach = function(_, bufnr)
     -- disable renaming from ts_ls
     local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'vdtls' })
@@ -8,5 +8,3 @@ local config = {
     end
   end,
 }
-
-vim.lsp.config('angularls', config)

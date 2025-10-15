@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   capabilities = {
     workspace = {
       didChangeWatchedFiles = {
@@ -8,5 +8,3 @@ local config = {
     },
   },
 }
-
-vim.lsp.config('svelte', config)

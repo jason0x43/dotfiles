@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   bundle_path = '/Users/jason/.local/share/nvim/mason/packages/powershell-editor-services',
   settings = {
     powershell = {
@@ -12,5 +12,3 @@ local config = {
     enableProfileLoading = false,
   },
 }
-
-vim.lsp.config('powershell_es', config)

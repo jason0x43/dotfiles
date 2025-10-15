@@ -132,3 +132,24 @@ local disabled_plugins = {
 for _, plugin in ipairs(disabled_plugins) do
   vim.g['loaded_' .. plugin] = 1
 end
+
+-- Logging
+vim.lsp.set_log_level('error')
+vim.lsp.log.set_format_func(vim.inspect)
+
+-- When an lsp returns multiple "goto definition" results, only keep the
+-- first one
+local origTextDocDef = vim.lsp.handlers['textDocument/definition']
+vim.lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
+  if result ~= nil and #result > 1 then
+    result = { result[1] }
+  end
+  origTextDocDef(err, result, ctx, config)
+end
+
+if vim.g.neovide then
+  -- Don't animate neovide cursor
+  vim.g.neovide_cursor_animation_length = 0
+
+  vim.o.guifont = 'JetBrainsMono Nerd Font Mono:h12'
+end

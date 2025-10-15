@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   root_dir = function(bufnr, on_dir)
     if require('user.util.lsp').get_deno_root(bufnr) then
       return
@@ -50,5 +50,3 @@ local config = {
     end
   end,
 }
-
-vim.lsp.config('ts_ls', config)

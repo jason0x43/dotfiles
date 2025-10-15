@@ -1,10 +1,8 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   settings = {
     yaml = {
       keyOrdering = false,
     },
   },
 }
-
-vim.lsp.config('yamlls', config)

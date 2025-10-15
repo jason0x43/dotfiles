@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   settings = {
     css = {
       validate = true,
@@ -15,5 +15,3 @@ local config = {
     },
   },
 }
-
-vim.lsp.config('cssls', config)

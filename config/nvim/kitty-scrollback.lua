@@ -1,8 +1,11 @@
+-- remove vim.fn.stdpath('config') from vim.opt.runtimepath to prevent the
+-- default user config from loading
+vim.opt.runtimepath:remove(vim.fn.stdpath('config'))
+
 -- in your Neovim config
 vim.api.nvim_create_autocmd('TermOpen', {
   pattern = '*',
   callback = function()
-    print('opened!')
     vim.wo.wrap = true
   end,
 })

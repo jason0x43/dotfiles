@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   on_attach = function(client)
     -- Let neovim know about custom basedpyright commands that may be used by
     -- code actions
@@ -30,5 +30,3 @@ local config = {
     end,
   },
 }
-
-vim.lsp.config('basedpyright', config)

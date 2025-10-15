@@ -1,5 +1,5 @@
 ---@type vim.lsp.Config
-local config = {
+return {
   root_dir = function(bufnr, on_dir)
     local root = require('user.util.lsp').get_deno_root(bufnr)
     if root then
@@ -15,5 +15,3 @@ local config = {
 
   workspace_required = false,
 }
-
-vim.lsp.config('denols', config)

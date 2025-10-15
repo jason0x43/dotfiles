@@ -225,9 +225,7 @@ else
   end, { desc = 'Focus the window to the right' })
 end
 
-vim.keymap.set('n', '<leader>y', function()
-  require('user.config.yazi').open_yazi()
-end)
+vim.keymap.set('n', '<leader>y', '<Cmd>Yazi<CR>')
 
 vim.keymap.set(
   'n',
