@@ -4,7 +4,7 @@
 fish_color_autosuggestion brblack
 fish_color_cancel -r
 fish_color_command yellow
-fish_color_comment brblack
+fish_color_comment brblack --italic
 fish_color_cwd green
 fish_color_cwd_root red
 fish_color_end green
