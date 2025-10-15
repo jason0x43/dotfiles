@@ -553,7 +553,11 @@ end)
 later(function()
   add('folke/sidekick.nvim')
 
-  require('sidekick').setup()
+  require('sidekick').setup({
+    nes = {
+      enabled = false
+    }
+  })
 
   -- For Sidekick
   vim.keymap.set('n', '<Tab>', function()
