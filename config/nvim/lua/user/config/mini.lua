@@ -75,10 +75,6 @@ now(function()
   diff.setup({
     source = { diff.gen_source.git(), diff.gen_source.none() },
   })
-
-  vim.api.nvim_create_user_command('Diff', function()
-    MiniDiff.toggle_overlay(0)
-  end, { desc = 'Toggle a git diff overlay' })
 end)
 
 -- Icons; used by status line

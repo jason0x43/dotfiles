@@ -45,3 +45,11 @@ end, { desc = 'Open the startup screen' })
 vim.api.nvim_create_user_command('Help', function()
   require('snacks').picker.help()
 end, { desc = 'Search for help pages' })
+
+vim.api.nvim_create_user_command('Diff', function(info)
+  if #info.args > 0 then
+    vim.cmd('DiffviewOpen ' .. info.args)
+  else
+    vim.cmd('DiffviewOpen')
+  end
+end, { desc = 'Toggle a git diff overlay', nargs = '?' })
