@@ -59,11 +59,7 @@ cmd('Help', function()
 end, 'Search for help pages')
 
 cmd('Diff', function(args)
-  if #args.args > 0 then
-    vim.cmd('DiffviewOpen ' .. args.args)
-  else
-    vim.cmd('DiffviewOpen')
-  end
+  MiniDiff.toggle_overlay(0)
 end, 'Toggle a git diff overlay', '?')
 
 cmd('Yazi', function()
