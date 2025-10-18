@@ -10,4 +10,3 @@ set -gx XDG_DATA_HOME ~/.local/share
 set -gx XDG_STATE_HOME ~/.local/state
 set -gx GOPATH ~/Code/go
 set -gx MANPAGER "sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
-set -gx COPILOT_KITTY 1https://github.com/sharkdp/lscolors
