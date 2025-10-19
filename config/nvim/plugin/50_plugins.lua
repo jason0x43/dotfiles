@@ -328,11 +328,6 @@ now_if_args(function()
   add('b0o/schemastore.nvim')
 end)
 
--- Use as kitty scrollback handler
-later(function()
-  add('mikesmithgh/kitty-scrollback.nvim')
-end)
-
 -- Better start/end matching
 later(function()
   add('andymass/vim-matchup')
