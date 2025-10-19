@@ -281,10 +281,10 @@ end
 ---@param group string
 ---@param other_group string
 local function hilink(group, other_group)
-  vim.api.nvim_set_hl(0, group, { link = other_group })
+  vim.api.nvim_set_hl(0, group, { link = other_group, default = false })
 end
 
--- A convenience function for setting highlight groups
+---A convenience function for setting highlight groups
 ---@param group string
 ---@param options table
 local function hi(group, options)
@@ -321,6 +321,8 @@ local function apply_theme()
   local info = 'br_blue'
   local warn = 'orange'
 
+  -- Disable the LSP comment token; treesitter does a better job
+  hi('@lsp.type.comment', {})
   hi('@markup.emphasis', { bold = true, italic = true })
   hi('@markup.italic', { italic = true })
   hi('@markup.link.label', { fg = 'blue' })
@@ -328,6 +330,7 @@ local function apply_theme()
   hi('@markup.strong', { bold = true })
   hi('@markup.underline', { underline = true })
   hi('Added', { fg = 'green' })
+  hi('Boolean', { fg = 'orange' })
   hi('Changed', { fg = 'yellow' })
   hi('ColorColumn', { bg = 'bg_2' })
   hi('Comment', { fg = 'dim_0', italic = true })
@@ -363,6 +366,7 @@ local function apply_theme()
   hi('DiffDelete', { fg = 'red', bg = 'bg_1' })
   hi('DiffText', { fg = 'bg_1', bg = 'yellow' })
   hi('Directory', {})
+  hi('DocComment', { fg = 'yellow' })
   hi('DropBarMenuHoverEntry', { fg = 'fg_1', bg = 'bg_2' })
   hi('DropBarMenuNormalFloat', { fg = 'fg_1', bg = 'bg_1' })
   hi('EndOfBuffer', {})
@@ -370,18 +374,19 @@ local function apply_theme()
   hi('FloatBorder', { fg = 'bg_2' })
   hi('FoldColumn', {})
   hi('Folded', { bg = 'bg_1' })
-  hi('Function', { fg = 'violet' })
+  hi('Function', {})
   hi('GitSignsAdd', { fg = 'green', bg = sign_col_bg })
   hi('GitSignsChange', { fg = 'yellow', bg = sign_col_bg })
   hi('GitSignsDelete', { fg = 'red', bg = sign_col_bg })
-  hi('Identifier', { fg = 'br_blue' })
+  hi('Identifier', {})
   hi('Ignore', { fg = 'bg_2' })
   hi('IncSearch', { fg = 'orange', reverse = true })
   hi('LineNr', { fg = 'bg_2', bg = sign_col_bg })
   hi('LspReferenceRead', { bg = 'bg_1' })
   hi('LspReferenceText', { bg = 'bg_1' })
   hi('LspReferenceWrite', { bg = 'bg_1' })
-  hi('MatchParen', { fg = 'br_yellow', bg = 'bg_2', bold = true })
+  hi('MatchParen', { fg = 'br_yellow', bg = 'bg_1' })
+  hi('MatchParenCur', { fg = 'br_yellow', bg = 'bg_2', bold = true })
   hi('MiniCursorWord', { bg = 'bg_1', underline = false })
   hi('MiniHiPatternsTodo', { fg = 'magenta', bold = true })
   hi('MiniIndentScopeSymbol', { fg = 'bg_2' })
@@ -407,6 +412,8 @@ local function apply_theme()
   hi('Normal', { fg = 'fg_0' })
   hi('NormalNC', { fg = 'dim_0' })
   hi('NotifyBackground', { bg = 'bg_0' })
+  hi('Number', { fg = 'blue' })
+  hi('Operator', {})
   hi('Pmenu', { fg = 'dim_0', bg = 'bg_1' })
   hi('PmenuSbar', { bg = 'bg_2' })
   hi('PmenuSel', { bg = 'bg_2' })
@@ -421,7 +428,7 @@ local function apply_theme()
   hi('SnacksIndent', { fg = 'dim_0' })
   hi('SnacksPickerTitle', { fg = 'br_blue', bg = 'bg_0' })
   hi('SnacksPickerTree', { fg = 'dim_0' })
-  hi('Special', { fg = 'orange' })
+  hi('Special', { fg = 'violet' })
   hi('SpecialKey', {})
   hi('SpellBad', { undercurl = true, sp = 'red' })
   hi('SpellCap', { undercurl = true, sp = 'red' })
@@ -429,7 +436,7 @@ local function apply_theme()
   hi('SpellRare', { undercurl = true, sp = 'cyan' })
   hi('StartifyFile', { fg = 'blue' })
   hi('StartifyHeader', { fg = 'green' })
-  hi('Statement', { fg = 'br_yellow' })
+  hi('Statement', { fg = 'br_magenta' })
   hi('String', { fg = 'cyan' })
   hi('TabLine', { fg = 'dim_0', reverse = true })
   hi('TabLineFill', { fg = 'dim_0', reverse = true })
@@ -451,13 +458,19 @@ local function apply_theme()
   hi('markdownCode', { fg = 'orange', bg = 'bg_1' })
 
   hilink('@attribute', 'Type')
+  hilink('@boolean', 'Boolean')
+  hilink('@comment.documentation', 'DocComment')
   hilink('@diff.minus', 'diffRemoved')
   hilink('@diff.plus', 'diffAdded')
+  -- Highlight builtin functions like keywords
+  hilink('@function.builtin', 'Statement')
   hilink('@keyword', 'Keyword')
+  hilink('@keyword.operator', 'Operator')
   hilink('@markup.heading', 'Title')
   hilink('@markup.link', 'Underlined')
   hilink('@markup.list', 'Delimiter')
   hilink('@markup.raw', 'String')
+  hilink('@number', 'Number')
   hilink('@operator', 'Operator')
   hilink('@string', 'String')
   hilink('@string.bash', 'String')
@@ -466,7 +479,6 @@ local function apply_theme()
   hilink('@tag.delimiter', 'Delimiter')
   hilink('@variable', 'Identifier')
   hilink('BlinkCmpGhostText', 'Comment')
-  hilink('Boolean', 'Constant')
   hilink('Character', 'Constant')
   hilink('Conditional', 'Statement')
   hilink('Debug', 'Special')
@@ -512,8 +524,6 @@ local function apply_theme()
   hilink('NotifyINFOTitle', 'DiagnosticInfo')
   hilink('NotifyWARNIcon', 'DiagnosticWarn')
   hilink('NotifyWARNTitle', 'DiagnosticWarn')
-  hilink('Number', 'Constant')
-  hilink('Operator', 'Statement')
   hilink('PreCondit', 'PreProc')
   hilink('QuickFixLine', 'Search')
   -- Ensure RenderMarkdownCode doesn't get linked to ColorColumn, then set its
@@ -555,17 +565,10 @@ end
 -- (e.g., Windows Terminal).
 vim.o.termguicolors = true
 
--- initially clear the Normal group to prevent a flash of an incorrect
--- background
-vim.api.nvim_set_hl(0, 'Normal', {})
-
 -- load the theme if the TUI color handling setup changes
-vim.api.nvim_create_autocmd('OptionSet', {
-  pattern = { 'background' },
-  callback = function()
-    apply_theme()
-  end,
-})
+_G.Config.new_autocmd('OptionSet', 'background', function()
+  apply_theme()
+end)
 
 -- Neovide and win32 sometimes don't initially set the background. Do it
 -- manually.
