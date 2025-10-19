@@ -261,7 +261,23 @@ end)
 
 -- Pickers
 later(function()
-  require('mini.pick').setup({
+  local pick = require('mini.pick')
+  local default_show = pick.default_show
+
+  pick.setup({
+    source = {
+      -- Override the default show function to relativize paths
+      show = function(buf, items, query, opts)
+        for _, v in ipairs(items) do
+          if type(v.text) == 'string' and type(v.bufnr) == 'number' then
+            v.text = vim.fn.fnamemodify(v.text, ':.')
+          end
+        end
+
+        -- Fall back to the default renderer
+        return default_show(buf, items, query, opts)
+      end,
+    },
     window = {
       config = function()
         local height = math.min(10, math.floor(0.4 * vim.o.lines))
