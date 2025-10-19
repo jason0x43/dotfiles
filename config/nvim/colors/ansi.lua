@@ -321,8 +321,10 @@ local function apply_theme()
   local info = 'br_blue'
   local warn = 'orange'
 
-  -- Disable the LSP comment token; treesitter does a better job
+  -- Disable some LSP semantic types that treesitter handles better
   hi('@lsp.type.comment', {})
+  hi('@lsp.type.keyword', {})
+
   hi('@markup.emphasis', { bold = true, italic = true })
   hi('@markup.italic', { italic = true })
   hi('@markup.link.label', { fg = 'blue' })
@@ -477,7 +479,10 @@ local function apply_theme()
   hilink('@tag', 'Statement')
   hilink('@tag.attribute', 'Type')
   hilink('@tag.delimiter', 'Delimiter')
+  hilink('@type', 'Type')
+  hilink('@type.builtin', 'Type')
   hilink('@variable', 'Identifier')
+  hilink('@variable.builtin', 'Keyword')
   hilink('BlinkCmpGhostText', 'Comment')
   hilink('Character', 'Constant')
   hilink('Conditional', 'Statement')
