@@ -71,7 +71,7 @@ end, 'Close the current window')
 set_key(
   'n',
   '<leader>d',
-  '<Cmd>Pick diagnostic scope=current<CR>',
+  '<Cmd>Pick diagnostic scope="current"<CR>',
   'List diagnostics'
 )
 
@@ -162,12 +162,12 @@ set_key(
   'Find help'
 )
 
-set_key('n', '<leader>lr', '<Cmd>Pick lsp scope=references<CR>', 'Find help')
+set_key('n', '<leader>lr', '<Cmd>Pick lsp scope="references"<CR>', 'Find help')
 
 set_key(
   'n',
   '<leader>ls',
-  '<Cmd>Pick lsp scope=document_symbol<CR>',
+  '<Cmd>Pick lsp scope="document_symbol"<CR>',
   'Find help'
 )
 
