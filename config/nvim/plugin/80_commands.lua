@@ -1,5 +1,5 @@
 ---@param name string
----@param callback fun(args: vim.api.keyset.create_user_command.command_args)
+---@param callback string | fun(args: vim.api.keyset.create_user_command.command_args)
 ---@param desc string
 ---@param nargs string|number|nil
 local cmd = function(name, callback, desc, nargs)
@@ -10,57 +10,37 @@ local cmd = function(name, callback, desc, nargs)
   )
 end
 
-cmd('Commands', function()
-  MiniPick.registry.commands()
-end, 'List configured user commands')
+cmd('Commands', 'Pick commands', 'List configured user commands')
 
-cmd('Config', function()
-  MiniFiles.open('~/.config')
-end, 'Open an explorer in the config directory')
+cmd(
+  'Config',
+  'lua MiniFiles.open("~/.config")',
+  'Open an explorer in the config directory'
+)
 
-cmd('Highlights', function()
-  MiniPick.registry.hl_groups()
-end, 'List highlight groups')
+cmd('Highlights', 'Pick hl_groups', 'List highlight groups')
 
-cmd('Icons', function()
-  MiniPick.registry.icons()
-end, 'List available icons')
+cmd('Icons', 'Pick icons', 'List available icons')
 
-cmd('Keys', function()
-  MiniPick.registry.keymaps()
-end, 'List configured keymaps')
+cmd('Keys', 'Pick keymaps', 'List configured keymaps')
 
-cmd('Map', function()
-  require('mini.map').toggle()
-end, 'Show or hide a file map')
+cmd('Map', 'lua require("mini.map").toggle()', 'Show or hide a file map')
 
-cmd('Modified', function()
-  MiniPick.registry.modified()
-end, 'List modified git files')
+cmd('Modified', 'Pick modified', 'List modified git files')
 
-cmd('Notifications', function()
-  MiniNotify.show_history()
-end, 'Show a list of displayed notifications')
+cmd(
+  'Notifications',
+  'lua MiniNotify.show_history()',
+  'Show a list of displayed notifications'
+)
 
-cmd('Recent', function()
-  require('snacks').picker.recent()
-end, 'Find recent files')
+cmd('Recent', 'Pick recent', 'Find recent files')
 
-cmd('Term', function()
-  require('snacks').terminal.open()
-end, 'Open a terminal')
+cmd('Diff', 'MiniDiff.toggle_overlay(0)', 'Toggle a git diff overlay', '?')
 
-cmd('Dashboard', function()
-  require('snacks').dashboard.open()
-end, 'Open the startup screen')
-
-cmd('Help', function()
-  require('snacks').picker.help()
-end, 'Search for help pages')
-
-cmd('Diff', function(args)
-  MiniDiff.toggle_overlay(0)
-end, 'Toggle a git diff overlay', '?')
+cmd('KittyFocus', function(arg)
+  require('user.terminal').focus_kitty(arg.args)
+end, 'Move the window focus', 1)
 
 cmd('Yazi', function()
   if os.getenv('TERM') ~= 'xterm-kitty' then
