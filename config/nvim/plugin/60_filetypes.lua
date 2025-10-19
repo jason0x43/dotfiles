@@ -4,9 +4,14 @@ vim.filetype.add({
     Podfile = 'ruby',
   },
   extension = {
-    ['ejs'] = 'html',
-    ['dashtoc'] = 'json',
-    ['podspec'] = 'ruby',
+    ejs = 'html',
+    dashtoc = 'json',
+    podspec = 'ruby',
+    theme = function(path, bufnr)
+      if path:match('/fish/.+%.theme$') then
+        return 'fish'
+      end
+    end,
   },
   pattern = {
     ['appsettings.*.json'] = 'jsonc',
