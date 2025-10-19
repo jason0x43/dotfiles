@@ -1,7 +1,3 @@
--- remove vim.fn.stdpath('config') from vim.opt.runtimepath to prevent the
--- default user config from loading
-vim.opt.runtimepath:remove(vim.fn.stdpath('config'))
-
 -- Just need cterm colors for this
 vim.o.termguicolors = false
 
@@ -50,9 +46,6 @@ end)
 -- Jump cursor to proper position when the buffer renders
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
-    -- Restore the standard runtime path
-    vim.opt.runtimepath:append(vim.fn.stdpath('config'))
-
     -- Make buffer read-only and unmodifiable
     vim.opt_local.modifiable = false
     vim.opt_local.readonly = true
