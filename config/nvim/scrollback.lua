@@ -46,10 +46,6 @@ end)
 -- Jump cursor to proper position when the buffer renders
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
-    -- Make buffer read-only and unmodifiable
-    vim.opt_local.modifiable = false
-    vim.opt_local.readonly = true
-
     -- Don't try leave a scroll margin around the cursor
     vim.opt_local.scrolloff = 0
     vim.opt_local.sidescrolloff = 0
@@ -68,5 +64,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
       timeout = 200,
       on_visual = true,
     })
+
+    -- Exit after yank to return to the terminal
+    vim.defer_fn(function()
+      vim.cmd('qa!')
+    end, 220)
   end,
 })
