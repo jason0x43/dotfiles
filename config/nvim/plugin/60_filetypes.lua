@@ -7,6 +7,7 @@ vim.filetype.add({
     ejs = 'html',
     dashtoc = 'json',
     podspec = 'ruby',
+    dockerignore = 'gitignore',
     theme = function(path, bufnr)
       if path:match('/fish/.+%.theme$') then
         return 'fish'
@@ -14,6 +15,8 @@ vim.filetype.add({
     end,
   },
   pattern = {
+    ['compose.yaml'] = 'yaml.dockercompose',
+    ['compose.*.yaml'] = 'yaml.dockercompose',
     ['appsettings.*.json'] = 'jsonc',
     ['.-/ansible/.-%.yml'] = 'yaml.ansible',
     -- Note: use '.-' so this block will be tried even if a '.*' pattern is
