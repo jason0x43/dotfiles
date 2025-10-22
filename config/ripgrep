@@ -6,3 +6,6 @@
 
 # follow symlinks
 --follow
+
+# don't skip hidden files by default
+--hidden
