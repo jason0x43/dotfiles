@@ -8,7 +8,6 @@ description: >-
     changes to keep history clean, and whenever repository conventions
     (Conventional Commits, PR templates, changelogs) must be followed.
 
-
     - Triggers:
       - You have a set of staged changes and want a concise, accurate commit
         message.
@@ -31,46 +30,47 @@ description: >-
 
     <example>
       Context: The user just implemented a feature and staged changes. They want
-    a Conventional Commit message and a PR description.
+        a Conventional Commit message and a PR description.
       user: "Added user timezone support with a new setting and updated the
-    scheduler. Please draft the commit message and PR description."
-      assistant: "I'm going to use the Task tool to launch the
-    change-summary-writer agent to generate a compliant commit message and a
-    structured PR description from the staged diff."
+        scheduler. Please draft the commit message and PR description."
+      assistant: "I'm going to use the Task tool to launch the change-summarizer
+        agent to generate a compliant commit message and a structured PR
+        description from the staged diff."
       <commentary>
       Since the user has staged a logical unit of work, use the Task tool to
-    launch the change-summary-writer agent to produce a Conventional Commit
-    message and a PR description aligned with the repo’s PR template.
+      launch the change-summarizer agent to produce a Conventional Commit
+      message and a PR description aligned with the repo’s PR template.
       </commentary>
-      assistant: "Now let me use the change-summary-writer agent to generate the
-    commit message and PR description." </example>
+      assistant: "Now let me use the change-summarizer agent to generate the
+        commit message and PR description."
+    </example>
 
     <example>
       Context: The user bumped a dependency across multiple packages in a
-    monorepo and wants a PR body that includes release notes.
+        monorepo and wants a PR body that includes release notes.
       user: "Bumped axios to 1.7.4 across services. I need a PR description with
-    release notes and risk assessment."
-      assistant: "I'm going to use the Task tool to launch the
-    change-summary-writer agent to draft a chore(deps) commit message and a PR
-    description including upstream changes and risk notes."
+        release notes and risk assessment."
+      assistant: "I'm going to use the Task tool to launch the change-summarizer
+        agent to draft a chore(deps) commit message and a PR description
+        including upstream changes and risk notes."
       <commentary>
       Since this is a dependency update spanning multiple packages, use the
-    change-summary-writer agent to generate a scoped chore(deps) commit and a PR
-    description with consolidated release notes and testing instructions.
+      change-summarizer agent to generate a scoped chore(deps) commit and a PR
+      description with consolidated release notes and testing instructions.
       </commentary>
     </example>
 
     <example>
       Context: The user finished refactoring a module and wants to commit
-    immediately.
+        immediately.
       user: "Refactored payment validation logic; please commit."
       assistant: "I'm going to use the Task tool to launch the
-    change-summary-writer agent to summarize the diff and produce a commit
-    message before committing."
+        change-summarizer agent to summarize the diff and produce a commit
+        message before committing."
       <commentary>
-      Proactively run the change-summary-writer agent after this logical
-    refactor to create an accurate refactor: commit message and ensure subject
-    length and body formatting are compliant.
+      Proactively run the change-summarizer agent after this logical
+      refactor to create an accurate refactor: commit message and ensure subject
+      length and body formatting are compliant.
       </commentary>
     </example>
 mode: all
