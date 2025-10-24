@@ -1,6 +1,11 @@
 {
 	"$schema": "https://opencode.ai/config.json",
 
+	"keybinds": {
+		"messages_page_down": "ctrl+d",
+		"messages_page_up": "ctrl+u"
+	},
+
 	"mcp": {
 		"context7": {
 			"type": "remote",
