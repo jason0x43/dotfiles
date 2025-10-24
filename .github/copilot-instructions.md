@@ -189,7 +189,7 @@ The `bin/dotfiles home` command:
 1. **Creates symlinks** from `home/*` → `~/.{filename}`
 2. **Creates symlinks** from `config/*` → `~/.config/{dirname}`
 3. **Removes broken symlinks** in ~ and ~/.config
-4. **Moves existing directories** to `~/.config/local/` to avoid conflicts
+4. **Moves existing directories** to `~/.config.local/` to avoid conflicts
 
 **Critical:** Never manually create files that conflict with symlinks. The
 installer will move them!

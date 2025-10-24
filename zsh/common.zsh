@@ -9,8 +9,10 @@ export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$TMPDIR}
 
 export ZDATADIR=$XDG_DATA_HOME/zsh
-export ZCONFDIR=$XDG_CONFIG_HOME/local/zsh
 export ZCACHEDIR=$XDG_CACHE_HOME/zsh
+
+# Local config not checked into dotfiles
+export ZCONFDIR=$XDG_CONFIG_HOME.local/zsh
 
 export ZPLUGDIR=$ZDATADIR/plugins
 export ZFUNCDIR=$ZDATADIR/functions
