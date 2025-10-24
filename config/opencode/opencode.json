@@ -10,5 +10,9 @@
 			},
 			"enabled": true
 		}
-	}
+	},
+
+	"plugin": [
+		"opencode-skills@github:jason0x43/opencode-skills#d2c4e4362d20744aa04158c6804d78fa0c85507a"
+	]
 }
