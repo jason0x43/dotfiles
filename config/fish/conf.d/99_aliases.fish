@@ -68,3 +68,5 @@ alias icat='kitten icat'
 
 # grip
 alias grip='go-grip -H grip.local'
+
+alias oc='opencode'
