@@ -1,11 +1,7 @@
 ---
 description: Generates a commit message from staged changes.
-model: openai/gpt-5-mini
-textVerbosity: low
+model: github-copilot/gpt-5-mini
 tools:
-  read: true
-  grep: true
-  glob: true
   edit: false
   write: false
   bash: true
