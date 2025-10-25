@@ -1,6 +1,7 @@
 ---
 description: Generates a commit message from staged changes.
-mode: all
+model: openai/gpt-5-mini
+textVerbosity: low
 tools:
   read: true
   grep: true
@@ -18,9 +19,10 @@ You are a developer. Write clear, concise commit messages following the project
 standards. A typical commit message looks like:
 
 ```
-A short summary, typically < 60 characters
+A short summary, <= 72 characters
 
-Optional details, which may contain paragraphs and lists.
+Optional details, which may contain paragraphs and lists. These should be
+wrapped at 80 characters.
 ```
 
 Responsibilities:
