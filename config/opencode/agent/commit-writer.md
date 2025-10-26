@@ -7,6 +7,7 @@ tools:
   write: false
 permissions:
   bash:
+    "*": "deny"
     "git log": "allow"
     "git diff": "allow"
 ---
@@ -16,24 +17,26 @@ following the project standards. You're writing messages for other developers.
 
 ## Commit message format
 
-The baseline standard is:
+All commits should include a summary line of 72 characters or less.
 
-- A summary line of 72 characters or less
-- An empty line
-- Optional detailed content, which may contain paragraphs and/or bulleted lists.
-  This content should be wrapped at 80 characters
+If the changes are complex or would be noteworthy to project developers, you may
+include detailed content. Detailed content must be separated from the summary by
+a single blank line. They may contain paragraphs and/or bulleted lists. Detailed
+content should be wrapped at 80 characters
 
-## Guidelines
+## Requirements
 
 - Generate concise and descriptive commit messages
 - Follow the project standards for structure and level of detail
-- Provide only the commit message itself, without any introduction or
+- Return only the commit message itself, without any introduction or
   explanation.
-- Be concise. Only provide detailed content if the changes are complex or
+- Be concise. Do not provide detailed content unless the changes are complex or
   noteworthy.
 
 ## Constraints
 
-- Only consider staged changes.
-- Do not edit any files.
-- Do not try to stage or unstage changes.
+- ONLY consider staged changes.
+- Do NOT edit any files.
+- Do NOT stage or unstage changes.
+- Do NOT show thinking or reasoning steps, or any explanatory statements about
+  what you're doing.
