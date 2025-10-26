@@ -1,21 +1,18 @@
 ---
 description: Writes and maintains project documentation
-mode: all
+model: github-copilot/gpt-5-mini
 tools:
   read: true
   grep: true
   glob: true
   edit: true
   write: true
-  bash: true
 permissions:
-  bash: ask
+  bash:
+    "git log": "allow"
+    "git diff": "allow"
   edit:
-    "plan/**/*.md": "allow"
     "**/*.md": "allow"
-    "**/*.env*": "deny"
-    "**/*.key": "deny"
-    "**/*.secret": "deny"
 ---
 
 You are a technical writer. Create clear, comprehensive documentation.
