@@ -71,3 +71,59 @@ cmd('Yazi', function()
     'yazi',
   }, { detach = true })
 end, 'Open a yazi pane')
+
+cmd(
+  'CommitMessage',
+  function()
+    vim.notify('Generating commit message...', vim.log.levels.INFO)
+
+    -- Run opencode command and capture output directly
+    vim.system(
+      { 'opencode', 'run', '--command', 'commit-message' },
+      { text = true },
+      function(result)
+        vim.schedule(function()
+          if result.code ~= 0 then
+            vim.notify(
+              'Failed to generate commit message: ' .. (result.stderr or ''),
+              vim.log.levels.ERROR
+            )
+            return
+          end
+
+          local output = result.stdout or ''
+          if output == '' then
+            vim.notify(
+              'No commit message generated',
+              vim.log.levels.WARN
+            )
+            return
+          end
+
+          -- Split output into lines
+          local lines = vim.split(output, '\n', { plain = true })
+
+          -- Remove trailing empty line if present
+          if lines[#lines] == '' then
+            table.remove(lines)
+          end
+
+          if #lines == 0 then
+            vim.notify(
+              'No commit message generated',
+              vim.log.levels.WARN
+            )
+            return
+          end
+
+          -- Insert the commit message at cursor position
+          local cursor_pos = vim.api.nvim_win_get_cursor(0)
+          local row = cursor_pos[1] - 1 -- 0-indexed for nvim_buf_set_lines
+
+          vim.api.nvim_buf_set_lines(0, row, row, false, lines)
+        end)
+      end
+    )
+  end,
+  'Generate a commit message for the currently staged changes'
+)
