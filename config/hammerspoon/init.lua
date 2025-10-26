@@ -55,7 +55,9 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 		end
 
 		for _, win in ipairs(gptWins) do
-			window.fill("center", { window = win, width = 700 })
+			local screenFrame = win:screen():frame()
+			win:setSize({ w = 600, h = screenFrame.h * 0.7 })
+			window.moveTo("right", win)
 		end
 
 		for _, win in ipairs(simWins) do
