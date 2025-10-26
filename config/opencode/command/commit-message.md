@@ -5,7 +5,7 @@ agent: commit-writer
 
 Generate a commit message for the staged changes.
 
-Only return the commit message, no analysis, commentary, or other explanation.
+Only return the commit message -- no analysis, commentary, or other explanation.
 
 Process:
 
