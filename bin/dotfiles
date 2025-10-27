@@ -430,6 +430,17 @@ function dotfiles-node {
     done
 }
 
+# Update uv tools
+function dotfiles-uv {
+    if (( ! $+commands[uv] )); then
+        warn "uv not installed"
+        return
+    fi
+
+    log "Updating uv tools..."
+    uv tool upgrade --all
+}
+
 cd $HOME
 
 while (( $# > 0 )); do
@@ -453,6 +464,7 @@ while (( $# > 0 )); do
             echo '    launchd        Link and bootstrap launchd scripts'
             echo '    node           Update global node packages, install defaults'
             echo '    rust           Update rust install'
+            echo '    uv             Update uv tools'
             echo '    vim            Update vim plugins'
             echo '    zsh            Update zsh plugins'
             exit 1
@@ -466,7 +478,6 @@ while (( $# > 0 )); do
             ;;
         *)
             GROUP=$1
-            log "Done"
             ;;
     esac
 
@@ -479,6 +490,7 @@ else
     dotfiles-home
     dotfiles-brew
     dotfiles-node
+    dotfiles-uv
     dotfiles-rust
     dotfiles-bat
     dotfiles-fish
