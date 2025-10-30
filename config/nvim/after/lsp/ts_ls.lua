@@ -6,7 +6,8 @@ return {
     end
 
     local file = vim.api.nvim_buf_get_name(bufnr)
-    local root = vim.fs.root(file, { 'tsconfig.json', 'jsconfig.json' })
+    local root =
+      vim.fs.root(file, { 'tsconfig.json', 'jsconfig.json', 'package.json' })
     if root then
       on_dir(root)
     end
