@@ -1,25 +1,23 @@
 {
-	"$schema": "https://opencode.ai/config.json",
+  "$schema": "https://opencode.ai/config.json",
 
-	"instructions": [".github/copilot-instructions.md"],
+  "instructions": [".github/copilot-instructions.md"],
 
-	"keybinds": {
-		"messages_page_down": "ctrl+d",
-		"messages_page_up": "ctrl+u"
-	},
+  "keybinds": {
+    "messages_page_down": "ctrl+d",
+    "messages_page_up": "ctrl+u"
+  },
 
-	"mcp": {
-		"context7": {
-			"type": "remote",
-			"url": "https://mcp.context7.com/mcp",
-			"headers": {
-				"CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
-			},
-			"enabled": true
-		}
-	},
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      },
+      "enabled": true
+    }
+  },
 
-	"plugin": [
-		"opencode-skills@github:jason0x43/opencode-skills#d2c4e4362d20744aa04158c6804d78fa0c85507a"
-	]
+  "plugin": ["opencode-skills"]
 }
