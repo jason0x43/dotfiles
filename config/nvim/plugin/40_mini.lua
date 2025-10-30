@@ -265,6 +265,10 @@ later(function()
   local default_show = pick.default_show
 
   pick.setup({
+    mappings = {
+      refine = '<C-r>',
+    },
+
     source = {
       -- Override the default show function to relativize paths
       show = function(buf, items, query, opts)
