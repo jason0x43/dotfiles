@@ -456,7 +456,7 @@ local function apply_theme()
   hi('WarningMsg', {})
   hi('WildMenu', {})
   hi('WinBar', { bg = 'bg_1', fg = 'fg_0' })
-  hi('WinSeparator', { fg = 'dim_0', bg = 'dim_0' })
+  hi('WinSeparator', { fg = 'dim_0' })
   hi('markdownCode', { fg = 'orange', bg = 'bg_1' })
 
   hi('@markup.heading.gitcommit', {})
