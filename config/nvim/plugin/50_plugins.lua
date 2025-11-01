@@ -1,3 +1,4 @@
+local MiniDeps = require('mini.deps')
 local add = MiniDeps.add
 local now = MiniDeps.now
 local later = MiniDeps.later
@@ -81,12 +82,12 @@ end)
 
 later(function()
   ---@type string | nil
-  local checkout = 'v.1.6.0'
+  local checkout = 'v.1.7.0'
 
   if vim.fn.executable('rustc') then
     checkout = nil
   else
-    -- Get latest pre-build version of blink
+    -- Get latest pre-built version of blink
     local curl = require('plenary.curl')
     local res = curl.get(
       'https://api.github.com/repos/Saghen/blink.cmp/releases/latest',
@@ -133,20 +134,6 @@ later(function()
       post_install = build_blink,
     },
   })
-  local providers = {
-    copilot = {
-      name = 'copilot',
-      module = 'blink-copilot',
-      score_offset = 100,
-      async = true,
-    },
-    lazydev = {
-      name = 'LazyDev',
-      module = 'lazydev.integrations.blink',
-      fallbacks = { 'lsp' },
-    },
-  }
-  local default = { 'copilot', 'lsp', 'path', 'buffer', 'lazydev' }
 
   require('blink.cmp').setup({
     cmdline = {
@@ -193,13 +180,13 @@ later(function()
     keymap = {
       preset = 'default',
       ['<C-e>'] = { 'select_and_accept', 'fallback' },
-      ['<Tab>'] = {
-        'snippet_forward',
-        function()
-          return require('sidekick').nes_jump_or_apply()
-        end,
-        'fallback',
-      },
+      -- ['<Tab>'] = {
+      --   'snippet_forward',
+      --   function()
+      --     return require('sidekick').nes_jump_or_apply()
+      --   end,
+      --   'fallback',
+      -- },
     },
     signature = {
       enabled = false,
@@ -208,8 +195,20 @@ later(function()
       },
     },
     sources = {
-      default = default,
-      providers = providers,
+      default = { 'copilot', 'lsp', 'path', 'buffer', 'lazydev' },
+      providers = {
+        copilot = {
+          name = 'copilot',
+          module = 'blink-copilot',
+          score_offset = 100,
+          async = true,
+        },
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          fallbacks = { 'lsp' },
+        },
+      },
     },
   })
 end)
@@ -278,9 +277,7 @@ end)
 
 later(function()
   add('mason-org/mason.nvim')
-  require('mason').setup({
-    ui = { border = 'single' },
-  })
+  require('mason').setup()
 
   add('mason-org/mason-lspconfig.nvim')
   require('mason-lspconfig').setup({
@@ -301,23 +298,59 @@ end)
 
 -- AI =========================================================================
 
--- Sidekick
+-- opencode
 later(function()
-  add('folke/sidekick.nvim')
+  add({
+    source = 'sudo-tee/opencode.nvim',
+    depends = { 'nvim-lua/plenary.nvim' },
+  })
 
-  require('sidekick').setup({
-    nes = {
-      enabled = false,
+  require('opencode').setup({
+    ui = {
+      input = {
+        text = {
+          wrap = true,
+        },
+      },
+      window_width = 80 / vim.o.columns,
     },
   })
 
-  -- For Sidekick
-  vim.keymap.set('n', '<Tab>', function()
-    -- if there is a next edit, jump to it, otherwise apply it if any
-    if not require('sidekick').nes_jump_or_apply() then
-      return '<Tab>'
-    end
-  end, { desc = 'Goto/Apply Next Edit Suggestion' })
+  local opencode_group =
+    vim.api.nvim_create_augroup('opencode_config', { clear = true })
+
+  -- Update the opencode split width when the nvim window is resized
+  vim.api.nvim_create_autocmd('VimResized', {
+    group = opencode_group,
+    callback = function()
+      require('opencode').setup({
+        ui = {
+          window_width = 80 / vim.o.columns,
+        },
+      })
+    end,
+    desc = 'Update opencode window width on resize',
+  })
+
+  -- Enable linebreak in opencode windows
+  vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+    group = opencode_group,
+    callback = function()
+      if vim.bo.filetype == 'opencode_output' then
+        vim.wo.linebreak = true
+      elseif vim.bo.filetype == 'opencode' then
+        vim.wo.linebreak = true
+      end
+    end,
+    desc = 'Enable linebreak in opencode output buffers',
+  })
+
+  -- Cleaner markdown rendering in opencode output panes
+  add('MeanderingProgrammer/render-markdown.nvim')
+  require('render-markdown').setup({
+    anti_conceal = { enabled = false },
+    file_types = { 'opencode_output' },
+  })
 end)
 
 -- Other functionality ========================================================
