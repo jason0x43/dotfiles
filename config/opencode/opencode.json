@@ -16,8 +16,20 @@
         "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
       },
       "enabled": true
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_MCP_KEY}"
+      }
     }
   },
 
-  "plugin": ["opencode-skills"]
+  "plugin": ["opencode-skills"],
+
+  "tools": {
+    // Disable github tools by default; enable per-project.
+    "github": false
+  }
 }
