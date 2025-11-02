@@ -346,6 +346,23 @@ later(function()
   })
 
   -- Cleaner markdown rendering in opencode output panes
+  -- render-markdown depends on lazy.nvim to decide whether to lazy load (which
+  -- we need), so mock those parts of lazy.nvim.
+  package.loaded.lazy = {}
+  package.preload['lazy.core.config'] = function()
+    return {
+      spec = {
+        plugins = { ['render-markdown.nvim'] = { ft = { 'opencode_output' } } },
+      },
+    }
+  end
+  package.preload['lazy.core.plugin'] = function()
+    return {
+      values = function(p, k)
+        return p[k] or {}
+      end,
+    }
+  end
   add('MeanderingProgrammer/render-markdown.nvim')
   require('render-markdown').setup({
     anti_conceal = { enabled = false },
