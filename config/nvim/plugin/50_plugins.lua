@@ -344,25 +344,14 @@ later(function()
     end,
     desc = 'Enable linebreak in opencode output buffers',
   })
+end)
 
+now_if_args(function()
   -- Cleaner markdown rendering in opencode output panes
-  -- render-markdown depends on lazy.nvim to decide whether to lazy load (which
-  -- we need), so mock those parts of lazy.nvim.
-  package.loaded.lazy = {}
-  package.preload['lazy.core.config'] = function()
-    return {
-      spec = {
-        plugins = { ['render-markdown.nvim'] = { ft = { 'opencode_output' } } },
-      },
-    }
-  end
-  package.preload['lazy.core.plugin'] = function()
-    return {
-      values = function(p, k)
-        return p[k] or {}
-      end,
-    }
-  end
+  -- render-markdown has to be initialized in a now or now_if_args. If it's
+  -- called in a later block, it's initialization code can run after a file has
+  -- been opened but before the user setup code, allowing render-markdown to
+  -- attach to buffers it shouldn't.
   add('MeanderingProgrammer/render-markdown.nvim')
   require('render-markdown').setup({
     anti_conceal = { enabled = false },
