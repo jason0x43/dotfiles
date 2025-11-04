@@ -16,9 +16,9 @@ vim.filetype.add({
     end,
   },
   pattern = {
-    ['compose.yaml'] = 'yaml.dockercompose',
-    ['compose.*.yaml'] = 'yaml.dockercompose',
-    ['.*.compose.yaml'] = 'yaml.dockercompose',
+    ['compose.yaml'] = 'yaml.docker-compose',
+    ['compose.*.yaml'] = 'yaml.docker-compose',
+    ['.*.compose.yaml'] = 'yaml.docker-compose',
     ['appsettings.*.json'] = 'jsonc',
     ['.-/ansible/.-%.yml'] = 'yaml.ansible',
     -- Note: use '.-' so this block will be tried even if a '.*' pattern is
