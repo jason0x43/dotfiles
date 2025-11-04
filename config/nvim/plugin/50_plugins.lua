@@ -344,19 +344,14 @@ later(function()
     end,
     desc = 'Enable linebreak in opencode output buffers',
   })
-end)
 
-now_if_args(function()
   -- Cleaner markdown rendering in opencode output panes
-  -- render-markdown has to be initialized in a now or now_if_args. If it's
-  -- called in a later block, it's initialization code can run after a file has
-  -- been opened but before the user setup code, allowing render-markdown to
-  -- attach to buffers it shouldn't.
-  add('MeanderingProgrammer/render-markdown.nvim')
-  require('render-markdown').setup({
+  ---@type render.md.UserConfig
+  vim.g.render_markdown_config = {
     anti_conceal = { enabled = false },
     file_types = { 'opencode_output' },
-  })
+  }
+  add('MeanderingProgrammer/render-markdown.nvim')
 end)
 
 -- Other functionality ========================================================
@@ -418,13 +413,13 @@ later(function()
 end)
 
 -- Semantic navigation
-later(function()
-  add('Bekaboo/dropbar.nvim')
-  require('dropbar').setup({
-    sources = {
-      path = {
-        preview = false,
-      },
-    },
-  })
-end)
+-- later(function()
+--   add('Bekaboo/dropbar.nvim')
+--   require('dropbar').setup({
+--     sources = {
+--       path = {
+--         preview = false,
+--       },
+--     },
+--   })
+-- end)

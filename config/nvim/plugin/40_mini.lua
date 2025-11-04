@@ -246,7 +246,7 @@ later(function()
     if vim.o.buftype == 'nofile' then
       vim.b.miniindentscope_disable = true
     end
-  end, 'Setup DropBar menu buffers')
+  end, 'Disable indentscope in nofile buffers')
 end)
 
 -- Jumping around
