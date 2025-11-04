@@ -5,8 +5,8 @@ keybind = ctrl+h=goto_split:left
 keybind = ctrl+j=goto_split:bottom
 keybind = ctrl+k=goto_split:top
 keybind = ctrl+l=goto_split:right
-keybind = ctrl+s>minus=new_split:down
-keybind = ctrl+s>shift+backslash=new_split:right
+keybind = ctrl+a>minus=new_split:down
+keybind = ctrl+a>shift+backslash=new_split:right
 keybind = alt+j=resize_split:down,32
 keybind = alt+k=resize_split:up,32
 keybind = alt+h=resize_split:left,32
