@@ -1,15 +1,94 @@
 #!/bin/bash
 
 args="-xd"
+dry_run=true
 
 if [[ ! $1 == '-f' ]]; then
   args="$args -n"
+else
+  dry_run=false
 fi
 
 root=$(git rev-parse --show-toplevel)
-excludes=$(grep -v "^#" $root/.git/info/exclude)
+excludes=$(grep -v "^#" "$root/.git/info/exclude" 2>/dev/null | grep -v "^$")
 for e in $excludes; do
   args="$args -e $e"
 done
 
-git clean $args $@ 
+if [[ $dry_run == true ]]; then
+  # In dry-run mode, calculate space that would be saved
+
+  # Get list of files that would be removed
+  # shellcheck disable=SC2086
+  files_to_remove=$(git clean $args "$@" 2>/dev/null)
+
+  if [[ -n "$files_to_remove" ]]; then
+    # Print the list of files
+    echo "$files_to_remove"
+
+    # Calculate total size using du -c for efficiency
+    # shellcheck disable=SC2086
+    total_kb=$(git clean $args "$@" 2>/dev/null \
+      | sed 's/^Would remove //' \
+      | xargs du -skc 2>/dev/null \
+      | tail -1 \
+      | awk '{print $1}')
+
+    # Convert KB to human-readable format
+    if [[ $total_kb -ge 1048576 ]]; then
+      size_display=$(echo "scale=2; $total_kb / 1048576" | bc)
+      unit="GB"
+    elif [[ $total_kb -ge 1024 ]]; then
+      size_display=$(echo "scale=2; $total_kb / 1024" | bc)
+      unit="MB"
+    else
+      size_display=$total_kb
+      unit="KB"
+    fi
+
+    echo ""
+    echo "Total space that would be saved: ${size_display} ${unit}"
+  else
+    # No files to remove
+    # shellcheck disable=SC2086
+    git clean $args "$@"
+  fi
+else
+  # In cleanup mode, take before/after size snapshots
+
+  # Get size before cleanup
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    size_before=$(du -sk "$root" 2>/dev/null | awk '{print $1}')
+  else
+    size_before=$(du -s --block-size=1K "$root" 2>/dev/null | awk '{print $1}')
+  fi
+
+  # Perform the cleanup
+  # shellcheck disable=SC2086
+  git clean $args "$@"
+
+  # Get size after cleanup
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    size_after=$(du -sk "$root" 2>/dev/null | awk '{print $1}')
+  else
+    size_after=$(du -s --block-size=1K "$root" 2>/dev/null | awk '{print $1}')
+  fi
+
+  # Calculate space saved in KB
+  space_saved=$((size_before - size_after))
+
+  # Convert to human-readable format
+  if [[ $space_saved -ge 1048576 ]]; then
+    size_display=$(echo "scale=2; $space_saved / 1048576" | bc)
+    unit="GB"
+  elif [[ $space_saved -ge 1024 ]]; then
+    size_display=$(echo "scale=2; $space_saved / 1024" | bc)
+    unit="MB"
+  else
+    size_display=$space_saved
+    unit="KB"
+  fi
+
+  echo ""
+  echo "Total space saved: ${size_display} ${unit}"
+fi
