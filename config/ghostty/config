@@ -1,5 +1,5 @@
 command = /opt/homebrew/bin/fish
-theme = light:selenized-light,dark:selenized-dark
+theme = light:ansi-light,dark:ansi-dark
 
 keybind = ctrl+h=goto_split:left
 keybind = ctrl+j=goto_split:bottom
@@ -11,6 +11,9 @@ keybind = alt+j=resize_split:down,32
 keybind = alt+k=resize_split:up,32
 keybind = alt+h=resize_split:left,32
 keybind = alt+l=resize_split:right,32
+keybind = ctrl+a>r=reload_config
+keybind = shift+enter=text:\n
+keybind = ctrl+a>c=write_screen_file:paste
 
 # enable the quick terminal
 keybind = global:alt+ctrl+cmd+space=toggle_quick_terminal
@@ -20,3 +23,18 @@ quick-terminal-animation-duration = 0.25
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
+
+# flashy cursor
+shell-integration-features = no-cursor
+custom-shader = ./shaders/cursor_blaze_no_trail.glsl
+
+# hide mouse
+mouse-hide-while-typing = true
+
+# clipboard
+clipboard-read = allow
+
+# window padding
+window-padding-x = 2
+window-padding-y = 2
+window-padding-balance = true
