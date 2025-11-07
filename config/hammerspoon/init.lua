@@ -29,7 +29,7 @@ hs.window.animationDuration = 0
 hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	local windows = hs.window.visibleWindows()
 	local terminalWins =
-		getWindows(windows, { "kitty", "WezTerm", "Terminal.app" })
+		getWindows(windows, { "kitty", "Ghostty", "WezTerm", "Terminal.app" })
 	local browserWins =
 		getWindows(windows, { "Safari", "Wavebox", "Google Chrome", "Firefox" })
 	local mailWins = getWindows(windows, { "Mail" })
@@ -43,7 +43,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	-- Otherwise, assume the external display is in use.
 	if window.isStageManagerEnabled() then
 		for _, win in ipairs(terminalWins) do
-			window.fill("center", { window = win, width = 800 })
+			window.fill("center", { window = win, width = 1000 })
 		end
 
 		for _, win in ipairs(browserWins) do
@@ -70,32 +70,32 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	else
 		if #browserWins > 0 then
 			if #terminalWins > 0 then
-				if #simWins + #emuWins > 0 then
-					for _, win in ipairs(browserWins) do
-						window.fill("left", {
-							window = win,
-							width = 1570,
-							marginLeft = 370,
-						})
-					end
-					for _, win in ipairs(simWins) do
-						window.moveTo("top-left", win)
-					end
-					for _, win in ipairs(emuWins) do
-						window.moveTo("bottom-left", win)
-					end
-					for _, win in ipairs(terminalWins) do
-						window.fill("right", { window = win, width = const.THIN_WIDTH })
-					end
-				else
+				-- if #simWins + #emuWins > 0 then
+				-- 	for _, win in ipairs(browserWins) do
+				-- 		window.fill("left", {
+				-- 			window = win,
+				-- 			width = 1570,
+				-- 			marginLeft = 370,
+				-- 		})
+				-- 	end
+				-- 	for _, win in ipairs(simWins) do
+				-- 		window.moveTo("top-left", win)
+				-- 	end
+				-- 	for _, win in ipairs(emuWins) do
+				-- 		window.moveTo("bottom-left", win)
+				-- 	end
+				-- 	for _, win in ipairs(terminalWins) do
+				-- 		window.fill("right", { window = win, width = const.THIN_WIDTH })
+				-- 	end
+				-- else
           logger.i("using non-emu sizing")
 					for _, win in ipairs(browserWins) do
-						window.fill("left", { window = win, width = 1 - const.THIN_WIDTH })
+						window.fill("left", { window = win, width = 1 - const.TERM_WIDTH })
 					end
 					for _, win in ipairs(terminalWins) do
-						window.fill("right", { window = win, width = const.THIN_WIDTH })
+						window.fill("right", { window = win, width = const.TERM_WIDTH })
 					end
-				end
+				-- end
 			else
 				for _, win in ipairs(browserWins) do
 					window.fill("center", { window = win })
@@ -103,7 +103,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 			end
 		else
 			for _, win in ipairs(terminalWins) do
-				window.fill("center", { window = win, width = 900 })
+				window.fill("center", { window = win, width = 1200 })
 			end
 		end
 
