@@ -1,6 +1,8 @@
 ---
 description: Writes and maintains project documentation
 model: github-copilot/gpt-5-mini
+reasoningEffort: high
+textVerbosity: medium
 tools:
   read: true
   grep: true

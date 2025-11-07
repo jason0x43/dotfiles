@@ -3,6 +3,9 @@
 
   "agent": {
     "plan": {
+      "model": "github-copilot/gpt-5-mini",
+      "reasoningEffort": "high",
+      "textVerbosity": "medium",
       "permission": {
         "bash": {
           "echo *": "allow",
@@ -14,6 +17,11 @@
           "tail *": "allow"
         }
       }
+    },
+    "build": {
+      "model": "github-copilot/gpt-5-mini",
+      "reasoningEffort": "high",
+      "textVerbosity": "low"
     }
   },
 
