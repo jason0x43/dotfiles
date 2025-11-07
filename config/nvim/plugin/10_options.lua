@@ -1,6 +1,10 @@
 -- Leader for mappings
 vim.g.mapleader = ';'
 
+-- More responsive UI
+vim.o.updatetime = 500
+vim.o.timeoutlen = 500
+
 -- Default tabstop and shiftwidth
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4

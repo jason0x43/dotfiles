@@ -319,19 +319,6 @@ later(function()
   local opencode_group =
     vim.api.nvim_create_augroup('opencode_config', { clear = true })
 
-  -- Update the opencode split width when the nvim window is resized
-  vim.api.nvim_create_autocmd('VimResized', {
-    group = opencode_group,
-    callback = function()
-      require('opencode').setup({
-        ui = {
-          window_width = 80 / vim.o.columns,
-        },
-      })
-    end,
-    desc = 'Update opencode window width on resize',
-  })
-
   -- Enable linebreak in opencode windows
   vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
     group = opencode_group,
