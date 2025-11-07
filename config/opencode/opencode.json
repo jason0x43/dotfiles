@@ -1,6 +1,22 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
+  "agent": {
+    "plan": {
+      "permission": {
+        "bash": {
+          "echo *": "allow",
+          "find *": "allow",
+          "grep *": "allow",
+          "rg *": "allow",
+          "fd *": "allow",
+          "head *": "allow",
+          "tail *": "allow"
+        }
+      }
+    }
+  },
+
   "instructions": [".github/copilot-instructions.md"],
 
   "keybinds": {
