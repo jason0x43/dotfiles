@@ -197,6 +197,8 @@ function dotfiles-mas {
 function dotfiles-launchd {
     log "Linking and bootstrapping launchd scripts..."
 
+    mkdir -p $HOME/Library/LaunchAgents
+
     for f in $DOTFILES/launchd/*; do
         if [[ ! -h $HOME/Library/LaunchAgents/$f:t ]]; then
             link $f $HOME/Library/LaunchAgents/$f:t
