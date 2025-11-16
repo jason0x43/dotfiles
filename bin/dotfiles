@@ -176,6 +176,12 @@ function dotfiles-home {
 
     # Fix the terminal definition so that C-H works properly in neovim.
     fixterm
+
+    # Update Hammerspoon config file location on macOS
+    if [[ $OSTYPE == darwin* ]] && [[ -d "/Applications/Hammerspoon.app" ]]; then
+        defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
+        logSub "Updated Hammerspoon config file location"
+    fi
 }
 
 # Upgrade Mac App Store packages
