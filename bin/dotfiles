@@ -82,13 +82,13 @@ function fixterm {
         terms=($(toe -a | cut -f1 | sort))
     fi
 
-    if (( ! $terms[(I)wezterm] )); then
-        local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
-        curl --silent -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
-        tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
-        rm $tmpfile
-        logSub "Installed wezterm terminfo"
-    fi
+    # if (( ! $terms[(I)wezterm] )); then
+    #     local tmpfile=$(mktemp /tmp/dotfiles.XXXXXX)
+    #     curl --silent -o $tmpfile https://raw.githubusercontent.com/wez/wezterm/master/termwiz/data/wezterm.terminfo
+    #     tic -x -o $HOME/.terminfo $tmpfile &> /dev/null
+    #     rm $tmpfile
+    #     logSub "Installed wezterm terminfo"
+    # fi
 
     # Fix terminal definition so C-H works properly in neovim
     kbs=$(infocmp | grep -o 'kbs=[^,]\+')
