@@ -344,8 +344,8 @@ end)
 -- Other functionality ========================================================
 
 -- JSON schemas
--- May be needed by LS at startup
-now_if_args(function()
+-- May be needed by LS at startup, such as with `json_generating_cmd | vi -R -`
+now(function()
   add('b0o/schemastore.nvim')
 end)
 
