@@ -441,8 +441,12 @@ function dotfiles-node {
 # Update uv tools
 function dotfiles-uv {
     if (( ! $+commands[uv] )); then
-        warn "uv not installed"
-        return
+        if [[ $INSTALL == 0 ]]; then
+            warn "uv not installed"
+            return
+        fi
+
+        curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
     fi
 
     log "Updating uv tools..."
