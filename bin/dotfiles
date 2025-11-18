@@ -438,6 +438,25 @@ function dotfiles-node {
     done
 }
 
+# Update bun
+function dotfiles-bun {
+    if (( ! $+commands[bun] )); then
+        if [[ $INSTALL == 0 ]]; then
+            warn "bun not installed"
+            return
+        fi
+
+        log "Installing bun..."
+        curl -fsSL https://bun.com/install | bash
+
+        log "Intalling bun completions..."
+        bun completions
+    fi
+
+    log "Updating bun..."
+    bun upgrade
+}
+
 # Update uv tools
 function dotfiles-uv {
     if (( ! $+commands[uv] )); then
@@ -446,6 +465,7 @@ function dotfiles-uv {
             return
         fi
 
+        log "Installing uv..."
         curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
     fi
 
@@ -502,6 +522,7 @@ else
     dotfiles-home
     dotfiles-brew
     dotfiles-node
+    dotfiles-bun
     dotfiles-uv
     dotfiles-rust
     dotfiles-bat
