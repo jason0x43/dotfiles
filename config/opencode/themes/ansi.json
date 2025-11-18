@@ -1,0 +1,225 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "ansi0": 0,
+    "ansi1": 1,
+    "ansi2": 2,
+    "ansi3": 3,
+    "ansi4": 4,
+    "ansi5": 5,
+    "ansi6": 6,
+    "ansi7": 7,
+    "ansi8": 8,
+    "ansi9": 9,
+    "ansi10": 10,
+    "ansi11": 11,
+    "ansi12": 12,
+    "ansi13": 13,
+    "ansi14": 14,
+    "ansi15": 15,
+    "ansiBg": "none",
+    "ansiFg": "none"
+  },
+  "theme": {
+    "primary": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "secondary": {
+      "dark": "ansi9",
+      "light": "ansi9"
+    },
+    "accent": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "error": {
+      "dark": "ansi11",
+      "light": "ansi11"
+    },
+    "warning": {
+      "dark": "ansi12",
+      "light": "ansi12"
+    },
+    "success": {
+      "dark": "ansi14",
+      "light": "ansi14"
+    },
+    "info": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "text": {
+      "dark": "ansiFg",
+      "light": "ansiFg"
+    },
+    "textMuted": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "background": {
+      "dark": "ansiBg",
+      "light": "ansiBg"
+    },
+    "backgroundPanel": {
+      "dark": "ansi1",
+      "light": "ansi1"
+    },
+    "backgroundElement": {
+      "dark": "ansi1",
+      "light": "ansi1"
+    },
+    "border": {
+      "dark": "ansi2",
+      "light": "ansi2"
+    },
+    "borderActive": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "borderSubtle": {
+      "dark": "ansi2",
+      "light": "ansi2"
+    },
+    "diffAdded": {
+      "dark": "ansi14",
+      "light": "ansi14"
+    },
+    "diffRemoved": {
+      "dark": "ansi11",
+      "light": "ansi11"
+    },
+    "diffContext": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "diffHunkHeader": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "diffHighlightAdded": {
+      "dark": "ansi14",
+      "light": "ansi14"
+    },
+    "diffHighlightRemoved": {
+      "dark": "ansi11",
+      "light": "ansi11"
+    },
+    "diffAddedBg": {
+      "dark": "ansi0",
+      "light": "ansi0"
+    },
+    "diffRemovedBg": {
+      "dark": "ansi1",
+      "light": "ansi1"
+    },
+    "diffContextBg": {
+      "dark": "ansi0",
+      "light": "ansi0"
+    },
+    "diffLineNumber": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "ansi2",
+      "light": "ansi2"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "ansi1",
+      "light": "ansi1"
+    },
+    "markdownText": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "markdownHeading": {
+      "dark": "ansi4",
+      "light": "ansi4"
+    },
+    "markdownLink": {
+      "dark": "ansi4",
+      "light": "ansi4"
+    },
+    "markdownLinkText": {
+      "dark": "ansi0",
+      "light": "ansi0"
+    },
+    "markdownCode": {
+      "dark": "ansi14",
+      "light": "ansi14"
+    },
+    "markdownBlockQuote": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "markdownEmph": {
+      "dark": "ansi12",
+      "light": "ansi12"
+    },
+    "markdownStrong": {
+      "dark": "ansi13",
+      "light": "ansi13"
+    },
+    "markdownHorizontalRule": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "markdownListItem": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "markdownListEnumeration": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "markdownImage": {
+      "dark": "ansi9",
+      "light": "ansi9"
+    },
+    "markdownImageText": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "markdownCodeBlock": {
+      "dark": "ansi4",
+      "light": "ansi4"
+    },
+    "syntaxComment": {
+      "dark": "ansi3",
+      "light": "ansi3"
+    },
+    "syntaxKeyword": {
+      "dark": "ansi9",
+      "light": "ansi9"
+    },
+    "syntaxFunction": {
+      "dark": "ansi8",
+      "light": "ansi8"
+    },
+    "syntaxVariable": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "syntaxString": {
+      "dark": "ansi14",
+      "light": "ansi14"
+    },
+    "syntaxNumber": {
+      "dark": "ansi15",
+      "light": "ansi15"
+    },
+    "syntaxType": {
+      "dark": "ansi7",
+      "light": "ansi7"
+    },
+    "syntaxOperator": {
+      "dark": "ansi9",
+      "light": "ansi9"
+    },
+    "syntaxPunctuation": {
+      "dark": "ansi4",
+      "light": "ansi4"
+    }
+  }
+}

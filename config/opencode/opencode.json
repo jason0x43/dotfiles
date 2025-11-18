@@ -275,7 +275,8 @@
   },
 
   // "theme": "ansi",
-  // "theme": "nightowl",
+  // "theme": "mynord",
+  // "theme": "opencode",
   "theme": "system"
 
   // "tools": {
