@@ -349,9 +349,10 @@ now(function()
 end)
 
 -- Better start/end matching
-later(function()
+-- Matchup needs to load immediately at startup
+now(function()
   add('andymass/vim-matchup')
-  vim.g.matchup_matchparen_offscreen = { method = 'popup', border = 'rounded' }
+  vim.g.matchup_matchparen_offscreen = { method = 'popup' }
 end)
 
 -- Better git diff views
