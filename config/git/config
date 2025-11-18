@@ -84,31 +84,6 @@
 [push]
 	default = current
 
-[tig]
-	line-graphics = utf-8
-	vertical-split = no
-	commit-order = default
-	main-view-id = yes
-	main-view-date = relative-compact
-	tab-size = 2
-
-[tig "color"]
-	default = default default normal
-	cursor = color0 color7 normal
-	diff-del = color1 default normal
-	diff-add = color2 default normal
-	title-focus = color0 color4 normal
-	title-blur = color7 color8 normal
-
-[tig "bind"]
-	generic = <Ctrl-f> scroll-page-down
-	generic = G move-first-line
-	status = S !?git stash save --keep-index %(prompt)
-	status = + !git commit --amend
-	main = = !git edit-commit %(commit)
-	main = R !git rebase -i %(commit)^
-	diff = R !git rebase -i %(commit)^
-
 [url "git@github.com:"]
 	insteadOf = gh:
 	pushInsteadOf = gh:

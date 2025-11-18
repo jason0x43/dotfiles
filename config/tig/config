@@ -1,0 +1,29 @@
+# General settings
+set line-graphics = utf-8
+set vertical-split = no
+set commit-order = default
+set main-view-id = yes
+set main-view-date = relative-compact
+set tab-size = 2
+
+# Override the default terminal colors to white on black.
+color default default default
+color title-focus color0 color4
+color title-blur color7 color8
+color search-result color7 color8
+color cursor color0 color7
+
+# Diff colors
+color diff-del color1 default
+color diff-add color2 default
+color diff-header color3 default
+color diff-index color4 default
+color diff-chunk color5 default
+
+# Bindings
+bind generic <Ctrl-f> scroll-page-down
+bind generic G move-first-line
+bind status S !?git stash save --keep-index %(prompt)
+bind status + !git commit --amend
+bind main = !git edit-commit %(commit)
+bind main R !git rebase -i %(commit)^
