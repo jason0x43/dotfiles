@@ -119,7 +119,7 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 			end
 		end
 
-		local chatWins = getWindows(windows, { "Chat" })
+		local chatWins = getWindows(windows, { "Google Chat" })
 		if #chatWins > 0 then
 			window.fill("right", { window = chatWins[1], width = 600 })
 		end
