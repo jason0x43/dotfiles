@@ -71,30 +71,30 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 		if #browserWins > 0 then
 			if #terminalWins > 0 then
 				-- if #simWins + #emuWins > 0 then
-				-- 	for _, win in ipairs(browserWins) do
-				-- 		window.fill("left", {
-				-- 			window = win,
-				-- 			width = 1570,
-				-- 			marginLeft = 370,
-				-- 		})
-				-- 	end
-				-- 	for _, win in ipairs(simWins) do
-				-- 		window.moveTo("top-left", win)
-				-- 	end
-				-- 	for _, win in ipairs(emuWins) do
-				-- 		window.moveTo("bottom-left", win)
-				-- 	end
-				-- 	for _, win in ipairs(terminalWins) do
-				-- 		window.fill("right", { window = win, width = const.THIN_WIDTH })
-				-- 	end
+				--   for _, win in ipairs(browserWins) do
+				--     window.fill("left", {
+				--       window = win,
+				--       width = 1570,
+				--       marginLeft = 370,
+				--     })
+				--   end
+				--   for _, win in ipairs(simWins) do
+				--     window.moveTo("top-left", win)
+				--   end
+				--   for _, win in ipairs(emuWins) do
+				--     window.moveTo("bottom-left", win)
+				--   end
+				--   for _, win in ipairs(terminalWins) do
+				--     window.fill("right", { window = win, width = const.THIN_WIDTH })
+				--   end
 				-- else
-          logger.i("using non-emu sizing")
-					for _, win in ipairs(browserWins) do
-						window.fill("left", { window = win, width = 1 - const.TERM_WIDTH })
-					end
-					for _, win in ipairs(terminalWins) do
-						window.fill("right", { window = win, width = const.TERM_WIDTH })
-					end
+				logger.i("using non-emu sizing")
+				for _, win in ipairs(browserWins) do
+					window.fill("left", { window = win, width = 1 - const.TERM_WIDTH })
+				end
+				for _, win in ipairs(terminalWins) do
+					window.fill("right", { window = win, width = const.TERM_WIDTH })
+				end
 				-- end
 			else
 				for _, win in ipairs(browserWins) do
@@ -233,6 +233,26 @@ ConfigWatcher = hs.pathwatcher
 	end)
 	:start()
 
+-- Disable or ensable Stage Manager whenever an external display is connected or
+-- disconnected
+MonitorWatcher = hs.screen.watcher
+	.new(function()
+		local script = [[
+        tell application "System Events"
+          set countDisplays to count of desktops
+
+          if countDisplays is greater than 1 then
+            do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
+          else
+            do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool false"
+          end if
+        end tell
+      ]]
+		hs.osascript.applescript(script)
+	end)
+	:start()
+
+-- Make the mouse more obvious
 hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
 
 hs.alert.show("Hammerspoon config loaded")
