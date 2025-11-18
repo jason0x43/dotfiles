@@ -12,7 +12,7 @@ return {
       workspace = {
         checkThirdParty = false,
         library = {
-          home .. "/.hammerspoon/Spoons/EmmyLua.spoon/annotations"
+          home .. "/.config/hammerspoon/Spoons/EmmyLua.spoon/annotations"
         }
       },
 

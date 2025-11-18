@@ -243,9 +243,9 @@ local function updateStageManager()
       set countDisplays to count of desktops
 
       if countDisplays is greater than 1 then
-        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
-      else
         do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool false"
+      else
+        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
       end if
     end tell
   ]]
