@@ -1,3 +1,5 @@
+local home = os.getenv("HOME")
+
 ---@type vim.lsp.Config
 return {
   settings = {
@@ -9,6 +11,9 @@ return {
 
       workspace = {
         checkThirdParty = false,
+        library = {
+          home .. "/.hammerspoon/Spoons/EmmyLua.spoon/annotations"
+        }
       },
 
       runtime = {

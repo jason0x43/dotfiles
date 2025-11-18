@@ -1,3 +1,5 @@
+hs.loadSpoon("EmmyLua")
+
 ---@module "types"
 ---@module "user.types.hammerspoon"
 
@@ -12,10 +14,12 @@ local logger = hs.logger.new("init", "info")
 ---@param appNames string[]
 ---@return hs.window[]
 local function getWindows(windows, appNames)
-	return hs.fnutils.ifilter(windows, function(win)
+	local wins = hs.fnutils.ifilter(windows, function(win)
 		local app = win:application():name()
 		return hs.fnutils.contains(appNames, app)
 	end)
+	---@cast wins hs.window[]
+	return wins
 end
 
 settings.init("settings.json")
@@ -233,22 +237,33 @@ ConfigWatcher = hs.pathwatcher
 	end)
 	:start()
 
--- Disable or ensable Stage Manager whenever an external display is connected or
--- disconnected
-MonitorWatcher = hs.screen.watcher
-	.new(function()
-		local script = [[
-        tell application "System Events"
-          set countDisplays to count of desktops
+local function updateStageManager()
+	local script = [[
+    tell application "System Events"
+      set countDisplays to count of desktops
 
-          if countDisplays is greater than 1 then
-            do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
-          else
-            do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool false"
-          end if
-        end tell
-      ]]
-		hs.osascript.applescript(script)
+      if countDisplays is greater than 1 then
+        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
+      else
+        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool false"
+      end if
+    end tell
+  ]]
+	hs.osascript.applescript(script)
+end
+
+-- Update Stage Manager state on display layout changes
+MonitorWatcher = hs.screen.watcher.new(updateStageManager):start()
+
+-- Update Stage Manager state when macBook wakes
+PowerWatcher = hs.caffeinate.watcher
+	.new(function(event)
+		if
+			event == hs.caffeinate.watcher.systemDidWake
+			or event == hs.caffeinate.watcher.screensDidWake
+		then
+			updateStageManager()
+		end
 	end)
 	:start()
 
