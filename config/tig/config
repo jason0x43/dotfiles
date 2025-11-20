@@ -12,6 +12,7 @@ color title-focus color0 color4
 color title-blur color7 color8
 color search-result color7 color8
 color cursor color0 color7
+color cursor-blur color0 color8
 
 # Diff colors
 color diff-del color1 default
