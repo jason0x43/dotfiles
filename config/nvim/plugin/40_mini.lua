@@ -23,111 +23,114 @@ now(function()
 end)
 
 -- Start screen
-now(function()
-  local starter = require('mini.starter')
-  starter.setup({
-    evaluate_single = true,
-    items = {
-      {
+if not (vim.list_contains(vim.v.argv, '-p')) then
+  -- Only load the start screen if neovide wasn't started with '-p'
+  now(function()
+    local starter = require('mini.starter')
+    starter.setup({
+      evaluate_single = true,
+      items = {
         {
-          action = function()
-            MiniFiles.open()
-          end,
-          name = 'Explore',
-          section = 'Pickers',
+          {
+            action = function()
+              MiniFiles.open()
+            end,
+            name = 'Explore',
+            section = 'Pickers',
+          },
+          {
+            action = 'Pick smart',
+            name = 'Files',
+            section = 'Pickers',
+          },
+          {
+            action = 'Pick grep_live',
+            name = 'Search',
+            section = 'Pickers',
+          },
+          {
+            action = 'Pick recent current_dir=true',
+            name = 'Recent',
+            section = 'Pickers',
+          },
+          {
+            action = function()
+              MiniExtra.pickers.visit_paths({
+                filter = function(opts)
+                  local suffix = 'COMMIT_EDITMSG'
+                  return opts.path:sub(-#suffix) ~= suffix
+                end,
+              })
+            end,
+            name = 'Visited',
+            section = 'Pickers',
+          },
+          {
+            action = 'Pick help',
+            name = 'Help',
+            section = 'Pickers',
+          },
         },
         {
-          action = 'Pick smart',
-          name = 'Files',
-          section = 'Pickers',
-        },
-        {
-          action = 'Pick grep_live',
-          name = 'Search',
-          section = 'Pickers',
-        },
-        {
-          action = 'Pick recent current_dir=true',
-          name = 'Recent',
-          section = 'Pickers',
-        },
-        {
-          action = function()
-            MiniExtra.pickers.visit_paths({
-              filter = function(opts)
-                local suffix = 'COMMIT_EDITMSG'
-                return opts.path:sub(-#suffix) ~= suffix
-              end,
-            })
-          end,
-          name = 'Visited',
-          section = 'Pickers',
-        },
-        {
-          action = 'Pick help',
-          name = 'Help',
-          section = 'Pickers',
+          {
+            name = 'Close',
+            action = 'enew',
+            section = 'Actions',
+          },
+          {
+            name = 'Dependencies',
+            action = 'DepsUpdate',
+            section = 'Actions',
+          },
+          {
+            name = 'Tools',
+            action = 'Mason',
+            section = 'Actions',
+          },
+          {
+            name = 'Yazi',
+            action = function()
+              require('user.config.yazi').open_yazi()
+            end,
+            section = 'Actions',
+          },
+          {
+            name = 'Quit',
+            action = 'qall',
+            section = 'Actions',
+          },
         },
       },
-      {
-        {
-          name = 'Close',
-          action = 'enew',
-          section = 'Actions',
-        },
-        {
-          name = 'Dependencies',
-          action = 'DepsUpdate',
-          section = 'Actions',
-        },
-        {
-          name = 'Tools',
-          action = 'Mason',
-          section = 'Actions',
-        },
-        {
-          name = 'Yazi',
-          action = function()
-            require('user.config.yazi').open_yazi()
+      header = '',
+      footer = '',
+    })
+
+    local orig_ministarter_open = MiniStarter.open
+
+    ---@diagnostic disable-next-line: duplicate-set-field
+    MiniStarter.open = function()
+      -- Hide UI elements
+      vim.o.laststatus = 0
+      vim.opt_local.fillchars = 'eob: '
+
+      orig_ministarter_open()
+    end
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'MiniStarterOpened',
+      callback = function()
+        -- Restore when leaving starter buffer
+        vim.api.nvim_create_autocmd('BufUnload', {
+          buffer = 0,
+          once = true,
+          callback = function()
+            vim.o.laststatus = 2
           end,
-          section = 'Actions',
-        },
-        {
-          name = 'Quit',
-          action = 'qall',
-          section = 'Actions',
-        },
-      },
-    },
-    header = '',
-    footer = '',
-  })
-
-  local orig_ministarter_open = MiniStarter.open
-
-  ---@diagnostic disable-next-line: duplicate-set-field
-  MiniStarter.open = function()
-    -- Hide UI elements
-    vim.o.laststatus = 0
-    vim.opt_local.fillchars = 'eob: '
-
-    orig_ministarter_open()
-  end
-
-  vim.api.nvim_create_autocmd('User', {
-    pattern = 'MiniStarterOpened',
-    callback = function()
-      -- Restore when leaving starter buffer
-      vim.api.nvim_create_autocmd('BufUnload', {
-        buffer = 0,
-        once = true,
-        callback = function()
-          vim.o.laststatus = 2
-        end,
-      })
-    end,
-  })
-end)
+        })
+      end,
+    })
+  end)
+end
 
 -- Status line
 now(function()

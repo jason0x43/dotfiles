@@ -21,6 +21,7 @@ vim.filetype.add({
     ['.*.compose.yaml'] = 'yaml.docker-compose',
     ['appsettings.*.json'] = 'jsonc',
     ['.-/ansible/.-%.yml'] = 'yaml.ansible',
+    ['/private/.-%/screen.txt'] = 'scrollback',
     -- Note: use '.-' so this block will be tried even if a '.*' pattern is
     -- added later
     ['.-'] = {

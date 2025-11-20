@@ -49,7 +49,6 @@ now_if_args(function()
 
   -- Manually enable language servers not managed by Mason
   vim.lsp.enable('sourcekit')
-  vim.lsp.enable('copilot')
 end)
 
 -- Auto-configure lua-ls
@@ -332,6 +331,7 @@ later(function()
   })
 
   -- Cleaner markdown rendering in opencode output panes
+  ---@module 'render-markdown'
   ---@type render.md.UserConfig
   vim.g.render_markdown_config = {
     anti_conceal = { enabled = false },

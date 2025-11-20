@@ -18,7 +18,7 @@ _G.Config.new_autocmd('VimResized', '*', function()
   vim.api.nvim_command('wincmd =')
 
   -- Show line numbers if the window is big enough
-  if vim.bo.buftype ~= 'nofile' then
+  if vim.bo.buftype ~= 'nofile' and vim.bo.buftype ~= 'scrollback' then
     vim.o.number = vim.o.columns > 88
   end
 end, 'Update settings when vim window is resized')
@@ -151,6 +151,7 @@ _G.Config.new_autocmd('BufWinEnter', '*', function()
 
   if
     buftype == 'nofile'
+    or buftype == 'scrollback'
     or filetype:find('commit') ~= nil
     or filetype == 'svn'
   then
@@ -179,3 +180,40 @@ _G.Config.new_autocmd('FileType', 'mininotify-history', function()
     MiniBufremove.delete(0, true)
   end, { buffer = true, desc = 'Close the current window' })
 end, 'Close notify history panes with q')
+
+-- Setup buffers for Ghostty scrollback content
+_G.Config.new_autocmd('FileType', 'scrollback', function()
+  -- No line numbering
+  vim.wo.number = false
+  vim.bo.readonly = true
+
+  -- Make 'q' quit
+  vim.keymap.set({ 'n', 'v' }, 'q', '<cmd>qa!<cr>', { silent = true })
+
+  -- Make '/' search backward
+  vim.keymap.set('n', '/', '?', { noremap = true })
+
+  -- Don't try leave a scroll margin around the cursor
+  vim.opt_local.scrolloff = 0
+  vim.opt_local.sidescrolloff = 0
+
+  -- Disable all language servers
+  vim.lsp.enable(vim.tbl_keys(vim.lsp._enabled_configs), false)
+
+  vim.g.ministatusline_disable = true
+  vim.o.laststatus = 0
+
+  -- Scroll to the bottom of the file
+  vim.schedule(function()
+    vim.cmd('normal! G')
+  end)
+
+  vim.api.nvim_create_autocmd('TextYankPost', {
+    callback = function()
+      -- Exit after yank to return to the terminal
+      vim.defer_fn(function()
+        vim.cmd('qa!')
+      end, 220)
+    end,
+  })
+end, 'Configure Ghostty scrollback buffers')

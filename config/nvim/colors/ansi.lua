@@ -411,7 +411,11 @@ local function apply_theme()
   hi('ModeMsg', {})
   hi('MoreMsg', {})
   hi('NonText', {})
-  hi('Normal', { fg = 'fg_0' })
+  if vim.fn.has('neovide') then
+    hi('Normal', { fg = 'fg_0', bg = 'bg_0' })
+  else
+    hi('Normal', { fg = 'fg_0' })
+  end
   hi('NormalNC', { fg = 'dim_0' })
   hi('NotifyBackground', { bg = 'bg_0' })
   hi('Number', { fg = 'blue' })

@@ -13,7 +13,8 @@ keybind = alt+h=resize_split:left,32
 keybind = alt+l=resize_split:right,32
 keybind = ctrl+a>r=reload_config
 keybind = shift+enter=text:\n
-keybind = ctrl+a>c=write_screen_file:paste
+keybind = ctrl+a>c=write_screen_file:open
+keybind = ctrl+a>t=prompt_surface_title
 
 # enable the quick terminal
 keybind = global:alt+ctrl+cmd+space=toggle_quick_terminal
