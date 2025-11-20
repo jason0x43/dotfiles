@@ -1,4 +1,4 @@
-const vec4 CURSOR_COLOR_ACCENT = vec4(0.5, 0.063, 0.941, 0.3);
+const vec4 CURSOR_COLOR_ACCENT = vec4(0.5, 0.05, 0.5, 0.1);
 const float DURATION = 0.3;
 
 float sdBox(in vec2 p, in vec2 xy, in vec2 b)
