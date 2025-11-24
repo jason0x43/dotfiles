@@ -179,8 +179,11 @@ function dotfiles-home {
 
     # Update Hammerspoon config file location on macOS
     if [[ $OSTYPE == darwin* ]] && [[ -d "/Applications/Hammerspoon.app" ]]; then
-        defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
-        logSub "Updated Hammerspoon config file location"
+        val=$(defaults read org.hammerspoon.Hammerspoon MJConfigFile 2> /dev/null)
+        if [ $val != "~/.config/hammerspoon/init.lua" ]; then
+            defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
+            logSub "Updated Hammerspoon config file location"
+        fi
     fi
 }
 
@@ -389,7 +392,7 @@ function dotfiles-node {
     logSub "Updating package managers..."
 
     if (( $+commands[pnpm] )); then
-        pnpm self-update
+        pnpm self-update -q
     fi
 
     logSub "Updating global node packages..."
