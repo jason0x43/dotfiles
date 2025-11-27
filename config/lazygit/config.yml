@@ -1,0 +1,21 @@
+git:
+  autoFetch: false
+
+gui:
+  expandFocusedSidePanel: true
+  nerdFontsVersion: '3'
+  showCommandLog: false
+  sidePanelWidth: 0.25
+  tabWidth: 2
+  theme:
+    selectedLineBgColor:
+      - black
+  useHunkModeInStagingView: false
+
+keybinding:
+  universal:
+    quit: <c-c>
+    return: q
+
+promptToReturnFromSubprocess: false
+quitOnTopLevelReturn: true

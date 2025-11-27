@@ -55,7 +55,7 @@ alias grv="git remote -v"
 alias gs="git -c status.color=always status --short"
 alias gsu="git -c status.color=always status --short | grep U"
 alias gui="gitui"
-alias ts='tig status'
+# alias ts='tig status'
 
 # vim
 alias view='vi -R'
@@ -69,4 +69,9 @@ alias icat='kitten icat'
 # grip
 alias grip='go-grip -H grip.local'
 
+# opencode
 alias oc='opencode'
+
+# lazygit
+alias lg='lazygit'
+alias lgs='lazygit status'
