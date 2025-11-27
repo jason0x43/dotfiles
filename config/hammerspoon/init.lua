@@ -253,11 +253,17 @@ local function updateStageManager()
 end
 
 -- Update Stage Manager state on display layout changes
-MonitorWatcher = hs.screen.watcher.new(updateStageManager):start()
+MonitorWatcher = hs.screen.watcher
+	.new(function()
+		hs.alert.show("Display config changed")
+		updateStageManager()
+	end)
+	:start()
 
 -- Update Stage Manager state when macBook wakes
 PowerWatcher = hs.caffeinate.watcher
 	.new(function(event)
+		hs.alert.show("MacBook woke up")
 		if
 			event == hs.caffeinate.watcher.systemDidWake
 			or event == hs.caffeinate.watcher.screensDidWake
