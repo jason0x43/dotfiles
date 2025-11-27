@@ -3,7 +3,7 @@
 
   "agent": {
     "plan": {
-      "model": "openai/gpt-5.1-codex-high",
+      // "model": "openai/gpt-5.1-codex-high",
       "permission": {
         "bash": {
           "echo *": "allow",
@@ -17,7 +17,7 @@
       }
     },
     "build": {
-      "model": "anthropic/claude-sonnet-4-5"
+      // "model": "anthropic/claude-sonnet-4-5"
     }
   },
 
@@ -25,7 +25,7 @@
     "disable_paste_summary": true
   },
 
-  "instructions": [".github/copilot-instructions.md"],
+  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
 
   "keybinds": {
     "messages_page_down": "ctrl+d",
