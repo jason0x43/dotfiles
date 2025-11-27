@@ -351,13 +351,38 @@ later(function()
     end,
     desc = 'Enable linebreak in opencode output buffers',
   })
+end)
 
-  -- Cleaner markdown rendering in opencode output panes
+-- CodeCompanion
+later(function()
+  add({
+    source = 'olimorris/codecompanion.nvim',
+    depends = { 'nvim-lua/plenary.nvim' },
+  })
+
+  require('codecompanion').setup({
+    ignore_warnings = true,
+    strategies = {
+      chat = {
+        adapter = 'opencode',
+      },
+      inline = {
+        adapter = 'opencode',
+      },
+      cmd = {
+        adapter = 'opencode',
+      },
+    },
+  })
+end)
+
+later(function()
+  -- Cleaner markdown rendering in AI panes
   ---@module 'render-markdown'
   ---@type render.md.UserConfig
   vim.g.render_markdown_config = {
     anti_conceal = { enabled = false },
-    file_types = { 'opencode_output' },
+    file_types = { 'opencode_output', 'codecompanion' },
   }
   add('MeanderingProgrammer/render-markdown.nvim')
 end)
