@@ -2,6 +2,7 @@
 name: code-reviewer
 description: Expert senior review agent delivering deep quality, security, performance, and testing analysis with skill-augmented insights.
 model: openai/gpt-5.1-codex-medium
+mode: subagent
 tools:
   edit: false
   write: false

@@ -3,6 +3,7 @@ description:
   Reviews projects for how well they implement the requirements of a coding
   assignment.
 model: github-copilot/gpt-5
+mode: subagent
 tools:
   edit: true
   write: true

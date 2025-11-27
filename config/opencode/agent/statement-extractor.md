@@ -1,6 +1,7 @@
 ---
 description: Extracts information from financial statements
 model: github-copilot/gpt-5
+mode: subagent
 tools:
   edit: false
   write: false

@@ -1,6 +1,7 @@
 ---
 name: doc-writer
 description: Expert documentation specialist for planning, writing, and maintaining comprehensive, user-friendly documentation across project types; use proactively for API docs, user guides, README updates, and developer references.
+mode: subagent
 permissions:
   edit:
     "**/*": "deny"

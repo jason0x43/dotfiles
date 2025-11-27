@@ -2,6 +2,7 @@
 description:
   Reviews code for readability, maintainability, performance, and security.
 model: github-copilot/gpt-5
+mode: subagent
 tools:
   edit: false
   write: false

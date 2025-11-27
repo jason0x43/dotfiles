@@ -3,6 +3,7 @@ description:
   Helps write and validate Git commit messages according to the projects commit
   format. Use when the user asks for help writing a commit message.
 model: github-copilot/gpt-5-mini
+mode: subagent
 reasoningEffort: medium
 textVerbosity: low
 tools:
