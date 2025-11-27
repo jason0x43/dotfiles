@@ -215,24 +215,46 @@ end)
 
 later(function()
   add('stevearc/conform.nvim')
-  require('conform').setup({
+
+  local conform = require('conform')
+
+  ---@param bufnr number Buffer number (defaults to current buffer)
+  local function format_js(bufnr)
+    local file = vim.api.nvim_buf_get_name(bufnr)
+
+    local biome_root = vim.fs.root(file, { 'biome.json' })
+    if biome_root and conform.get_formatter_info('biome', bufnr).available then
+      return { 'biome' }
+    end
+
+    local deno_root = vim.fs.root(file, { 'deno.json', 'deno.jsonc' })
+    if
+      deno_root and conform.get_formatter_info('deno_fmt', bufnr).available
+    then
+      return { 'deno_fmt' }
+    end
+
+    return { 'prettier' }
+  end
+
+  conform.setup({
     formatters_by_ft = {
       blade = { 'prettier' },
       cs = { 'csharpier' },
-      css = { 'prettier' },
+      css = format_js,
       fish = { 'fish_indent' },
       html = { 'prettier' },
-      javascript = { 'prettier', 'deno_fmt' },
-      javascriptreact = { 'prettier' },
-      json = { 'prettier' },
-      jsonc = { 'prettier' },
+      javascript = format_js,
+      javascriptreact = format_js,
+      json = format_js,
+      jsonc = format_js,
       lua = { 'stylua' },
       markdown = { 'prettier' },
       python = { 'ruff_format' },
       swift = { 'swift_format' },
       tex = { 'latexindent' },
-      typescript = { 'prettier' },
-      typescriptreact = { 'prettier' },
+      typescript = format_js,
+      typescriptreact = format_js,
     },
     formatters = {
       prettier = {
