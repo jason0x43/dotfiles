@@ -6,7 +6,7 @@ import { existsSync } from "node:fs";
 
 const NOTIFIER_APP =
   "~/Applications/opencode-notifier.app/Contents/MacOS/terminal-notifier";
-const SOUND = "Tink";
+const SOUND = "Funk";
 
 /**
  * Resolve ~ to home directory
