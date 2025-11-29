@@ -135,7 +135,7 @@ later(function()
 
   require('blink.cmp').setup({
     cmdline = {
-      enabled = false,
+      enabled = true,
     },
     completion = {
       accept = {
@@ -174,17 +174,6 @@ later(function()
           },
         },
       },
-    },
-    keymap = {
-      preset = 'default',
-      ['<C-e>'] = { 'select_and_accept', 'fallback' },
-      -- ['<Tab>'] = {
-      --   'snippet_forward',
-      --   function()
-      --     return require('sidekick').nes_jump_or_apply()
-      --   end,
-      --   'fallback',
-      -- },
     },
     signature = {
       enabled = false,
@@ -336,44 +325,22 @@ later(function()
     },
   })
 
-  local opencode_group =
-    vim.api.nvim_create_augroup('opencode_config', { clear = true })
+  _G.Config.new_autocmd('BufWinEnter', '*', function(evt)
+    local buf = evt.buf
+    local starts_with = require('user.util.string').starts_with
+    if not starts_with(vim.bo[buf].filetype, 'opencode') then
+      return
+    end
 
-  -- Enable linebreak in opencode windows
-  vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
-    group = opencode_group,
-    callback = function()
-      if vim.bo.filetype == 'opencode_output' then
-        vim.wo.linebreak = true
-      elseif vim.bo.filetype == 'opencode' then
-        vim.wo.linebreak = true
-      end
-    end,
-    desc = 'Enable linebreak in opencode output buffers',
-  })
-end)
+    vim.wo.linebreak = true
 
--- CodeCompanion
-later(function()
-  add({
-    source = 'olimorris/codecompanion.nvim',
-    depends = { 'nvim-lua/plenary.nvim' },
-  })
-
-  require('codecompanion').setup({
-    ignore_warnings = true,
-    strategies = {
-      chat = {
-        adapter = 'opencode',
-      },
-      inline = {
-        adapter = 'opencode',
-      },
-      cmd = {
-        adapter = 'opencode',
-      },
-    },
-  })
+    local win = vim.fn.bufwinid(buf)
+    vim.api.nvim_set_option_value(
+      'fillchars',
+      'eob: ',
+      { scope = 'local', win = win }
+    )
+  end, 'Enable linebreak in opencode output buffers')
 end)
 
 later(function()
@@ -382,7 +349,10 @@ later(function()
   ---@type render.md.UserConfig
   vim.g.render_markdown_config = {
     anti_conceal = { enabled = false },
-    file_types = { 'opencode_output', 'codecompanion' },
+    file_types = { 'opencode_output' },
+    heading = {
+      enabled = false,
+    },
   }
   add('MeanderingProgrammer/render-markdown.nvim')
 end)
