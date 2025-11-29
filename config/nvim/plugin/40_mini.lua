@@ -287,11 +287,17 @@ later(function()
     },
     window = {
       config = function()
+        -- The height of the picker
         local height = math.min(10, math.floor(0.4 * vim.o.lines))
+        -- The width of the picker (screen width - border)
         local width = vim.o.columns - 2
-        local row = vim.o.lines - height - 4
-        if vim.o.filetype == 'ministarter' then
-          row = row + 2
+        -- The row the picker should be drawn at
+        -- (screen height - picker height - border - cmdline height)
+        local row = vim.o.lines - height - 2 - 1
+
+        -- Raise the picker above the statusbar if the statusbar is visible
+        if vim.o.laststatus > 0 then
+          row = row - 1
         end
 
         return {
@@ -308,6 +314,7 @@ later(function()
   MiniPick.registry.diagnostic = require('user.mini.picker_diagnostics')
   MiniPick.registry.recent = require('user.mini.picker_recent')
   MiniPick.registry.undotree = require('user.mini.picker_undo')
+  MiniPick.registry.commandbar = require('user.mini.picker_commandbar')
   MiniPick.registry.smart = require('user.mini.picker_smarter')
   MiniPick.registry.icons = require('user.mini.picker_icons')
   MiniPick.registry.modified = require('user.mini.picker_modified')

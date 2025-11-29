@@ -24,15 +24,10 @@ set_key('n', '<space>', '<Cmd>set nohlsearch<CR>', 'Clear search highlights')
 -- Disable "Entering Ex mode"
 set_key('n', 'Q', '<nop>', 'Disable entering Ex mode')
 
--- Go to the previous buffer
-set_key('n', '<leader><leader>', '<C-^>', 'Go to the previous buffer')
-
-set_key(
-  'n',
-  '<leader>;',
-  '<Cmd>lua require("dropbar.api").pick()<CR>',
-  'Pick symbols in winbar'
-)
+-- Open a command picker
+set_key('n', '<leader>;', function()
+  MiniPick.registry.commandbar()
+end, 'Pick a command')
 
 set_key(
   'n',
