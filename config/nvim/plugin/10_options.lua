@@ -1,6 +1,9 @@
 -- Leader for mappings
 vim.g.mapleader = ';'
 
+-- Fuzzy command line matching
+vim.opt.wildoptions = vim.opt.wildoptions + 'fuzzy'
+
 -- More responsive UI
 vim.o.updatetime = 500
 vim.o.timeoutlen = 500
