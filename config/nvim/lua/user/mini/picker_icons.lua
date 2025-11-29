@@ -1,3 +1,4 @@
+---@module 'mini.pick'
 -- Based on Snacks icons picker
 
 local NERDFONTS_SETS = {
@@ -145,6 +146,7 @@ return function(local_opts)
 
   MiniPick.start({
     source = {
+      name = "Icons",
       items = icons,
       choose = function(item)
         vim.api.nvim_win_call(
