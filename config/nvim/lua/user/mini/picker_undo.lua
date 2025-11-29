@@ -1,7 +1,5 @@
 -- This code is based on telescope-undo
 
-local M = {}
-
 -- how many lines of context to show around each diff
 local context_lines = 3
 
@@ -13,14 +11,6 @@ local context_lines = 3
 ---|  { seq: number, alt: number, is_first: boolean, is_next: boolean, time: number }
 ---@alias UndoList
 ---|  UndoListEntry[]
-
--- return true of the string str starts with the string other
----@param str string
----@param other string
----@return boolean
-local starts_with = function(str, other)
-  return str:sub(1, #other) == other
-end
 
 ---@param entries table
 ---@param level number
@@ -286,6 +276,7 @@ return function()
 
   require('mini.pick').start({
     source = {
+      name = "Undo",
       items = lines,
       choose = function(item)
         local seq = get_seq(item)
@@ -316,6 +307,7 @@ return function()
         local ns = vim.api.nvim_create_namespace('undotree')
 
         if diff_or_error ~= nil and ok then
+          local starts_with = require('user.util.string').starts_with
           for i = 0, #dlines - 1 do
             local line = dlines[i + 1]
             if starts_with(line, '--- ') then

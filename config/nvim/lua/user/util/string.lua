@@ -43,4 +43,12 @@ M.trim = function(str)
   return str:gsub('^%s+', ''):gsub('%s+$', '')
 end
 
+---Return true if the string str starts with the string other
+---@param str string
+---@param other string
+---@return boolean
+M.starts_with = function(str, other)
+  return str:sub(1, #other) == other
+end
+
 return M
