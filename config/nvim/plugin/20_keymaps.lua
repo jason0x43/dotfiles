@@ -250,6 +250,13 @@ end
 
 set_key('n', '<leader>y', '<Cmd>Yazi<CR>', 'Open a yazi overlay')
 
+vim.keymap.set(
+  { 'n', 'x' },
+  '<enter>',
+  require('user.util.jump').jump,
+  { desc = 'Jump to a location' }
+)
+
 -- Override the default "goto definition" handler to use relative paths
 -- vim.keymap.set('n', '<c-]>', function()
 --   local params = vim.lsp.util.make_position_params(0, 'utf-16')

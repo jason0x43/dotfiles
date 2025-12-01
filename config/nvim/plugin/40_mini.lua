@@ -252,11 +252,6 @@ later(function()
   end, 'Disable indentscope in nofile buffers')
 end)
 
--- Jumping around
-later(function()
-  require('mini.jump2d').setup()
-end)
-
 -- Move text
 later(function()
   require('mini.move').setup()
