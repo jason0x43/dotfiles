@@ -3,9 +3,8 @@ local LABEL_CHARS =
   vim.split('fjdkslgha;rueiwotyqpvbcnxmzFJDKSLGHARUEIWOTYQPVBCNXMZ', '')
 
 -- all printable chars we want to capture
-local PRINTABLE =
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    .. '`~!@#$%^&*()-_=+[{]}\\|;:\'",<.>/?'
+local PRINTABLE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  .. '`~!@#$%^&*()-_=+[{]}\\|;:\'",<.>/?'
 
 local M = {}
 
@@ -25,13 +24,18 @@ local function highlight_matches(needle)
   end
 
   local line_idx_start, line_idx_end = vim.fn.line('w0'), vim.fn.line('w$')
-  local lines =
-    vim.api.nvim_buf_get_lines(state.bufnr, line_idx_start - 1, line_idx_end, false)
+  local lines = vim.api.nvim_buf_get_lines(
+    state.bufnr,
+    line_idx_start - 1,
+    line_idx_end,
+    false
+  )
 
   local is_case_sensitive = needle ~= string.lower(needle)
 
   for lines_i, line_text in ipairs(lines) do
-    local search_text = is_case_sensitive and line_text or string.lower(line_text)
+    local search_text = is_case_sensitive and line_text
+      or string.lower(line_text)
     local line_idx = lines_i + line_idx_start - 1
 
     -- skip folded lines
@@ -57,6 +61,8 @@ local function cleanup()
   if not state then
     return
   end
+
+  vim.cmd('echom ""')
 
   -- clear extmarks
   vim.api.nvim_buf_clear_namespace(state.bufnr, NS, 0, -1)
@@ -90,7 +96,8 @@ local function find_matches(extmarks, char1, char2)
   local is_case_sensitive = needle ~= string.lower(needle)
 
   for lines_i, line_text in ipairs(lines) do
-    local search_text = is_case_sensitive and line_text or string.lower(line_text)
+    local search_text = is_case_sensitive and line_text
+      or string.lower(line_text)
     local line_idx = lines_i + line_idx_start - 1
 
     -- skip folded lines
@@ -202,7 +209,7 @@ function M.jump()
   -- cleanup any existing state
   cleanup()
 
-  require('user.util.toast').toast('Enter 2 characters to jump to...')
+  vim.cmd('echom "Enter two characters..."')
 
   local bufnr = vim.api.nvim_get_current_buf()
 

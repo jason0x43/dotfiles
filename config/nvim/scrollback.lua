@@ -71,3 +71,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end, 220)
   end,
 })
+
+-- Enable jump-to-location functionality
+vim.keymap.set(
+  { 'n', 'x' },
+  '<enter>',
+  require('user.util.jump').jump,
+  { desc = 'Jump to a location' }
+)
+
+vim.cmd('hi Search ctermbg=8')
+vim.cmd('hi CurSearch cterm=bold ctermbg=5')
