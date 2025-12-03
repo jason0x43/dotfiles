@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $OSTYPE == linux* ]]; then
-  cd /home/linuxbrew && sudo -u linuxbrew /home/linuxbrew/.linuxbrew/bin/brew $@
+  /home/linuxbrew/.linuxbrew/bin/brew $@
 else
   /opt/homebrew/bin/brew $@
 fi
