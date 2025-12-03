@@ -274,10 +274,7 @@
     }
   },
 
-  // "theme": "ansi",
-  // "theme": "mynord",
-  // "theme": "opencode",
-  "theme": "system"
+  "theme": "selenized",
 
   // "tools": {
   //   // Disable github tools by default; enable per-project.
