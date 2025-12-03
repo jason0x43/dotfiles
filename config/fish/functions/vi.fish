@@ -8,7 +8,7 @@ function vi
             nvim $argv
         end
     else if command -q vim
-        vim $argv
+        command vim $argv
     else
         command vi $argv
     end
