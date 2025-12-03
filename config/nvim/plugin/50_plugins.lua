@@ -82,9 +82,11 @@ later(function()
   ---@type string | nil
   local checkout = 'v.1.7.0'
 
-  if vim.fn.executable('rustc') then
+  if vim.fn.executable('rustc') == 1 then
     checkout = nil
   else
+    add('nvim-lua/plenary.nvim')
+
     -- Get latest pre-built version of blink
     local curl = require('plenary.curl')
     local res = curl.get(
@@ -106,7 +108,13 @@ later(function()
 
   -- build from source, requires nightly rust
   local function build_blink(params)
+    -- Don't try to build if we're not using head
+    if checkout ~= nil then
+      return
+    end
+
     vim.notify('Building blink.cmp', vim.log.levels.INFO)
+
     local obj = vim
       .system({ 'cargo', 'build', '--release' }, { cwd = params.path })
       :wait()
@@ -308,7 +316,7 @@ end)
 -- AI =========================================================================
 
 -- opencode
-if vim.fn.executable('opencode') then
+if vim.fn.executable('opencode') == 1 then
   later(function()
     add({
       source = 'sudo-tee/opencode.nvim',
