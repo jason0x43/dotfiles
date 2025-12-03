@@ -308,54 +308,56 @@ end)
 -- AI =========================================================================
 
 -- opencode
-later(function()
-  add({
-    source = 'sudo-tee/opencode.nvim',
-    depends = { 'nvim-lua/plenary.nvim' },
-  })
+if vim.fn.executable('opencode') then
+  later(function()
+    add({
+      source = 'sudo-tee/opencode.nvim',
+      depends = { 'nvim-lua/plenary.nvim' },
+    })
 
-  require('opencode').setup({
-    ui = {
-      input = {
-        text = {
-          wrap = true,
+    require('opencode').setup({
+      ui = {
+        input = {
+          text = {
+            wrap = true,
+          },
         },
+        window_width = 80 / vim.o.columns,
       },
-      window_width = 80 / vim.o.columns,
-    },
-  })
+    })
 
-  _G.Config.new_autocmd('BufWinEnter', '*', function(evt)
-    local buf = evt.buf
-    local starts_with = require('user.util.string').starts_with
-    if not starts_with(vim.bo[buf].filetype, 'opencode') then
-      return
-    end
+    _G.Config.new_autocmd('BufWinEnter', '*', function(evt)
+      local buf = evt.buf
+      local starts_with = require('user.util.string').starts_with
+      if not starts_with(vim.bo[buf].filetype, 'opencode') then
+        return
+      end
 
-    vim.wo.linebreak = true
+      vim.wo.linebreak = true
 
-    local win = vim.fn.bufwinid(buf)
-    vim.api.nvim_set_option_value(
-      'fillchars',
-      'eob: ',
-      { scope = 'local', win = win }
-    )
-  end, 'Enable linebreak in opencode output buffers')
-end)
+      local win = vim.fn.bufwinid(buf)
+      vim.api.nvim_set_option_value(
+        'fillchars',
+        'eob: ',
+        { scope = 'local', win = win }
+      )
+    end, 'Enable linebreak in opencode output buffers')
+  end)
 
-later(function()
-  -- Cleaner markdown rendering in AI panes
-  ---@module 'render-markdown'
-  ---@type render.md.UserConfig
-  vim.g.render_markdown_config = {
-    anti_conceal = { enabled = false },
-    file_types = { 'opencode_output' },
-    heading = {
-      enabled = false,
-    },
-  }
-  add('MeanderingProgrammer/render-markdown.nvim')
-end)
+  later(function()
+    -- Cleaner markdown rendering in AI panes
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    vim.g.render_markdown_config = {
+      anti_conceal = { enabled = false },
+      file_types = { 'opencode_output' },
+      heading = {
+        enabled = false,
+      },
+    }
+    add('MeanderingProgrammer/render-markdown.nvim')
+  end)
+end
 
 -- Other functionality ========================================================
 
