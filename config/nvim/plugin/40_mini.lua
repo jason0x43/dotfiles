@@ -22,6 +22,11 @@ now(function()
   require('mini.notify').setup()
 end)
 
+-- Command line updates
+now(function()
+  require('mini.cmdline').setup()
+end)
+
 -- Start screen
 if not (vim.list_contains(vim.v.argv, '-p')) then
   -- Only load the start screen if neovide wasn't started with '-p'

@@ -143,7 +143,7 @@ later(function()
 
   require('blink.cmp').setup({
     cmdline = {
-      enabled = true,
+      enabled = false,
     },
     completion = {
       accept = {
