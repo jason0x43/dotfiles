@@ -125,28 +125,28 @@
       "light": "lightRed"
     },
     "diffAddedBg": {
-      "dark": "darkBg",
-      "light": "lightBg"
+      "dark": "darkBlack",
+      "light": "lightBlack"
     },
     "diffRemovedBg": {
-      "dark": "darkBg",
-      "light": "lightBg"
+      "dark": "darkBlack",
+      "light": "lightBlack"
     },
     "diffContextBg": {
-      "dark": "darkBg",
-      "light": "lightBg"
+      "dark": "darkBlack",
+      "light": "lightBlack"
     },
     "diffLineNumber": {
       "dark": "darkWhite",
       "light": "lightWhite"
     },
     "diffAddedLineNumberBg": {
-      "dark": "darkBg",
-      "light": "lightBg"
+      "dark": "darkBlack",
+      "light": "lightBlack"
     },
     "diffRemovedLineNumberBg": {
-      "dark": "darkBg",
-      "light": "lightBg"
+      "dark": "darkBlack",
+      "light": "lightBlack"
     },
     "markdownText": {
       "dark": "darkBrWhite",
