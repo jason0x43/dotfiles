@@ -61,6 +61,7 @@ alias gui="gitui"
 alias view='vi -R'
 alias vim='vi'
 alias vimdiff='vi -d'
+alias vil="vi -c 'normal `0'"
 
 # kitty
 alias kt='kitten @ set-tab-title'
