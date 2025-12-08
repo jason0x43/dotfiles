@@ -15,7 +15,6 @@ gui:
 keybinding:
   universal:
     quit: <c-c>
-    return: q
 
 promptToReturnFromSubprocess: false
 quitOnTopLevelReturn: true
