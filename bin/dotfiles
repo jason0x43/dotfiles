@@ -458,55 +458,42 @@ dotfiles-node() {
 
   logSub "Updating global node packages..."
 
-  # get list of outdated global packages
-  local mods=()
+  local npm_cmd
+  npm_cmd=$(command -v npm)
+
+  local outdated_json
+  outdated_json=$("$npm_cmd" --registry=https://registry.npmjs.org outdated -g --json 2>/dev/null) || true
+
+  local updates
+  updates=$(printf '%s' "$outdated_json" | node -e '
+const fs = require("fs");
+const s = fs.readFileSync(0, "utf8").trim();
+if (!s || s === "{}") process.exit(0);
+const data = JSON.parse(s);
+for (const [name, info] of Object.entries(data)) {
+  const current = info.current || "";
+  const latest = info.latest || info.wanted || "";
+  console.log(`${name} ${current}->${latest}`);
+}
+')
+
+  if [[ -z "$updates" ]]; then
+    logSub "No global packages to update"
+    return
+  fi
+
+  "$npm_cmd" update \
+    --registry=https://registry.npmjs.org \
+    --progress=false \
+    --no-fund \
+    --no-audit \
+    --global \
+    --no-ignore-scripts > /dev/null
+
   while IFS= read -r line; do
-    mods+=("$line")
-  done < <(npm --registry=https://registry.npmjs.org outdated -g --parseable)
-  
-  for mod in "${mods[@]}"; do
-    [[ -n "$mod" ]] || continue
-    
-    # extract current and latest fields
-    IFS=':' read -ra array <<< "$mod"
-    local currentPkg="${array[2]}"
-    local latestPkg="${array[3]}"
-
-    # extract current and latest versions, minus any prerelease tags
-    IFS='@' read -ra currentVerParts <<< "$currentPkg"
-    local currentVer="${currentVerParts[1]}"
-    IFS='@' read -ra latestVerParts <<< "$latestPkg"
-    local latestVer="${latestVerParts[1]}"
-
-    if [[ "$latestVer" == 'linked' ]]; then
-      logSub "Skipping $latestPkg"
-      continue
-    fi
-
-    # read versions into arrays
-    IFS='.' read -ra current <<< "$currentVer"
-    IFS='.' read -ra latest <<< "$latestVer"
-
-    # if latest is newer than current, install latest
-    if (( latest[0] > current[0] )) || {
-      (( latest[0] == current[0] )) &&
-      (( latest[1] > current[1] )) || {
-        (( latest[0] == current[0] )) &&
-        (( latest[1] == current[1] )) &&
-        (( latest[2] > current[2] ));
-      };
-    }; then
-      local npm_cmd
-      npm_cmd=$(command -v npm)
-      "$npm_cmd" install \
-        --registry=https://registry.npmjs.org \
-        --progress=false \
-        -g \
-        "$latestPkg" \
-        --no-ignore-scripts > /dev/null
-      logSub "Installed $latestPkg"
-    fi
-  done
+    [[ -n "$line" ]] || continue
+    logSub "Updated $line"
+  done <<< "$updates"
 }
 
 # Update bun
