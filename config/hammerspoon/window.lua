@@ -32,7 +32,18 @@ end
 M.isStageManagerEnabled = function()
 	local output =
 		hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
+  ---@cast output string
 	return util.trim(output) == "1"
+end
+
+---Enable or disable Stage Manager.
+---@param enabled boolean
+M.setStageManagerEnabled = function(enabled)
+	local val = enabled and "true" or "false"
+	hs.execute(
+		"/usr/bin/defaults write com.apple.WindowManager GloballyEnabled -bool "
+			.. val
+	)
 end
 
 ---@param area 'left'|'right'|'center'
@@ -64,8 +75,8 @@ M.fill = function(area, options)
 		else
 			winFrame.w = width
 		end
-  else
-    winFrame.w = screenFrame.w / 2
+	else
+		winFrame.w = screenFrame.w / 2
 	end
 
 	winFrame.h = screenFrame.h - marginTop - marginBottom

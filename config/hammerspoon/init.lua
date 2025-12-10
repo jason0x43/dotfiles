@@ -237,41 +237,50 @@ ConfigWatcher = hs.pathwatcher
 	end)
 	:start()
 
+local updateDebounceTimer
 local function updateStageManager()
-	local script = [[
-    tell application "System Events"
-      set countDisplays to count of desktops
+	local delay = 1
+	if updateDebounceTimer then
+		updateDebounceTimer:stop()
+	end
 
-      if countDisplays is greater than 1 then
-        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool false"
-      else
-        do shell script "defaults write com.apple.WindowManager GloballyEnabled -bool true"
-      end if
-    end tell
-  ]]
-	hs.osascript.applescript(script)
+	updateDebounceTimer = hs.timer.doAfter(delay, function()
+    local screens = hs.screen.allScreens()
+
+    if #screens > 1 and window.isStageManagerEnabled() then
+      hs.alert.show("Disabling Stage Manager")
+      window.setStageManagerEnabled(false)
+    elseif #screens == 1 and not window.isStageManagerEnabled() then
+      hs.alert.show("Enabling Stage Manager")
+      window.setStageManagerEnabled(true)
+    end
+
+		updateDebounceTimer = nil
+	end)
 end
 
 -- Update Stage Manager state on display layout changes
-MonitorWatcher = hs.screen.watcher
-	.new(function()
-		hs.alert.show("Display config changed")
-		updateStageManager()
-	end)
-	:start()
+if not MonitorWatcher then
+	MonitorWatcher = hs.screen.watcher
+		.new(function()
+			updateStageManager()
+		end)
+		:start()
+end
 
 -- Update Stage Manager state when macBook wakes
-PowerWatcher = hs.caffeinate.watcher
-	.new(function(event)
-		hs.alert.show("MacBook woke up")
-		if
-			event == hs.caffeinate.watcher.systemDidWake
-			or event == hs.caffeinate.watcher.screensDidWake
-		then
-			updateStageManager()
-		end
-	end)
-	:start()
+if not PowerWatcher then
+	PowerWatcher = hs.caffeinate.watcher
+		.new(function(event)
+			if
+				event == hs.caffeinate.watcher.systemDidWake
+				or event == hs.caffeinate.watcher.screensDidWake
+			then
+				updateStageManager()
+			end
+		end)
+		:start()
+end
 
 -- Make the mouse more obvious
 hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
