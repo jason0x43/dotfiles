@@ -295,19 +295,7 @@ dotfiles-brew() {
 
     logSub "Installing Homebrew..."
 
-    if [[ $OSTYPE == linux* ]]; then
-      if ! id linuxbrew > /dev/null 2>&1; then
-        sudo adduser --disabled-password --gecos "" linuxbrew
-      fi
-
-      sudo -u linuxbrew NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      sudo apt install build-essential
-
-      sudo chmod a+rx /home/linuxbrew
-      sudo chmod -R o=u-w "$HOMEBREW_BASE"
-    else
-      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
   # Install some missing or newer core packages from brew
@@ -329,18 +317,10 @@ dotfiles-brew() {
     )
   fi
 
-  if [[ $OSTYPE == linux* ]]; then
-    sudo -u linuxbrew bash -c "cd && $BREW install -q ${brew_packages[*]}"
-  else
-    "$BREW" install -q "${brew_packages[@]}"
-  fi
+  "$BREW" install -q "${brew_packages[@]}"
 
   logSub "Updating installed brew packages..."
-  if [[ $OSTYPE == linux* ]]; then
-    sudo -u linuxbrew bash -c "cd && $BREW upgrade"
-  else
-    "$BREW" upgrade
-  fi
+  "$BREW" upgrade
 
   # Remove git's included zsh completions in favor of the system completions
   if [[ -f "${HOMEBREW_BASE}/share/zsh/site-functions/_git" ]]; then
