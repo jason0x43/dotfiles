@@ -453,47 +453,23 @@ dotfiles-node() {
   logSub "Updating package managers..."
 
   if command_exists pnpm; then
-    pnpm self-update -q
+    pnpm self-update -q > /dev/null
   fi
 
   logSub "Updating global node packages..."
 
-  local npm_cmd
-  npm_cmd=$(command -v npm)
+  local outdated
+  outdated=$(npm outdated -g --json | jq -r 'to_entries[] | "\(.key)"')
 
-  local outdated_json
-  outdated_json=$("$npm_cmd" --registry=https://registry.npmjs.org outdated -g --json 2>/dev/null) || true
-
-  local updates
-  updates=$(printf '%s' "$outdated_json" | node -e '
-const fs = require("fs");
-const s = fs.readFileSync(0, "utf8").trim();
-if (!s || s === "{}") process.exit(0);
-const data = JSON.parse(s);
-for (const [name, info] of Object.entries(data)) {
-  const current = info.current || "";
-  const latest = info.latest || info.wanted || "";
-  console.log(`${name} ${current}->${latest}`);
-}
-')
-
-  if [[ -z "$updates" ]]; then
+  if [[ -z "$outdated" ]]; then
     logSub "No global packages to update"
     return
   fi
 
-  "$npm_cmd" update \
-    --registry=https://registry.npmjs.org \
-    --progress=false \
-    --no-fund \
-    --no-audit \
-    --global \
-    --no-ignore-scripts > /dev/null
-
-  while IFS= read -r line; do
-    [[ -n "$line" ]] || continue
-    logSub "Updated $line"
-  done <<< "$updates"
+  for pkg in $outdated; do
+    logSub "Updating $pkg..."
+    npm i -g "${pkg}@latest" > /dev/null
+  done
 }
 
 # Update bun
@@ -515,7 +491,7 @@ dotfiles-bun() {
   bun upgrade
 }
 
-# Update uv tools
+# Update uv and tools
 dotfiles-uv() {
   if ! command_exists uv; then
     if [[ $INSTALL == 0 ]]; then
@@ -526,6 +502,9 @@ dotfiles-uv() {
     log "Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
   fi
+
+  log "Updating uv..."
+  uv self update
 
   log "Updating uv tools..."
   uv tool upgrade --all
