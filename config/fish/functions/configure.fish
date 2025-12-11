@@ -1,14 +1,27 @@
 function configure
+    # Install plugin manager if it's missing
     if ! command -q fisher
         curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish \
             | source && fisher install jorgebucaran/fisher
     end
 
+    set -l tide_installed 0
     if ! command -q tide
-        fisher install IlanCosman/tide@v6
+        set -l tide_installed 1
     end
 
-    fisher update
+    # Install/update plugins
+    # @fish-lsp-disable 7001
+    UV_VENV_CLEAR=1 fisher update >/dev/null
+
+    # Disable `clear` in functions/tide/configure/choices/all/finish.fish
+    set -l functions_path (dirname (status --current-filename))
+    set -l tide_finish_config "$functions_path/tide/configure/choices/all/finish.fish"
+    if test -f $tide_finish_config
+        sed -i '' -E 's@^([[:space:]]*)(command -q clear && clear)@\1# \2@' $tide_finish_config
+        functions -e finish
+        source "$functions_path/tide/configure/choices/all/finish.fish"
+    end
 
     tide configure \
         --auto \
@@ -21,9 +34,9 @@ function configure
         --icons='Many icons' \
         --transient=No
 
+    # @fish-lsp-disable 2003
     set -U fish_greeting ""
     set -U tide_git_icon 
-
     set -U tide_dotnet_icon 
     set -U tide_dotnet_color blue
     set -U tide_dotnet_bg_color normal
