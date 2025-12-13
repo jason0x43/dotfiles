@@ -141,8 +141,7 @@ for _, plugin in ipairs(disabled_plugins) do
 end
 
 -- Logging
-vim.lsp.set_log_level('error')
-vim.lsp.log.set_format_func(vim.inspect)
+vim.lsp.log.set_level(vim.lsp.log_levels.ERROR)
 
 -- When an lsp returns multiple "goto definition" results, only keep the
 -- first one
@@ -155,7 +154,7 @@ vim.lsp.handlers['textDocument/definition'] = function(err, result, ctx, config)
 end
 
 if vim.g.neovide then
-  -- Don't animate neovide cursor
+  -- Don't animate Neovide cursor
   vim.g.neovide_cursor_animation_length = 0
 
   vim.o.guifont = 'JetBrainsMono Nerd Font Mono:h12'
