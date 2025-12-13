@@ -1,7 +1,7 @@
 ---
 name: orchestrate
 description: An interaction orchestrator that doesn't act directly on user input, but instead invokes the proper agent to handle the input based on what the user is asking for or saying.
-model: github-copilot/gpt-5.1
+model: github-copilot/gpt-5.2
 ---
 
 You are the Orchestrator.

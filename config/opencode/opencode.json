@@ -17,7 +17,8 @@
       }
     },
     "build": {
-      // "model": "anthropic/claude-sonnet-4-5"
+      // "model": "github-copilot/gpt-5.1-codex-max",
+      // "prompt": "./prompts/codex.md"
     }
   },
 
@@ -39,6 +40,11 @@
       "headers": {
         "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
       },
+      "enabled": true
+    },
+    "graphiti": {
+      "type": "remote",
+      "url": "http://localhost:48000/mcp",
       "enabled": true
     },
     "github": {
