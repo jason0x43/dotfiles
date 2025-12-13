@@ -42,7 +42,7 @@ now_if_args(function()
   })
 end)
 
--- Lanuage servers ============================================================
+-- Language servers ===========================================================
 
 now_if_args(function()
   add('neovim/nvim-lspconfig')
@@ -91,9 +91,7 @@ later(function()
     local curl = require('plenary.curl')
     local res = curl.get(
       'https://api.github.com/repos/Saghen/blink.cmp/releases/latest',
-      {
-        headers = { ['User-Agent'] = 'neovim-lua' },
-      }
+      { headers = { ['User-Agent'] = 'neovim-lua' } }
     )
     if res.status ~= 200 then
       vim.notify(
@@ -154,9 +152,6 @@ later(function()
       },
       documentation = {
         auto_show = true,
-        window = {
-          border = 'rounded',
-        },
       },
       ghost_text = {
         enabled = false,
@@ -171,6 +166,12 @@ later(function()
         draw = {
           columns = { { 'kind_icon' }, { 'label', gap = 1 } },
           components = {
+            kind_icon = {
+              highlight = function(ctx)
+                local _, hl, _ = require('mini.icons').get('lsp', ctx.kind)
+                return hl
+              end,
+            },
             label = {
               text = function(ctx)
                 return require('colorful-menu').blink_components_text(ctx)
@@ -185,9 +186,7 @@ later(function()
     },
     signature = {
       enabled = false,
-      window = {
-        border = 'rounded',
-      },
+      border = 'none',
     },
     sources = {
       default = { 'copilot', 'lsp', 'path', 'buffer', 'lazydev' },
@@ -315,7 +314,7 @@ end)
 
 -- AI =========================================================================
 
--- opencode
+-- OpenCode
 if vim.fn.executable('opencode') == 1 then
   later(function()
     add({
