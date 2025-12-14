@@ -341,6 +341,7 @@ dotfiles-apt() {
     return
   fi
 
+  log "Upgrading apt packages..."
   sudo apt update -qq
   sudo apt upgrade -qq
 }
