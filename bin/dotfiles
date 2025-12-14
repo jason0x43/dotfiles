@@ -574,7 +574,6 @@ else
 
   dotfiles-home
   dotfiles-brew
-  dotfiles-apt
   dotfiles-node
   dotfiles-bun
   dotfiles-uv
