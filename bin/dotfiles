@@ -334,6 +334,17 @@ dotfiles-brew() {
   fi
 }
 
+# Update apt packages
+dotfiles-apt() {
+  if [[ $OSTYPE != linux* ]]; then
+    warn "Not a linux system"
+    return
+  fi
+
+  sudo apt update -qq
+  sudo apt upgrade -qq
+}
+
 # Update neovim plugins
 dotfiles-nvim() {
   if ! command_exists nvim; then
@@ -485,6 +496,27 @@ dotfiles-uv() {
   uv tool upgrade --all
 }
 
+# Update codex completions
+dotfiles-codex() {
+  if ! command_exists codex; then
+    if [[ $INSTALL == 0 ]]; then
+      warn "codex not installed"
+      return
+    fi
+
+    if ! command_exists npm; then
+      warn "npm not installed"
+      return
+    fi
+
+    log "Installing codex..."
+    npm i -g @openai/codex
+  fi
+
+  log "Updating codex completions..."
+  codex completion fish > "$XDG_CONFIG_HOME/fish/completions/codex.fish"
+}
+
 # ============================================================================
 # Main Script
 # ============================================================================
@@ -535,11 +567,17 @@ done
 if [[ -n "$GROUP" ]]; then
   "dotfiles-${GROUP}"
 else
+  if [[ $OSTYPE == linux* ]]; then
+    dotfiles-apt
+  fi
+
   dotfiles-home
   dotfiles-brew
+  dotfiles-apt
   dotfiles-node
   dotfiles-bun
   dotfiles-uv
+  dotfiles-codex
   dotfiles-rust
   dotfiles-bat
   dotfiles-fish
