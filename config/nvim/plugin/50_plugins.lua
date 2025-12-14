@@ -186,7 +186,6 @@ later(function()
     },
     signature = {
       enabled = false,
-      border = 'none',
     },
     sources = {
       default = { 'copilot', 'lsp', 'path', 'buffer', 'lazydev' },
