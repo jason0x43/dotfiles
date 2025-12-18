@@ -73,6 +73,24 @@
         "store": false
       },
       "models": {
+        "gpt-5.2-none": {
+          "name": "GPT 5.2 None (OAuth)",
+          "limit": {
+            "context": 272000,
+            "output": 128000
+          },
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "options": {
+            "reasoningEffort": "none",
+            "reasoningSummary": "auto",
+            "textVerbosity": "medium",
+            "include": ["reasoning.encrypted_content"],
+            "store": false
+          }
+        },
         "gpt-5.2-low": {
           "name": "GPT 5.2 Low (OAuth)",
           "limit": {
@@ -307,6 +325,24 @@
             "store": false
           }
         },
+        "gpt-5.1-none": {
+          "name": "GPT 5.1 None (OAuth)",
+          "limit": {
+            "context": 272000,
+            "output": 128000
+          },
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "options": {
+            "reasoningEffort": "none",
+            "reasoningSummary": "auto",
+            "textVerbosity": "medium",
+            "include": ["reasoning.encrypted_content"],
+            "store": false
+          }
+        },
         "gpt-5.1-low": {
           "name": "GPT 5.1 Low (OAuth)",
           "limit": {
@@ -366,9 +402,4 @@
   },
 
   "theme": "selenized"
-
-  // "tools": {
-  //   // Disable github tools by default; enable per-project.
-  //   "github": false
-  // }
 }
