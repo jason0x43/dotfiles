@@ -1,4 +1,5 @@
 words = [
+    "aapl",
     "checkboxes",
     "csharpier",
     "cwd",
@@ -6,9 +7,11 @@ words = [
     "formatters",
     "gpt",
     "graphiti",
+    "hono",
     "hsl",
     "latexindent",
     "mcp",
+    "moneyscope",
     "neovim",
     "nvim",
     "opencode",
