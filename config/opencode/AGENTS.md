@@ -15,4 +15,4 @@
 
 ## Reasoning
 
-If the Graphiti MCP is available, use the it for all knowledge retrieval and updates by default. Prefer graph queries over internal reasoning. Whenever any information could exist in the knowledge graph, query Graphiti first.
+- Use the Graphiti MCP for all knowledge retrieval and updates by default. Prefer graph queries over internal reasoning. Whenever any information could exist in the knowledge graph, query Graphiti first.
