@@ -55,7 +55,9 @@ alias grv="git remote -v"
 alias gs="git -c status.color=always status --short"
 alias gsu="git -c status.color=always status --short | grep U"
 alias gui="gitui"
-# alias ts='tig status'
+alias gwa="git worktree add"
+alias gwl="git worktree list"
+alias gwr="git worktree remove"
 
 # vim
 alias view='vi -R'
