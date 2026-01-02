@@ -1,6 +1,6 @@
 ---
 description: Helps develop and debug Android applications
-model: openai/gpt-5.1-codex-medium
+model: openai/gpt-5.2-high
 mode: subagent
 ---
 
