@@ -81,41 +81,6 @@ Before implementing a fix for a GitHub issue:
 2. Verify acceptance criteria
 3. Report completion
 
-## Git Workflow (CRITICAL)
-
-### Commit Early, Commit Often
-
-**Non-negotiable:** Commit after EVERY meaningful change. Don't batch commits.
-
-```bash
-# After each logical change
-git add <specific files>
-git commit -m "<description>"
-git push
-```
-
-### Commit Message Format
-
-```
-<type>: <description>
-
-Types: fix, feat, refactor, docs, test, chore
-```
-
-Examples:
-
-- `fix: Skip API snapshot sync on testnet`
-- `feat: Add snapshot visualization script`
-- `refactor: Remove colorama dependencies`
-
-### Branch Strategy
-
-Always create a branch for new work: `<type>/<short-name>`
-
-```bash
-git checkout -b fix/skip-testnet-sync
-```
-
 ### After Every Implementation
 
 Always report back to Orchestrator with:
@@ -158,4 +123,4 @@ Every change needs tests or test updates.
 
 - Deviate from plan without asking
 - Skip type hints
-- Commit without tests passing
+- Complete without tests passing
