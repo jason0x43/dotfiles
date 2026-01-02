@@ -48,6 +48,7 @@ vim.filetype.add({
         if
           first_line:find('#!/usr/bin/env %-S deno') ~= nil
           or first_line:find('#!/usr/bin/env %-S npx tsx') ~= nil
+          or first_line:find('#!/usr/bin/env bun') ~= nil
         then
           return 'typescript'
         end
