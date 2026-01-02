@@ -47,5 +47,6 @@ words = [
     "xcodebuild",
     "xcodeproj",
     "xcrun",
+    "xdg",
     "zod",
 ]
