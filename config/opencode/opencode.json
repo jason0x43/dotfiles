@@ -58,7 +58,6 @@
   },
 
   "plugin": [
-    "opencode-skills@latest",
     "opencode-gemini-auth@latest",
     "opencode-openai-codex-auth@latest"
   ],
