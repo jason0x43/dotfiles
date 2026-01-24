@@ -74,25 +74,6 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	else
 		if #browserWins > 0 then
 			if #terminalWins > 0 then
-				-- if #simWins + #emuWins > 0 then
-				--   for _, win in ipairs(browserWins) do
-				--     window.fill("left", {
-				--       window = win,
-				--       width = 1570,
-				--       marginLeft = 370,
-				--     })
-				--   end
-				--   for _, win in ipairs(simWins) do
-				--     window.moveTo("top-left", win)
-				--   end
-				--   for _, win in ipairs(emuWins) do
-				--     window.moveTo("bottom-left", win)
-				--   end
-				--   for _, win in ipairs(terminalWins) do
-				--     window.fill("right", { window = win, width = const.THIN_WIDTH })
-				--   end
-				-- else
-				logger.i("using non-emu sizing")
 				for _, win in ipairs(browserWins) do
 					window.fill("left", { window = win, width = 1 - const.TERM_WIDTH })
 				end
@@ -237,50 +218,50 @@ ConfigWatcher = hs.pathwatcher
 	end)
 	:start()
 
-local updateDebounceTimer
-local function updateStageManager()
-	local delay = 1
-	if updateDebounceTimer then
-		updateDebounceTimer:stop()
-	end
-
-	updateDebounceTimer = hs.timer.doAfter(delay, function()
-    local screens = hs.screen.allScreens()
-
-    if #screens > 1 and window.isStageManagerEnabled() then
-      hs.alert.show("Disabling Stage Manager")
-      window.setStageManagerEnabled(false)
-    elseif #screens == 1 and not window.isStageManagerEnabled() then
-      hs.alert.show("Enabling Stage Manager")
-      window.setStageManagerEnabled(true)
-    end
-
-		updateDebounceTimer = nil
-	end)
-end
+-- local updateDebounceTimer
+-- local function updateStageManager()
+-- 	local delay = 1
+-- 	if updateDebounceTimer then
+-- 		updateDebounceTimer:stop()
+-- 	end
+--
+-- 	updateDebounceTimer = hs.timer.doAfter(delay, function()
+--     local screens = hs.screen.allScreens()
+--
+--     if #screens > 1 and window.isStageManagerEnabled() then
+--       hs.alert.show("Disabling Stage Manager")
+--       window.setStageManagerEnabled(false)
+--     elseif #screens == 1 and not window.isStageManagerEnabled() then
+--       hs.alert.show("Enabling Stage Manager")
+--       window.setStageManagerEnabled(true)
+--     end
+--
+-- 		updateDebounceTimer = nil
+-- 	end)
+-- end
 
 -- Update Stage Manager state on display layout changes
-if not MonitorWatcher then
-	MonitorWatcher = hs.screen.watcher
-		.new(function()
-			updateStageManager()
-		end)
-		:start()
-end
+-- if not MonitorWatcher then
+-- 	MonitorWatcher = hs.screen.watcher
+-- 		.new(function()
+-- 			updateStageManager()
+-- 		end)
+-- 		:start()
+-- end
 
 -- Update Stage Manager state when macBook wakes
-if not PowerWatcher then
-	PowerWatcher = hs.caffeinate.watcher
-		.new(function(event)
-			if
-				event == hs.caffeinate.watcher.systemDidWake
-				or event == hs.caffeinate.watcher.screensDidWake
-			then
-				updateStageManager()
-			end
-		end)
-		:start()
-end
+-- if not PowerWatcher then
+-- 	PowerWatcher = hs.caffeinate.watcher
+-- 		.new(function(event)
+-- 			if
+-- 				event == hs.caffeinate.watcher.systemDidWake
+-- 				or event == hs.caffeinate.watcher.screensDidWake
+-- 			then
+-- 				updateStageManager()
+-- 			end
+-- 		end)
+-- 		:start()
+-- end
 
 -- Make the mouse more obvious
 hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
