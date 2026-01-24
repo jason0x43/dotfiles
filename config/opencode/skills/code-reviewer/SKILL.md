@@ -66,7 +66,7 @@ function getUser(id) {
 ```javascript
 // You write:
 function UserList({ users }) {
-  return users.map(user => <User data={user} />);
+  return users.map((user) => <User data={user} />);
 }
 
 // I flag:
@@ -139,6 +139,7 @@ def process_data(data):
 ## When to Invoke Sub-Agent
 
 After I flag issues, invoke **@code-reviewer** sub-agent for:
+
 - Detailed explanation of the issue
 - Multiple fix alternatives with pros/cons
 - Architectural recommendations
@@ -146,6 +147,7 @@ After I flag issues, invoke **@code-reviewer** sub-agent for:
 - Best practice guidelines
 
 **Example:**
+
 ```
 Me: "⚠️ Potential N+1 query detected"
 You: "@code-reviewer explain the N+1 issue and show optimal solution"
@@ -161,7 +163,7 @@ Sub-agent: [Provides comprehensive analysis with examples]
 async function fetchUsers(ids) {
   const users = [];
   for (let id of ids) {
-    const user = await User.findById(id);  // N+1 query!
+    const user = await User.findById(id); // N+1 query!
     users.push(user);
   }
   return users;
@@ -186,9 +188,9 @@ function UserCard({ user }) {
 
   useEffect(() => {
     fetch(`/api/users/${user.id}`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setData);
-  }, []);  // Missing dependency!
+  }, []); // Missing dependency!
 
   return <div>{data?.name}</div>;
 }
@@ -200,7 +202,7 @@ function UserCard({ user }) {
 // After fix:
 useEffect(() => {
   fetch(`/api/users/${user.id}`)
-    .then(res => res.json())
+    .then((res) => res.json())
     .then(setData);
 }, [user.id]);
 ```

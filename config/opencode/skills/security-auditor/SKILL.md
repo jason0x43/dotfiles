@@ -20,16 +20,18 @@ Automatic security vulnerability detection.
 ### OWASP Top 10 Patterns
 
 **1. SQL Injection**
+
 ```javascript
 // CRITICAL: SQL injection
 const query = `SELECT * FROM users WHERE id = ${userId}`;
 
 // SECURE: Parameterized query
-const query = 'SELECT * FROM users WHERE id = ?';
+const query = "SELECT * FROM users WHERE id = ?";
 db.query(query, [userId]);
 ```
 
 **2. XSS (Cross-Site Scripting)**
+
 ```javascript
 // CRITICAL: XSS vulnerability
 element.innerHTML = userInput;
@@ -41,15 +43,17 @@ element.innerHTML = DOMPurify.sanitize(userInput);
 ```
 
 **3. Authentication Issues**
+
 ```javascript
 // CRITICAL: Weak JWT secret
-const token = jwt.sign(payload, 'secret123');
+const token = jwt.sign(payload, "secret123");
 
 // SECURE: Strong secret from environment
 const token = jwt.sign(payload, process.env.JWT_SECRET);
 ```
 
 **4. Sensitive Data Exposure**
+
 ```python
 # CRITICAL: Exposed password
 password = "admin123"
@@ -59,14 +63,15 @@ password = os.getenv("DB_PASSWORD")
 ```
 
 **5. Broken Access Control**
+
 ```javascript
 // CRITICAL: No authorization check
-app.delete('/api/users/:id', (req, res) => {
+app.delete("/api/users/:id", (req, res) => {
   User.delete(req.params.id);
 });
 
 // SECURE: Authorization check
-app.delete('/api/users/:id', auth, checkOwnership, (req, res) => {
+app.delete("/api/users/:id", auth, checkOwnership, (req, res) => {
   User.delete(req.params.id);
 });
 ```
@@ -167,6 +172,7 @@ pip-audit
 **@code-reviewer (Sub-Agent):** Deep security audit with threat modeling
 
 ### Workflow
+
 1. I detect vulnerability pattern
 2. I flag: "🚨 SQL injection detected"
 3. You want full analysis → Invoke **@code-reviewer** sub-agent
@@ -175,23 +181,27 @@ pip-audit
 ## Common Vulnerability Patterns
 
 ### Authentication
+
 - Weak password policies
 - Missing MFA
 - Session fixation
 - Insecure password storage
 
 ### Authorization
+
 - Missing access control
 - Privilege escalation
 - IDOR (Insecure Direct Object Reference)
 
 ### Data Protection
+
 - Unencrypted sensitive data
 - Weak encryption algorithms
 - Missing HTTPS
 - Insecure cookies
 
 ### Input Validation
+
 - SQL injection
 - Command injection
 - XSS

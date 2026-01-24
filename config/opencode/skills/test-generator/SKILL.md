@@ -1,6 +1,6 @@
 ---
 name: test-generator
-description: Automatically suggest tests for new functions and components. Use when new code is written, functions added, or user mentions testing. Creates test scaffolding with Jest, Vitest, Pytest patterns. Triggers on new functions, components, test requests, testing mentions.
+description: Automatically suggest tests for new functions and components. Use when new code is written, functions added, or user mentions testing. Creates test scaffolding with Jest, vitest, Pytest patterns. Triggers on new functions, components, test requests, testing mentions.
 ---
 
 # Test Generator Skill
