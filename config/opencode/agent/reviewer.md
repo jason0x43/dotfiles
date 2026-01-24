@@ -1,7 +1,8 @@
 ---
 description: Code review and risk analysis in one pass. Use for PRs or branches before merge. Focus on correctness, security, maintainability, and best practices with concrete findings and file:line refs.
 mode: subagent
-model: openai/gpt-5.2-medium
+model: openai/gpt-5.2
+reasoningEffort: medium
 temperature: 0.2
 tools:
   read: true

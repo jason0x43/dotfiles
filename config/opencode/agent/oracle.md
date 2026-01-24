@@ -1,7 +1,8 @@
 ---
 description: High-temperature oracle - most output is noise, but the gold is in there. Called for complex refactors (>5 files), risky changes, or when stuck. Pan for insight; don't take everything literally.
 mode: subagent
-model: openai/gpt-5.2-high
+model: openai/gpt-5.2
+reasoningEffort: high
 temperature: 0.8
 tools:
   read: true

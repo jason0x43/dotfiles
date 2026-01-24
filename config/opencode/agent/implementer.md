@@ -1,6 +1,7 @@
 ---
 description: Senior code implementer. Use for writing code, making changes, running tests, and fixing bugs. Takes plans from Planner and executes precisely. Full code modification access.
-model: openai/gpt-5.2-medium
+model: openai/gpt-5.2
+reasoningEffort: medium
 mode: subagent
 temperature: 0.2
 tools:

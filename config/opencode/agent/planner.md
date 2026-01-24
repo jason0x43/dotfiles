@@ -1,7 +1,8 @@
 ---
 description: Research + Planning in one pass. Use for ANY codebase exploration, understanding implementations, and creating actionable plans. Digs deep, plans lean. Returns research findings that flow naturally into implementation plans with file:line refs.
 mode: subagent
-model: openai/gpt-5.2-high
+model: openai/gpt-5.2
+reasoningEffort: high
 temperature: 0.2
 tools:
   read: true

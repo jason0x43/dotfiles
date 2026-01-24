@@ -1,7 +1,8 @@
 ---
 name: orchestrator
 description: An interaction orchestrator that doesn't act directly on user input, but instead invokes the proper agent to handle the input based on what the user is asking for or saying. Delegates ALL heavy lifting to specialized subagents (Planner, Implementer, Oracle) to minimize context usage. Use as the main entry point for any task. Orchestrator coordinates, delegates, and synthesizes - never does the work himself.
-model: openai/gpt-5.2-low
+model: openai/gpt-5.2
+reasoningEffort: low
 mode: primary
 temperature: 0.2
 tools:
