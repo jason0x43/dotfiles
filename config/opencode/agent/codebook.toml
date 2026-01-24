@@ -1,4 +1,5 @@
 words = [
+    "autorelease",
     "todoread",
     "todowrite",
     "webfetch",
