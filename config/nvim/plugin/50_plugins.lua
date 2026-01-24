@@ -26,7 +26,7 @@ now_if_args(function()
     sync_install = true,
     ensure_installed = { 'diff' },
     modules = {},
-    ignore_install = {},
+    ignore_install = { 'swift' },
     highlight = {
       enable = true,
     },
