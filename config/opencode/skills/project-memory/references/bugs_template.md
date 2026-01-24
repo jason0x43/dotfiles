@@ -39,3 +39,5 @@ Use bullet lists for simplicity. Older entries can be manually removed when they
 - Include enough context for future reference
 - Date entries so you know how recent the issue is
 - Periodically clean out very old entries (6+ months)
+
+## Entries

@@ -46,7 +46,7 @@ Organize information into logical categories:
 
 Use bullet lists for simplicity and easy scanning.
 
-## Example Structure
+## Example Entries
 
 ### GCP Project Information
 
@@ -156,3 +156,5 @@ Use bullet lists for simplicity and easy scanning.
 - Use consistent formatting (same structure for similar items)
 - Group related information together
 - Mark deprecated items clearly with dates
+
+## Entries

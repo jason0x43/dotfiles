@@ -90,3 +90,5 @@ Each decision should include:
 - Keep alternatives brief but clear
 - Update decisions if they're revisited/changed
 - Focus on "why" not "how" (implementation details go elsewhere)
+
+## Entries

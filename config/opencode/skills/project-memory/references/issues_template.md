@@ -74,3 +74,5 @@ Use bullet lists for simplicity. This is NOT a replacement for your ticket syste
 - Don't duplicate ticket details - link to source of truth
 - Clean out very old entries periodically (3+ months)
 - Include both Jira and GitHub tickets as appropriate
+
+## Entries
