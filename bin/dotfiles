@@ -478,7 +478,7 @@ dotfiles-bun() {
   bun upgrade
 
   log "Updating global dependencies..."
-  bun update -g
+  bun update -g --latest
 }
 
 # Update uv and tools
