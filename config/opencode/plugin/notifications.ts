@@ -32,11 +32,12 @@ async function commandExists($: PluginInput["$"], cmd: string) {
  */
 async function notify($: PluginInput["$"], title: string, message: string) {
   const notifierPath = expandPath(NOTIFIER_APP);
+	const termId = "net.kovidgoyal.kitty";
 
   if (existsSync(notifierPath)) {
-    await $`${notifierPath} -title ${title} -message ${message} -sound ${SOUND}`.quiet();
+    await $`${notifierPath} -title ${title} -message ${message} -sound ${SOUND} -activate ${termId}`.quiet();
   } else if (await commandExists($, "terminal-notifier")) {
-    await $`terminal-notifier -title ${title} -message ${message} -sound ${SOUND}`.quiet();
+    await $`terminal-notifier -title ${title} -message ${message} -sound ${SOUND} -activate ${termId}`.quiet();
   } else {
     await $`osascript -e ${'display notification "' + message + '" with title "' + title + '" sound name "' + SOUND + '"'}`.quiet();
   }
