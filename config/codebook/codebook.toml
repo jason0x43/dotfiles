@@ -29,6 +29,7 @@ words = [
     "latexindent",
     "lifecycle",
     "linters",
+    "logstream",
     "lookups",
     "mcp",
     "mkdir",
@@ -70,6 +71,7 @@ words = [
     "xcodebuild",
     "xcodeproj",
     "xcrun",
+    "xcworkspace",
     "xdg",
     "zod",
 ]
