@@ -29,13 +29,6 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-${TMPDIR}}"
 
-export ZDATADIR="${XDG_DATA_HOME}/zsh"
-export ZCACHEDIR="${XDG_CACHE_HOME}/zsh"
-export ZCONFDIR="${XDG_CONFIG_HOME}.local/zsh"
-export ZPLUGDIR="${ZDATADIR}/plugins"
-export ZFUNCDIR="${ZDATADIR}/functions"
-export ZCOMPDIR="${ZCACHEDIR}/completions"
-
 export HOMEBREW_AUTO_UPDATE_SECS=300
 
 INSTALL=0
@@ -367,61 +360,6 @@ dotfiles-nvim() {
 
   logSub "Updating treesitter parsers..."
   nvim --headless -c 'TSUpdateSync | lua print("\n") io.flush()' +qa
-}
-
-# Update zsh plugins
-dotfiles-zsh() {
-  log "Updating zsh plugins..."
-
-  if [[ -z "$ZPLUGDIR" ]]; then
-    err "ZPLUGDIR not defined"
-    return
-  fi
-
-  local out=""
-  local head=""
-
-  for plugin in "${ZPLUGDIR}"/*/*; do
-    [[ -e "$plugin" ]] || continue
-    [[ -d "$plugin" ]] || continue
-    
-    head=$(git -C "$plugin" rev-parse HEAD)
-    if ! out=$(git -C "$plugin" pull -q --recurse-submodules 2>&1); then
-      err "Error updating ${plugin}"
-      err "$out"
-      continue
-    fi
-    if ! out=$(git -C "$plugin" submodule update --remote 2>&1); then
-      err "Error updating ${plugin}"
-      err "$out"
-      continue
-    fi
-    local new_head
-    new_head=$(git -C "$plugin" rev-parse HEAD)
-    if [[ "$new_head" != "$head" ]]; then
-      local parent
-      local basename
-      parent=$(basename "$(dirname "$plugin")")
-      basename=$(basename "$plugin")
-      logSub "Updated ${parent}/${basename}"
-    fi
-  done
-
-  log "Updating shell completions..."
-
-  makedir "${ZDATADIR}/functions"
-
-  if command_exists op; then
-    op completion zsh > "${ZDATADIR}/functions/_op"
-  fi
-
-  if command_exists mise; then
-    mise complete --shell zsh > "${ZDATADIR}/functions/_mise"
-  fi
-
-  if command_exists orb; then
-    orb completion zsh > "${ZDATADIR}/functions/_orb"
-  fi
 }
 
 # Update global npm packages

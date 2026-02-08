@@ -78,3 +78,8 @@ alias oc='opencode'
 # lazygit
 alias lg='lazygit'
 alias lgs='lazygit status'
+
+# Tailscale
+if test -x /Applications/Tailscale.app/Contents/MacOS/Tailscale
+    alias tailscale=/Applications/Tailscale.app/Contents/MacOS/Tailscale
+end
