@@ -43,8 +43,6 @@ hs.hotkey.bind({ "ctrl", "shift" }, "space", function()
 	local slackWins = getWindows(windows, { "Slack" })
 	local gptWins = getWindows(windows, { "ChatGPT" })
 
-	-- If Stage Manager is enabled, assume only the built-in display is in use.
-	-- Otherwise, assume the external display is in use.
 	if window.isStageManagerEnabled() then
 		for _, win in ipairs(terminalWins) do
 			window.fill("center", { window = win, width = 1000 })
