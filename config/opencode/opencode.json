@@ -3,7 +3,6 @@
 
   "agent": {
     "plan": {
-      "model": "openai/gpt-5.2",
       "permission": {
         "bash": {
           "echo *": "allow",
@@ -15,9 +14,6 @@
           "tail *": "allow"
         }
       }
-    },
-    "build": {
-      "model": "openai/gpt-5.2-codex",
     }
   },
 
@@ -25,12 +21,10 @@
     "disable_paste_summary": true
   },
 
-  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
-
-  "keybinds": {
-    "messages_page_down": "ctrl+d",
-    "messages_page_up": "ctrl+u"
-  },
+  "instructions": [
+    "AGENTS.md",
+    ".github/copilot-instructions.md"
+  ],
 
   "mcp": {
     "context7": {
@@ -41,11 +35,11 @@
       },
       "enabled": true
     },
-    "graphiti": {
-      "type": "remote",
-      "url": "http://localhost:48000/mcp",
-      "enabled": true
-    },
+    // "graphiti": {
+    //   "type": "remote",
+    //   "url": "http://localhost:48000/mcp",
+    //   "enabled": true
+    // },
     "github": {
       "type": "remote",
       "enabled": false,
@@ -58,8 +52,5 @@
 
   "plugin": [
     "opencode-gemini-auth@latest"
-  ],
-
-  "theme": "selenized"
-  // "theme": "system"
+  ]
 }
