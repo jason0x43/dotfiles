@@ -5,7 +5,7 @@ gui:
   expandFocusedSidePanel: true
   nerdFontsVersion: '3'
   showCommandLog: false
-  sidePanelWidth: 0.25
+  sidePanelWidth: 0.4
   tabWidth: 2
   theme:
     selectedLineBgColor:
