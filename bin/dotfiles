@@ -1,532 +1,575 @@
-#!/bin/bash
-
-# ============================================================================
-# Color Setup
-# ============================================================================
-
-if [[ -t 1 ]]; then
-  COLOR_GREEN='\033[1;32m'
-  COLOR_BLUE='\033[1;34m'
-  COLOR_RED='\033[1;31m'
-  COLOR_YELLOW='\033[1;33m'
-  COLOR_RESET='\033[0m'
-else
-  COLOR_GREEN=''
-  COLOR_BLUE=''
-  COLOR_RED=''
-  COLOR_YELLOW=''
-  COLOR_RESET=''
-fi
-
-# ============================================================================
-# Environment Setup
-# ============================================================================
-
-export DOTFILES="${HOME}/.dotfiles"
-
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-${TMPDIR}}"
-
-export HOMEBREW_AUTO_UPDATE_SECS=300
-
-INSTALL=0
-GROUP=""
-
-if [[ $OSTYPE == linux* ]]; then
-  export HOMEBREW_BASE=/home/linuxbrew/.linuxbrew
-else
-  export HOMEBREW_BASE=/opt/homebrew
-fi
-
-PATH="${HOMEBREW_BASE}/bin:${PATH}"
-BREW="${HOMEBREW_BASE}/bin/brew"
-
-# ============================================================================
-# Utility Functions
-# ============================================================================
-
-# Log output
-log() {
-  local msg="$1"
-  local color="${2:-${COLOR_GREEN}}"
-  echo -e "${color}>>>${COLOR_RESET} ${msg}"
-}
-
-# Log sub-output
-logSub() {
-  log "$1" "${COLOR_BLUE}"
-}
-
-# Log error output
-err() {
-  log "$1" "${COLOR_RED}"
-}
-
-# Log warning output
-warn() {
-  log "$1" "${COLOR_YELLOW}"
-}
-
-# Get a file owner
-owner() {
-  if [[ $OSTYPE == darwin* ]]; then
-    stat -f '%Su' "$1"
-  else
-    stat -c '%U' "$1"
-  fi
-}
-
-# Create a directory
-makedir() {
-  if [[ ! -d "$1" ]]; then
-    mkdir -p "$1"
-    logSub "Created $1/"
-  fi
-}
-
-# Create a symlink
-link() {
-  if [[ ! -r "$2" ]]; then
-    ln -s "$1" "$2"
-    logSub "Linked $1 -> $2"
-  fi
-}
-
-# Sed in place (platform-agnostic)
-sedInPlace() {
-  if [[ $OSTYPE == darwin* ]]; then
-    sed -i "" "$@"
-  else
-    sed -i"" "$@"
-  fi
-}
-
-# Check if command exists
-command_exists() {
-  command -v "$1" &> /dev/null
-}
-
-# Fix terminal config
-fixterm() {
-  # Fix terminal definition so C-H works properly in neovim
-  local kbs
-  kbs=$(infocmp | grep -o 'kbs=[^,]\+')
-  if [[ $kbs =~ kbs=\^[hH] ]]; then
-    infocmp "$TERM" | sed 's/kbs=^[hH]/kbs=\\177/' > "/tmp/${TERM}.ti"
-    tic "/tmp/${TERM}.ti"
-    rm "/tmp/${TERM}.ti"
-    logSub "Fixed backspace code in terminfo"
-  fi
-}
-
-# ============================================================================
-# Group Functions
-# ============================================================================
-
-# Rebuild bat cache
-dotfiles-bat() {
-  if ! command_exists bat; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Bat not installed"
-      return
-    fi
-
-    brew install bat
-  fi
-
-  log "Rebuilding bat cache..."
-  local out
-  if ! out=$(bat cache --build 2>&1); then
-    err "Error rebuilding bat cache"
-    err "$out"
-  fi
-}
-
-# Setup the fish shell prompt
-dotfiles-fish() {
-  if ! command_exists fish; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Fish not installed"
-      return
-    fi
-
-    if ! command_exists brew; then
-      err "Unable to install fish"
-      return
-    fi
-
-    brew install fish
-  fi
-
-  log "Updating fish config..."
-  UV_VENV_CLEAR=1 fish -c configure
-}
-
-# Link dotfiles into $HOME, update terminfo
-dotfiles-home() {
-  log "Updating home directory files..."
-
-  # Remove broken links from home directory
-  while IFS= read -r -d '' f; do
-    if [[ -L "$f" ]] && [[ ! -e "$f" ]]; then
-      rm "$f"
-      logSub "Removed $f"
-    fi
-  done < <(find "${HOME}" -maxdepth 1 -name '.*' -type l -print0 2>/dev/null)
-
-  # Remove broken links from config directory
-  if [[ -d "${XDG_CONFIG_HOME}" ]]; then
-    while IFS= read -r -d '' f; do
-      if [[ -L "$f" ]] && [[ ! -e "$f" ]]; then
-        rm "$f"
-        logSub "Removed $f"
-      fi
-    done < <(find "${XDG_CONFIG_HOME}" -maxdepth 1 -type l -print0 2>/dev/null)
-  fi
-
-  # Link files from home/ directory
-  for f in "${DOTFILES}/home/"*; do
-    [[ -e "$f" ]] || continue
-    [[ -f "$f" ]] || continue
-    local basename
-    basename=$(basename "$f")
-    link "$f" "${HOME}/.${basename}"
-  done
-
-  makedir "${XDG_CONFIG_HOME}"
-
-  # Link directories from config/ directory
-  for f in "${DOTFILES}/config/"*; do
-    [[ -e "$f" ]] || continue
-    local basename
-    basename=$(basename "$f")
-    
-    if [[ -d "${XDG_CONFIG_HOME}/${basename}" ]] && [[ ! -L "${XDG_CONFIG_HOME}/${basename}" ]]; then
-      mkdir -p "${XDG_CONFIG_HOME}/local"
-      mv "${XDG_CONFIG_HOME}/${basename}" "${XDG_CONFIG_HOME}/local/${basename}"
-      logSub "Moved ${XDG_CONFIG_HOME}/${basename} -> ${XDG_CONFIG_HOME}/local/${basename}"
-    fi
-    link "$f" "${XDG_CONFIG_HOME}/${basename}"
-  done
-
-  makedir "${XDG_CACHE_HOME}/zsh"
-  makedir "${XDG_CACHE_HOME}/direnv/allow"
-
-  # Fix the terminal definition so that C-H works properly in neovim.
-  fixterm
-
-  # Update Hammerspoon config file location on macOS
-  if [[ $OSTYPE == darwin* ]] && [[ -d "/Applications/Hammerspoon.app" ]]; then
-    local val
-    val=$(defaults read org.hammerspoon.Hammerspoon MJConfigFile 2> /dev/null || echo "")
-    if [[ "$val" != "$HOME/.config/hammerspoon/init.lua" ]]; then
-      defaults write org.hammerspoon.Hammerspoon MJConfigFile "$HOME/.config/hammerspoon/init.lua"
-      logSub "Updated Hammerspoon config file location"
-    fi
-  fi
-}
-
-# Upgrade Mac App Store packages
-dotfiles-mas() {
-  if ! command_exists mas; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "mas not installed"
-      return
-    fi
-
-    brew install mas
-  fi
-
-  log "Upgrading Mac App Store apps..."
-  mas upgrade
-}
-
-# Link and activate launchd scripts
-dotfiles-launchd() {
-  log "Linking and bootstrapping launchd scripts..."
-
-  mkdir -p "${HOME}/Library/LaunchAgents"
-
-  for f in "${DOTFILES}/launchd/"*; do
-    [[ -e "$f" ]] || continue
-    local basename
-    basename=$(basename "$f")
-    
-    if [[ ! -h "${HOME}/Library/LaunchAgents/${basename}" ]]; then
-      link "$f" "${HOME}/Library/LaunchAgents/${basename}"
-      launchctl bootstrap "gui/${UID}" "${HOME}/Library/LaunchAgents/${basename}"
-      logSub "Bootstrapped ${basename}"
-    fi
-  done
-}
-
-# Install or update rust
-dotfiles-rust() {
-  if ! command_exists rustup; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Rust not installed"
-      return
-    fi
-
-    log "Installing rust..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
-  else
-    log "Updating rust..."
-    rustup -q update
-  fi
-}
-
-# Install homebrew and core packages, update brew packages
-dotfiles-brew() {
-  if [[ ! -x "$BREW" ]]; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Homebrew not installed"
-      return
-    fi
-
-    logSub "Installing Homebrew..."
-
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-
-  # Install some missing or newer core packages from brew
-  logSub "Installing/updating core packages..."
-  local brew_packages=(
-    'bat'        # better cat
-    'eza'        # better ls
-    'fd'         # file finder
-    'ripgrep'    # better grep
-    'zoxide'     # better cd
-    'mise'       # tool version manager
-    'tig'        # terminal git ui
-    'neovim'     # editor
-  )
-
-  if [[ $OSTYPE == darwin* ]]; then
-    brew_packages+=(
-      '1password-cli'
-    )
-  fi
-
-  "$BREW" install -q "${brew_packages[@]}"
-
-  logSub "Updating installed brew packages..."
-  "$BREW" upgrade
-
-  # Remove git's included zsh completions in favor of the system completions
-  if [[ -f "${HOMEBREW_BASE}/share/zsh/site-functions/_git" ]]; then
-    local hb_owner
-    hb_owner=$(owner "$HOMEBREW_BASE")
-    if [[ "$hb_owner" == "$USER" ]]; then
-      rm -f "${HOMEBREW_BASE}/share/zsh/site-functions/_git"
-    else
-      sudo rm -f "${HOMEBREW_BASE}/share/zsh/site-functions/_git"
-    fi
-  fi
-}
-
-# Update apt packages
-dotfiles-apt() {
-  if [[ $OSTYPE != linux* ]]; then
-    warn "Not a linux system"
-    return
-  fi
-
-  log "Upgrading apt packages..."
-  sudo apt update -qq
-  sudo apt upgrade -qq
-}
-
-# Update neovim plugins
-dotfiles-nvim() {
-  if ! command_exists nvim; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Neovim not installed"
-      return
-    fi
-
-    brew install neovim
-  fi
-
-  log "Updating neovim resources..."
-
-  logSub "Updating plugins..."
-  nvim --headless "+Lazy! sync" +qa
-
-  logSub "Updating language servers..."
-  nvim --headless -c "autocmd User MasonUpgradeComplete qall" -c 'MasonUpgrade'
-
-  logSub "Updating treesitter parsers..."
-  nvim --headless -c 'TSUpdateSync | lua print("\n") io.flush()' +qa
-}
-
-# Update global npm packages
-dotfiles-node() {
-  log "Updating node..."
-
-  if ! command_exists npm; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "Node not installed"
-      return
-    fi
-
-    brew install node
-  fi
-
-  logSub "Updating package managers..."
-
-  if command_exists pnpm; then
-    pnpm self-update -q > /dev/null
-  fi
-
-  logSub "Updating global node packages..."
-
-  local outdated
-  outdated=$(npm outdated -g --json | jq -r 'to_entries[] | "\(.key)"')
-
-  if [[ -z "$outdated" ]]; then
-    logSub "No global packages to update"
-    return
-  fi
-
-  for pkg in $outdated; do
-    logSub "Updating $pkg..."
-    npm i -g "${pkg}@latest" > /dev/null
-  done
-}
-
-# Update bun
-dotfiles-bun() {
-  if ! command_exists bun; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "bun not installed"
-      return
-    fi
-
-    log "Installing bun..."
-    curl -fsSL https://bun.com/install | bash
-
-    log "Intalling bun completions..."
-    bun completions
-  fi
-
-  log "Updating bun..."
-  bun upgrade
-
-  log "Updating global dependencies..."
-  bun update -g --latest
-}
-
-# Update uv and tools
-dotfiles-uv() {
-  if ! command_exists uv; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "uv not installed"
-      return
-    fi
-
-    log "Installing uv..."
-    curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
-  fi
-
-  log "Updating uv..."
-  uv self update
-
-  log "Updating uv tools..."
-  uv tool upgrade --all
-}
-
-# Update codex completions
-dotfiles-codex() {
-  if ! command_exists codex; then
-    if [[ $INSTALL == 0 ]]; then
-      warn "codex not installed"
-      return
-    fi
-
-    if ! command_exists npm; then
-      warn "npm not installed"
-      return
-    fi
-
-    log "Installing codex..."
-    npm i -g @openai/codex
-  fi
-
-  log "Updating codex completions..."
-  codex completion fish > "$XDG_CONFIG_HOME/fish/completions/codex.fish"
-}
-
-# ============================================================================
-# Main Script
-# ============================================================================
-
-cd "$HOME" || exit 1
-
-while (( $# > 0 )); do
-  case $1 in
-    -h | --help)
-      echo 'usage: dotfiles [options] [group]'
-      echo
-      echo 'Update local environment. All groups are updated by default.'
-      echo
-      echo 'Options:'
-      echo '    -h, --help     Show this help message'
-      echo '    -i, --install  Install missing things'
-      echo '    <group>        A group to update'
-      echo
-      echo 'Available groups:'
-      echo '    bat            Rebuild bat theme and filetype cache'
-      echo '    brew           Update all installed homebrew packages'
-      echo '    fish           Update fish plugins and configure fish'
-      echo '    home           Update dotfiles and home directories, fixup terminfo database'
-      echo '    init           Install brew and core packages'
-      echo '    launchd        Link and bootstrap launchd scripts'
-      echo '    node           Update global node packages, install defaults'
-      echo '    rust           Update rust install'
-      echo '    uv             Update uv tools'
-      echo '    vim            Update vim plugins'
-      echo '    zsh            Update zsh plugins'
-      exit 1
-      ;;
-    -i | --install)
-      INSTALL=1
-      ;;
-    -*)
-      echo "Unknown option $1"
-      exit 1
-      ;;
-    *)
-      GROUP=$1
-      ;;
-  esac
-
-  shift
-done
-
-if [[ -n "$GROUP" ]]; then
-  "dotfiles-${GROUP}"
-else
-  if [[ $OSTYPE == linux* ]]; then
-    dotfiles-apt
-  fi
-
-  dotfiles-home
-  dotfiles-brew
-  dotfiles-node
-  dotfiles-bun
-  dotfiles-uv
-  dotfiles-codex
-  dotfiles-rust
-  dotfiles-bat
-  dotfiles-fish
-
-  if [[ $OSTYPE == darwin* ]]; then
-    dotfiles-launchd
-    dotfiles-mas
-  fi
-fi
-
-log "Done"
+#!/usr/bin/env python3
+"""Update local environment and toolchain resources."""
+
+import argparse
+import json
+import os
+import pwd
+import re
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional, Sequence, Union, Callable, Literal
+
+
+@dataclass(frozen=True)
+class Module:
+    """An install or update task for a specific tool or resource"""
+
+    name: str
+    fn: Callable[[], None]
+
+
+@dataclass(frozen=True)
+class Colors:
+    """Terminal color output helper"""
+
+    green: str
+    blue: str
+    red: str
+    yellow: str
+    reset: str
+
+    @staticmethod
+    def from_tty(is_tty: bool) -> "Colors":
+        if not is_tty:
+            return Colors("", "", "", "", "")
+        return Colors(
+            green="\033[1;32m",
+            blue="\033[1;34m",
+            red="\033[1;31m",
+            yellow="\033[1;33m",
+            reset="\033[0m",
+        )
+
+
+IS_LINUX: bool = sys.platform.startswith("linux")
+IS_MACOS: bool = sys.platform == "darwin"
+COLORS = Colors.from_tty(sys.stdout.isatty())
+HOME = Path.home()
+DOTFILES = Path(os.environ.get("DOTFILES", str(HOME / ".dotfiles"))).expanduser()
+XDG_CACHE_HOME = Path(
+    os.environ.get("XDG_CACHE_HOME", str(HOME / ".cache"))
+).expanduser()
+XDG_CONFIG_HOME = Path(
+    os.environ.get("XDG_CONFIG_HOME", str(HOME / ".config"))
+).expanduser()
+XDG_DATA_HOME = Path(
+    os.environ.get("XDG_DATA_HOME", str(HOME / ".local" / "share"))
+).expanduser()
+XDG_RUNTIME_DIR = Path(
+    os.environ.get("XDG_RUNTIME_DIR", os.environ.get("TMPDIR", "/tmp"))
+).expanduser()
+HOMEBREW_BASE = (
+    Path("/home/linuxbrew/.linuxbrew") if IS_LINUX else Path("/opt/homebrew")
+)
+BREW = HOMEBREW_BASE / "bin" / "brew"
+MODULES: list[Module] = []
+
+
+def register_module(
+    name: str,
+    *,
+    os: Optional[Literal["linux", "macos"]] = None,
+    priority: Optional[int] = None,
+) -> Callable[[Callable[[], None]], Callable[[], None]]:
+    """Register an install/update module.
+
+    The order that modules are registered is significant.
+    """
+
+    def decorator(fn: Callable[[], None]) -> Callable[[], None]:
+        if any(m.name == name for m in MODULES):
+            raise ValueError(f"Duplicate module: {name}")
+        if not os or os == "linux" and IS_LINUX or os == "macos" and IS_MACOS:
+            MODULES.append(Module(name, fn))
+
+        return fn
+
+    return decorator
+
+
+os.environ["DOTFILES"] = str(DOTFILES)
+os.environ["XDG_CACHE_HOME"] = str(XDG_CACHE_HOME)
+os.environ["XDG_CONFIG_HOME"] = str(XDG_CONFIG_HOME)
+os.environ["XDG_DATA_HOME"] = str(XDG_DATA_HOME)
+os.environ["XDG_RUNTIME_DIR"] = str(XDG_RUNTIME_DIR)
+os.environ["HOMEBREW_AUTO_UPDATE_SECS"] = "300"
+os.environ["HOMEBREW_BASE"] = str(HOMEBREW_BASE)
+os.environ["PATH"] = f"{HOMEBREW_BASE / 'bin'}:{os.environ.get('PATH', '')}"
+
+install_missing: bool = False
+
+
+def log(message: str, color: Optional[str] = None) -> None:
+    """Print a primary message to stdout"""
+    tint = color if color is not None else COLORS.green
+    print(f"{tint}>>>{COLORS.reset} {message}")
+
+
+def log_sub(message: str) -> None:
+    """Print a secondary message to stdout"""
+    log(message, COLORS.blue)
+
+
+def warn(message: str) -> None:
+    """Print a warning to stdout"""
+    log(message, COLORS.yellow)
+
+
+def err(message: str) -> None:
+    """Print an error to stdout"""
+    log(message, COLORS.red)
+
+
+def command_exists(command: str) -> bool:
+    """Return true if a command exists on the system"""
+    return shutil.which(command) is not None
+
+
+def owner(path: Path) -> str:
+    """Return the owner of a file"""
+    try:
+        uid = path.stat().st_uid
+        return pwd.getpwuid(uid).pw_name
+    except (FileNotFoundError, KeyError):
+        return ""
+
+
+def makedir(path: Path) -> None:
+    """Create a directory and any parents"""
+    if path.is_dir():
+        return
+    path.mkdir(parents=True, exist_ok=True)
+    log_sub(f"Created {path}/")
+
+
+def link(source: Path, target: Path) -> None:
+    """Create a symlink"""
+    if target.exists() or target.is_symlink():
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.symlink_to(source)
+    log_sub(f"Linked {source} -> {target}")
+
+
+def run_command(
+    command: Union[str, Sequence[str]],
+    *,
+    capture_output: bool = False,
+    quiet: bool = False,
+    shell: bool = False,
+    extra_env: Optional[Dict[str, str]] = None,
+) -> subprocess.CompletedProcess[str]:
+    """Run a command and return the result"""
+    env = os.environ.copy()
+    if extra_env:
+        env.update(extra_env)
+
+    kwargs = {}
+    if capture_output:
+        kwargs["stdout"] = subprocess.PIPE
+        kwargs["stderr"] = subprocess.PIPE
+    elif quiet:
+        kwargs["stdout"] = subprocess.DEVNULL
+        kwargs["stderr"] = subprocess.DEVNULL
+
+    if shell:
+        kwargs["executable"] = "/bin/bash"
+
+    return subprocess.run(command, text=True, env=env, shell=shell, **kwargs)
+
+
+@register_module("apt", os="linux")
+def module_apt() -> None:
+    """Update app packages"""
+    log("Upgrading apt packages...")
+    run_command(["sudo", "apt", "update", "-qq"])
+    run_command(["sudo", "apt", "upgrade", "-qq"])
+
+
+@register_module("brew")
+def module_brew() -> None:
+    if not BREW.exists():
+        if not install_missing:
+            warn("Homebrew not installed")
+            return
+
+        log_sub("Installing Homebrew...")
+        run_command(
+            'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+            shell=True,
+        )
+
+    brew_packages = [
+        "bat",
+        "eza",
+        "fd",
+        "ripgrep",
+        "zoxide",
+        "mise",
+        "lazygit",
+        "neovim",
+    ]
+
+    if IS_MACOS:
+        brew_packages.append("1password-cli")
+
+    log_sub("Installing/updating core packages...")
+    run_command([str(BREW), "install", "-q", *brew_packages])
+
+    log_sub("Updating installed brew packages...")
+    run_command([str(BREW), "upgrade"])
+
+    git_completion = HOMEBREW_BASE / "share" / "zsh" / "site-functions" / "_git"
+    if git_completion.exists():
+        log_sub("Removing default git zsh completions...")
+        if owner(HOMEBREW_BASE) == os.environ.get("USER", ""):
+            git_completion.unlink(missing_ok=True)
+        else:
+            run_command(["sudo", "rm", "-f", str(git_completion)])
+
+
+@register_module("home")
+def module_home() -> None:
+    """Setup the home directory"""
+
+    log("Updating home directory files...")
+
+    for entry in HOME.iterdir():
+        if not entry.name.startswith("."):
+            continue
+        if entry.is_symlink() and not entry.exists():
+            entry.unlink(missing_ok=True)
+            log_sub(f"Removed {entry}")
+
+    if XDG_CONFIG_HOME.is_dir():
+        for entry in XDG_CONFIG_HOME.iterdir():
+            if entry.is_symlink() and not entry.exists():
+                entry.unlink(missing_ok=True)
+                log_sub(f"Removed {entry}")
+
+    home_dir = DOTFILES / "home"
+    if home_dir.exists():
+        for source in sorted(home_dir.iterdir()):
+            if source.is_file():
+                link(source, HOME / f".{source.name}")
+
+    makedir(XDG_CONFIG_HOME)
+
+    config_dir = DOTFILES / "config"
+    if config_dir.exists():
+        for source in sorted(config_dir.iterdir()):
+            target = XDG_CONFIG_HOME / source.name
+            if target.is_dir() and not target.is_symlink():
+                local_dir = XDG_CONFIG_HOME / "local"
+                local_dir.mkdir(parents=True, exist_ok=True)
+                destination = local_dir / source.name
+                try:
+                    shutil.move(str(target), str(destination))
+                    log_sub(f"Moved {target} -> {destination}")
+                except shutil.Error as exc:
+                    warn(f"Unable to move {target}: {exc}")
+            link(source, target)
+
+    makedir(XDG_CACHE_HOME / "zsh")
+    makedir(XDG_CACHE_HOME / "direnv" / "allow")
+
+
+@register_module("term")
+def module_term() -> None:
+    """Fix quirks in the local terminal config"""
+    info = run_command(["infocmp"], capture_output=True)
+    if info.returncode != 0:
+        return
+
+    match = re.search(r"kbs=([^,]+)", info.stdout)
+    if not match:
+        return
+
+    kbs = match.group(1)
+    if kbs not in ("^h", "^H"):
+        return
+
+    term = os.environ.get("TERM", "xterm-256color")
+    term_info = run_command(["infocmp", term], capture_output=True)
+    if term_info.returncode != 0:
+        return
+
+    patched = re.sub(r"kbs=\^[hH]", r"kbs=\\177", term_info.stdout)
+    temp_path = Path("/tmp") / f"{term}.ti"
+    temp_path.write_text(patched, encoding="utf-8")
+    try:
+        run_command(["tic", str(temp_path)])
+        log_sub("Fixed backspace code in terminfo")
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+@register_module("uv")
+def module_uv() -> None:
+    if not command_exists("uv"):
+        if not install_missing:
+            warn("uv not installed")
+            return
+
+        log("Installing uv...")
+        run_command(
+            "curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh",
+            shell=True,
+        )
+
+    log("Updating uv...")
+    run_command(["uv", "self", "update"])
+
+    log("Updating uv tools...")
+    run_command(["uv", "tool", "upgrade", "--all"])
+
+
+@register_module("fish")
+def module_fish() -> None:
+    """Install and configure the fish shell"""
+    if not command_exists("fish"):
+        if not install_missing:
+            warn("Fish not installed")
+            return
+        if not command_exists("brew"):
+            err("Unable to install fish")
+            return
+        run_command(["brew", "install", "fish"])
+
+    log("Updating fish config...")
+    run_command(["fish", "-c", "configure"], extra_env={"UV_VENV_CLEAR": "1"})
+
+
+@register_module("bat")
+def module_bat() -> None:
+    """Install and configure bat"""
+    if not command_exists("bat"):
+        if not install_missing:
+            warn("Bat not installed")
+            return
+        run_command([str(BREW), "install", "bat"])
+
+    log("Rebuilding bat cache...")
+    result = run_command(["bat", "cache", "--build"], capture_output=True)
+    if result.returncode != 0:
+        err("Error rebuilding bat cache")
+        if result.stderr.strip():
+            err(result.stderr.strip())
+        elif result.stdout.strip():
+            err(result.stdout.strip())
+
+
+@register_module("node")
+def module_node() -> None:
+    def npm_outdated_global_packages() -> List[str]:
+        result = run_command(["npm", "outdated", "-g", "--json"], capture_output=True)
+        if not result.stdout.strip():
+            return []
+        try:
+            data = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            warn("Unable to parse npm outdated output")
+            return []
+        if not isinstance(data, dict):
+            return []
+        return sorted(data.keys())
+
+    log("Updating node...")
+    if not command_exists("npm"):
+        if not install_missing:
+            warn("Node not installed")
+            return
+        run_command([str(BREW), "install", "node"])
+
+    log_sub("Updating package managers...")
+    if command_exists("pnpm"):
+        run_command(["pnpm", "self-update", "-q"], quiet=True)
+
+    log_sub("Updating global node packages...")
+    outdated = npm_outdated_global_packages()
+    if not outdated:
+        log_sub("No global packages to update")
+        return
+
+    for package in outdated:
+        log_sub(f"Updating {package}...")
+        run_command(["npm", "i", "-g", f"{package}@latest"], quiet=True)
+
+
+@register_module("bun")
+def module_bun() -> None:
+    if not command_exists("bun"):
+        if not install_missing:
+            warn("bun not installed")
+            return
+
+        log("Installing bun...")
+        run_command("curl -fsSL https://bun.com/install | bash", shell=True)
+
+    log("Updating bun...")
+    run_command(["bun", "upgrade"])
+
+    log("Updating global dependencies...")
+    run_command(["bun", "update", "-g", "--latest"])
+
+    log("Updating bun completions...")
+    run_command(["bun", "completions"])
+
+
+@register_module("mas", os="macos")
+def module_mas() -> None:
+    if not command_exists("mas"):
+        if not install_missing:
+            warn("mas not installed")
+            return
+        run_command([str(BREW), "install", "mas"])
+
+    log("Upgrading Mac App Store apps...")
+    run_command(["mas", "upgrade"])
+
+
+@register_module("launchd", os="macos")
+def module_launchd() -> None:
+    log("Linking and bootstrapping launchd scripts...")
+    launch_agents = HOME / "Library" / "LaunchAgents"
+    launch_agents.mkdir(parents=True, exist_ok=True)
+
+    launchd_dir = DOTFILES / "launchd"
+    if not launchd_dir.exists():
+        return
+
+    for source in sorted(launchd_dir.iterdir()):
+        target = launch_agents / source.name
+        if target.is_symlink():
+            continue
+        link(source, target)
+        run_command(
+            ["launchctl", "bootstrap", f"gui/{os.getuid()}", str(target)],
+        )
+        log_sub(f"Bootstrapped {source.name}")
+
+
+@register_module("rust")
+def module_rust() -> None:
+    if not command_exists("rustup"):
+        if not install_missing:
+            warn("Rust not installed")
+            return
+
+        log("Installing rust...")
+        run_command(
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path",
+            shell=True,
+        )
+        return
+
+    log("Updating rust...")
+    run_command(["rustup", "-q", "update"])
+
+
+@register_module("copilot")
+def module_copilot() -> None:
+    """Update copilot cli"""
+    if not command_exists("copilot"):
+        if not install_missing:
+            warn("copilot not installed")
+            return
+
+        log("Installing copilot...")
+        run_command(
+            "curl -fsSL https://gh.io/copilot-install | bash",
+            shell=True,
+        )
+
+    log("Updating copilot...")
+    run_command(["copilot", "update"])
+
+
+@register_module("codex")
+def module_codex() -> None:
+    """Update codex config"""
+    if not command_exists("codex"):
+        if not install_missing:
+            warn("codex not installed")
+            return
+
+        log("Installing codex...")
+        run_command(
+            "bun install -g @openai/codex",
+            shell=True,
+        )
+
+    log("Updating codex completions...")
+    completion_dir = XDG_CONFIG_HOME / "fish" / "completions"
+    completion_dir.mkdir(parents=True, exist_ok=True)
+    completion_path = completion_dir / "codex.fish"
+    result = run_command(["codex", "completion", "fish"], capture_output=True)
+
+    if result.returncode == 0:
+        completion_path.write_text(result.stdout, encoding="utf-8")
+    else:
+        warn("Unable to update codex completions")
+
+
+@register_module("hammerspoon", os="macos")
+def module_hammerspoon() -> None:
+    """Update hammerspoon config file location"""
+    if Path("/Applications/Hammerspoon.app").exists():
+        log("Updating hammerspoon config location...")
+        desired = str(XDG_CONFIG_HOME / "hammerspoon" / "init.lua")
+        result = run_command(
+            ["defaults", "read", "org.hammerspoon.Hammerspoon", "MJConfigFile"],
+            capture_output=True,
+        )
+        current_value = result.stdout.strip() if result.returncode == 0 else ""
+        if current_value != desired:
+            run_command(
+                [
+                    "defaults",
+                    "write",
+                    "org.hammerspoon.Hammerspoon",
+                    "MJConfigFile",
+                    desired,
+                ],
+            )
+            log_sub("Updated Hammerspoon config file location")
+
+
+parser = argparse.ArgumentParser(
+    prog="dotfiles",
+    description="Update local environment. All modules are updated by default.",
+)
+parser.add_argument(
+    "-i", "--install", action="store_true", help="Install missing things"
+)
+parser.add_argument(
+    "module",
+    nargs="?",
+    help="A module to update",
+    choices=sorted(m.name for m in MODULES),
+)
+args = parser.parse_args()
+
+os.chdir(HOME)
+
+install_missing = args.install
+exit_code = 0
+
+if args.module:
+    handler = next((m for m in MODULES if m.name == args.module), None)
+    if handler:
+        handler.fn()
+    else:
+        err(f"Unknown module: {args.module}")
+        exit_code = 1
+else:
+    for m in MODULES:
+        m.fn()
+
+log("Done")
+
+raise SystemExit(exit_code)
