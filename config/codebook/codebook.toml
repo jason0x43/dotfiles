@@ -34,6 +34,7 @@ words = [
     "latexindent",
     "launchctl",
     "launchd",
+    "lazygit",
     "lifecycle",
     "linters",
     "logstream",
