@@ -1,5 +1,6 @@
 command = /opt/homebrew/bin/fish
 theme = light:ansi-light,dark:ansi-dark
+auto-update-channel = tip
 
 keybind = ctrl+h=goto_split:left
 keybind = ctrl+j=goto_split:bottom
