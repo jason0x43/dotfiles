@@ -238,6 +238,7 @@ def module_home() -> None:
 
     log("Updating home directory files...")
 
+    # Remove broken dotfile symlinks from ~/
     for entry in HOME.iterdir():
         if not entry.name.startswith("."):
             continue
@@ -245,17 +246,18 @@ def module_home() -> None:
             entry.unlink(missing_ok=True)
             log_sub(f"Removed {entry}")
 
+    # Remove broken symlinks from ~/.config
     if XDG_CONFIG_HOME.is_dir():
         for entry in XDG_CONFIG_HOME.iterdir():
             if entry.is_symlink() and not entry.exists():
                 entry.unlink(missing_ok=True)
                 log_sub(f"Removed {entry}")
 
+    # Link files in .dotfiles/home into ~/
     home_dir = DOTFILES / "home"
     if home_dir.exists():
         for source in sorted(home_dir.iterdir()):
-            if source.is_file():
-                link(source, HOME / f".{source.name}")
+            link(source, HOME / f".{source.name}")
 
     makedir(XDG_CONFIG_HOME)
 
