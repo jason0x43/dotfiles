@@ -345,6 +345,17 @@ def module_fish() -> None:
     log("Updating fish config...")
     run_command(["fish", "-c", "configure"], extra_env={"UV_VENV_CLEAR": "1"})
 
+    # TODO: remove this if/when fish-ai merges
+    # https://github.com/Realiserad/fish-ai/pull/527
+    fish_ai = XDG_CONFIG_HOME / "fish" / "conf.d" / "fish_ai.fish"
+    if fish_ai.exists():
+        old = 'if test -d "$_fish_ai_install_dir"'
+        new = 'if status is-interactive && test -d "$_fish_ai_install_dir"'
+        content = fish_ai.read_text(encoding="utf-8")
+        if old in content:
+            fish_ai.write_text(content.replace(old, new), encoding="utf-8")
+            log_sub("Patched fish_ai.fish to skip setup in non-interactive shells")
+
 
 @register_module("bat")
 def module_bat() -> None:
