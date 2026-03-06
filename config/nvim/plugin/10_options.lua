@@ -50,6 +50,10 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.splitkeep = 'topline'
 
+-- Built-in completion
+vim.o.complete = '.,w,b,kspell' -- Use less sources
+vim.o.completeopt = 'menuone,noselect,fuzzy,nosort' -- Use custom behavior
+
 -- Don't add EOL to files that don't already have one
 vim.o.fixendofline = false
 

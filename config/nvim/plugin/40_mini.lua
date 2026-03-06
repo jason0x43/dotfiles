@@ -6,7 +6,11 @@ local now_if_args = vim.fn.argc(-1) > 0 and now or later
 
 -- Icons; used by status line and others
 now(function()
-  require('mini.icons').setup()
+  require('mini.icons').setup({
+    lsp = {
+      copilot = { glyph = '' }
+    }
+  })
 
   -- Mock 'nvim-tree/nvim-web-devicons' for plugins without 'mini.icons'
   -- support. Not needed for 'mini.nvim' or MiniMax, but might be useful for
