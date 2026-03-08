@@ -8,8 +8,8 @@ local now_if_args = vim.fn.argc(-1) > 0 and now or later
 now(function()
   require('mini.icons').setup({
     lsp = {
-      copilot = { glyph = '' }
-    }
+      copilot = { glyph = '' },
+    },
   })
 
   -- Mock 'nvim-tree/nvim-web-devicons' for plugins without 'mini.icons'
