@@ -5,7 +5,6 @@ import argparse
 import json
 import os
 import pwd
-import re
 import shutil
 import subprocess
 import sys
@@ -182,54 +181,12 @@ def run_command(
     return subprocess.run(command, text=True, env=env, shell=shell, **kwargs)
 
 
-@register_module("apt", os="linux")
-def module_apt() -> None:
-    """Update app packages"""
-    log("Upgrading apt packages...")
-    run_command(["sudo", "apt", "update", "-qq"])
-    run_command(["sudo", "apt", "upgrade", "-qq"])
-
-
-@register_module("brew")
-def module_brew() -> None:
+def brew_install(pkg: str) -> None:
     if not BREW.exists():
-        if not install_missing:
-            warn("Homebrew not installed")
-            return
+        print(f"Unable to install {pkg}")
 
-        log_sub("Installing Homebrew...")
-        run_command(
-            'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
-            shell=True,
-        )
-
-    brew_packages = [
-        "bat",
-        "eza",
-        "fd",
-        "ripgrep",
-        "zoxide",
-        "mise",
-        "lazygit",
-        "neovim",
-    ]
-
-    if IS_MACOS:
-        brew_packages.append("1password-cli")
-
-    log_sub("Installing/updating core packages...")
-    run_command([str(BREW), "install", "-q", *brew_packages])
-
-    log_sub("Updating installed brew packages...")
-    run_command([str(BREW), "upgrade"])
-
-    git_completion = HOMEBREW_BASE / "share" / "zsh" / "site-functions" / "_git"
-    if git_completion.exists():
-        log_sub("Removing default git zsh completions...")
-        if owner(HOMEBREW_BASE) == os.environ.get("USER", ""):
-            git_completion.unlink(missing_ok=True)
-        else:
-            run_command(["sudo", "rm", "-f", str(git_completion)])
+    log(f"Installing {pkg}...")
+    run_command([str(BREW), "install", "-q", pkg])
 
 
 @register_module("home")
@@ -277,46 +234,62 @@ def module_home() -> None:
             link(source, target)
 
     makedir(XDG_CACHE_HOME / "zsh")
-    makedir(XDG_CACHE_HOME / "direnv" / "allow")
 
 
-@register_module("term")
-def module_term() -> None:
-    """Fix quirks in the local terminal config"""
-    info = run_command(["infocmp"], capture_output=True)
-    if info.returncode != 0:
-        return
+@register_module("apt", os="linux")
+def module_apt() -> None:
+    """Update app packages"""
+    log("Upgrading apt packages...")
+    run_command(["sudo", "apt", "update", "-qq"])
+    run_command(["sudo", "apt", "upgrade", "-qq"])
 
-    match = re.search(r"kbs=([^,]+)", info.stdout)
-    if not match:
-        return
 
-    kbs = match.group(1)
-    if kbs not in ("^h", "^H"):
-        return
+@register_module("brew")
+def module_brew() -> None:
+    log("Setting up homebrew...")
+    if not BREW.exists():
+        if not install_missing:
+            warn("Homebrew not installed")
+            return
 
-    term = os.environ.get("TERM", "xterm-256color")
-    term_info = run_command(["infocmp", term], capture_output=True)
-    if term_info.returncode != 0:
-        return
+        log_sub("Installing Homebrew...")
+        run_command(
+            'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+            shell=True,
+        )
 
-    patched = re.sub(r"kbs=\^[hH]", r"kbs=\\177", term_info.stdout)
-    temp_path = Path("/tmp") / f"{term}.ti"
-    temp_path.write_text(patched, encoding="utf-8")
-    try:
-        run_command(["tic", str(temp_path)])
-        log_sub("Fixed backspace code in terminfo")
-    finally:
-        temp_path.unlink(missing_ok=True)
+    brew_packages = [
+        "bat",
+        "eza",
+        "fd",
+        "ripgrep",
+        "zoxide",
+        "mise",
+        "lazygit",
+        "neovim",
+    ]
+
+    if IS_MACOS:
+        brew_packages.append("1password-cli")
+
+    log_sub("Installing/updating core packages...")
+    run_command([str(BREW), "install", "-q", *brew_packages])
+
+    log_sub("Updating installed brew packages...")
+    run_command([str(BREW), "upgrade"])
+
+    git_completion = HOMEBREW_BASE / "share" / "zsh" / "site-functions" / "_git"
+    if git_completion.exists():
+        log_sub("Removing default git zsh completions...")
+        if owner(HOMEBREW_BASE) == os.environ.get("USER", ""):
+            git_completion.unlink(missing_ok=True)
+        else:
+            run_command(["sudo", "rm", "-f", str(git_completion)])
 
 
 @register_module("uv")
 def module_uv() -> None:
     if not command_exists("uv"):
-        if not install_missing:
-            warn("uv not installed")
-            return
-
         log("Installing uv...")
         run_command(
             "curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh",
@@ -330,41 +303,11 @@ def module_uv() -> None:
     run_command(["uv", "tool", "upgrade", "--all"])
 
 
-@register_module("fish")
-def module_fish() -> None:
-    """Install and configure the fish shell"""
-    if not command_exists("fish"):
-        if not install_missing:
-            warn("Fish not installed")
-            return
-        if not command_exists("brew"):
-            err("Unable to install fish")
-            return
-        run_command(["brew", "install", "fish"])
-
-    log("Updating fish config...")
-    run_command(["fish", "-c", "configure"], extra_env={"UV_VENV_CLEAR": "1"})
-
-    # TODO: remove this if/when fish-ai merges
-    # https://github.com/Realiserad/fish-ai/pull/527
-    fish_ai = XDG_CONFIG_HOME / "fish" / "conf.d" / "fish_ai.fish"
-    if fish_ai.exists():
-        old = 'if test -d "$_fish_ai_install_dir"'
-        new = 'if status is-interactive && test -d "$_fish_ai_install_dir"'
-        content = fish_ai.read_text(encoding="utf-8")
-        if old in content:
-            fish_ai.write_text(content.replace(old, new), encoding="utf-8")
-            log_sub("Patched fish_ai.fish to skip setup in non-interactive shells")
-
-
 @register_module("bat")
 def module_bat() -> None:
     """Install and configure bat"""
-    if not command_exists("bat"):
-        if not install_missing:
-            warn("Bat not installed")
-            return
-        run_command([str(BREW), "install", "bat"])
+    if not command_exists("bat") and not brew_install("bat"):
+        return
 
     log("Rebuilding bat cache...")
     result = run_command(["bat", "cache", "--build"], capture_output=True)
@@ -374,6 +317,16 @@ def module_bat() -> None:
             err(result.stderr.strip())
         elif result.stdout.strip():
             err(result.stdout.strip())
+
+
+@register_module("fish")
+def module_fish() -> None:
+    """Install and configure the fish shell"""
+    if not command_exists("fish") and not brew_install("fish"):
+        return
+
+    log("Updating fish config...")
+    run_command(["fish", "-c", "configure"], extra_env={"UV_VENV_CLEAR": "1"})
 
 
 @register_module("node")
@@ -391,16 +344,8 @@ def module_node() -> None:
             return []
         return sorted(data.keys())
 
-    log("Updating node...")
-    if not command_exists("npm"):
-        if not install_missing:
-            warn("Node not installed")
-            return
-        run_command([str(BREW), "install", "node"])
-
-    log_sub("Updating package managers...")
-    if command_exists("pnpm"):
-        run_command(["pnpm", "self-update", "-q"], quiet=True)
+    if not command_exists("node") and not brew_install("node"):
+        return
 
     log_sub("Updating global node packages...")
     outdated = npm_outdated_global_packages()
@@ -413,18 +358,24 @@ def module_node() -> None:
         run_command(["npm", "i", "-g", f"{package}@latest"], quiet=True)
 
 
+@register_module("pnpm")
+def module_pnpm() -> None:
+    if not command_exists("pnpm"):
+        log("Installing pnpm...")
+        run_command("curl -fsSL https://get.pnpm.io/install.sh | sh -", shell=True)
+
+    log_sub("Updating pnpm...")
+    run_command(["pnpm", "self-update", "-q"], quiet=True)
+
+
 @register_module("bun")
 def module_bun() -> None:
     if not command_exists("bun"):
-        if not install_missing:
-            warn("bun not installed")
-            return
-
         log("Installing bun...")
         run_command("curl -fsSL https://bun.com/install | bash", shell=True)
-
-    log("Updating bun...")
-    run_command(["bun", "upgrade"])
+    else:
+        log("Updating bun...")
+        run_command(["bun", "upgrade"])
 
     log("Updating global dependencies...")
     run_command(["bun", "update", "-g", "--latest"])
@@ -435,11 +386,8 @@ def module_bun() -> None:
 
 @register_module("mas", os="macos")
 def module_mas() -> None:
-    if not command_exists("mas"):
-        if not install_missing:
-            warn("mas not installed")
-            return
-        run_command([str(BREW), "install", "mas"])
+    if not command_exists("mas") and not brew_install("mas"):
+        return
 
     log("Upgrading Mac App Store apps...")
     run_command(["mas", "upgrade"])
@@ -466,66 +414,50 @@ def module_launchd() -> None:
         log_sub(f"Bootstrapped {source.name}")
 
 
-@register_module("rust")
+@register_module("rust", os="macos")
 def module_rust() -> None:
     if not command_exists("rustup"):
-        if not install_missing:
-            warn("Rust not installed")
-            return
-
         log("Installing rust...")
         run_command(
             "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path",
             shell=True,
         )
         return
-
-    log("Updating rust...")
-    run_command(["rustup", "-q", "update"])
+    else:
+        log("Updating rust...")
+        run_command(["rustup", "-q", "update"])
 
 
 @register_module("copilot")
 def module_copilot() -> None:
     """Update copilot cli"""
-    if not command_exists("copilot"):
-        if not install_missing:
-            warn("copilot not installed")
-            return
-
-        log("Installing copilot...")
-        run_command(
-            "curl -fsSL https://gh.io/copilot-install | bash",
-            shell=True,
-        )
-
-    log("Updating copilot...")
-    run_command(["copilot", "update"])
+    if command_exists("copilot"):
+        log("Updating copilot...")
+        run_command(["copilot", "update"])
 
 
 @register_module("codex")
 def module_codex() -> None:
     """Update codex config"""
-    if not command_exists("codex"):
-        if not install_missing:
-            warn("codex not installed")
-            return
+    if command_exists("codex"):
+        log("Updating codex completions...")
+        completion_dir = XDG_CONFIG_HOME / "fish" / "completions"
+        completion_dir.mkdir(parents=True, exist_ok=True)
+        completion_path = completion_dir / "codex.fish"
+        result = run_command(["codex", "completion", "fish"], capture_output=True)
 
-        log("Installing codex...")
-        run_command(
-            "bun install -g @openai/codex",
-            shell=True,
-        )
+        if result.returncode == 0:
+            completion_path.write_text(result.stdout, encoding="utf-8")
+        else:
+            warn("Unable to update codex completions")
 
-    log("Updating codex completions...")
-    completion_dir = XDG_CONFIG_HOME / "fish" / "completions"
-    completion_dir.mkdir(parents=True, exist_ok=True)
-    completion_path = completion_dir / "codex.fish"
-    result = run_command(["codex", "completion", "fish"], capture_output=True)
 
-    if result.returncode == 0:
-        completion_path.write_text(result.stdout, encoding="utf-8")
-    else:
-        warn("Unable to update codex completions")
+@register_module("claude")
+def module_claude() -> None:
+    """Update claude"""
+    if command_exists("claude"):
+        log("Updating claude...")
+        run_command(["claude", "update"])
 
 
 @register_module("hammerspoon", os="macos")
