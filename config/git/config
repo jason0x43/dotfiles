@@ -80,6 +80,7 @@
 	unignore = update-index --no-assume-unchanged
 	unstage = reset HEAD
 	untrack = rm --cached
+	ustash = stash push --keep-index --include-untracked
 
 [push]
 	default = current
