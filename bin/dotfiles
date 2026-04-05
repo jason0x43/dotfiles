@@ -273,10 +273,22 @@ def module_brew() -> None:
         brew_packages.append("1password-cli")
 
     log_sub("Installing/updating core packages...")
-    run_command([str(BREW), "install", "-q", *brew_packages])
+    run_command(
+        [str(BREW), "install", "-q", *brew_packages],
+        extra_env={
+            "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
+            "HOMEBREW_NO_INSTALL_UPGRADE": "true",
+        },
+    )
 
     log_sub("Updating installed brew packages...")
-    run_command([str(BREW), "upgrade"])
+    run_command(
+        [str(BREW), "upgrade", "-q"],
+        extra_env={
+            "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
+            "HOMEBREW_NO_INSTALL_UPGRADE": "true",
+        },
+    )
 
     git_completion = HOMEBREW_BASE / "share" / "zsh" / "site-functions" / "_git"
     if git_completion.exists():
