@@ -21,10 +21,7 @@
     "disable_paste_summary": true
   },
 
-  "instructions": [
-    "AGENTS.md",
-    ".github/copilot-instructions.md"
-  ],
+  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
 
   "mcp": {
     "context7": {
@@ -35,11 +32,6 @@
       },
       "enabled": true
     },
-    // "graphiti": {
-    //   "type": "remote",
-    //   "url": "http://localhost:48000/mcp",
-    //   "enabled": true
-    // },
     "github": {
       "type": "remote",
       "enabled": false,
@@ -50,7 +42,18 @@
     }
   },
 
-  "plugin": [
-    "opencode-gemini-auth@latest"
-  ]
+  "plugin": ["opencode-gemini-auth@latest"],
+
+  "provider": {
+    "anthropic": {
+      "options": {
+        "setCacheKey": true
+      }
+    },
+    "openai": {
+      "options": {
+        "setCacheKey": true
+      }
+    }
+  }
 }
