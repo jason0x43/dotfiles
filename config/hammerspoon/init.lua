@@ -264,4 +264,29 @@ ConfigWatcher = hs.pathwatcher
 -- Make the mouse more obvious
 hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
 
+-- Add a caffeine menubar icon
+Caffeine = {
+	running = false,
+	icon_empty = hs.image
+		.imageFromPath(os.getenv("HOME") .. "/.config/hammerspoon/pot-empty.svg")
+		:setSize({ h = 18, w = 18 }),
+	icon_filled = hs.image
+		.imageFromPath(os.getenv("HOME") .. "/.config/hammerspoon/pot-filled.svg")
+		:setSize({ h = 18, w = 18 }),
+}
+Caffeine.menu = hs.menubar.new()
+Caffeine.menu:setIcon(Caffeine.icon_empty)
+
+-- Poll for caffeinate status; not the most efficient, but flexible
+Caffeine.watcher = hs.timer.doEvery(2, function()
+	local running = hs.execute('pgrep -f "caffeinate -dims"') ~= ""
+	if running and not Caffeine.running then
+		Caffeine.running = true
+		Caffeine.menu:setIcon(Caffeine.icon_filled)
+	elseif not running and Caffeine.running then
+		Caffeine.running = false
+		Caffeine.menu:setIcon(Caffeine.icon_empty)
+	end
+end)
+
 hs.alert.show("Hammerspoon config loaded")
