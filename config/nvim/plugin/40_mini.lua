@@ -23,7 +23,26 @@ end)
 
 -- Notifications
 now(function()
-  require('mini.notify').setup()
+  require('mini.notify').setup({
+    content = {
+      sort = function(notifications)
+        return vim.tbl_filter(function(notif)
+          local title = ''
+          if notif.data and notif.data.response then
+            title = notif.data.response.value.title
+          end
+          -- Filter out excessive notifications from jdtls
+          return not (
+            notif.data.source == 'lsp_progress'
+            and (
+              title:find('Publish Diagnostics')
+              or title:find('Validate documents')
+            )
+          )
+        end, notifications)
+      end,
+    },
+  })
 end)
 
 -- Command line updates
@@ -273,7 +292,7 @@ later(function()
 
   pick.setup({
     mappings = {
-      refine = '<C-r>',
+      refine = '<M-r>',
     },
 
     source = {
