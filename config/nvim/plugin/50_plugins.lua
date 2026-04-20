@@ -6,7 +6,7 @@ local now_if_args = vim.fn.argc(-1) > 0 and now or later
 
 -- Treesitter =================================================================
 
-now_if_args(function()
+now(function()
   add({
     source = 'nvim-treesitter/nvim-treesitter',
     hooks = {
@@ -14,31 +14,20 @@ now_if_args(function()
         vim.cmd('TSUpdate')
       end,
     },
+    checkout = 'main',
   })
+
   add({
     source = 'nvim-treesitter/nvim-treesitter-textobjects',
     -- Same logic as for 'nvim-treesitter'
     checkout = 'main',
   })
 
-  require('nvim-treesitter.configs').setup({
-    auto_install = true,
-    sync_install = true,
-    ensure_installed = { 'diff' },
-    modules = {},
-    ignore_install = { 'swift' },
-    highlight = {
-      enable = true,
-    },
-    indent = {
-      enable = true,
-    },
-    matchup = {
-      enable = true,
-    },
-    context_commentstring = {
-      enable = true,
-    },
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { '<filetype>' },
+    callback = function()
+      vim.treesitter.start()
+    end,
   })
 end)
 
