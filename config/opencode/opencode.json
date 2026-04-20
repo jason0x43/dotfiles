@@ -1,53 +1,66 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
   "agent": {
     "plan": {
       "permission": {
         "bash": {
           "echo *": "allow",
+          "fd *": "allow",
           "find *": "allow",
           "grep *": "allow",
-          "rg *": "allow",
-          "fd *": "allow",
           "head *": "allow",
+          "rg *": "allow",
           "tail *": "allow"
         }
       }
     }
   },
-
   "experimental": {
     "disable_paste_summary": true
   },
-
-  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
-
+  "instructions": [
+    "AGENTS.md",
+    ".github/copilot-instructions.md"
+  ],
   "mcp": {
     "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
+      "enabled": true,
       "headers": {
         "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
       },
-      "enabled": true
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
     },
     "github": {
-      "type": "remote",
       "enabled": false,
-      "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
         "Authorization": "Bearer {env:GITHUB_MCP_KEY}"
-      }
+      },
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/"
     }
   },
-
-  "plugin": ["opencode-gemini-auth@latest"],
-
+  "model": "ollama/gemma4:26b",
+  "plugin": [
+    "opencode-gemini-auth@latest"
+  ],
   "provider": {
     "anthropic": {
       "options": {
         "setCacheKey": true
+      }
+    },
+    "ollama": {
+      "models": {
+        "gemma4:26b": {
+          "_launch": true,
+          "name": "gemma4:26b"
+        }
+      },
+      "name": "Ollama",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1"
       }
     },
     "openai": {
