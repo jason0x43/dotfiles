@@ -279,7 +279,7 @@ Caffeine.menu:setIcon(Caffeine.icon_empty)
 
 -- Poll for caffeinate status; not the most efficient, but flexible
 Caffeine.watcher = hs.timer.doEvery(2, function()
-	local running = hs.execute('pgrep -f "caffeinate -dims"') ~= ""
+	local running = hs.execute('pgrep caffeinate') ~= ""
 	if running and not Caffeine.running then
 		Caffeine.running = true
 		Caffeine.menu:setIcon(Caffeine.icon_filled)
