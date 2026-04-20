@@ -84,3 +84,6 @@ alias lgl='lazygit log'
 if test -x /Applications/Tailscale.app/Contents/MacOS/Tailscale
     alias tailscale=/Applications/Tailscale.app/Contents/MacOS/Tailscale
 end
+
+# SignetAI
+alias signet='bun run --bun ~/.bun/bin/signet'
