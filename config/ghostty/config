@@ -1,7 +1,8 @@
-command = /opt/homebrew/bin/fish
+command = /usr/local/bin/fish
 theme = light:ansi-light,dark:ansi-dark
 auto-update-channel = tip
 
+# general key bindigns
 keybind = ctrl+h=goto_split:left
 keybind = ctrl+j=goto_split:bottom
 keybind = ctrl+k=goto_split:top
@@ -13,9 +14,49 @@ keybind = alt+k=resize_split:up,32
 keybind = alt+h=resize_split:left,32
 keybind = alt+l=resize_split:right,32
 keybind = ctrl+a>r=reload_config
+keybind = ctrl+a>p=toggle_command_palette
 keybind = shift+enter=text:\n
 keybind = ctrl+a>c=write_screen_file:open
 keybind = ctrl+a>t=prompt_surface_title
+
+# vim movement keytable
+keybind = ctrl+a>v=activate_key_table:vim
+
+# Key table definition
+keybind = vim/
+
+# Line movement
+keybind = vim/j=scroll_page_lines:1
+keybind = vim/k=scroll_page_lines:-1
+
+# Page movement
+keybind = vim/ctrl+d=scroll_page_down
+keybind = vim/ctrl+u=scroll_page_up
+keybind = vim/ctrl+f=scroll_page_down
+keybind = vim/ctrl+b=scroll_page_up
+
+# Jump to top/bottom
+keybind = vim/g>g=scroll_to_top
+keybind = vim/shift+g=scroll_to_bottom
+
+# Search (if you want vim-style search entry)
+keybind = vim/slash=start_search
+keybind = vim/n=navigate_search:next
+keybind = vim/shift+n=navigate_search:previous
+
+# Copy mode / selection
+keybind = vim/y=copy_to_clipboard
+
+# Command Palette
+keybind = vim/shift+semicolon=toggle_command_palette
+
+# Exit
+keybind = vim/escape=deactivate_key_table
+keybind = vim/q=deactivate_key_table
+keybind = vim/i=deactivate_key_table
+
+# Catch unbound keys
+keybind = vim/catch_all=ignore
 
 # enable the quick terminal
 keybind = global:alt+ctrl+cmd+space=toggle_quick_terminal
@@ -26,7 +67,9 @@ font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
 
-font-size = 12
+font-size = 13
+font-thicken = true
+font-thicken-strength = 0
 
 # flashy cursor
 shell-integration-features = no-cursor
@@ -42,3 +85,7 @@ clipboard-read = allow
 window-padding-x = 2
 window-padding-y = 2
 window-padding-balance = true
+
+# notifications
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = notify
