@@ -10,3 +10,5 @@ set -gx XDG_STATE_HOME ~/.local/state
 set -gx GOPATH ~/Code/go
 set -gx MANPAGER "sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
 set -gx HOMEBREW_NO_ENV_HINTS 1
+set -gx PI_CONFIG_DIR ~/.config/pi
+set -gx PI_CODING_AGENT_DIR $PI_CONFIG_DIR/agent
