@@ -14,7 +14,7 @@ Produce a fast, high-signal review of proposed or completed changes before hando
 ## Required Execution Model
 
 - Always perform the review in a subagent, not inline in the main agent.
-- Use the latest Claude Sonnet model available to the environment for the review subagent.
+- Use gpt-5.3-codex from openai for the review subagent.
 - Give the subagent the exact scope to review: changed files, diff, relevant constraints, and any intended behavior.
 - Ask the subagent for findings only. Do not ask it to edit code.
 
