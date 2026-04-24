@@ -17,6 +17,8 @@
         <string>3850</string>
         <key>SIGNET_PATH</key>
         <string>/Users/jason/.local/share/signet</string>
+        <key>PI_CODING_AGENT_DIR</key>
+        <string>/Users/jason/.config/pi/agent</string>
         <key>PATH</key>
         <string>/Users/jason/.bun/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
     </dict>
