@@ -43,3 +43,6 @@ __pycache__/
 **/CLAUDE.local.md
 
 **/.claude/settings.local.json
+
+# Pi coding agent lens extension files
+.pi-lens/
