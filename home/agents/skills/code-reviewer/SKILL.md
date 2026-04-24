@@ -1,222 +1,110 @@
 ---
 name: code-reviewer
-description: Automatic code quality and best practices analysis. Use proactively when files are modified, saved, or committed. Analyzes code style, patterns, potential bugs, and security basics. Triggers on file changes, git diff, code edits, quality mentions.
+description: General-purpose code review skill for agent-driven development; use after making updates to code.
 ---
 
-# Code Reviewer Skill
+# Code Reviewer
 
-Lightweight automatic code quality checks while you code.
+Use this skill to review code during agent-driven development. This skill is for internal agent feedback loops, not user-facing review reports.
 
-## When I Activate
+## Purpose
 
-- Files modified or saved
-- Git diff run
-- Code mentioned in conversation
-- User asks about code quality
-- Before commits
+Produce a fast, high-signal review of proposed or completed changes before handoff. Focus on catching issues early, tightening the implementation, and preventing unnecessary or unfinished changes from being left behind.
 
-## What I Check
+## Required Execution Model
 
-### Quick Wins
+- Always perform the review in a subagent, not inline in the main agent.
+- Use the latest Claude Sonnet model available to the environment for the review subagent.
+- Give the subagent the exact scope to review: changed files, diff, relevant constraints, and any intended behavior.
+- Ask the subagent for findings only. Do not ask it to edit code.
 
-- Code style and formatting issues
-- Common anti-patterns
-- Obvious bugs (null checks, undefined references)
-- Basic security patterns (hardcoded secrets)
-- Import/export issues
-- Unused variables and functions
+## Review Priorities
 
-### What I Don't Do
+Evaluate the changes for:
 
-- Deep architectural review → Use **@code-reviewer** sub-agent
-- Comprehensive security audit → Use **security-auditor** skill
-- Performance profiling → Use **@architect** sub-agent
-- Full refactoring plans → Use **@code-reviewer** sub-agent
+- General code quality
+- Security issues and misuse of trust boundaries, secrets, permissions, shell execution, file access, and input handling
+- Use of modern language and framework idioms that match the surrounding codebase
+- In-progress, accidental, or unnecessary changes left in the updated code
 
-## Relationship with @code-reviewer Sub-Agent
+## What To Look For
 
-**Me (Skill):** Fast, lightweight, real-time feedback
-**@code-reviewer (Sub-Agent):** Deep analysis with examples and strategy
+### Code Quality
 
-### Workflow
+- Correctness issues, edge cases, broken control flow, and missing error handling
+- Overly complex changes that could be smaller or clearer
+- Confusing naming, dead code, commented-out code, debug prints, and TODOs without justification
+- Missing or insufficient tests when the repo already expects them
+- Regressions against existing patterns or repository conventions
 
-1. You write code
-2. I auto-analyze (instant feedback)
-3. I flag: "⚠️ Potential issue on line 42"
-4. You want details → Invoke **@code-reviewer** sub-agent
-5. Sub-agent provides comprehensive analysis
+### Security
 
-## Analysis Examples
+- Injection risks, unsafe shell usage, unsanitized inputs, path traversal, insecure temp file handling
+- Leaked secrets, tokens, credentials, internal URLs, or machine-specific values
+- Overly broad permissions, insecure defaults, missing validation, and unsafe deserialization
+- Logging of sensitive data or persistence of sensitive material in repo files
 
-### JavaScript/TypeScript
+### Modern Idioms
 
-```javascript
-// You write this code:
-function getUser(id) {
-  return db.query(`SELECT * FROM users WHERE id = ${id}`);
-}
+- Deprecated APIs, outdated framework patterns, or unnecessary legacy compatibility code
+- Code that fights the language or framework instead of using the current idiomatic approach
+- New abstractions that are heavier than the surrounding code style requires
 
-// I immediately flag:
-// 🚨 Line 2: SQL injection vulnerability
-// 💡 Use parameterized queries
-```
+### In-Progress Or Unnecessary Changes
 
-### React
+- Temporary flags, placeholders, stubs, scaffolding, or incomplete branches
+- Formatting-only churn unrelated to the task
+- Drive-by refactors not needed for the requested change
+- Leftover imports, unreachable code, disabled tests, or partial migrations
 
-```javascript
-// You write:
-function UserList({ users }) {
-  return users.map((user) => <User data={user} />);
-}
+## Review Procedure
 
-// I flag:
-// ⚠️ Missing key prop in list rendering (line 2)
-// 💡 Add key={user.id} to User component
-```
+1. Gather the exact review scope.
+2. Launch a review subagent on the latest Claude Sonnet model.
+3. Provide:
+   - the user goal
+   - the implementation intent
+   - the files or diff to review
+   - repo-specific constraints or conventions
+4. Ask for prioritized findings with file references.
+5. Apply only findings that are real, actionable, and in scope.
+6. If no meaningful findings exist, report that clearly and note any residual testing gaps.
 
-### Python
+## Expected Output From The Subagent
 
-```python
-# You write:
-def process_data(data):
-    return data['user']['profile']['name']
+The subagent should return:
 
-# I flag:
-# ⚠️ Potential KeyError - no safety checks (line 2)
-# 💡 Use .get() or add try/except
-```
+- A short list of findings ordered by severity
+- File paths and line references when possible
+- Why each issue matters
+- A brief note when no findings are present
+- Any residual risk or testing gap that still deserves attention
 
-## Check Categories
+## Reporting Style
 
-### Code Style
+- Keep feedback direct and implementation-oriented.
+- Prefer concrete defects and risks over stylistic commentary.
+- Do not optimize for politeness or explanation to an end user.
+- Avoid speculative complaints unless they identify a real risk.
+- If a change is acceptable, say so briefly and move on.
 
-- Inconsistent naming conventions
-- Missing semicolons (JavaScript)
-- Improper indentation
-- Long functions (>50 lines)
-- Magic numbers
+## Default Review Prompt
 
-### Potential Bugs
+Use this as the baseline prompt for the review subagent and adapt it to the task:
 
-- Null/undefined access without checks
-- Array access without bounds checking
-- Type mismatches (TypeScript)
-- Unreachable code
-- Infinite loops
+```text
+Review these changes for agent-driven development feedback. Focus on actionable findings only.
 
-### Basic Security
+Evaluate:
+- code quality and correctness
+- security
+- modern language/framework idioms
+- unfinished, accidental, or unnecessary changes left in the code
 
-- Hardcoded API keys or secrets
-- SQL injection patterns
-- eval() or exec() usage
-- Insecure random number generation
-- Missing input validation
-
-### Best Practices
-
-- Missing error handling
-- Console.log in production code
-- Commented-out code blocks
-- TODO comments without context
-- Overly complex conditions
-
-## Output Format
-
-```
-🤖 code-reviewer skill:
-  [Severity] Issue description (file:line)
-  💡 Quick fix suggestion
-  📖 Reference: [link to learn more]
-```
-
-### Severity Levels
-
-- 🚨 **CRITICAL**: Must fix (security, data loss)
-- ⚠️ **HIGH**: Should fix (bugs, performance)
-- 📋 **MEDIUM**: Consider fixing (maintainability)
-- 💡 **LOW**: Nice to have (style, readability)
-
-## When to Invoke Sub-Agent
-
-After I flag issues, invoke **@code-reviewer** sub-agent for:
-
-- Detailed explanation of the issue
-- Multiple fix alternatives with pros/cons
-- Architectural recommendations
-- Refactoring strategies
-- Best practice guidelines
-
-**Example:**
-
-```
-Me: "⚠️ Potential N+1 query detected"
-You: "@code-reviewer explain the N+1 issue and show optimal solution"
-Sub-agent: [Provides comprehensive analysis with examples]
-```
-
-## Examples in Action
-
-### TypeScript Function
-
-```typescript
-// Before:
-async function fetchUsers(ids) {
-  const users = [];
-  for (let id of ids) {
-    const user = await User.findById(id); // N+1 query!
-    users.push(user);
-  }
-  return users;
-}
-
-// I flag:
-// ⚠️ N+1 query pattern detected (line 4)
-// 💡 Use User.findByIds(ids) for batch loading
-
-// After fix:
-async function fetchUsers(ids) {
-  return await User.findByIds(ids);
-}
-```
-
-### React Component
-
-```jsx
-// Before:
-function UserCard({ user }) {
-  const [data, setData] = useState();
-
-  useEffect(() => {
-    fetch(`/api/users/${user.id}`)
-      .then((res) => res.json())
-      .then(setData);
-  }, []); // Missing dependency!
-
-  return <div>{data?.name}</div>;
-}
-
-// I flag:
-// ⚠️ useEffect dependency array incomplete (line 6)
-// 💡 Add user.id to dependencies: [user.id]
-
-// After fix:
-useEffect(() => {
-  fetch(`/api/users/${user.id}`)
-    .then((res) => res.json())
-    .then(setData);
-}, [user.id]);
-```
-
-## Integration with /review Command
-
-The `/review` command aggregates my findings with deep sub-agent analysis:
-
-```bash
-/review --scope staged --checks all
-
-# Command workflow:
-# 1. Collects my automatic findings
-# 2. Invokes @code-reviewer sub-agent for deep analysis
-# 3. Invokes @security-auditor sub-agent
-# 4. Generates comprehensive report with priorities
+Return:
+- prioritized findings only
+- file/line references when available
+- why each finding matters
+- a short statement if no findings are present
+- residual risks or testing gaps if relevant
 ```

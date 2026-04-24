@@ -1,6 +1,6 @@
 ---
-name: apple-dev
-description: Domain knowledge about Apple APIs, resources, and development processes; use when planning or implementing features, updates, or bug fixes on Apple-focused Swift and Objective-C projects.
+name: swift-data-dev
+description: Domain knowledge about SwiftData and CloudKit; use when planning or implementing features, updates, or bug fixes that involve SwiftData or CloudKit.
 ---
 
 # Apple Development Notes
