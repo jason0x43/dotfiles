@@ -3,11 +3,11 @@ hs.loadSpoon("EmmyLua")
 ---@module "types"
 ---@module "user.types.hammerspoon"
 
-local settings = require("settings")
+local secrets = require("secrets")
 local ui = require("ui")
 local logger = hs.logger.new("init", "info")
 
-settings.init("settings.json")
+secrets.init("secrets.json")
 
 -- Use Spotlight when searching for app names
 hs.application.enableSpotlightForNameSearches(true)

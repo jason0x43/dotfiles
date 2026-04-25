@@ -18,11 +18,21 @@ local function openInChromeProfile(profile)
 	end
 end
 
-local chromeWork = 'Profile 1'
+local chromeWork = "Profile 1"
+local workUrls = hs.settings.get("workUrls")
 
-spoon.URLDispatcher.url_patterns = {
-  { ".*", nil, openInChromeProfile(chromeWork), "Slack" },
-  { ".*", "com.apple.safari" }
-}
+spoon.URLDispatcher.url_patterns = {}
+
+if workUrls then
+	for _, entry in ipairs(workUrls) do
+		local urlPattern = { entry.pattern, nil, openInChromeProfile(chromeWork) }
+		if entry.app then
+			table.insert(urlPattern, entry.app)
+		end
+		table.insert(spoon.URLDispatcher.url_patterns, urlPattern)
+	end
+end
+
+table.insert(spoon.URLDispatcher.url_patterns, { ".*", "com.apple.safari" })
 
 spoon.URLDispatcher:start()
