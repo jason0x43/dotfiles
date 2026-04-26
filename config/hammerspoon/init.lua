@@ -36,6 +36,7 @@ ConfigWatcher = hs.pathwatcher
 hs.hotkey.bind({ "ctrl", "shift" }, "m", ui.mouseHighlight)
 
 require("caffeinate")
+require("battery-status")
 require("url-dispatcher")
 require("keybinds")
 --require("display-watcher")

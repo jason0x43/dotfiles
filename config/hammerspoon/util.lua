@@ -40,4 +40,14 @@ M.indexOf = function(table, item)
   return nil
 end
 
+---@param path string
+---@return hs.image
+M.loadImage = function(path)
+	local img = hs.image.imageFromPath(path)
+	if not img then
+		error("Failed to load image from path: " .. path)
+	end
+	return img
+end
+
 return M
