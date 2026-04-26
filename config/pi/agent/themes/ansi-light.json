@@ -34,9 +34,9 @@
 
 		"selectedBg": "black",
 		"userMessageBg": "#f3f3ff",
-		"userMessageText": "white",
+		"userMessageText": "#303030",
 		"customMessageBg": "black",
-		"customMessageText": "white",
+		"customMessageText": "#303030",
 		"customMessageLabel": "magenta",
 		"toolPendingBg": "#f5f5f5",
 		"toolSuccessBg": "#f0f9f0",

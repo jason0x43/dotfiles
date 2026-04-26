@@ -1,13 +1,10 @@
 {
-  "lastChangelogVersion": "0.70.0",
+  "lastChangelogVersion": "0.70.2",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultModel": "gpt-5.4",
   "defaultThinkingLevel": "medium",
   "packages": [
-    "npm:pi-subagents"
-  ],
-  "skills": [
-    "~/.local/share/signet/skills"
+    "../../../Code/pi-subagents"
   ],
   "theme": "ansi-dark"
 }

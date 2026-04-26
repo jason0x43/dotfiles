@@ -12,3 +12,4 @@ set -gx MANPAGER "sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x0
 set -gx HOMEBREW_NO_ENV_HINTS 1
 set -gx PI_CONFIG_DIR ~/.config/pi
 set -gx PI_CODING_AGENT_DIR $PI_CONFIG_DIR/agent
+set -gx SIGNET_WORKSPACE ~/.local/share/signet
