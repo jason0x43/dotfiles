@@ -20,8 +20,8 @@ local ICON_HEIGHT = 18
 local ENTITY_REGISTRY_REQUEST_ID = 1
 local STATE_CHANGED_SUBSCRIPTION_ID = 2
 
-local defaultIcon =
-	util.loadImage("battery.svg"):setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
+local highBatteryIcon =
+	util.loadImage("battery-high.svg"):setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
 local lowBatteryIcon =
 	util.loadImage("battery-low.svg"):setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
 
@@ -216,10 +216,7 @@ local function refreshMenuIcon()
 	end
 
 	local isLowBattery = hasLowBattery()
-	M.menu:setIcon(
-		isLowBattery and lowBatteryIcon or defaultIcon,
-		not isLowBattery
-	)
+	M.menu:setIcon(isLowBattery and lowBatteryIcon or highBatteryIcon)
 end
 
 ---@param entity BatteryStatusSensor
