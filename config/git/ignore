@@ -46,3 +46,6 @@ __pycache__/
 
 # Pi coding agent lens extension files
 .pi-lens/
+
+# Lean Context
+.lean-ctx/
