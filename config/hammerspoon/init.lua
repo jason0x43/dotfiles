@@ -3,11 +3,11 @@ hs.loadSpoon("EmmyLua")
 ---@module "types"
 ---@module "user.types.hammerspoon"
 
-local secrets = require("secrets")
+local settings = require("settings")
 local ui = require("ui")
 local logger = hs.logger.new("init", "info")
 
-secrets.init("secrets.json")
+settings.init("settings.json")
 
 -- Use Spotlight when searching for app names
 hs.application.enableSpotlightForNameSearches(true)
@@ -20,7 +20,11 @@ ConfigWatcher = hs.pathwatcher
 	.new(hs.configdir, function(files)
 		local doReload = false
 		for _, file in pairs(files) do
-			if file:sub(-4) == ".lua" or file:sub(-5) == ".json" then
+			if
+				file:sub(-4) == ".lua"
+				or file:sub(-5) == ".json"
+				or file:sub(-4) == ".svg"
+			then
 				doReload = true
 				break
 			end
@@ -40,5 +44,6 @@ require("battery-status")
 require("url-dispatcher")
 require("keybinds")
 --require("display-watcher")
+require("pi-status")
 
 hs.alert.show("Hammerspoon config loaded")

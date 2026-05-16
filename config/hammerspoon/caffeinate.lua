@@ -1,4 +1,4 @@
-local util = require('util')
+local util = require("util")
 
 ---@return hs.menubar
 local function createMenu()
@@ -23,27 +23,22 @@ local function decaffeinate()
 	hs.execute("pkill -x caffeinate")
 end
 
-local empty_img =
-	util.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pot-empty.svg")
-local filled_img =
-	util.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pot-filled.svg")
+local icon_empty = util
+	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pot-empty.svg")
+	:setSize({ h = 18, w = 18 })
+local icon_filled = util
+	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pot-filled.svg")
+	:setSize({ h = 18, w = 18 })
 
 -- Add a caffeine menubar icon
-Caffeine = {
-  ---@type boolean
-	running = false,
-	icon_empty = empty_img:setSize({ h = 18, w = 18 }),
-	icon_filled = filled_img:setSize({ h = 18, w = 18 }),
-}
+Caffeine = {}
 
 local function refreshMenuState()
-	Caffeine.running = isRunning()
-	Caffeine.menu:setIcon(
-		Caffeine.running and Caffeine.icon_filled or Caffeine.icon_empty
-	)
+	local running = isRunning()
+	Caffeine.menu:setIcon(running and icon_filled or icon_empty)
 	Caffeine.menu:setMenu({
 		{
-			title = Caffeine.running and "Decaffeinate" or "Caffeinate",
+			title = running and "Decaffeinate" or "Caffeinate",
 			fn = function()
 				if Caffeine.running then
 					decaffeinate()

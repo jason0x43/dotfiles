@@ -6,9 +6,9 @@ module.init = function(filename)
 
   if attrs then
     ---@type table | nil
-    local secrets = hs.json.read(filename)
-    if secrets then
-      for key, value in pairs(secrets) do
+    local settings = hs.json.read(filename)
+    if settings then
+      for key, value in pairs(settings) do
         hs.settings.set(key, value)
       end
     end
