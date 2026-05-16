@@ -10,7 +10,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Union, Callable, Literal
+from typing import Dict, List, Optional, Sequence, Union, Callable, Literal, Any
 
 
 @dataclass(frozen=True)
@@ -167,7 +167,8 @@ def run_command(
     if extra_env:
         env.update(extra_env)
 
-    kwargs = {}
+    kwargs: dict[str, Any] = {}
+
     if capture_output:
         kwargs["stdout"] = subprocess.PIPE
         kwargs["stderr"] = subprocess.PIPE
@@ -181,12 +182,13 @@ def run_command(
     return subprocess.run(command, text=True, env=env, shell=shell, **kwargs)
 
 
-def brew_install(pkg: str) -> None:
+def brew_install(pkg: str) -> bool:
     if not BREW.exists():
         print(f"Unable to install {pkg}")
 
     log(f"Installing {pkg}...")
-    run_command([str(BREW), "install", "-q", pkg])
+    result = run_command([str(BREW), "install", "-q", pkg])
+    return result.returncode == 0
 
 
 @register_module("home")
@@ -396,15 +398,6 @@ def module_bun() -> None:
     run_command(["bun", "completions"])
 
 
-@register_module("mas", os="macos")
-def module_mas() -> None:
-    if not command_exists("mas") and not brew_install("mas"):
-        return
-
-    log("Upgrading Mac App Store apps...")
-    run_command(["mas", "upgrade"])
-
-
 @register_module("launchd", os="macos")
 def module_launchd() -> None:
     log("Linking and bootstrapping launchd scripts...")
@@ -494,6 +487,15 @@ def module_hammerspoon() -> None:
                 ],
             )
             log_sub("Updated Hammerspoon config file location")
+
+
+@register_module("mas", os="macos")
+def module_mas() -> None:
+    if not command_exists("mas") and not brew_install("mas"):
+        return
+
+    log("Upgrading Mac App Store apps...")
+    run_command(["mas", "upgrade"])
 
 
 parser = argparse.ArgumentParser(
