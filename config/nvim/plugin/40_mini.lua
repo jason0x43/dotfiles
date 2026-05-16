@@ -357,3 +357,13 @@ later(function()
   require('mini.visits').setup()
 end)
 
+-- Use 'q' to close vim.pack windows
+later(function()
+  _G.Config.new_autocmd('FileType', 'nvim-pack', function()
+    vim.wo.foldlevel = 0
+    vim.keymap.set('n', 'q', function()
+      vim.cmd('close')
+    end, { buffer = 0, desc = 'Close the pack pane' })
+  end, 'Close vim.pack windows with "q"')
+end)
+
