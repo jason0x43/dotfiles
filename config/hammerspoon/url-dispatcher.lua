@@ -19,7 +19,9 @@ local function openInChromeProfile(profile)
 end
 
 local chromeWork = "Profile 1"
+
 local workUrls = hs.settings.get("workUrls")
+---@cast workUrls { pattern: string, app?: string }[] | nil
 
 spoon.URLDispatcher.url_patterns = {}
 
