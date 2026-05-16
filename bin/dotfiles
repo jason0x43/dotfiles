@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import pwd
+import re
 import shutil
 import subprocess
 import sys
@@ -242,6 +243,57 @@ def resolve_agent_skill_path(repo_dir: Path, skill: str, path: Optional[str] = N
     if candidate.is_dir():
         return candidate
     return None
+
+
+def ensure_skill_frontmatter_name(skill_dir: Path) -> None:
+    """Ensure a skill's frontmatter name matches its directory name."""
+    skill_file = skill_dir / "SKILL.md"
+    if not skill_file.is_file():
+        warn(f"Missing SKILL.md in {skill_dir}")
+        return
+
+    try:
+        content = skill_file.read_text(encoding="utf-8")
+    except OSError as exc:
+        warn(f"Unable to read {skill_file}: {exc}")
+        return
+
+    frontmatter_match = re.match(r"^(---\n)(.*?)(\n---\n?)", content, re.DOTALL)
+    if not frontmatter_match:
+        warn(f"Missing frontmatter in {skill_file}")
+        return
+
+    opening, frontmatter, closing = frontmatter_match.groups()
+    expected_name = skill_dir.name
+    name_pattern = re.compile(r'(?m)^name:\s*(?:["\']?)([^"\'\n]+)(?:["\']?)\s*$')
+    name_match = name_pattern.search(frontmatter)
+
+    if name_match and name_match.group(1).strip() == expected_name:
+        return
+
+    if name_match:
+        updated_frontmatter = name_pattern.sub(f"name: {expected_name}", frontmatter, count=1)
+    else:
+        updated_frontmatter = f"name: {expected_name}\n{frontmatter}" if frontmatter else f"name: {expected_name}"
+
+    updated_content = (
+        content[: frontmatter_match.start()]
+        + opening
+        + updated_frontmatter
+        + closing
+        + content[frontmatter_match.end() :]
+    )
+
+    if updated_content == content:
+        return
+
+    try:
+        skill_file.write_text(updated_content, encoding="utf-8")
+    except OSError as exc:
+        warn(f"Unable to update {skill_file}: {exc}")
+        return
+
+    log_sub(f"Patched skill name in {skill_file}")
 
 
 @register_module("home")
@@ -568,6 +620,7 @@ def module_agents() -> None:
     if local_skills_dir.is_dir():
         for source in sorted(local_skills_dir.iterdir()):
             if source.is_dir():
+                ensure_skill_frontmatter_name(source)
                 sync_link(source, agents_skills_dir / source.name)
 
     sources_path = DOTFILES / "agents" / "sources.json"
@@ -615,6 +668,7 @@ def module_agents() -> None:
                 warn(f"Missing skill '{skill}' in {base_dir}")
                 continue
 
+            ensure_skill_frontmatter_name(source)
             sync_link(source, agents_skills_dir / skill)
 
 
