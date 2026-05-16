@@ -154,6 +154,28 @@ def link(source: Path, target: Path) -> None:
     log_sub(f"Linked {source} -> {target}")
 
 
+def sync_link(source: Path, target: Path) -> None:
+    """Create or update a symlink"""
+    if not source.exists():
+        warn(f"Missing source for link: {source}")
+        return
+
+    if target.is_symlink():
+        current = (target.parent / target.readlink()).resolve()
+        desired = source.resolve()
+        if current == desired:
+            return
+        target.unlink()
+        log_sub(f"Removed {target}")
+    elif target.exists():
+        warn(f"Skipping existing non-link: {target}")
+        return
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.symlink_to(source)
+    log_sub(f"Linked {source} -> {target}")
+
+
 def run_command(
     command: Union[str, Sequence[str]],
     *,
@@ -189,6 +211,37 @@ def brew_install(pkg: str) -> bool:
     log(f"Installing {pkg}...")
     result = run_command([str(BREW), "install", "-q", pkg])
     return result.returncode == 0
+
+
+def sync_git_repo(repo: str, destination: Path) -> None:
+    """Clone a repo if missing, otherwise update it"""
+    url = f"https://github.com/{repo}.git"
+
+    if (destination / ".git").is_dir():
+        log_sub(f"Updating {repo}...")
+        result = run_command(["git", "-C", str(destination), "pull", "--ff-only"])
+        if result.returncode != 0:
+            warn(f"Unable to update {repo}")
+        return
+
+    if destination.exists():
+        warn(f"Skipping existing non-git directory: {destination}")
+        return
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    log_sub(f"Cloning {repo}...")
+    result = run_command(["git", "clone", url, str(destination)])
+    if result.returncode != 0:
+        warn(f"Unable to clone {repo}")
+
+
+def resolve_agent_skill_path(repo_dir: Path, skill: str, path: Optional[str] = None) -> Optional[Path]:
+    """Resolve a skill directory from a repo"""
+    base_dir = repo_dir / path if path else repo_dir
+    candidate = base_dir / skill
+    if candidate.is_dir():
+        return candidate
+    return None
 
 
 @register_module("home")
@@ -496,6 +549,73 @@ def module_mas() -> None:
 
     log("Upgrading Mac App Store apps...")
     run_command(["mas", "upgrade"])
+
+
+@register_module("agents")
+def module_agents() -> None:
+    """Sync agent skills and sources"""
+    log("Syncing agents...")
+
+    agents_dir = HOME / ".agents"
+    agents_skills_dir = agents_dir / "skills"
+    agents_sources_dir = agents_dir / "sources"
+
+    makedir(agents_dir)
+    makedir(agents_skills_dir)
+    makedir(agents_sources_dir)
+
+    local_skills_dir = DOTFILES / "agents" / "skills"
+    if local_skills_dir.is_dir():
+        for source in sorted(local_skills_dir.iterdir()):
+            if source.is_dir():
+                sync_link(source, agents_skills_dir / source.name)
+
+    sources_path = DOTFILES / "agents" / "sources.json"
+    if not sources_path.is_file():
+        return
+
+    try:
+        sources = json.loads(sources_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        warn(f"Unable to parse {sources_path}")
+        return
+
+    if not isinstance(sources, list):
+        warn(f"Unexpected sources format in {sources_path}")
+        return
+
+    for entry in sources:
+        if not isinstance(entry, dict):
+            warn(f"Skipping invalid source entry: {entry}")
+            continue
+
+        repo = entry.get("repo")
+        path = entry.get("path")
+        skills = entry.get("skills")
+        if not isinstance(repo, str) or path is not None and not isinstance(path, str) or not isinstance(skills, list):
+            warn(f"Skipping invalid source entry: {entry}")
+            continue
+
+        owner, _, name = repo.partition("/")
+        if not owner or not name:
+            warn(f"Skipping invalid repo: {repo}")
+            continue
+
+        repo_dir = agents_sources_dir / owner / name
+        sync_git_repo(repo, repo_dir)
+
+        for skill in skills:
+            if not isinstance(skill, str):
+                warn(f"Skipping invalid skill entry for {repo}: {skill}")
+                continue
+
+            source = resolve_agent_skill_path(repo_dir, skill, path)
+            if source is None:
+                base_dir = repo_dir / path if path else repo_dir
+                warn(f"Missing skill '{skill}' in {base_dir}")
+                continue
+
+            sync_link(source, agents_skills_dir / skill)
 
 
 parser = argparse.ArgumentParser(
