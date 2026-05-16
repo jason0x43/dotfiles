@@ -1,26 +1,17 @@
-local MiniDeps = require('mini.deps')
-local add = MiniDeps.add
-local now = MiniDeps.now
-local later = MiniDeps.later
+local gh = _G.Config.github
+local now = _G.Config.now
+local later = _G.Config.later
 local now_if_args = vim.fn.argc(-1) > 0 and now or later
 
 -- Treesitter =================================================================
 
 now(function()
-  add({
-    source = 'nvim-treesitter/nvim-treesitter',
-    hooks = {
-      post_checkout = function()
-        vim.cmd('TSUpdate')
-      end,
+  vim.pack.add({
+    { src = gh('nvim-treesitter/nvim-treesitter'), version = 'main' },
+    {
+      src = gh('nvim-treesitter/nvim-treesitter-textobjects'),
+      version = 'main',
     },
-    checkout = 'main',
-  })
-
-  add({
-    source = 'nvim-treesitter/nvim-treesitter-textobjects',
-    -- Same logic as for 'nvim-treesitter'
-    checkout = 'main',
   })
 
   vim.api.nvim_create_autocmd('FileType', {
@@ -35,7 +26,7 @@ end)
 
 -- Auto-configure lua language server
 now_if_args(function()
-  add('folke/lazydev.nvim')
+  vim.pack.add({ gh('folke/lazydev.nvim') })
   require('lazydev').setup({
     enabled = true,
     debug = false,
@@ -55,7 +46,7 @@ now_if_args(function()
 end)
 
 now_if_args(function()
-  add('neovim/nvim-lspconfig')
+  vim.pack.add({ gh('neovim/nvim-lspconfig') })
 
   -- Manually enable language servers not managed by Mason
   vim.lsp.enable('sourcekit')
@@ -65,26 +56,16 @@ end)
 -- Completions ================================================================
 
 later(function()
-  -- build from source, requires nightly rust
-  local function build_blink()
-    require('blink.cmp').build()
-  end
-
-  add({
-    source = 'saghen/blink.cmp',
-    depends = {
-      'saghen/blink.lib',
-      -- Copilot provider
-      'fang2hou/blink-copilot',
-      -- Colorize menu items
-      'xzbdmw/colorful-menu.nvim',
-    },
-    hooks = {
-      post_checkout = build_blink,
-      post_install = build_blink,
-    },
+  vim.pack.add({
+    gh('saghen/blink.lib'),
+    -- Copilot provider
+    gh('fang2hou/blink-copilot'),
+    -- Colorize menu items
+    gh('xzbdmw/colorful-menu.nvim'),
+    gh('saghen/blink.cmp'),
   })
 
+  require('blink.cmp'):build()
   require('blink.cmp').setup({
     cmdline = {
       enabled = false,
@@ -155,7 +136,7 @@ end)
 -- Formatting =================================================================
 
 later(function()
-  add('stevearc/conform.nvim')
+  vim.pack.add({ gh('stevearc/conform.nvim') })
 
   local conform = require('conform')
 
@@ -229,7 +210,7 @@ end)
 
 -- Auto-set indentation
 now(function()
-  add('tpope/vim-sleuth')
+  vim.pack.add({ gh('tpope/vim-sleuth') })
   -- Disable sleuth for markdown files as it slows the load time significantly
   vim.g.sleuth_markdown_heuristics = 0
 end)
@@ -237,10 +218,10 @@ end)
 -- External tools =============================================================
 
 later(function()
-  add('mason-org/mason.nvim')
+  vim.pack.add({ gh('mason-org/mason.nvim') })
   require('mason').setup()
 
-  add('mason-org/mason-lspconfig.nvim')
+  vim.pack.add({ gh('mason-org/mason-lspconfig.nvim') })
   require('mason-lspconfig').setup({
     automatic_enable = true,
     ensure_installed = {},
@@ -251,16 +232,18 @@ end)
 
 -- Misc filetype support
 now_if_args(function()
-  add('fladson/vim-kitty')
-  add('mustache/vim-mustache-handlebars')
-  add('jwalton512/vim-blade')
-  add('cfdrake/vim-pbxproj')
+  vim.pack.add({
+    gh('fladson/vim-kitty'),
+    gh('mustache/vim-mustache-handlebars'),
+    gh('jwalton512/vim-blade'),
+    gh('cfdrake/vim-pbxproj'),
+  })
 end)
 
 -- AI =========================================================================
 
 later(function()
-  add('pablopunk/pi.nvim')
+  vim.pack.add({ gh('pablopunk/pi.nvim') })
   require('pi').setup({
     provider = 'openai-codex',
     model = 'gpt-5.4',
@@ -273,19 +256,19 @@ end)
 -- JSON schemas
 -- May be needed by LS at startup, such as with `json_generating_cmd | vi -R -`
 now(function()
-  add('b0o/schemastore.nvim')
+  vim.pack.add({ gh('b0o/schemastore.nvim') })
 end)
 
 -- Better start/end matching
 -- Matchup needs to load immediately at startup
 now(function()
-  add('andymass/vim-matchup')
+  vim.pack.add({ gh('andymass/vim-matchup') })
   vim.g.matchup_matchparen_offscreen = { method = 'popup' }
 end)
 
 -- Better git diff views
 later(function()
-  add('sindrets/diffview.nvim')
+  vim.pack.add({ gh('sindrets/diffview.nvim') })
 
   local last_status = vim.o.laststatus
   local actions = require('diffview.actions')

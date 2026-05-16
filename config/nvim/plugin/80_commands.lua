@@ -42,6 +42,10 @@ cmd('Notifications', function()
   MiniNotify.show_history()
 end, 'Show a list of displayed notifications')
 
+cmd('PackUpdate', function()
+  vim.pack.update()
+end, 'Update installed plugins')
+
 cmd('Recent', function()
   MiniPick.registry.recent()
 end, 'Find recent files')

@@ -1,5 +1,5 @@
-local now = MiniDeps.now
-local later = MiniDeps.later
+local now = _G.Config.now
+local later = _G.Config.later
 local now_if_args = vim.fn.argc(-1) > 0 and now or later
 
 -- Now ========================================================================
@@ -107,7 +107,7 @@ if not (vim.list_contains(vim.v.argv, '-p')) then
           },
           {
             name = 'Dependencies',
-            action = 'DepsUpdate',
+            action = 'PackUpdate',
             section = 'Actions',
           },
           {
@@ -357,12 +357,3 @@ later(function()
   require('mini.visits').setup()
 end)
 
--- Use 'q' to close mini.deps windows
-later(function()
-  _G.Config.new_autocmd('FileType', 'minideps-confirm', function()
-    vim.wo.foldlevel = 0
-    vim.keymap.set('n', 'q', function()
-      vim.cmd('close')
-    end, { buffer = 0, desc = 'Close the deps pane' })
-  end, 'Close mini.deps windows with "q"')
-end)
