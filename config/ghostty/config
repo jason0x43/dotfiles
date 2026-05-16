@@ -1,6 +1,6 @@
 command = /usr/local/bin/fish
 theme = light:ansi-light,dark:ansi-dark
-auto-update-channel = tip
+auto-update-channel = stable
 
 # general key bindigns
 keybind = ctrl+h=goto_split:left
