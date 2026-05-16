@@ -10,3 +10,4 @@ fish/fish_history
 config/direnv/allow
 .tool-versions
 zsh/.zsh_sessions
+.pi/
