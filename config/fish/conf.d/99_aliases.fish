@@ -84,3 +84,7 @@ alias lgl='lazygit log'
 if test -x /Applications/Tailscale.app/Contents/MacOS/Tailscale
     alias tailscale=/Applications/Tailscale.app/Contents/MacOS/Tailscale
 end
+
+if command -q pi
+    alias pp='pi --model gpt-5.4-mini -p'
+end
