@@ -33,15 +33,8 @@ end)
 
 -- Language servers ===========================================================
 
+-- Auto-configure lua language server
 now_if_args(function()
-  add('neovim/nvim-lspconfig')
-
-  -- Manually enable language servers not managed by Mason
-  vim.lsp.enable('sourcekit')
-end)
-
--- Auto-configure lua-ls
-later(function()
   add('folke/lazydev.nvim')
   require('lazydev').setup({
     enabled = true,
@@ -57,71 +50,35 @@ later(function()
         path = 'nvim-lspconfig/lua',
         words = { 'lspconfig', 'lsp' },
       },
-      {
-        path = vim.fn.stdpath('config') .. '/lua/user/types/wezterm',
-        words = { 'wezterm' },
-      },
     },
   })
+end)
+
+now_if_args(function()
+  add('neovim/nvim-lspconfig')
+
+  -- Manually enable language servers not managed by Mason
+  vim.lsp.enable('sourcekit')
+  vim.lsp.enable('lua_ls')
 end)
 
 -- Completions ================================================================
 
 later(function()
-  ---@type string | nil
-  local checkout = 'v.1.7.0'
-
-  if vim.fn.executable('rustc') == 1 then
-    checkout = nil
-  else
-    add('nvim-lua/plenary.nvim')
-
-    -- Get latest pre-built version of blink
-    local curl = require('plenary.curl')
-    local res = curl.get(
-      'https://api.github.com/repos/Saghen/blink.cmp/releases/latest',
-      { headers = { ['User-Agent'] = 'neovim-lua' } }
-    )
-    if res.status ~= 200 then
-      vim.notify(
-        'Failed to get latest blink.cmp version: ' .. res.status,
-        vim.log.levels.WARN
-      )
-    else
-      local data = vim.fn.json_decode(res.body)
-      checkout = data.tag_name
-    end
-  end
-
   -- build from source, requires nightly rust
-  local function build_blink(params)
-    -- Don't try to build if we're not using head
-    if checkout ~= nil then
-      return
-    end
-
-    vim.notify('Building blink.cmp', vim.log.levels.INFO)
-
-    local obj = vim
-      .system({ 'cargo', 'build', '--release' }, { cwd = params.path })
-      :wait()
-    if obj.code == 0 then
-      vim.notify('Building blink.cmp done', vim.log.levels.INFO)
-    else
-      vim.notify('Building blink.cmp failed', vim.log.levels.ERROR)
-    end
+  local function build_blink()
+    require('blink.cmp').build()
   end
 
   add({
     source = 'saghen/blink.cmp',
     depends = {
+      'saghen/blink.lib',
       -- Copilot provider
       'fang2hou/blink-copilot',
       -- Colorize menu items
       'xzbdmw/colorful-menu.nvim',
     },
-    -- Checkout a specific version of blink to get pre-compiled rust part
-    checkout = checkout,
     hooks = {
       post_checkout = build_blink,
       post_install = build_blink,
@@ -202,7 +159,7 @@ later(function()
 
   local conform = require('conform')
 
-  ---@param bufnr number Buffer number (defaults to current buffer)
+  ---@param bufnr integer Buffer number (defaults to current buffer)
   local function format_js(bufnr)
     local file = vim.api.nvim_buf_get_name(bufnr)
 
@@ -302,57 +259,14 @@ end)
 
 -- AI =========================================================================
 
--- OpenCode
-if vim.fn.executable('opencode') == 1 then
-  later(function()
-    add({
-      source = 'sudo-tee/opencode.nvim',
-      depends = { 'nvim-lua/plenary.nvim' },
-    })
-
-    require('opencode').setup({
-      ui = {
-        input = {
-          text = {
-            wrap = true,
-          },
-        },
-        window_width = 80 / vim.o.columns,
-      },
-    })
-
-    _G.Config.new_autocmd('BufWinEnter', '*', function(evt)
-      local buf = evt.buf
-      local starts_with = require('user.util.string').starts_with
-      if not starts_with(vim.bo[buf].filetype, 'opencode') then
-        return
-      end
-
-      vim.wo.linebreak = true
-
-      local win = vim.fn.bufwinid(buf)
-      vim.api.nvim_set_option_value(
-        'fillchars',
-        'eob: ',
-        { scope = 'local', win = win }
-      )
-    end, 'Enable linebreak in opencode output buffers')
-  end)
-
-  later(function()
-    -- Cleaner markdown rendering in AI panes
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    vim.g.render_markdown_config = {
-      anti_conceal = { enabled = false },
-      file_types = { 'opencode_output' },
-      heading = {
-        enabled = false,
-      },
-    }
-    add('MeanderingProgrammer/render-markdown.nvim')
-  end)
-end
+later(function()
+  add('pablopunk/pi.nvim')
+  require('pi').setup({
+    provider = 'openai-codex',
+    model = 'gpt-5.4',
+    thinking = 'off',
+  })
+end)
 
 -- Other functionality ========================================================
 
@@ -412,15 +326,3 @@ later(function()
   })
   require('user.util.diffview').patch_layout()
 end)
-
--- Semantic navigation
--- later(function()
---   add('Bekaboo/dropbar.nvim')
---   require('dropbar').setup({
---     sources = {
---       path = {
---         preview = false,
---       },
---     },
---   })
--- end)
