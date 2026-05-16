@@ -38,6 +38,16 @@
       },
       "type": "remote",
       "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "lean-ctx": {
+      "command": [
+        "/Users/jason/.local/bin/lean-ctx"
+      ],
+      "enabled": true,
+      "environment": {
+        "LEAN_CTX_DATA_DIR": "/Users/jason/.lean-ctx"
+      },
+      "type": "local"
     }
   },
   "model": "ollama/gemma4:26b",
