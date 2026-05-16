@@ -209,6 +209,13 @@ local activeIcon = util
 ---Refresh the menubar item and menu
 local function refresh()
 	local statuses = collectStatuses()
+
+	if #statuses == 0 then
+		menubar:setIcon(nil)
+		menubar:setMenu({})
+		return
+	end
+
 	local busyCount = 0
 	for _, status in ipairs(statuses) do
 		if status.busy then
@@ -232,7 +239,7 @@ refresh()
 PiStatus = {
 	menubar = menubar,
 	watcher = hs.pathwatcher.new(STATUS_DIR, refresh),
-	timer = hs.timer.doEvery(REFRESH_INTERVAL_SECONDS, refresh)
+	timer = hs.timer.doEvery(REFRESH_INTERVAL_SECONDS, refresh),
 }
 
 PiStatus.watcher:start()
