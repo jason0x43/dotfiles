@@ -1,14 +1,5 @@
 local util = require("util")
 
----@return hs.menubar
-local function createMenu()
-	local menu = hs.menubar.new()
-	if not menu then
-		error("Failed to create menubar item")
-	end
-	return menu
-end
-
 local function isRunning()
 	return hs.execute("pgrep -x caffeinate") ~= ""
 end
@@ -30,17 +21,17 @@ local icon_filled = util
 	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pot-filled.svg")
 	:setSize({ h = 18, w = 18 })
 
--- Add a caffeine menubar icon
-Caffeine = {}
+local menubar = hs.menubar.new()
+---@cast menubar hs.menubar
 
 local function refreshMenuState()
 	local running = isRunning()
-	Caffeine.menu:setIcon(running and icon_filled or icon_empty)
-	Caffeine.menu:setMenu({
+	menubar:setIcon(running and icon_filled or icon_empty)
+	menubar:setMenu({
 		{
 			title = running and "Decaffeinate" or "Caffeinate",
 			fn = function()
-				if Caffeine.running then
+				if running then
 					decaffeinate()
 				else
 					caffeinate()
@@ -52,8 +43,11 @@ local function refreshMenuState()
 	})
 end
 
-Caffeine.menu = createMenu()
 refreshMenuState()
 
--- Poll for caffeinate status; not the most efficient, but flexible
-Caffeine.watcher = hs.timer.doEvery(2, refreshMenuState)
+-- Use a global variable to store state
+Caffeine = {
+  menu = menubar,
+  -- Poll for caffeinate status; not the most efficient, but flexible
+  watcher = hs.timer.doEvery(3, refreshMenuState)
+}

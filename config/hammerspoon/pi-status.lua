@@ -200,10 +200,10 @@ local function buildMenu(statuses)
 end
 
 local idleIcon = util
-	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pi-status-idle.svg")
+	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pi-idle.svg")
 	:setSize({ h = 18, w = 18 })
 local activeIcon = util
-	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pi-status-active.svg")
+	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pi-active.svg")
 	:setSize({ h = 18, w = 18 })
 
 ---Refresh the menubar item and menu
@@ -223,12 +223,7 @@ local function refresh()
 		end
 	end
 
-	if busyCount > 0 then
-		menubar:setIcon(activeIcon)
-	else
-		menubar:setIcon(idleIcon)
-	end
-
+  menubar:setIcon(busyCount > 0 and activeIcon or idleIcon)
 	menubar:setTooltip("pi session status")
 	menubar:setMenu(buildMenu(statuses))
 end
@@ -238,8 +233,6 @@ refresh()
 -- Use a global variable to store state
 PiStatus = {
 	menubar = menubar,
-	watcher = hs.pathwatcher.new(STATUS_DIR, refresh),
+	watcher = hs.pathwatcher.new(STATUS_DIR, refresh):start(),
 	timer = hs.timer.doEvery(REFRESH_INTERVAL_SECONDS, refresh),
 }
-
-PiStatus.watcher:start()
