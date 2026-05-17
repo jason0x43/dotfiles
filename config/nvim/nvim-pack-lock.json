@@ -62,6 +62,10 @@
       "rev": "e0883b20e0af3d43aa0a7030864d781cd306ab72",
       "src": "https://github.com/b0o/schemastore.nvim"
     },
+    "tiny-cmdline.nvim": {
+      "rev": "ad58747b955d0743ccfd56e97da1a4c1fac89f58",
+      "src": "https://github.com/rachartier/tiny-cmdline.nvim"
+    },
     "vim-blade": {
       "rev": "9534101808cc320eef003129a40cab04b026a20c",
       "src": "https://github.com/jwalton512/vim-blade"

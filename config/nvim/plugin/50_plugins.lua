@@ -309,3 +309,8 @@ later(function()
   })
   require('user.util.diffview').patch_layout()
 end)
+
+-- Floating commandline
+now(function()
+  vim.pack.add({ 'https://github.com/rachartier/tiny-cmdline.nvim' })
+end)

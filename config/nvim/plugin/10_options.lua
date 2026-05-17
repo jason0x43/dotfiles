@@ -163,3 +163,7 @@ if vim.g.neovide then
 
   vim.o.guifont = 'JetBrainsMono Nerd Font Mono:h12'
 end
+
+-- Enable ui2
+require("vim._core.ui2").enable({})
+vim.o.cmdheight = 0

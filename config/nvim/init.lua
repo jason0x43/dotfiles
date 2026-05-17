@@ -34,9 +34,7 @@ _G.Config = {
     misc.safely('now', f)
   end,
   later = function(f)
-    vim.schedule(function()
-      misc.safely('later', f)
-    end)
+    misc.safely('later', f)
   end,
 }
 
