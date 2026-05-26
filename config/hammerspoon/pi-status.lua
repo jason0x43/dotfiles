@@ -22,12 +22,8 @@ local REFRESH_INTERVAL_SECONDS = 5
 
 local hasKitty = hs.fs.attributes("/opt/homebrew/bin/kitten") ~= nil
 
-local menubar = hs.menubar.new()
----@cast menubar hs.menubar
-
-if not menubar then
-	error("Failed to create pi status menubar item")
-end
+---@type hs.menubar | nil
+local menubar
 
 ---@param path string
 ---@return table | nil
@@ -206,13 +202,37 @@ local activeIcon = util
 	.loadImage(os.getenv("HOME") .. "/.config/hammerspoon/pi-active.svg")
 	:setSize({ h = 18, w = 18 })
 
+---@return hs.menubar
+local function ensureMenubar()
+	if menubar then
+		return menubar
+	end
+
+	local item = hs.menubar.new()
+	if not item then
+		error("Failed to create pi status menubar item")
+	end
+
+	item:setTooltip("pi session status")
+	menubar = item
+	return item
+end
+
+local function removeMenubar()
+	if not menubar then
+		return
+	end
+
+	menubar:delete()
+	menubar = nil
+end
+
 ---Refresh the menubar item and menu
 local function refresh()
 	local statuses = collectStatuses()
 
 	if #statuses == 0 then
-		menubar:setIcon(nil)
-		menubar:setMenu({})
+		removeMenubar()
 		return
 	end
 
@@ -223,16 +243,18 @@ local function refresh()
 		end
 	end
 
-  menubar:setIcon(busyCount > 0 and activeIcon or idleIcon)
-	menubar:setTooltip("pi session status")
-	menubar:setMenu(buildMenu(statuses))
+	local item = ensureMenubar()
+	item:setIcon(busyCount > 0 and activeIcon or idleIcon)
+	item:setMenu(buildMenu(statuses))
 end
 
 refresh()
 
 -- Use a global variable to store state
 PiStatus = {
-	menubar = menubar,
 	watcher = hs.pathwatcher.new(STATUS_DIR, refresh):start(),
 	timer = hs.timer.doEvery(REFRESH_INTERVAL_SECONDS, refresh),
+	getMenubar = function()
+		return menubar
+	end,
 }
