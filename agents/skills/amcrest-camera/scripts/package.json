@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/mime-types": "^3.0.1"
+  },
+  "dependencies": {
+    "mime-types": "^3.0.2"
+  }
+}
