@@ -5,16 +5,6 @@ ratio = [0, 4, 4]
 max_width = 2000
 max_height = 2000
 
-[[plugin.prepend_fetchers]]
-id = "git"
-name = "*"
-run = "git"
-
-[[plugin.prepend_fetchers]]
-id = "git"
-name = "*/"
-run = "git"
-
 [[opener.nvim]]
 run = """/opt/homebrew/bin/nvim \
 	--server "${NVIM_SERVER}" \
