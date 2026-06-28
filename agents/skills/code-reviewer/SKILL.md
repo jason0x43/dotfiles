@@ -59,7 +59,7 @@ Evaluate the changes for:
 ## Review Procedure
 
 1. Gather the exact review scope.
-2. Launch a review subagent on the latest Claude Sonnet model.
+2. Launch a review subagent with the latest gpt model.
 3. Provide:
    - the user goal
    - the implementation intent

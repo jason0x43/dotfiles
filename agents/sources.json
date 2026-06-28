@@ -26,5 +26,10 @@
     "repo": "software-mansion-labs/skills",
     "path": "skills",
     "skills": ["react-native-best-practices"]
+  },
+  {
+    "repo": "oxc-project/oxc",
+    "path": ".agents/skills",
+    "skills": ["migrate-oxfmt", "migrate-oxlint", "performance-lint-rules"]
   }
 ]
