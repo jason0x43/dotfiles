@@ -18,10 +18,7 @@
   "experimental": {
     "disable_paste_summary": true
   },
-  "instructions": [
-    "AGENTS.md",
-    ".github/copilot-instructions.md"
-  ],
+  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
   "mcp": {
     "context7": {
       "enabled": true,
@@ -38,39 +35,13 @@
       },
       "type": "remote",
       "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "lean-ctx": {
-      "command": [
-        "/Users/jason/.local/bin/lean-ctx"
-      ],
-      "enabled": true,
-      "environment": {
-        "LEAN_CTX_DATA_DIR": "/Users/jason/.lean-ctx"
-      },
-      "type": "local"
     }
   },
-  "model": "ollama/gemma4:26b",
-  "plugin": [
-    "opencode-gemini-auth@latest"
-  ],
+  "plugin": ["opencode-gemini-auth@latest"],
   "provider": {
     "anthropic": {
       "options": {
         "setCacheKey": true
-      }
-    },
-    "ollama": {
-      "models": {
-        "gemma4:26b": {
-          "_launch": true,
-          "name": "gemma4:26b"
-        }
-      },
-      "name": "Ollama",
-      "npm": "@ai-sdk/openai-compatible",
-      "options": {
-        "baseURL": "http://127.0.0.1:11434/v1"
       }
     },
     "openai": {
