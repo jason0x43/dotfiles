@@ -14,12 +14,9 @@ now(function()
     },
   })
 
-  vim.api.nvim_create_autocmd('FileType', {
-    pattern = { '<filetype>' },
-    callback = function()
-      vim.treesitter.start()
-    end,
-  })
+  _G.Config.new_autocmd('OptionSet', '<filetype>', function()
+    vim.treesitter.start()
+  end)
 end)
 
 -- Language servers ===========================================================
@@ -144,7 +141,15 @@ later(function()
   local function format_js(bufnr)
     local file = vim.api.nvim_buf_get_name(bufnr)
 
-    local biome_root = vim.fs.root(file, { 'biome.json' })
+    local oxfmt_root = vim.fs.root(
+      file,
+      { 'oxfmt.config.ts', '.oxfmt.config.jsonc', '.oxfmt.config.json' }
+    )
+    if oxfmt_root and conform.get_formatter_info('oxfmt', bufnr).available then
+      return { 'oxfmt' }
+    end
+
+    local biome_root = vim.fs.root(file, { 'biome.json', 'biome.jsonc' })
     if biome_root and conform.get_formatter_info('biome', bufnr).available then
       return { 'biome' }
     end
@@ -197,8 +202,8 @@ later(function()
         prepend_args = { '-m' },
       },
       csharpier = {
-        command = 'csharpier',
-        args = { 'format', '--write-stdout' },
+        command = 'dotnet',
+        args = { 'csharpier', 'format', '--write-stdout' },
       },
     },
   })
@@ -213,6 +218,27 @@ now(function()
   vim.pack.add({ gh('tpope/vim-sleuth') })
   -- Disable sleuth for markdown files as it slows the load time significantly
   vim.g.sleuth_markdown_heuristics = 0
+end)
+
+-- File picker ================================================================
+
+now(function()
+  _G.Config.new_autocmd('PackChanged', nil, function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+    if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
+      if not ev.data.active then
+        vim.cmd.packadd('fff.nvim')
+      end
+      require('fff.download').download_or_build_binary()
+    end
+  end)
+
+  vim.g.fff = {
+    lazy_sync = true,
+  }
+
+  vim.pack.add({ gh('dmtrKovalenko/fff.nvim') })
+  require('fff').setup()
 end)
 
 -- External tools =============================================================
@@ -308,9 +334,4 @@ later(function()
     },
   })
   require('user.util.diffview').patch_layout()
-end)
-
--- Floating commandline
-now(function()
-  vim.pack.add({ 'https://github.com/rachartier/tiny-cmdline.nvim' })
 end)

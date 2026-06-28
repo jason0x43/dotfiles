@@ -2,7 +2,8 @@ vim.filetype.add({
   filename = {
     Fastfile = 'ruby',
     Podfile = 'ruby',
-    ['opencode.json'] = 'jsonc'
+    ['opencode.json'] = 'jsonc',
+    ['eas.json'] = 'jsonc'
   },
   extension = {
     ejs = 'html',

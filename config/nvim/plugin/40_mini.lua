@@ -67,12 +67,12 @@ if not (vim.list_contains(vim.v.argv, '-p')) then
             section = 'Pickers',
           },
           {
-            action = 'Pick smart',
+            action = 'Pick fff_files',
             name = 'Files',
             section = 'Pickers',
           },
           {
-            action = 'Pick grep_live',
+            action = 'Pick fff_content',
             name = 'Search',
             section = 'Pickers',
           },
@@ -316,7 +316,7 @@ later(function()
         local width = vim.o.columns - 2
         -- The row the picker should be drawn at
         -- (screen height - picker height - border - cmdline height)
-        local row = vim.o.lines - height - 2 - 1
+        local row = vim.o.lines - height - 2 - 0
 
         -- Raise the picker above the statusbar if the statusbar is visible
         if vim.o.laststatus > 0 then
@@ -342,6 +342,8 @@ later(function()
   MiniPick.registry.icons = require('user.mini.picker_icons')
   MiniPick.registry.modified = require('user.mini.picker_modified')
   MiniPick.registry.conflicts = require('user.mini.picker_conflicts')
+  MiniPick.registry.fff_files = require('user.mini.picker_fff').files
+  MiniPick.registry.fff_content = require('user.mini.picker_fff').content
 
   -- Use mini.pick as vim selector UI
   vim.ui.select = MiniPick.ui_select

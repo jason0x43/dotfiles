@@ -87,7 +87,7 @@ set_key('n', '<leader>e', function()
   require('mini.files').open(dir)
 end, 'Open a file manager')
 
-set_key('n', '<leader>f', '<Cmd>Pick smart<CR>', 'Find files')
+set_key('n', '<leader>f', '<Cmd>Pick fff_files<CR>', 'Find files')
 
 set_key('n', '<leader>F', function()
   require('conform').format({ lsp_fallback = true, async = true })
@@ -184,7 +184,7 @@ set_key(
 set_key(
   'n',
   '<leader>s',
-  '<Cmd>Pick grep_live<CR>',
+  '<Cmd>Pick fff_content<CR>',
   'Search for strings in files'
 )
 

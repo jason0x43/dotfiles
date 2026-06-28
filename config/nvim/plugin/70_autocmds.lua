@@ -217,3 +217,8 @@ _G.Config.new_autocmd('FileType', 'scrollback', function()
     end,
   })
 end, 'Configure Ghostty scrollback buffers')
+
+-- Enable treesitter highlighting
+_G.Config.new_autocmd('FileType', '*', function(args)
+  pcall(vim.treesitter.start, args.buf)
+end);
