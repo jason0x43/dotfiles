@@ -31,18 +31,17 @@ local function find_content(query)
 
   local items = {}
   for _, r in ipairs(results.items) do
-    local rpath = r.relative_path or r.path
     table.insert(items, {
       text = string.format(
         '%s|%d|%d|%s',
-        rpath,
+        r.relative_path,
         r.line_number,
         r.col,
         r.line_content
       ),
       lnum = r.line_number,
       col = r.col,
-      path = r.path,
+      path = r.relative_path,
     })
   end
 
