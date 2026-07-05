@@ -3,35 +3,47 @@
 set -e
 
 target_branch=$1
+pr_branch=$2
+is_worktree=0
+
+if [[ -n "$pr_branch" ]]; then
+  is_worktree=1
+fi
 
 if [[ -z $target_branch ]]; then
-  echo "Usage: git merge-pr <target_branch>"
+  echo "Usage: git merge-pr <target_branch> [pr_branch]"
   exit 1
 fi
 
-current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ -z "$pr_branch" ]]; then
+  pr_branch=$(git rev-parse --abbrev-ref HEAD)
+fi
 
 echo "Updating remote refs..."
 git remote update
 
 current_commit=$(git rev-parse $target_branch)
-remote_commit=$(git rev-parse origin/$current_branch)
+remote_commit=$(git rev-parse origin/$pr_branch)
 
-if [[ $current_commit == $remote_commit ]]; then
+if [[ $current_commit == "$remote_commit" ]]; then
   echo "$target_branch is up to date -- did you forget to push?"
   exit 1
 fi
 
 echo "Checking for remote branch..."
-remote_branch=$(git ls-remote --heads origin refs/heads/$current_branch)
+remote_branch=$(git ls-remote --heads origin refs/heads/$pr_branch)
 if [[ -n $remote_branch ]]; then
-  echo "$current_branch still exists on remote -- has the PR been merged?"
+  echo "$pr_branch still exists on remote -- has the PR been merged?"
   exit 1
 fi
 
 git checkout $target_branch
 git pull
-git branch -D $current_branch
+if [[ $is_worktree == "1" ]]; then
+  wt remove -D $pr_branch
+else
+  git branch -D $pr_branch
+fi
 
 echo "Pruning remote refs..."
 git remote update --prune
