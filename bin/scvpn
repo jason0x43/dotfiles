@@ -1,0 +1,359 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Configurable strongSwan/swanctl wrapper. All VPN-specific values are
+# read from ~/.config/scvpn.conf (a sourced shell snippet). See the
+# example config or `scvpn --help` for the recognized variables.
+
+CONFIG_FILE="${SCVPN_CONFIG:-}"
+
+if [[ -z "$CONFIG_FILE" ]]; then
+  if [[ -f "$HOME/.config.local/scvpn.conf" ]]; then
+    CONFIG_FILE="$HOME/.config.local/scvpn.conf"
+  else
+    CONFIG_FILE="$HOME/.config/scvpn.conf"
+  fi
+fi
+
+# --- Defaults (overridable from the config file) -----------------------------
+
+# charon VICI socket, chgrp'd after startup so non-root swanctl works.
+: "${CHARON_SOCKET:=/var/run/charon.vici}"
+: "${SOCKET_GROUP:=staff}"
+# Seconds to wait for charon to come up after `ipsec start`.
+: "${START_WAIT:=2}"
+# Labels used inside the one-shot secrets conf (arbitrary, must just be
+# valid swanctl secret block names).
+: "${IKE_SECRET_NAME:=ike}"
+: "${XAUTH_SECRET_NAME:=xauth}"
+
+# --- Required config (no defaults) -------------------------------------------
+# These MUST be set in the config file:
+#   CHILD_NAME        strongSwan child SA name this script manages
+#   OP_ITEM           1Password item holding the VPN password + otp field
+#   XAUTH_ID          xauth id used inside the inline secrets block
+#   SWAN_CONF         main swanctl conf; source of the static IKE PSK
+
+# Temp dir for the one-shot secrets conf; cleaned up on EXIT.
+TMPDIR_VPN=""
+
+# Install the cleanup trap early so the temp dir is removed even on
+# error or interruption. The dir is created lazily in vpn_up.
+trap '[[ -n "$TMPDIR_VPN" && -d "$TMPDIR_VPN" ]] && rm -rf "$TMPDIR_VPN"' EXIT
+
+die() {
+  echo "❌ $*" >&2
+  exit 1
+}
+
+load_config() {
+  [[ -f "$CONFIG_FILE" ]] \
+    || die "Config file not found: $CONFIG_FILE
+Create it with CHILD_NAME, OP_ITEM, XAUTH_ID, and SWAN_CONF set."
+
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
+
+  local missing=()
+  [[ -n "${CHILD_NAME:-}" ]]     || missing+=("CHILD_NAME")
+  [[ -n "${OP_ITEM:-}" ]]        || missing+=("OP_ITEM")
+  [[ -n "${XAUTH_ID:-}" ]]       || missing+=("XAUTH_ID")
+  [[ -n "${SWAN_CONF:-}" ]]      || missing+=("SWAN_CONF")
+
+  if ((${#missing[@]})); then
+    die "Missing required config value(s) in $CONFIG_FILE: ${missing[*]}"
+  fi
+
+  [[ -f "$SWAN_CONF" ]] \
+    || die "SWAN_CONF does not exist: $SWAN_CONF"
+}
+
+usage() {
+  cat <<EOF
+Usage: scvpn [up|down|stop|status]
+
+  up      Bring up the $CHILD_NAME VPN (starts ipsec if necessary).
+            - If fully down, pulls password + TOTP from 1Password,
+              writes a one-shot secrets conf to a temp dir, loads only
+              those creds, and initiates. (Temp dir is removed on exit.)
+            - If authenticated-but-no-tunnel, just initiates the child SA.
+  down    Bring down the $CHILD_NAME VPN (ipsec keeps running).
+  stop    Fully stop ipsec (tears down all SAs and stops charon).
+  status  Report connection status of $CHILD_NAME. (default)
+
+Config is read from: $CONFIG_FILE
+
+Recognized variables (set in the config file):
+  CHILD_NAME        (required) strongSwan child SA name to manage
+  OP_ITEM           (required) 1Password item with password + otp fields
+  XAUTH_ID          (required) xauth id for the inline secrets block
+  SWAN_CONF         (required) main swanctl conf; source of the IKE PSK
+  CHARON_SOCKET     (optional) charon VICI socket path
+                    default: /var/run/charon.vici
+  SOCKET_GROUP      (optional) group to chgrp the VICI socket to
+                    default: staff
+  START_WAIT        (optional) seconds to wait for charon after start
+                    default: 2
+  IKE_SECRET_NAME   (optional) label for the IKE PSK secret block
+                    default: ike
+  XAUTH_SECRET_NAME (optional) label for the xauth secret block
+                    default: xauth
+
+Status levels reported:
+  🔴 DOWN         - no IKE SA established
+  🟡 ESTABLISHED  - authenticated, but no child SA / tunnel installed
+  🟢 CONNECTED    - child SA installed, tunnel up
+EOF
+}
+
+# charon is the strongSwan keying daemon; its presence == ipsec is up.
+ipsec_running() {
+  pgrep -x charon >/dev/null 2>&1
+}
+
+# Run a command, buffering its combined stdout/stderr. Only print the
+# captured output if the command fails. Works under `set -e` because the
+# `|| rc=$?` branch captures the exit code without aborting.
+run_quiet() {
+  local out rc
+  out="$({ "$@"; } 2>&1)" && rc=0 || rc=$?
+  if [[ $rc -ne 0 ]]; then
+    echo "❌ Command failed ($rc): $*" >&2
+    printf '%s\n' "$out" >&2
+    return "$rc"
+  fi
+  return 0
+}
+
+# Mirror the behaviour of ./swaninit: start ipsec, wait, fix the charon
+# socket group, then load the swanctl configuration.
+ensure_ipsec_running() {
+  if ipsec_running; then
+    return 0
+  fi
+
+  echo "🚚 Starting ipsec..."
+  sudo ipsec start
+  echo "🕐 Waiting ${START_WAIT}s for charon..."
+  sleep "$START_WAIT"
+  echo "🛠️ Updating charon socket group..."
+  sudo chgrp "$SOCKET_GROUP" "$CHARON_SOCKET"
+  echo "🚚 Loading swan config..."
+  run_quiet swanctl --load-all
+  echo "🚀 Strong Swan is ready!"
+}
+
+# Echo the current swanctl --list-sas output (empty if nothing loaded).
+sas_output() {
+  swanctl --list-sas 2>/dev/null || true
+}
+
+# Print the connection level on stdout (0/1/2).
+#   0 = DOWN          no ESTABLISHED IKE SA
+#   1 = ESTABLISHED    IKE SA up, authenticated, no INSTALLED child SA
+#   2 = CONNECTED      child SA installed (tunnel up)
+vpn_level() {
+  local sas
+  sas="$(sas_output)"
+  if printf '%s\n' "$sas" | grep -q "${CHILD_NAME}:.*INSTALLED"; then
+    echo 2
+  elif printf '%s\n' "$sas" | grep -q "${CHILD_NAME}:.*ESTABLISHED"; then
+    echo 1
+  else
+    echo 0
+  fi
+}
+
+# Report status. Exit 0 only when fully CONNECTED.
+vpn_status() {
+  local level
+  level="$(vpn_level)"
+  case "$level" in
+    2)
+      echo "🟢 $CHILD_NAME is CONNECTED"
+      return 0
+      ;;
+    1)
+      echo "🟡 $CHILD_NAME is AUTHENTICATED"
+      return 1
+      ;;
+    0)
+      echo "🔴 $CHILD_NAME is DOWN"
+      return 1
+      ;;
+  esac
+}
+
+# Pull the VPN password and current TOTP from 1Password. Strips any
+# trailing newline `op` may emit so the secret is written verbatim.
+# Prints the xauth secret = password concatenated with the current OTP.
+fetch_op_credentials() {
+  local pw otp
+  pw=$(op item get "$OP_ITEM" --reveal --fields password)
+  otp=$(op item get "$OP_ITEM" --otp)
+  pw=${pw%$'\n'}
+  otp=${otp%$'\n'}
+  if [[ -z "$pw" || -z "$otp" ]]; then
+    echo "Failed to read credentials from 1Password item '$OP_ITEM'." >&2
+    return 1
+  fi
+  # Print password+otp for the caller to capture. We never log these.
+  printf '%s%s' "$pw" "$otp"
+}
+
+# Read the static IKE pre-shared key (first `secret = "..."` line) from
+# the main swanctl config. `swanctl --load-creds` flushes the credential
+# store before reloading from SWANCTL_DIR, so the IKE PSK must be
+# included in the temp conf alongside the fresh xauth secret — otherwise
+# Main Mode fails with "no shared key found".
+read_ike_psk() {
+  local psk
+  psk=$(awk '
+    /secret[[:space:]]*=/ && /"/ {
+      q1 = index($0, "\"")
+      rest = substr($0, q1 + 1)
+      q2 = index(rest, "\"")
+      if (q2 > 0) { print substr(rest, 1, q2 - 1); exit }
+    }
+  ' "$SWAN_CONF")
+  psk=${psk%$'\n'}
+  if [[ -z "$psk" ]]; then
+    echo "Could not read IKE PSK from $SWAN_CONF." >&2
+    return 1
+  fi
+  printf '%s' "$psk"
+}
+
+# Bring the VPN fully up.
+vpn_up() {
+  local level
+  level="$(vpn_level)"
+
+  case "$level" in
+    2)
+      echo "Already CONNECTED."
+      return 0
+      ;;
+    1)
+      echo "🔌 Connecting..."
+      run_quiet swanctl --initiate --child "$CHILD_NAME"
+      ;;
+    0)
+      echo "🔒 Authenticating with 1Password credentials..."
+      local xauth_secret ike_psk conf
+      if ! xauth_secret="$(fetch_op_credentials)"; then
+        return 1
+      fi
+      if ! ike_psk="$(read_ike_psk)"; then
+        return 1
+      fi
+
+      # Write a self-contained, one-shot secrets conf to a temp dir.
+      # `swanctl --load-creds` FLUSHES the existing credential store and
+      # reloads from SWANCTL_DIR, so both the static IKE PSK and the
+      # fresh xauth secret (password+OTP) must be present here, or Main
+      # Mode fails with "no shared key found". The dir is wiped on EXIT
+      # by the trap installed at script start.
+      TMPDIR_VPN=$(mktemp -d)
+      conf="$TMPDIR_VPN/swanctl.conf"
+      ( umask 077; cat > "$conf" ) <<EOF
+secrets {
+  $IKE_SECRET_NAME {
+    secret = "$ike_psk"
+  }
+  $XAUTH_SECRET_NAME {
+    id = $XAUTH_ID
+    secret = "$xauth_secret"
+  }
+}
+EOF
+
+      echo "🔁 Loading temporary credentials..."
+      run_quiet env SWANCTL_DIR="$TMPDIR_VPN" swanctl --load-creds
+
+      echo "🔌 Connecting..."
+      run_quiet swanctl --initiate --child "$CHILD_NAME"
+      ;;
+  esac
+
+  # Give strongSwan a moment, then re-check.
+  sleep 1
+  vpn_status || true
+}
+
+vpn_down() {
+  echo "🛑 Disconnecting..."
+  run_quiet swanctl --terminate --child "$CHILD_NAME"
+}
+
+# Fully stop ipsec / charon. Unlike `down`, this tears down everything
+# and shuts down the daemon. No-op if ipsec isn't running.
+vpn_stop() {
+  if ! ipsec_running; then
+    echo "🔴 ipsec is not running"
+    return 0
+  fi
+  echo "🛑 Stopping ipsec..."
+  sudo ipsec stop
+  # `ipsec stop` can return before charon fully exits; give it a moment
+  # and verify the daemon is gone.
+  sleep 1
+  if ipsec_running; then
+    echo "⚠️  charon still running after stop; forcing..."
+    sudo pkill -x charon || true
+  fi
+  echo "✅ ipsec stopped"
+}
+
+main() {
+  local cmd="${1:-status}"
+
+  # `--help` works without a config file so users can discover the
+  # required variables before creating one.
+  if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
+    CHILD_NAME="${CHILD_NAME:-<child-SA-name>}"
+    usage
+    exit 0
+  fi
+
+  load_config
+
+  # `status` (the no-argument default) must NOT start ipsec — it only
+  # reports. If charon isn't running, say so and exit; otherwise check
+  # the SA status with swanctl.
+  # `stop` is explicitly tearing ipsec down, so it also skips the
+  # bootstrap. Every other entry point ensures ipsec is running first.
+  if [[ "$cmd" == "status" ]]; then
+    if ! ipsec_running; then
+      echo "🔴 ipsec is not running"
+      return 0
+    fi
+    vpn_status
+    return $?
+  fi
+
+  if [[ "$cmd" != "stop" ]]; then
+    ensure_ipsec_running
+  fi
+
+  case "$cmd" in
+    up)
+      vpn_up
+      ;;
+    down)
+      vpn_down
+      vpn_status || true
+      ;;
+    stop)
+      vpn_stop
+      ;;
+    *)
+      echo "Unknown command: $cmd" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+}
+
+main "$@"

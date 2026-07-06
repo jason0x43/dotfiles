@@ -2,7 +2,7 @@
 
 local util = require("util")
 
-local SCVPN_COMMAND = os.getenv("HOME") .. "/.local/bin/scvpn"
+local SCVPN_COMMAND = os.getenv("HOME") .. "/.dotfiles/bin/scvpn"
 local REFRESH_INTERVAL_SECONDS = 10
 local ICON_WIDTH = 18
 local ICON_HEIGHT = 18
@@ -84,9 +84,9 @@ local function refresh()
 	if not M.menubar then
 		M.menubar = hs.menubar.new()
 		if not M.menubar then
-			error("Failed to create VPN status menubar item")
+			error("Failed to create SCVPN status menubar item")
 		end
-		M.menubar:setTooltip("VPN status")
+		M.menubar:setTooltip("SCVPN status")
 		M.menubar:setMenu(function()
 			return M.buildMenu()
 		end)

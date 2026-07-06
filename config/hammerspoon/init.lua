@@ -45,6 +45,6 @@ require("url-dispatcher")
 require("keybinds")
 --require("display-watcher")
 require("pi-status")
-require("vpn-status")
+require("scvpn-status")
 
 hs.alert.show("Hammerspoon config loaded")
