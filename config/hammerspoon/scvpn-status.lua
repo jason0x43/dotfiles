@@ -13,10 +13,14 @@ local disconnectedIcon = util
 local connectedIcon = util
 	.loadImage("vpn-connected.svg")
 	:setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
+local connectingIcon = util
+	.loadImage("vpn-connecting.svg")
+	:setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
 
 -- Possible connection states reported by `scvpn status`.
 local STATUS = {
 	DOWN = "down",
+	RUNNING = "running",
 	AUTHENTICATED = "authenticated",
 	CONNECTED = "connected",
 }
@@ -35,6 +39,8 @@ local M = {
 	timer = nil,
 	---@type hs.task | nil
 	activeTask = nil,
+	---@type "up" | "down" | nil
+	pendingAction = nil,
 }
 
 ---Parse the connection state from a `scvpn` output line.
@@ -45,14 +51,18 @@ local function parseStatus(output)
 		return STATUS.DOWN
 	end
 
-	-- "ipsec is not running" and "is DOWN" both mean no connection.
-	if output:find("CONNECTED", 1, true) then
+	if output:find("ipsec is not running", 1, true) then
+		return STATUS.DOWN
+	elseif output:find("CONNECTED", 1, true) then
 		return STATUS.CONNECTED
-	elseif output:find("AUTHENTICATED", 1, true) then
+	elseif
+		output:find("AUTHENTICATED", 1, true)
+		or output:find("ESTABLISHED", 1, true)
+	then
 		return STATUS.AUTHENTICATED
 	end
 
-	return STATUS.DOWN
+	return STATUS.RUNNING
 end
 
 ---Run `scvpn` (status) and update the menubar accordingly.
@@ -66,6 +76,16 @@ local function refresh()
 
 	local trimmed = util.trim(output)
 	local status = parseStatus(trimmed)
+
+	if
+		M.pendingAction == "up"
+		and status ~= STATUS.AUTHENTICATED
+		and status ~= STATUS.RUNNING
+	then
+		M.pendingAction = nil
+	elseif M.pendingAction == "down" and status == STATUS.DOWN then
+		M.pendingAction = nil
+	end
 
 	M.state = {
 		status = status,
@@ -92,9 +112,14 @@ local function refresh()
 		end)
 	end
 
-	M.menubar:setIcon(
-		status == STATUS.CONNECTED and connectedIcon or disconnectedIcon
-	)
+	local icon = disconnectedIcon
+	if status == STATUS.CONNECTED then
+		icon = connectedIcon
+	elseif M.pendingAction == "up" then
+		icon = connectingIcon
+	end
+
+	M.menubar:setIcon(icon)
 end
 
 ---Run `scvpn up` or `scvpn down` in the background, then refresh.
@@ -113,6 +138,9 @@ local function runVpnCommand(argument)
 		hs.timer.doAfter(1, refresh)
 	end, { "-l", "-c", shellCommand })
 
+	M.pendingAction = argument
+  refresh()
+
 	-- Hold the reference so the task isn't garbage-collected mid-run.
 	M.activeTask = task
 	task:start()
@@ -123,7 +151,9 @@ end
 local function toggleVpn()
 	if M.state.status == STATUS.CONNECTED then
 		runVpnCommand("down")
-	elseif M.state.status == STATUS.AUTHENTICATED then
+	elseif
+		M.state.status == STATUS.AUTHENTICATED or M.state.status == STATUS.RUNNING
+	then
 		runVpnCommand("up")
 	end
 end
@@ -136,11 +166,14 @@ function M.buildMenu()
 
 	if M.state then
 		local label
-    if M.activeTask then
-      label = "Working..."
-    elseif M.state.status == STATUS.CONNECTED then
+		if M.activeTask then
+			label = M.pendingAction == "up" and "Connecting..." or "Working..."
+		elseif M.state.status == STATUS.CONNECTED then
 			label = "Disconnect"
-		elseif M.state.status == STATUS.AUTHENTICATED then
+		elseif
+			M.state.status == STATUS.AUTHENTICATED
+			or M.state.status == STATUS.RUNNING
+		then
 			label = "Connect"
 		else
 			label = "Disconnected"
