@@ -182,6 +182,7 @@ later(function()
       tex = { 'latexindent' },
       typescript = format_js,
       typescriptreact = format_js,
+      xml = { 'xmllint' }
     },
     formatters = {
       prettier = {
@@ -238,7 +239,7 @@ now(function()
   }
 
   vim.pack.add({ gh('dmtrKovalenko/fff.nvim') })
-  require('fff').setup()
+  require('fff').setup({})
 end)
 
 -- External tools =============================================================
