@@ -7,6 +7,7 @@ return {
       'tailwind.config.js',
       'tailwind.config.cjs',
       'tailwind.config.mjs',
+      'uniwind-types.d.ts',
     })
     if root then
       on_dir(root)
