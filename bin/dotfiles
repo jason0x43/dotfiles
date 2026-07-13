@@ -5,7 +5,6 @@ import argparse
 import json
 import os
 import pwd
-import re
 import shutil
 import subprocess
 import sys
@@ -234,66 +233,6 @@ def sync_git_repo(repo: str, destination: Path) -> None:
     result = run_command(["git", "clone", url, str(destination)])
     if result.returncode != 0:
         warn(f"Unable to clone {repo}")
-
-
-def resolve_agent_skill_path(repo_dir: Path, skill: str, path: Optional[str] = None) -> Optional[Path]:
-    """Resolve a skill directory from a repo"""
-    base_dir = repo_dir / path if path else repo_dir
-    candidate = base_dir / skill
-    if candidate.is_dir():
-        return candidate
-    return None
-
-
-def ensure_skill_frontmatter_name(skill_dir: Path) -> None:
-    """Ensure a skill's frontmatter name matches its directory name."""
-    skill_file = skill_dir / "SKILL.md"
-    if not skill_file.is_file():
-        warn(f"Missing SKILL.md in {skill_dir}")
-        return
-
-    try:
-        content = skill_file.read_text(encoding="utf-8")
-    except OSError as exc:
-        warn(f"Unable to read {skill_file}: {exc}")
-        return
-
-    frontmatter_match = re.match(r"^(---\n)(.*?)(\n---\n?)", content, re.DOTALL)
-    if not frontmatter_match:
-        warn(f"Missing frontmatter in {skill_file}")
-        return
-
-    opening, frontmatter, closing = frontmatter_match.groups()
-    expected_name = skill_dir.name
-    name_pattern = re.compile(r'(?m)^name:\s*(?:["\']?)([^"\'\n]+)(?:["\']?)\s*$')
-    name_match = name_pattern.search(frontmatter)
-
-    if name_match and name_match.group(1).strip() == expected_name:
-        return
-
-    if name_match:
-        updated_frontmatter = name_pattern.sub(f"name: {expected_name}", frontmatter, count=1)
-    else:
-        updated_frontmatter = f"name: {expected_name}\n{frontmatter}" if frontmatter else f"name: {expected_name}"
-
-    updated_content = (
-        content[: frontmatter_match.start()]
-        + opening
-        + updated_frontmatter
-        + closing
-        + content[frontmatter_match.end() :]
-    )
-
-    if updated_content == content:
-        return
-
-    try:
-        skill_file.write_text(updated_content, encoding="utf-8")
-    except OSError as exc:
-        warn(f"Unable to update {skill_file}: {exc}")
-        return
-
-    log_sub(f"Patched skill name in {skill_file}")
 
 
 @register_module("home")
@@ -601,75 +540,6 @@ def module_mas() -> None:
 
     log("Upgrading Mac App Store apps...")
     run_command(["mas", "upgrade"])
-
-
-@register_module("agents")
-def module_agents() -> None:
-    """Sync agent skills and sources"""
-    log("Syncing agents...")
-
-    agents_dir = HOME / ".agents"
-    agents_skills_dir = agents_dir / "skills"
-    agents_sources_dir = agents_dir / "sources"
-
-    makedir(agents_dir)
-    makedir(agents_skills_dir)
-    makedir(agents_sources_dir)
-
-    local_skills_dir = DOTFILES / "agents" / "skills"
-    if local_skills_dir.is_dir():
-        for source in sorted(local_skills_dir.iterdir()):
-            if source.is_dir():
-                ensure_skill_frontmatter_name(source)
-                sync_link(source, agents_skills_dir / source.name)
-
-    sources_path = DOTFILES / "agents" / "sources.json"
-    if not sources_path.is_file():
-        return
-
-    try:
-        sources = json.loads(sources_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        warn(f"Unable to parse {sources_path}")
-        return
-
-    if not isinstance(sources, list):
-        warn(f"Unexpected sources format in {sources_path}")
-        return
-
-    for entry in sources:
-        if not isinstance(entry, dict):
-            warn(f"Skipping invalid source entry: {entry}")
-            continue
-
-        repo = entry.get("repo")
-        path = entry.get("path")
-        skills = entry.get("skills")
-        if not isinstance(repo, str) or path is not None and not isinstance(path, str) or not isinstance(skills, list):
-            warn(f"Skipping invalid source entry: {entry}")
-            continue
-
-        owner, _, name = repo.partition("/")
-        if not owner or not name:
-            warn(f"Skipping invalid repo: {repo}")
-            continue
-
-        repo_dir = agents_sources_dir / owner / name
-        sync_git_repo(repo, repo_dir)
-
-        for skill in skills:
-            if not isinstance(skill, str):
-                warn(f"Skipping invalid skill entry for {repo}: {skill}")
-                continue
-
-            source = resolve_agent_skill_path(repo_dir, skill, path)
-            if source is None:
-                base_dir = repo_dir / path if path else repo_dir
-                warn(f"Missing skill '{skill}' in {base_dir}")
-                continue
-
-            ensure_skill_frontmatter_name(source)
-            sync_link(source, agents_skills_dir / skill)
 
 
 parser = argparse.ArgumentParser(
