@@ -8,7 +8,7 @@ alias f="fzf"
 
 # better ls
 if command -q eza
-    alias ls="eza -F"
+    alias ls="eza -F auto"
 else
     alias ls="ls -CF"
 end
@@ -66,6 +66,12 @@ alias view='vi -R'
 alias vim='vi'
 alias vimdiff='vi -d'
 alias vil="vi -c 'normal `0'"
+
+# wt
+alias wts='wt switch'
+alias wtc='wt switch --create'
+alias wtl='wt list'
+alias wtr='wt remove -D'
 
 # kitty
 alias kt='kitten @ set-tab-title'
