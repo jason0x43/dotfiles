@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Kitty Work Tree
+
+branch=$1
+
+kitten @ launch \
+	--type=tab \
+	--tab-title "$branch" \
+	--cwd=current \
+	fish -c "wt switch --create $branch; exec fish"
