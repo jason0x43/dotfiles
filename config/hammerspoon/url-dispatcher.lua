@@ -7,7 +7,6 @@ local function openInChromeProfile(profile)
 		local task = hs.task.new(
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 			nil,
-			function() end,
 			{
 				"--profile-directory=" .. profile,
 				url,
