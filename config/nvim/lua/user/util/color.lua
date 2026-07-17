@@ -1,5 +1,5 @@
 local hex_pat = '[abcdef0-9][abcdef0-9]'
-local pat = '^#(' .. hex_pat .. ')(' .. hex_pat .. ')(' .. hex_pat .. ')$'
+local pat = '^#?(' .. hex_pat .. ')(' .. hex_pat .. ')(' .. hex_pat .. ')$'
 
 local M = {}
 
@@ -18,12 +18,31 @@ local function hex_to_rgb(hex_str)
   return { tonumber(r, 16), tonumber(g, 16), tonumber(b, 16) }
 end
 
+-- Function for RGB channel correction. Assumes input in [0; 1] range
+-- https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
+local function correct_channel(x)
+  return 0.04045 < x and math.pow((x + 0.055) / 1.055, 2.4) or (x / 12.92)
+end
+
+-- Function for lightness correction
+-- https://bottosson.github.io/posts/colorpicker/#intermission---a-new-lightness-estimate-for-oklab
+local function correct_lightness(x)
+  local k1, k2 = 0.206, 0.03
+  local k3 = (1 + k1) / (1 + k2)
+
+  return 0.5 * (k3 * x - k1 + math.sqrt((k3 * x - k1) ^ 2 + 4 * k2 * k3 * x))
+end
+
+local function cuberoot(x)
+  return math.pow(x, 0.333333)
+end
+
 ---Blend two colors
 ---@param fg string
 ---@param bg string
 ---@param alpha number
 ---@return string
-local function blend(fg, bg, alpha)
+M.blend = function(fg, bg, alpha)
   local _bg = hex_to_rgb(bg)
   local _fg = hex_to_rgb(fg)
 
@@ -46,7 +65,7 @@ end
 ---@param bg string? the base "dark" color
 ---@return string
 M.darken = function(hex, amount, bg)
-  local status, val = pcall(blend, hex, bg or '#000000', 1 - math.abs(amount))
+  local status, val = pcall(M.blend, hex, bg or '#000000', 1 - math.abs(amount))
   if status then
     return val
   end
@@ -59,7 +78,7 @@ end
 ---@param fg string? the base "light" color
 ---@return string
 M.lighten = function(hex, amount, fg)
-  local status, val = pcall(blend, hex, fg or '#ffffff', 1 - math.abs(amount))
+  local status, val = pcall(M.blend, hex, fg or '#ffffff', 1 - math.abs(amount))
   if status then
     return val
   end
@@ -164,6 +183,24 @@ M.random_rgb = function(background)
   local hsl = { h = h, s = s, l = l }
   local rgb = hsl_to_rgb(hsl)
   return rgb_to_hex(rgb)
+end
+
+M.compute_opposite_color = function(hex)
+  local dec = tonumber(hex, 16)
+  local b = correct_channel(math.fmod(dec, 256) / 255)
+  local g = correct_channel(math.fmod((dec - b) / 256, 256) / 255)
+  local r = correct_channel(math.floor(dec / 65536) / 255)
+
+  local l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b
+  local m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b
+  local s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b
+
+  local l_, m_, s_ = cuberoot(l), cuberoot(m), cuberoot(s)
+
+  local L =
+    correct_lightness(0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_)
+
+  return L < 0.5 and '#ffffff' or '#000000'
 end
 
 return M

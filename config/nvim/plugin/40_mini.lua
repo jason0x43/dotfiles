@@ -257,13 +257,112 @@ end)
 
 -- Colorizing
 later(function()
+  local function gen_highlighter_hex_color()
+    local default_opts = {
+      style = 'full',
+      priority = 200,
+      filter = function() return true end,
+      inline_text = '█',
+      max_number = nil,
+    }
+    opts = default_opts
+
+    local style = opts.style
+    local pattern = style == '#' and '()#()%x%x%x%x%x%x%x%x%f[%X]'
+      or '#%x%x%x%x%x%x%x%x%f[%X]'
+    local hl_style = (
+      { full = 'bg', ['#'] = 'bg', line = 'line', inline = 'fg' }
+    )[style] or 'bg'
+
+    local extmark_opts = { priority = opts.priority }
+    if opts.style == 'inline' then
+      local priority, inline_text = opts.priority, opts.inline_text
+      ---@diagnostic disable:cast-local-type
+      extmark_opts = function(_, _, data)
+        local virt_text = { { inline_text, data.hl_group } }
+        return {
+          virt_text = virt_text,
+          virt_text_pos = 'inline',
+          priority = priority,
+          right_gravity = false,
+        }
+      end
+    end
+
+    local hex_opts = { max_number = opts.max_number }
+    return {
+      pattern = pattern,
+      group = function(_, _, data)
+        return MiniHipatterns.compute_hex_color_group(
+          data.full_match,
+          hl_style,
+          hex_opts
+        )
+      end,
+      extmark_opts = extmark_opts,
+    }
+  end
+
   local hipatterns = require('mini.hipatterns')
   hipatterns.setup({
     highlighters = {
+      hex_color_alpha = gen_highlighter_hex_color(),
       hex_color = hipatterns.gen_highlighter.hex_color(),
       todo = { pattern = 'TODO', group = 'MiniHipatternsTodo' },
     },
   })
+
+  local hex_color_groups = {}
+  local n_hex_color_groups = 0
+  local cu = require('user.util.color')
+
+  ---@diagnostic disable-next-line: duplicate-set-field
+  hipatterns.compute_hex_color_group = function(hex_color, style, opts)
+    style = style or 'bg'
+    local hex = hex_color:lower():sub(2)
+    local group_name = string.format('MiniHipatterns_%s_%s', hex, style)
+
+    local base = hex:sub(1, 6)
+    local alpha = hex:sub(7, 8)
+    local blended = cu.blend(
+      base,
+      vim.o.background == 'dark' and '#000000' or '#ffffff',
+      #alpha == 2 and (tonumber(alpha, 16) / 255) or 1
+    )
+
+    -- Use manually tracked table instead of `vim.fn.hlexists()` because the
+    -- latter still returns true for cleared highlights
+    if hex_color_groups[group_name] then
+      return group_name
+    end
+
+    -- Limit
+    opts = vim.tbl_extend('force', { max_number = 10000 }, opts or {})
+    if n_hex_color_groups >= opts.max_number then
+      return nil
+    end
+
+    -- Define highlight group if it is not already defined
+    local hl_opts
+    -- - Compute opposite color based on Oklab lightness (for better contrast)
+    if style == 'bg' then
+      hl_opts = { fg = cu.compute_opposite_color(base), bg = blended }
+    end
+    if style == 'fg' then
+      hl_opts = { fg = blended }
+    end
+    if style == 'line' then
+      hl_opts = { sp = blended, underline = true }
+    end
+
+    local ok = pcall(vim.api.nvim_set_hl, 0, group_name, hl_opts)
+
+    -- Keep track of created groups to properly react on `:hi clear`
+    hex_color_groups[group_name] = ok
+    n_hex_color_groups = n_hex_color_groups + (ok and 1 or 0)
+
+    return ok and group_name or nil
+  end
 end)
 
 -- Indent guides
@@ -368,4 +467,3 @@ later(function()
     end, { buffer = 0, desc = 'Close the pack pane' })
   end, 'Close vim.pack windows with "q"')
 end)
-
