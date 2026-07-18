@@ -304,45 +304,58 @@ def module_brew() -> None:
             shell=True,
         )
 
-    brew_packages = [
-        "bat",
-        "eza",
-        "fd",
-        "ripgrep",
-        "zoxide",
-        "mise",
-        "lazygit",
-        "neovim",
-    ]
+    installed = run_command(
+        [str(BREW), "ls", "-1"],
+        extra_env={
+            "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
+            "HOMEBREW_NO_INSTALL_UPGRADE": "true",
+        },
+        capture_output=True,
+    )
+    installed_packages = set(
+        [
+            line
+            for line in installed.stdout.splitlines()
+            if len(line) > 0 and not line.startswith("==")
+        ]
+    )
+
+    default_packages = set(
+        [
+            "bat",
+            "eza",
+            "fd",
+            "ripgrep",
+            "zoxide",
+            "mise",
+            "lazygit",
+            "neovim",
+        ]
+    )
 
     if IS_MACOS:
-        brew_packages.append("1password-cli")
+        default_packages.add("1password-cli")
 
-    log_sub("Installing/updating core packages...")
+    needed_packages = default_packages - installed_packages
+
+    if len(needed_packages) > 0:
+        log_sub("Installing missing default packages...")
+        run_command(
+            [str(BREW), "install", "--quiet", *needed_packages],
+            extra_env={
+                "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
+                "HOMEBREW_NO_INSTALL_UPGRADE": "true",
+            },
+        )
+
+    log_sub("Updating brew packages...")
     run_command(
-        [str(BREW), "install", "-q", *brew_packages],
+        [str(BREW), "upgrade", "--quiet", "--greedy", "--no-ask"],
         extra_env={
             "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
             "HOMEBREW_NO_INSTALL_UPGRADE": "true",
         },
     )
-
-    log_sub("Updating installed brew packages...")
-    run_command(
-        [str(BREW), "upgrade", "-q"],
-        extra_env={
-            "HOMEBREW_NO_UPDATE_REPORT_NEW": "true",
-            "HOMEBREW_NO_INSTALL_UPGRADE": "true",
-        },
-    )
-
-    git_completion = HOMEBREW_BASE / "share" / "zsh" / "site-functions" / "_git"
-    if git_completion.exists():
-        log_sub("Removing default git zsh completions...")
-        if owner(HOMEBREW_BASE) == os.environ.get("USER", ""):
-            git_completion.unlink(missing_ok=True)
-        else:
-            run_command(["sudo", "rm", "-f", str(git_completion)])
 
 
 @register_module("uv")
@@ -423,7 +436,7 @@ def module_pnpm() -> None:
         run_command("curl -fsSL https://get.pnpm.io/install.sh | sh -", shell=True)
 
     log_sub("Updating pnpm...")
-    run_command(["pnpm", "self-update", "-q"], quiet=True)
+    run_command(["pnpm", "self-update", "latest"])
 
 
 @register_module("bun")
@@ -440,6 +453,20 @@ def module_bun() -> None:
 
     log("Updating bun completions...")
     run_command(["bun", "completions"])
+
+
+@register_module("rust", os="macos")
+def module_rust() -> None:
+    if not command_exists("rustup"):
+        log("Installing rust...")
+        run_command(
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path",
+            shell=True,
+        )
+        return
+    else:
+        log("Updating rust...")
+        run_command(["rustup", "-q", "update"])
 
 
 @register_module("launchd", os="macos")
@@ -461,28 +488,6 @@ def module_launchd() -> None:
             ["launchctl", "bootstrap", f"gui/{os.getuid()}", str(target)],
         )
         log_sub(f"Bootstrapped {source.name}")
-
-
-@register_module("rust", os="macos")
-def module_rust() -> None:
-    if not command_exists("rustup"):
-        log("Installing rust...")
-        run_command(
-            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path",
-            shell=True,
-        )
-        return
-    else:
-        log("Updating rust...")
-        run_command(["rustup", "-q", "update"])
-
-
-@register_module("copilot")
-def module_copilot() -> None:
-    """Update copilot cli"""
-    if command_exists("copilot"):
-        log("Updating copilot...")
-        run_command(["copilot", "update"])
 
 
 @register_module("codex")
