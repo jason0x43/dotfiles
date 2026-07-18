@@ -183,3 +183,7 @@ hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "down", media.volumeDown)
 hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "space", media.playPause)
 hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "right", media.nextTrack)
 hs.hotkey.bind({ "ctrl", "alt", "shift", "cmd" }, "left", media.previousTrack)
+
+-- Music media player bindings
+hs.hotkey.bind({ "ctrl", "shift", "cmd" }, "up", hs.itunes.volumeUp)
+hs.hotkey.bind({ "ctrl", "shift", "cmd" }, "down", hs.itunes.volumeDown)
