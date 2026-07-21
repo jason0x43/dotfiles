@@ -18,7 +18,10 @@
   "experimental": {
     "disable_paste_summary": true
   },
-  "instructions": ["AGENTS.md", ".github/copilot-instructions.md"],
+  "instructions": [
+    "AGENTS.md",
+    ".github/copilot-instructions.md"
+  ],
   "mcp": {
     "context7": {
       "enabled": true,
@@ -35,9 +38,20 @@
       },
       "type": "remote",
       "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "agentmemory": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@agentmemory/mcp"
+      ],
+      "enabled": true
     }
   },
-  "plugin": ["opencode-gemini-auth@latest"],
+  "plugin": [
+    "opencode-gemini-auth@latest"
+  ],
   "provider": {
     "anthropic": {
       "options": {
