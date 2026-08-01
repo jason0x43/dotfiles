@@ -11,22 +11,24 @@ local REFRESH_INTERVAL_SECONDS = 60
 local ICON_WIDTH = 18
 local ICON_HEIGHT = 18
 local REASON_ICON_SIZE = 14
-local SUMMARY_MAX = 64
+local SUMMARY_MAX = 56
 
----@alias JiraRelevantReason "assignment" | "mention" | "comment"
+---@alias JiraRelevantReason "assignment" | "unassignment" | "mention" | "comment" | "update"
 
 ---@class JiraStatusIssue
 ---@field key string
 ---@field summary string
 ---@field status string
 ---@field url string
+---@field assigneeAccountId string | nil
 ---@field categories string[]
+---@field lastRelevantEventId string
 ---@field lastRelevantAt string
 ---@field lastRelevantReason JiraRelevantReason
 
 ---@class JiraStatusFile
 ---@field polledAt string
----@field account table
+---@field account { accountId: string }
 ---@field counts table
 ---@field issues JiraStatusIssue[]
 
@@ -35,15 +37,21 @@ local notifyIcon =
 ---@cast notifyIcon hs.image
 
 ---@param path string
----@return hs.image
+---@return hs.image | nil
 local function loadReasonIcon(path)
-	local icon = util.loadImage(path):setSize({
-		h = REASON_ICON_SIZE,
-		w = REASON_ICON_SIZE,
-	})
-	---@cast icon hs.image
-	icon:template(true)
-	return icon
+	local ok, icon = pcall(function()
+		local image = util.loadImage(path):setSize({
+			h = REASON_ICON_SIZE,
+			w = REASON_ICON_SIZE,
+		})
+		---@cast image hs.image
+		image:template(true)
+		return image
+	end)
+	if ok then
+		return icon
+	end
+	return nil
 end
 
 ---Icons keyed by lastRelevantReason (what caused the issue to surface).
@@ -51,12 +59,16 @@ local reasonIcons = {
 	comment = loadReasonIcon("jira-reason-comment.svg"),
 	mention = loadReasonIcon("jira-reason-mention.svg"),
 	assignment = loadReasonIcon("jira-reason-assignment.svg"),
+	unassignment = loadReasonIcon("jira-reason-unassignment.svg"),
+	update = loadReasonIcon("jira-reason-update.svg"),
 }
 
 local reasonTooltips = {
 	comment = "New comment",
 	mention = "Mentioned",
 	assignment = "Assigned",
+	unassignment = "Unassigned",
+	update = "Updated",
 }
 
 local M = {
@@ -70,7 +82,7 @@ local M = {
 	allIssues = {},
 	---@type JiraStatusIssue[]  Unseen subset shown in the menu.
 	issues = {},
-	---Map of issue key -> lastRelevantAt value that was marked seen.
+	---Map of issue key -> lastRelevantEventId value that was marked seen.
 	---@type table<string, string>
 	seen = {},
 	---@type string | nil
@@ -109,6 +121,13 @@ local function ensureDir(path)
 	hs.fs.mkdir(path)
 end
 
+---True for event ids published by the daemon (`comment:123`, `history:456`).
+---@param value string
+---@return boolean
+local function isEventId(value)
+	return value:find("^[%w]+:") ~= nil
+end
+
 local function loadState()
 	local state = readJsonFile(STATE_PATH)
 	if type(state) ~= "table" or type(state.seen) ~= "table" then
@@ -117,9 +136,10 @@ local function loadState()
 	end
 
 	local seen = {}
-	for key, lastRelevantAt in pairs(state.seen) do
-		if type(key) == "string" and type(lastRelevantAt) == "string" then
-			seen[key] = lastRelevantAt
+	for key, eventId in pairs(state.seen) do
+		-- Drop pre-migration entries keyed on ISO timestamps.
+		if type(key) == "string" and type(eventId) == "string" and isEventId(eventId) then
+			seen[key] = eventId
 		end
 	end
 	M.seen = seen
@@ -143,14 +163,87 @@ local function truncate(value, max)
 	return value:sub(1, max - 1) .. "…"
 end
 
+---Parse a daemon ISO-8601 UTC timestamp to epoch seconds.
+---@param iso string
+---@return number | nil
+local function parseIsoUtc(iso)
+	local y, mo, d, h, mi, s = iso:match("^(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
+	if not y then
+		return nil
+	end
+
+	-- os.time interprets fields as local time; subtract the local-UTC offset.
+	local asLocal = os.time({
+		year = tonumber(y),
+		month = tonumber(mo),
+		day = tonumber(d),
+		hour = tonumber(h),
+		min = tonumber(mi),
+		sec = tonumber(s),
+		isdst = false,
+	})
+	if type(asLocal) ~= "number" then
+		return nil
+	end
+
+	local now = os.time()
+	local utcNow = os.date("!*t", now)
+	local offset = os.difftime(
+		now,
+		os.time({
+			year = utcNow.year,
+			month = utcNow.month,
+			day = utcNow.day,
+			hour = utcNow.hour,
+			min = utcNow.min,
+			sec = utcNow.sec,
+			isdst = false,
+		})
+	)
+	return asLocal - offset
+end
+
+---Compact relative age for menu titles (e.g. "3w", "2d", "5h").
+---@param iso string | nil
+---@return string
+local function formatAge(iso)
+	if type(iso) ~= "string" or iso == "" then
+		return ""
+	end
+
+	local eventTime = parseIsoUtc(iso)
+	if type(eventTime) ~= "number" then
+		return ""
+	end
+
+	local ageSec = math.max(0, os.time() - eventTime)
+
+	if ageSec < 60 then
+		return "now"
+	end
+	if ageSec < 3600 then
+		return string.format("%dm", math.floor(ageSec / 60))
+	end
+	if ageSec < 86400 then
+		return string.format("%dh", math.floor(ageSec / 3600))
+	end
+	if ageSec < 86400 * 14 then
+		return string.format("%dd", math.floor(ageSec / 86400))
+	end
+	if ageSec < 86400 * 60 then
+		return string.format("%dw", math.floor(ageSec / (86400 * 7)))
+	end
+	return string.format("%dmo", math.floor(ageSec / (86400 * 30)))
+end
+
 ---@param issue JiraStatusIssue
 ---@return boolean
 local function isUnseen(issue)
-	local seenAt = M.seen[issue.key]
-	if type(seenAt) ~= "string" then
+	local seenId = M.seen[issue.key]
+	if type(seenId) ~= "string" then
 		return true
 	end
-	return seenAt ~= issue.lastRelevantAt
+	return seenId ~= issue.lastRelevantEventId
 end
 
 ---Prune seen entries for keys no longer present in status, then persist.
@@ -182,10 +275,14 @@ end
 
 ---@param issue JiraStatusIssue
 local function markSeen(issue)
-	if type(issue.key) ~= "string" or type(issue.lastRelevantAt) ~= "string" then
+	if
+		type(issue.key) ~= "string"
+		or type(issue.lastRelevantEventId) ~= "string"
+		or issue.lastRelevantEventId == ""
+	then
 		return
 	end
-	M.seen[issue.key] = issue.lastRelevantAt
+	M.seen[issue.key] = issue.lastRelevantEventId
 	saveState()
 end
 
@@ -194,10 +291,11 @@ local function markAllSeen()
 	for _, issue in ipairs(M.allIssues) do
 		if
 			type(issue.key) == "string"
-			and type(issue.lastRelevantAt) == "string"
-			and M.seen[issue.key] ~= issue.lastRelevantAt
+			and type(issue.lastRelevantEventId) == "string"
+			and issue.lastRelevantEventId ~= ""
+			and M.seen[issue.key] ~= issue.lastRelevantEventId
 		then
-			M.seen[issue.key] = issue.lastRelevantAt
+			M.seen[issue.key] = issue.lastRelevantEventId
 			changed = true
 		end
 	end
@@ -213,9 +311,14 @@ local function buildMenu(issues)
 
 	for _, issue in ipairs(issues) do
 		local summary = truncate(issue.summary, SUMMARY_MAX)
+		local age = formatAge(issue.lastRelevantAt)
 		local title = issue.key
-		if summary ~= "" then
+		if summary ~= "" and age ~= "" then
+			title = string.format("%s  %s  · %s", issue.key, summary, age)
+		elseif summary ~= "" then
 			title = string.format("%s  %s", issue.key, summary)
+		elseif age ~= "" then
+			title = string.format("%s  · %s", issue.key, age)
 		end
 
 		local reason = issue.lastRelevantReason
@@ -252,6 +355,7 @@ local function issuesSignature(issues)
 	for i, issue in ipairs(issues) do
 		parts[i] = table.concat({
 			issue.key or "",
+			issue.lastRelevantEventId or "",
 			issue.lastRelevantAt or "",
 			issue.lastRelevantReason or "",
 			issue.summary or "",
@@ -303,13 +407,18 @@ function M.refresh()
 
 	local allIssues = {}
 	for _, issue in ipairs(status.issues) do
-		if type(issue) == "table" and type(issue.key) == "string" then
+		if
+			type(issue) == "table"
+			and type(issue.key) == "string"
+			and type(issue.lastRelevantEventId) == "string"
+			and issue.lastRelevantEventId ~= ""
+		then
 			table.insert(allIssues, issue)
 		end
 	end
 
-	M.allIssues = allIssues
 	pruneSeen(allIssues)
+	M.allIssues = allIssues
 
 	local visible = {}
 	for _, issue in ipairs(allIssues) do
