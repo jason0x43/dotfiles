@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Kitty Work Tree
+
+ref=$1
+repo=$(basename "$(git rev-parse --show-toplevel)")
+
+if git rev-parse --verify --quiet "$ref" >/dev/null; then
+	cmd="git worktree add ../$repo.$ref $ref && cd ../$repo.$ref; exec fish"
+else
+	cmd="git branch $ref && git worktree add ../$repo.$ref $ref && cd ../$repo.$ref; exec fish"
+fi
+
+
+kitten @ launch \
+	--type=tab \
+	--tab-title "$ref" \
+	--cwd=current \
+	fish -c "$cmd"

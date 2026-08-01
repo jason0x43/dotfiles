@@ -68,10 +68,10 @@ alias vimdiff='vi -d'
 alias vil="vi -c 'normal `0'"
 
 # wt
-alias wts='wt switch'
-alias wtc='wt switch --create'
+alias wta='wt add'
 alias wtl='wt list'
-alias wtr='wt remove -D'
+alias wtd='wt delete'
+alias wtr='wt remove'
 
 # kitty
 alias kt='kitten @ set-tab-title'
