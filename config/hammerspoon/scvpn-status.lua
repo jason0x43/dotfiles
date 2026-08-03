@@ -39,7 +39,7 @@ local M = {
 	timer = nil,
 	---@type hs.task | nil
 	activeTask = nil,
-	---@type "up" | "down" | nil
+	---@type "up" | "stop" | nil
 	pendingAction = nil,
 }
 
@@ -65,6 +65,22 @@ local function parseStatus(output)
 	return STATUS.RUNNING
 end
 
+---Ensure the menubar item exists.
+local function ensureMenubar()
+	if M.menubar then
+		return
+	end
+
+	M.menubar = hs.menubar.new()
+	if not M.menubar then
+		error("Failed to create SCVPN status menubar item")
+	end
+	M.menubar:setTooltip("SCVPN status")
+	M.menubar:setMenu(function()
+		return M.buildMenu()
+	end)
+end
+
 ---Run `scvpn` (status) and update the menubar accordingly.
 local function refresh()
 	-- `scvpn` shells out to `op`, `swanctl`, `pgrep`, etc.; load the
@@ -83,7 +99,7 @@ local function refresh()
 		and status ~= STATUS.RUNNING
 	then
 		M.pendingAction = nil
-	elseif M.pendingAction == "down" and status == STATUS.DOWN then
+	elseif M.pendingAction == "stop" and status == STATUS.DOWN then
 		M.pendingAction = nil
 	end
 
@@ -93,24 +109,7 @@ local function refresh()
 		lastUpdated = os.time(),
 	}
 
-	if status == STATUS.DOWN then
-		if M.menubar then
-			M.menubar:delete()
-			M.menubar = nil
-		end
-		return
-	end
-
-	if not M.menubar then
-		M.menubar = hs.menubar.new()
-		if not M.menubar then
-			error("Failed to create SCVPN status menubar item")
-		end
-		M.menubar:setTooltip("SCVPN status")
-		M.menubar:setMenu(function()
-			return M.buildMenu()
-		end)
-	end
+	ensureMenubar()
 
 	local icon = disconnectedIcon
 	if status == STATUS.CONNECTED then
@@ -122,13 +121,13 @@ local function refresh()
 	M.menubar:setIcon(icon)
 end
 
----Run `scvpn up` or `scvpn down` in the background, then refresh.
+---Run `scvpn up` or `scvpn stop` in the background, then refresh.
 ---
 ---`scvpn` relies on the user's $PATH (for `swanctl`, `pgrep`, etc.), so
 ---we launch it through a login shell (`/bin/zsh -l -c`) to load the
 ---profile. `hs.task` runs async so the menubar doesn't block while
 ---strongSwan negotiates.
----@param argument string  "up" to connect, "down" to disconnect.
+---@param argument string  "up" to connect, "stop" to fully disconnect.
 local function runVpnCommand(argument)
 	local shellCommand = string.format("%s %s", SCVPN_COMMAND, argument)
 
@@ -139,7 +138,7 @@ local function runVpnCommand(argument)
 	end, { "-l", "-c", shellCommand })
 
 	M.pendingAction = argument
-  refresh()
+	refresh()
 
 	-- Hold the reference so the task isn't garbage-collected mid-run.
 	M.activeTask = task
@@ -147,13 +146,11 @@ local function runVpnCommand(argument)
 end
 
 ---Toggle the VPN based on the current state.
----CONNECTED -> disconnect; AUTHENTICATED -> connect.
+---CONNECTED -> stop; otherwise -> up.
 local function toggleVpn()
 	if M.state.status == STATUS.CONNECTED then
-		runVpnCommand("down")
-	elseif
-		M.state.status == STATUS.AUTHENTICATED or M.state.status == STATUS.RUNNING
-	then
+		runVpnCommand("stop")
+	else
 		runVpnCommand("up")
 	end
 end
@@ -167,16 +164,11 @@ function M.buildMenu()
 	if M.state then
 		local label
 		if M.activeTask then
-			label = M.pendingAction == "up" and "Connecting..." or "Working..."
+			label = M.pendingAction == "up" and "Connecting..." or "Disconnecting..."
 		elseif M.state.status == STATUS.CONNECTED then
 			label = "Disconnect"
-		elseif
-			M.state.status == STATUS.AUTHENTICATED
-			or M.state.status == STATUS.RUNNING
-		then
-			label = "Connect"
 		else
-			label = "Disconnected"
+			label = "Connect"
 		end
 
 		table.insert(menu, {
