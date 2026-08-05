@@ -97,19 +97,70 @@ end
 
 local M = {}
 
+---Create a MiniPick matcher that safely replaces FFF search results.
+---
+---`set_picker_items()` updates asynchronously, so discard an update when the
+---query changes before MiniPick has finished processing it.
+---@param MiniPick table
+---@param find fun(query: string): table
+---@return fun(_: string[], _: number[], query: string[])
+local function make_live_match(MiniPick, find)
+  local set_items_opts = {
+    do_match = false,
+    querytick = MiniPick.get_querytick(),
+  }
+
+  return function(_, _, query)
+    local querytick = MiniPick.get_querytick()
+    if querytick == set_items_opts.querytick then
+      return
+    end
+
+    set_items_opts.querytick = querytick
+    if #query == 0 then
+      return MiniPick.set_picker_items({}, set_items_opts)
+    end
+
+    MiniPick.set_picker_items(find(table.concat(query)), set_items_opts)
+  end
+end
+
+---Choose a content-search result after any BufWinEnter cursor restoration.
+---@param MiniPick table
+---@param item table
+local function choose_content(MiniPick, item)
+  local state = MiniPick.get_picker_state()
+  local target_win = state and state.windows.target or vim.api.nvim_get_current_win()
+
+  MiniPick.default_choose(item)
+
+  -- The global BufWinEnter autocmd restores the `"` mark. Reapply an explicit
+  -- picker location after that autocmd has had a chance to run.
+  if item.lnum == nil then
+    return
+  end
+
+  vim.schedule(function()
+    if not vim.api.nvim_win_is_valid(target_win) then
+      return
+    end
+
+    local col = math.max((item.col or 1) - 1, 0)
+    vim.api.nvim_win_set_cursor(target_win, { item.lnum, col })
+    vim.api.nvim_win_call(target_win, function()
+      vim.cmd('normal! zvzz')
+    end)
+  end)
+end
+
 M.files = function(local_opts)
   local MiniPick = require('mini.pick')
 
   local opts = vim.tbl_deep_extend('force', {
     source = {
       name = 'fff_files',
-      items = find_files,
-      match = function(_, _, query)
-        MiniPick.set_picker_items(
-          find_files(table.concat(query)),
-          { do_match = false }
-        )
-      end,
+      items = {},
+      match = make_live_match(MiniPick, find_files),
       show = show,
     },
   }, local_opts)
@@ -123,14 +174,12 @@ M.content = function(local_opts)
   local opts = vim.tbl_deep_extend('force', {
     source = {
       name = 'fff_content',
-      items = find_content,
-      match = function(_, _, query)
-        MiniPick.set_picker_items(
-          find_content(table.concat(query)),
-          { do_match = false }
-        )
-      end,
+      items = {},
+      match = make_live_match(MiniPick, find_content),
       show = show,
+      choose = function(item)
+        choose_content(MiniPick, item)
+      end,
     },
   }, local_opts)
 
