@@ -21,9 +21,6 @@ indent_style = space
 max_line_length = 80
 tab_width = 2
 
-[*.md]
-max_line_length = 80
-
 [*.rs]
 max_line_length = 80
 
