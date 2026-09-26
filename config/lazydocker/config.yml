@@ -1,0 +1,8 @@
+gui:
+  expandFocusedSidePanel: true
+  nerdFontsVersion: '3'
+  sidePanelWidth: 0.4
+  tabWidth: 2
+  theme:
+    selectedLineBgColor:
+      - black
