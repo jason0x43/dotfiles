@@ -1,6 +1,3 @@
-[tools]
-java = 'oracle-21.0.9'
-
 [settings]
 idiomatic_version_file_enable_tools = []
 
