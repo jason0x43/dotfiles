@@ -5,14 +5,19 @@ function configure
             | source && fisher install jorgebucaran/fisher
     end
 
-    set -l tide_installed 0
+    # Install Tide if it is not already available, then update installed plugins.
     if ! command -q tide
-        set -l tide_installed 1
+        fisher install ilancosman/tide@v6 >/dev/null
     end
 
     # Install/update plugins
     # @fish-lsp-disable 7001
     UV_VENV_CLEAR=1 fisher update >/dev/null
+
+    # Allow machine-local configuration to manage optional plugins.
+    if functions -q configure_fish_ai
+        configure_fish_ai
+    end
 
     # Disable `clear` in functions/tide/configure/choices/all/finish.fish
     set -l functions_path (dirname (status --current-filename))
