@@ -139,6 +139,3 @@
 
 [include]
 	path = ~/.config.local/git/config
-
-[includeIf "gitdir:~/Work/"]
-	path = ~/.config.local/git/work
