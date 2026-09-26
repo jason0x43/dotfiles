@@ -155,6 +155,9 @@ end
 
 M.files = function(local_opts)
   local MiniPick = require('mini.pick')
+  if not vim.g.fff_available then
+    return MiniPick.builtin.files(local_opts)
+  end
 
   local opts = vim.tbl_deep_extend('force', {
     source = {
@@ -170,6 +173,9 @@ end
 
 M.content = function(local_opts)
   local MiniPick = require('mini.pick')
+  if not vim.g.fff_available then
+    return MiniPick.builtin.grep_live(local_opts)
+  end
 
   local opts = vim.tbl_deep_extend('force', {
     source = {

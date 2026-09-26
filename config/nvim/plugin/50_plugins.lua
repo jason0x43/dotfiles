@@ -53,17 +53,25 @@ end)
 -- Completions ================================================================
 
 later(function()
+  -- Install blink.lib first; vim.pack installs entries in each add call in parallel.
+  vim.pack.add({ gh('saghen/blink.lib') })
   vim.pack.add({
-    gh('saghen/blink.lib'),
+    gh('saghen/blink.cmp'),
     -- Copilot provider
     gh('fang2hou/blink-copilot'),
     -- Colorize menu items
     gh('xzbdmw/colorful-menu.nvim'),
-    gh('saghen/blink.cmp'),
   })
 
-  require('blink.cmp'):build()
+  local has_cargo = vim.fn.executable('cargo') == 1
+  if has_cargo then
+    require('blink.cmp').build():pwait()
+  end
+
   require('blink.cmp').setup({
+    fuzzy = {
+      implementation = has_cargo and 'prefer_rust' or 'lua',
+    },
     cmdline = {
       enabled = false,
     },
@@ -224,22 +232,54 @@ end)
 -- File picker ================================================================
 
 now(function()
-  _G.Config.new_autocmd('PackChanged', nil, function(ev)
-    local name, kind = ev.data.spec.name, ev.data.kind
-    if name == 'fff.nvim' and (kind == 'install' or kind == 'update') then
-      if not ev.data.active then
-        vim.cmd.packadd('fff.nvim')
-      end
-      require('fff.download').download_or_build_binary()
-    end
-  end)
-
   vim.g.fff = {
     lazy_sync = true,
   }
+  vim.g.fff_available = false
 
-  vim.pack.add({ gh('dmtrKovalenko/fff.nvim') })
-  require('fff').setup({})
+  vim.pack.add({ gh('dmtrKovalenko/fff.nvim') }, {
+    load = function(plugin)
+      -- Make the downloader available without sourcing FFF's startup file yet.
+      vim.opt.rtp:prepend(plugin.path)
+      local download = require('fff.download')
+      local binary_path = download.get_binary_path()
+      local function binary_loadable()
+        local loader = package.loadlib(binary_path, 'luaopen_fff_nvim')
+        return loader ~= nil
+      end
+
+      if not binary_loadable() then
+        local downloaded, download_error
+        download.download_binary(function(ok, err)
+          downloaded, download_error = ok, err
+        end)
+        local completed = vim.wait(120000, function() return downloaded ~= nil end, 100)
+        if not completed or not downloaded then
+          local reason = completed and download_error or 'download timed out'
+          vim.notify(
+            'fff.nvim is unavailable; using MiniPick built-ins. ' .. tostring(reason),
+            vim.log.levels.WARN
+          )
+          return
+        end
+      end
+
+      if not binary_loadable() then
+        vim.notify(
+          'fff.nvim binary is invalid; using MiniPick built-ins.',
+          vim.log.levels.WARN
+        )
+        return
+      end
+
+      vim.cmd.packadd('fff.nvim')
+      vim.g.fff_available = true
+    end,
+  })
+
+  if vim.g.fff_available then
+    require('fff').setup({})
+  end
 end)
 
 -- External tools =============================================================

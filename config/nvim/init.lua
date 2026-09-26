@@ -16,7 +16,9 @@ vim.api.nvim_create_autocmd('PackChanged', {
       if not ev.data.active then
         vim.cmd.packadd('blink.cmp')
       end
-      require('blink.cmp').build()
+      if vim.fn.executable('cargo') == 1 then
+        require('blink.cmp').build():pwait()
+      end
     end
   end,
 })
