@@ -8,9 +8,10 @@ import pwd
 import shutil
 import subprocess
 import sys
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Union, Callable, Literal, Any
+from typing import Any, Literal
 
 
 @dataclass(frozen=True)
@@ -71,8 +72,8 @@ MODULES: list[Module] = []
 def register_module(
     name: str,
     *,
-    os: Optional[Literal["linux", "macos"]] = None,
-    priority: Optional[int] = None,
+    os: Literal["linux", "macos"] | None = None,
+    priority: int | None = None,
 ) -> Callable[[Callable[[], None]], Callable[[], None]]:
     """Register an install/update module.
 
@@ -102,7 +103,7 @@ os.environ["PATH"] = f"{HOMEBREW_BASE / 'bin'}:{os.environ.get('PATH', '')}"
 install_missing: bool = False
 
 
-def log(message: str, color: Optional[str] = None) -> None:
+def log(message: str, color: str | None = None) -> None:
     """Print a primary message to stdout"""
     tint = color if color is not None else COLORS.green
     print(f"{tint}>>>{COLORS.reset} {message}")
@@ -177,12 +178,12 @@ def sync_link(source: Path, target: Path) -> None:
 
 
 def run_command(
-    command: Union[str, Sequence[str]],
+    command: str | Sequence[str],
     *,
     capture_output: bool = False,
     quiet: bool = False,
     shell: bool = False,
-    extra_env: Optional[Dict[str, str]] = None,
+    extra_env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     """Run a command and return the result"""
     env = os.environ.copy()
@@ -201,7 +202,9 @@ def run_command(
     if shell:
         kwargs["executable"] = "/bin/bash"
 
-    return subprocess.run(command, text=True, env=env, shell=shell, **kwargs)
+    return subprocess.run(
+        command, check=False, text=True, env=env, shell=shell, **kwargs
+    )
 
 
 def brew_install(pkg: str) -> bool:
@@ -312,26 +315,22 @@ def module_brew() -> None:
         },
         capture_output=True,
     )
-    installed_packages = set(
-        [
-            line
-            for line in installed.stdout.splitlines()
-            if len(line) > 0 and not line.startswith("==")
-        ]
-    )
+    installed_packages = {
+        line
+        for line in installed.stdout.splitlines()
+        if len(line) > 0 and not line.startswith("==")
+    }
 
-    default_packages = set(
-        [
-            "bat",
-            "eza",
-            "fd",
-            "ripgrep",
-            "zoxide",
-            "mise",
-            "lazygit",
-            "neovim",
-        ]
-    )
+    default_packages = {
+        "bat",
+        "eza",
+        "fd",
+        "ripgrep",
+        "zoxide",
+        "mise",
+        "lazygit",
+        "neovim",
+    }
 
     if IS_MACOS:
         default_packages.add("1password-cli")
@@ -402,7 +401,7 @@ def module_fish() -> None:
 
 @register_module("node")
 def module_node() -> None:
-    def npm_outdated_global_packages() -> List[str]:
+    def npm_outdated_global_packages() -> list[str]:
         result = run_command(["npm", "outdated", "-g", "--json"], capture_output=True)
         if not result.stdout.strip():
             return []

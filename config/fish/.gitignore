@@ -12,3 +12,4 @@ conf.d/fish_ai.fish
 !functions/_tide_item_mise.fish
 fish_variables*
 fishd.tmp.*
+fish_plugins
