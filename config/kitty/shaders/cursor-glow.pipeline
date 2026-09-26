@@ -1,0 +1,10 @@
+startgroup
+    animation_start cursor-trail-move
+    animation_stop 300
+
+    var float3 GLOW_COLOR = float3(0.8, 0.05, 0.8)
+    var float GLOW_OPACITY = 0.5
+    var float GLOW_RADIUS_PX = 10.0
+
+    shaders cursor-glow
+endgroup
