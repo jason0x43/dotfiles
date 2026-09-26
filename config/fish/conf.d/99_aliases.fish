@@ -1,4 +1,5 @@
 # file commands
+alias dush='du -sh'
 alias fda="fd -I"
 alias rgl="rg -l"
 alias rgla="rg -l -u"
@@ -96,3 +97,7 @@ end
 if command -q pi
     alias pp='pi --model gpt-5.4-mini -p'
 end
+
+# Claude
+
+alias cld='open claude://code/new?folder=$PWD'
