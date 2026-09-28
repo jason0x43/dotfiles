@@ -537,15 +537,6 @@ def module_hammerspoon() -> None:
             log_sub("Updated Hammerspoon config file location")
 
 
-@register_module("mas", os="macos")
-def module_mas() -> None:
-    if not command_exists("mas") and not brew_install("mas"):
-        return
-
-    log("Upgrading Mac App Store apps...")
-    run_command(["mas", "upgrade"])
-
-
 parser = argparse.ArgumentParser(
     prog="dotfiles",
     description="Update local environment. All modules are updated by default.",
