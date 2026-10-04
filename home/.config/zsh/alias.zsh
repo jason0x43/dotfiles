@@ -6,7 +6,7 @@ alias b='back'
 
 # Reload zshrc. Undefine DIRENV_WATCHES (if it exists) so that direnv will
 # reload the environment
-alias refresh='source ~/.zshenv && source ~/.zshrc'
+alias refresh='source ~/.zshenv && source $ZDOTDIR/.zshrc'
 alias reload='exec env -u DIRENV_WATCHES $SHELL'
 alias reloadx86='ARCHPREFERENCE=x86_64 exec arch -x86_64 env -u DIRENV_WATCHES $SHELL'
 

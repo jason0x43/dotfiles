@@ -1,6 +1,8 @@
 # Some core variables are set here so that they can be loaded by scripts like
 # base16_theme that may be run in a non-standard environment.
 
+export DOTFILES=${DOTFILES:-$HOME/.dotfiles}
+
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}

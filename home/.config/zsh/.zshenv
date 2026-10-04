@@ -8,8 +8,6 @@
 # user interaction should go in zshrc.
 #
 
-echo "loading zshenv"
-
 source $ZDOTDIR/common.zsh
 
 # Language
@@ -312,3 +310,6 @@ fi
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZDOTDIR/local/zshenv ]] && source $ZDOTDIR/local/zshenv
+
+# Remember the path so .zprofile can restore its order after path_helper
+typeset -ga _zshenv_path=($path)

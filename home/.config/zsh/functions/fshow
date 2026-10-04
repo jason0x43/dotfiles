@@ -1,5 +1,5 @@
 # fshow - git commit browser (enter for show, ctrl-d for diff, ` toggles sort)
-if [[ ! $+commands[fzf] ]]; then
+if (( ! $+commands[fzf] )); then
 	echo "FZF is not installed"
 	return 0
 fi

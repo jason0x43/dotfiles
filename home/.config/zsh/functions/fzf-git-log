@@ -3,7 +3,7 @@
 # alt-n and alt-p to scroll in preview
 # Enter to echo the commit log
 
-if [[ ! $+commands[fzf] ]]; then
+if (( ! $+commands[fzf] )); then
 	echo "FZF is not installed"
 	return 1
 fi

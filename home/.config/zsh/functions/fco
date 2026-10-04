@@ -1,5 +1,5 @@
 # fco - checkout git branch/tag
-if [[ ! $+commands[fzf] ]]; then
+if (( ! $+commands[fzf] )); then
 	echo "FZF is not installed"
 	return 0
 fi

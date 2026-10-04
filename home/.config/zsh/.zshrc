@@ -52,7 +52,7 @@ else
 fi
 
 export EDITOR=$SUDO_EDITOR
-export VISUAL=$SUDO_VISUAL
+export VISUAL=$EDITOR
 
 # Turn on color for everything
 # ------------------------------------------------------------------------
@@ -495,7 +495,7 @@ if (( $+commands[zoxide] )); then
 fi
 
 # 4-space tabs
-tabs -4
+[[ -t 1 ]] && tabs -4
 
 # Local config
 # --------------------------------------------------------------------------
