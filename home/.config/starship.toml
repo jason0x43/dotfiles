@@ -82,7 +82,7 @@ symbol = " "
 [git_branch]
 style = "green"
 format = '[$symbol$branch]($style) '
-symbol = ' '
+symbol = ' '
 
 # Counts in Tide's order and colors. Unlike Tide, deletions and renames get
 # their own counts instead of being included in modified (!).
