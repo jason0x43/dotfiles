@@ -47,6 +47,29 @@ fi
 # --------------------------------------------------------------------------
 if (( $+commands[zoxide] )); then
     eval "$(zoxide init zsh --cmd cd)"
+
+    # Complete `cd <query><Tab>` with local directories, or with zoxide's
+    # matches if there aren't any; repeated Tabs cycle through them. Other
+    # cases, such as Space-Tab for the fzf picker, are left to zoxide.
+    _zoxide_cd_complete() {
+        if (( CURRENT != 2 || ${#words} != 2 )) || [[ -z ${words[2]} ]]; then
+            __zoxide_z_complete
+            return
+        fi
+
+        _cd -/ && return 0
+
+        local -a matches display
+        matches=(${(f)"$(zoxide query --list --exclude "$PWD" -- ${words[2]} 2>/dev/null)"})
+        (( ${#matches} )) || return 1
+        display=(${matches/#$HOME/\~})
+
+        # Matches don't start with the query, so skip prefix matching (-U)
+        # and go straight to menu completion
+        compstate[insert]=menu
+        compadd -U -Q -V zoxide -S '' -d display -- ${(q-)matches}
+    }
+    compdef _zoxide_cd_complete cd
 fi
 
 # Terminal

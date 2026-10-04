@@ -38,6 +38,7 @@ setopt   COMPLETE_IN_WORD       # Complete from both ends of a word
 setopt   PATH_DIRS              # Perform path search even on command names with slashes
 unsetopt CASE_GLOB              # Make globbing case insensitive
 unsetopt FLOW_CONTROL           # Disable start/stop characters in shell editor
+unsetopt LIST_BEEP              # Don't beep when completion is ambiguous
 
 # Don't show a % for partial lines
 export PROMPT_EOL_MARK=''

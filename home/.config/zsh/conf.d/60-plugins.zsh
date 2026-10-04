@@ -55,3 +55,7 @@ bindkey -M viins '^y' autosuggest-accept
 bindkey -M viins '^e' autosuggest-clear
 bindkey -M viins '^n' history-substring-search-down
 bindkey -M viins '^p' history-substring-search-up
+
+# ctrl-e also cancels the completion menu, restoring what was typed
+zmodload zsh/complist
+bindkey -M menuselect '^e' undo
