@@ -12,11 +12,7 @@ fpath=(
 
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
-if [[ -d $ZDOTDIR/functions ]]; then
-    for func in $ZDOTDIR/functions/*(:t); do
-        autoload -U $func
-    done
-fi
+autoload -Uz $ZDOTDIR/functions/*(N-.:t)
 
 # Prompt
 # --------------------------------------------------------------------------
@@ -67,16 +63,16 @@ fpath=(
 # Note that fpath should be configured before calling compinit.
 # (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
 autoload -Uz compinit
-if [[ $HOME =~ "/Users" ]]; then
-    # Only try to rebuild the comp dump once a day
-    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]]; then
-        compinit -i -d $ZCOMPFILE
-    else
+# Only check for new completions (slow) if the dump is missing or more than a
+# day old. compinit doesn't rewrite an up-to-date dump, so touch it to reset
+# the clock.
+() {
+    if (( $# )); then
         compinit -C -i -d $ZCOMPFILE
+    else
+        compinit -i -d $ZCOMPFILE && touch $ZCOMPFILE
     fi
-else
-    compinit -i -d $ZCOMPFILE
-fi
+} $ZCOMPFILE(N.mh-24)
 
 # Add AWS completions
 if (( $+commands[aws_completer] )); then

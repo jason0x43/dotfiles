@@ -1,14 +1,14 @@
+# Run the best available vi. In WezTerm, nvim listens on a per-pane socket.
 if (( $+commands[nvim] )); then
 	if [[ -n $WEZTERM_PANE ]]; then
-		local socket
-		socket=/tmp/nvim-wt$WEZTERM_PANE
+		local socket=/tmp/nvim-wt$WEZTERM_PANE
 		rm -f $socket
-		nvim --listen $socket $*
+		nvim --listen $socket "$@"
 	else
-		nvim $*
+		nvim "$@"
 	fi
 elif (( $+commands[vim] )); then
-	vim $*
+	vim "$@"
 else
-	command vi $*
+	command vi "$@"
 fi
