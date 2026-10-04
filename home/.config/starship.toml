@@ -9,6 +9,7 @@ $git_branch\
 $git_state\
 $git_status\
 $fill\
+$cmd_duration\
 $package\
 ${custom.mise}\
 $time\
@@ -23,6 +24,12 @@ vimcmd_symbol = "[:](green)"
 vimcmd_replace_one_symbol = "[▶](green)"
 vimcmd_replace_symbol = "[▶](green)"
 vimcmd_visual_symbol = "[V](green)"
+
+# Like Tide, only show durations of 3 seconds or more
+[cmd_duration]
+format = " [$duration]($style)"
+style = "yellow"
+min_time = 3000
 
 # Tool versions from mise, styled like Tide's mise item in fish: an icon and
 # version for each active tool, in the tool's color. Unlike starship's language
