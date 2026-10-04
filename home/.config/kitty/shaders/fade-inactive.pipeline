@@ -1,0 +1,5 @@
+startgroup
+    # static effect, redraw only when the active window changes
+    animation_step 0
+    shaders fade-inactive
+endgroup
