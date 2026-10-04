@@ -4,144 +4,105 @@ add_newline = false
 
 format = """
 $hostname\
-$time\
 $directory\
 $git_branch\
 $git_state\
 $git_status\
 $fill\
 $package\
-$deno\
-$golang\
-$java\
-$lua\
-$nodejs\
-$python\
+${custom.mise}\
+$time\
 $line_break\
-${custom.character_fish}${custom.character_nu}"""
+$character"""
 
-# leave out $character in nushell
-
+# Matches the Tide prompt in fish
 [character]
-success_symbol = "[➜](bold green)"
-error_symbol = "[✗](bold red)"
-vimcmd_symbol = "[:](bold blue)"
+success_symbol = "[➜](green)"
+error_symbol = "[➜](bright-red)"
+vimcmd_symbol = "[:](green)"
+vimcmd_replace_one_symbol = "[▶](green)"
+vimcmd_replace_symbol = "[▶](green)"
+vimcmd_visual_symbol = "[V](green)"
 
-[custom.character_fish]
-format = """$character"""
-when = ''' test "$SHELL" =~ "/fish" '''
-
-[custom.character_nu]
-format = ""
-when = ''' test -n "$NU_LIB_DIRS" '''
-
-[aws]
-symbol = "  "
-
-[buf]
-symbol = " "
-
-[c]
-symbol = " "
-
-[conda]
-symbol = " "
-
-[dart]
-symbol = " "
-
-[deno]
-format = ' [$symbol($version )]($style)'
+# Tool versions from mise, styled like Tide's mise item in fish: an icon and
+# version for each active tool, in the tool's color. Unlike starship's language
+# modules, this includes tools set in parent directories' mise.toml files.
+[custom.mise]
+when = true
+shell = ["sh"]
+format = "( $output)"
+command = '''
+mise current 2> /dev/null | awk '
+BEGIN {
+    icon["ruby"] = ""; color["ruby"] = 31
+    icon["node"] = ""; color["node"] = 32
+    icon["java"] = ""; color["java"] = 33
+    icon["python"] = "󰌠"; color["python"] = 36
+    icon["go"] = ""; color["go"] = 96
+    icon["rust"] = ""; color["rust"] = 31
+    icon["bun"] = "󰳓"; color["bun"] = 37
+    icon["php"] = ""; color["php"] = 34
+    icon["zig"] = ""; color["zig"] = 33
+    icon["elixir"] = ""; color["elixir"] = 35
+    icon["crystal"] = ""; color["crystal"] = 97
+    icon["pulumi"] = ""; color["pulumi"] = 33
+    icon["terraform"] = "󱁢"; color["terraform"] = 35
+    icon["kubectl"] = "󱃾"; color["kubectl"] = 34
+    icon["gcloud"] = "󰊭"; color["gcloud"] = 34
+    icon["aws-cli"] = ""; color["aws-cli"] = 33
+    icon["azure-cli"] = "󰠅"; color["azure-cli"] = 34
+    icon["databricks-cli"] = "󰌨"; color["databricks-cli"] = 91
+    icon["dotnet"] = ""; color["dotnet"] = 35
+    icon["gradle"] = ""; color["gradle"] = 36
+    icon["maven"] = ""; color["maven"] = 31
+}
+{
+    tool = $1; ver = $2
+    sub(/.*@/, "", ver)
+    item = (tool in icon) ? icon[tool] " " ver : ver
+    if (tool in color) item = sprintf("\033[%dm%s\033[0m", color[tool], item)
+    printf "%s%s", (NR > 1 ? " " : ""), item
+}'
+'''
 
 [directory]
+style = "blue"
 read_only = " "
-
-[docker_context]
-symbol = " "
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
 
 [fill]
 symbol = " "
 
 [git_branch]
+style = "green"
 format = '[$symbol$branch]($style) '
 symbol = ' '
 
-[golang]
-format = ' [$symbol($version )]($style)'
-symbol = " "
-version_format = '${raw}'
-
-[haskell]
-symbol = " "
-
-[hg_branch]
-symbol = " "
+# Counts in Tide's order and colors. Unlike Tide, deletions and renames get
+# their own counts instead of being included in modified (!).
+[git_status]
+format = '($ahead_behind$stashed$conflicted$staged$modified$deleted$renamed$untracked)'
+ahead = '[⇡${count} ](bright-green)'
+behind = '[⇣${count} ](bright-green)'
+diverged = '[⇣${behind_count} ⇡${ahead_count} ](bright-green)'
+stashed = '[*${count} ](bright-green)'
+conflicted = '[~${count} ](bright-red)'
+staged = '[+${count} ](bright-yellow)'
+modified = '[!${count} ](bright-yellow)'
+deleted = '[✘${count} ](bright-yellow)'
+renamed = '[»${count} ](bright-yellow)'
+untracked = '[?${count} ](bright-blue)'
 
 [hostname]
 format = "[$ssh_symbol$hostname]($style) "
 ssh_symbol = ' '
 
-[java]
-format = ' [${symbol}(${version} )]($style)'
-symbol = " "
-version_format = '${raw}'
-
-[nodejs]
-format = ' [$symbol($version )]($style)'
-version_format = '${raw}'
-
-[julia]
-symbol = " "
-
-[lua]
-format = ' [$symbol($version )]($style)'
-symbol = " "
-
-[memory_usage]
-symbol = " "
-
-[meson]
-symbol = "喝 "
-
-[nim]
-symbol = " "
-
-[nix_shell]
-symbol = " "
-
 [package]
 format = ' [$symbol$version]($style)'
-symbol = " "
+symbol = "󰏗 "
 version_format = '${raw}'
-
-[python]
-format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
-symbol = " "
-version_format = '${raw}'
-
-[rlang]
-symbol = "ﳒ "
-
-[ruby]
-format = ' [$symbol$version]($style)'
-symbol = " "
-version_format = '${raw}'
-
-[rust]
-symbol = " "
-
-[scala]
-symbol = " "
-
-[spack]
-symbol = "🅢 "
 
 [time]
 disabled = false
-format = "[$time]($style) "
+format = " [$time]($style)"
+style = "bright-black"
+time_format = "%T"
