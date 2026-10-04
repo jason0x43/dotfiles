@@ -1,4 +1,5 @@
 completions/*.fish
+!completions/dotfiles.fish
 functions/tide
 functions/fisher.fish
 functions/fish_prompt.fish

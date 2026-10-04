@@ -22,16 +22,17 @@ The repo targets macOS (primary) and Linux (Debian-based) environments.
 /
 ├── bin/              # 65 executable scripts (zsh, bash, python, node, swift)
 │                     # Main: dotfiles (installer), checkhealth, git-* helpers
-├── config/           # XDG-aware application configs
-│   ├── nvim/         # Neovim config (Lua-based, lazy.nvim plugin manager)
-│   ├── fish/         # Fish shell (65 functions, conf.d/ for autoloading)
-│   ├── wezterm/      # WezTerm terminal emulator config
-│   ├── hammerspoon/  # macOS window manager (Lua)
-│   ├── git/          # Git configuration
-│   ├── bat/          # Syntax highlighting themes
-│   ├── mise/         # Tool version manager
-│   └── yazi/         # File manager
-├── home/             # Files symlinked to ~ (bashrc, editorconfig, prettierrc, zshenv)
+├── home/             # Mirror of ~ for managed files (names as they appear in ~)
+│   ├── .bashrc, .zshenv, .editorconfig, .prettierrc, ...
+│   └── .config/      # XDG-aware application configs
+│       ├── nvim/     # Neovim config (Lua-based)
+│       ├── fish/     # Fish shell (conf.d/ for autoloading)
+│       ├── wezterm/  # WezTerm terminal emulator config
+│       ├── hammerspoon/ # macOS automation (Lua)
+│       ├── git/      # Git configuration
+│       ├── bat/      # Syntax highlighting themes
+│       ├── mise/     # Tool version manager
+│       └── yazi/     # File manager
 ├── zsh/              # Zsh configuration files
 │   ├── .zshenv       # Environment setup (sourced first)
 │   ├── .zshrc        # Interactive shell config
@@ -48,42 +49,53 @@ The repo targets macOS (primary) and Linux (Debian-based) environments.
 **Key paths:**
 
 - `~/.dotfiles` → Repository root (set by `$DOTFILES` env var)
-- `~/.config` → Symlinked from `config/` (XDG_CONFIG_HOME)
+- `~/<path>` → Symlinked to `home/<path>` for each file in `home/`
 - `~/.local/config` → Host-specific configs (NOT in repo, never commit)
 - `~/.cache` → Transient files (XDG_CACHE_HOME)
 
 ## Build & Validation Commands
 
-### Primary Installation/Update Command
+### Managing Dotfiles
 
-**Always run from repo root:**
+`bin/dotfiles` manages home directory files. Everything in `home/` mirrors its
+location in `~` (e.g. `home/.config/fish/config.fish` →
+`~/.config/fish/config.fish`). Each file is symlinked individually; directories
+in `~` are real directories, so machine-specific files can live alongside
+linked ones. Files that git ignores are never linked.
 
 ```bash
-bin/dotfiles [options] [group]
+bin/dotfiles sync             # Link repo files into ~, remove stale links
+bin/dotfiles sync -f          # Also replace local files in the way (backed up to ~/.local/state/dotfiles/backups)
+bin/dotfiles status [dir...]  # Show link problems and untracked files; exits 1 if links need attention
+bin/dotfiles import <path>... # Move files (or every file in a directory) from ~ into home/ and link them
+bin/dotfiles forget <path>... # Move files from home/ back into ~
+bin/dotfiles ignore <path>... # Hide local files from status (adds to ~/.config/dotfiles/ignore)
 ```
 
-**Options:**
+Ignore rules: generic patterns for the repo's own contents go in `.gitignore`
+files. Machine-specific ignores go in `~/.config/dotfiles/ignore` (gitignore
+syntax, relative to ~, never committed); the script copies them into
+`.git/info/exclude`. Never add personal app names to the repo's `.gitignore`.
+
+`sync`, `import`, and `forget` accept `-n/--dry-run`.
+
+### Installing/Updating Tools
+
+```bash
+bin/dotfiles update [-i] [module...]
+```
 
 - `-i, --install` — Install missing dependencies (Homebrew, packages)
-- `<group>` — Run specific group only (see groups below)
+- `-l, --list` — List modules
+- `<module>` — Run specific modules only (all run by default)
 
-**Available groups:**
-
-- `home` — Symlink dotfiles to ~/, fix terminfo (run first for new setup)
-- `brew` — Install/update Homebrew packages
-- `fish` — Update Fish plugins, run Fish configure
-- `bat` — Rebuild bat cache for themes/syntax
-- `zsh` — Update Zsh plugins, refresh completions
-- `nvim` — Update Neovim plugins (Lazy), LSPs (Mason), treesitter parsers
-- `rust` — Install/update Rust via rustup
-- `node` — Update global npm packages
-- `launchd` — Link and bootstrap launch agents (macOS only)
-- `mas` — Upgrade Mac App Store apps (macOS only)
+**Modules:** brew, uv, bat, fish, node, pnpm, bun, rust (macOS), launchd
+(macOS), codex, claude, hammerspoon (macOS), apt (Linux)
 
 **Initial setup on new machine:**
 
 ```bash
-bin/dotfiles -i       # Install everything from scratch
+bin/dotfiles sync && bin/dotfiles update -i
 ```
 
 ### Syntax Validation
@@ -103,7 +115,7 @@ fish -n <script.fish>  # Syntax check
 **Lua files (if stylua installed):**
 
 ```bash
-stylua --check config/nvim/  # Format check (uses config/nvim/stylua.toml)
+stylua --check home/.config/nvim/  # Format check (uses home/.config/nvim/stylua.toml)
 ```
 
 **Nix flake (if nix installed):**
@@ -125,7 +137,7 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
 
 ## Core Dependencies
 
-**Homebrew packages (installed by `bin/dotfiles -i`):**
+**Homebrew packages (installed by `bin/dotfiles update -i`):**
 
 - bat, eza, fd, ripgrep, zoxide (modern CLI tools)
 - mise (tool version manager)
@@ -148,7 +160,7 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
 
 - Zsh: `#!/usr/bin/env zsh` or `#!/bin/zsh`
 - Bash: `#!/bin/bash` or `#!/usr/bin/env bash`
-- Fish: Not used (files in `config/fish/`)
+- Fish: Not used (files in `home/.config/fish/`)
 
 **Error handling:**
 
@@ -158,9 +170,9 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
 
 **Indentation:**
 
-- Shell/Fish/Lua: 2 spaces (see `home/editorconfig`)
+- Shell/Fish/Lua: 2 spaces (see `home/.editorconfig`)
 - Python: 4 spaces
-- JS/TS: Tabs (width 2, see `home/prettierrc`)
+- JS/TS: Tabs (width 2, see `home/.prettierrc`)
 
 **Naming:**
 
@@ -174,9 +186,9 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
 
 ### Configuration Files
 
-- **Lua** (Neovim/Hammerspoon): Follow `config/nvim/stylua.toml` (80 char line,
+- **Lua** (Neovim/Hammerspoon): Follow `home/.config/nvim/stylua.toml` (80 char line,
   single quotes, 2 space indent)
-- **Fish**: Autoload files in `config/fish/conf.d/` (numeric prefix for order:
+- **Fish**: Autoload files in `home/.config/fish/conf.d/` (numeric prefix for order:
   `05_`, `10_`, `99_`)
 - **Zsh**: Source order matters - check `.zshrc` for plugin loading sequence
 
@@ -184,28 +196,33 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
 
 ### Symlink Management
 
-The `bin/dotfiles home` command:
+`bin/dotfiles sync`:
 
-1. **Creates symlinks** from `home/*` → `~/.{filename}`
-2. **Creates symlinks** from `config/*` → `~/.config/{dirname}`
-3. **Removes broken symlinks** in ~ and ~/.config
-4. **Moves existing directories** to `~/.config.local/` to avoid conflicts
+1. **Links** each file in `home/` (that git doesn't ignore) to the same path
+   in `~`, creating directories as needed
+2. **Replaces stale links** (broken, or pointing elsewhere in the repo), and
+   replaces old whole-directory links with real directories, moving any
+   untracked files from the linked directory into `~`
+3. **Skips conflicts** (local files at a managed path) unless `--force`, which
+   backs them up to `~/.local/state/dotfiles/backups/` first
+4. **Removes links into the repo** that are broken or whose files were removed
 
-**Critical:** Never manually create files that conflict with symlinks. The
-installer will move them!
+To start managing a file, use `bin/dotfiles import ~/<path>` rather than
+copying it into `home/` by hand (files added by hand are linked on the next
+`sync`). New files created in `~` are local until imported.
 
 ### Environment Variable Loading
 
 **Zsh load order:**
 
-1. `home/zshenv` → sources `zsh/.zshenv`
+1. `home/.zshenv` → sources `zsh/.zshenv`
 2. `zsh/.zshenv` → sources `zsh/common.zsh` (sets XDG paths, DOTFILES, etc.)
 3. `zsh/.zshrc` → loads plugins, sources config files
 
 **Fish load order:**
 
-1. `config/fish/config.fish` (minimal)
-2. Files in `config/fish/conf.d/*.fish` (alphabetical, use numeric prefixes)
+1. `home/.config/fish/config.fish` (minimal)
+2. Files in `home/.config/fish/conf.d/*.fish` (alphabetical, use numeric prefixes)
 
 ### Plugin Management
 
@@ -213,7 +230,6 @@ installer will move them!
 
 - Managed by `zfetch` function (custom lightweight plugin manager)
 - Located in `$ZPLUGDIR` (typically `~/.local/share/zsh/plugins`)
-- Update with `bin/dotfiles zsh`
 
 **Neovim plugins:**
 
@@ -222,15 +238,7 @@ installer will move them!
 
 **Fish plugins:**
 
-- Configured in `config/fish/conf.d/` and updated via `bin/dotfiles fish`
-
-### Terminfo Fixes
-
-The `bin/dotfiles home` command automatically:
-
-- Installs WezTerm terminfo if missing
-- Fixes backspace codes (C-h) for Neovim compatibility
-- Uses `tic` and `infocmp` utilities
+- Configured in `home/.config/fish/conf.d/` and updated via `bin/dotfiles update fish`
 
 ### Host-Specific Configuration
 
@@ -255,7 +263,7 @@ Before committing changes:
     - Lua: `stylua --check <file>` (if available)
 
 2. **Test installation:**
-    - Run `bin/dotfiles <group>` for affected subsystem
+    - Run `bin/dotfiles update <module>` for affected subsystem
     - Verify no errors in output
 
 3. **Check file permissions:**
@@ -263,7 +271,7 @@ Before committing changes:
     - Config files should be 644
 
 4. **Validate symlinks:**
-    - After `bin/dotfiles home`, check `ls -la ~` for broken links
+    - Run `bin/dotfiles status` to check for broken or missing links
     - Verify configs load: open new shell, nvim, etc.
 
 5. **Platform compatibility:**
@@ -282,11 +290,7 @@ Before committing changes:
 
 3. **Git completions conflict:**
     - Homebrew's `_git` completion conflicts with system version
-    - `bin/dotfiles brew` automatically removes it
-
-4. **Terminfo must be fixed before Neovim will work properly:**
-    - Run `bin/dotfiles home` first on new systems
-    - Fixes C-h (backspace) keybinding issues
+    - `bin/dotfiles update brew` automatically removes it
 
 ## Files at Repository Root
 
@@ -295,8 +299,7 @@ Before committing changes:
 .gitignore        # Ignores: plugins, sessions, compiled files, .vscode, .tool-versions
 README.md         # User-facing documentation
 bin/              # Executable scripts directory
-config/           # Application configurations directory
-home/             # Files to symlink to ~/
+home/             # Mirror of ~ for managed files (including .config/)
 launchd/          # macOS launch agents
 nix-darwin/       # Nix flake for system config
 powershell/       # PowerShell profile

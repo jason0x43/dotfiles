@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update local environment and toolchain resources."""
+"""Manage home directory dotfiles and update the local environment."""
 
 import argparse
 import json
@@ -8,9 +8,10 @@ import pwd
 import shutil
 import subprocess
 import sys
+import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Literal
 
 
@@ -62,6 +63,22 @@ XDG_DATA_HOME = Path(
 XDG_RUNTIME_DIR = Path(
     os.environ.get("XDG_RUNTIME_DIR", os.environ.get("TMPDIR", "/tmp"))
 ).expanduser()
+XDG_STATE_HOME = Path(
+    os.environ.get("XDG_STATE_HOME", str(HOME / ".local" / "state"))
+).expanduser()
+# Files in DOTFILES_HOME mirror their locations in ~, and each one is symlinked
+# to that location
+DOTFILES_HOME = DOTFILES / "home"
+BACKUP_DIR = XDG_STATE_HOME / "dotfiles" / "backups"
+# The links created by the last sync, used to clean up removed files
+STATE_FILE = XDG_STATE_HOME / "dotfiles" / "links"
+# Machine-local ignore rules (gitignore syntax, relative to ~). These are kept
+# out of the repo, and copied into its .git/info/exclude.
+IGNORE_FILE = XDG_CONFIG_HOME / "dotfiles" / "ignore"
+EXCLUDE_BEGIN = f"# BEGIN dotfiles ignore (generated from {IGNORE_FILE})"
+EXCLUDE_END = "# END dotfiles ignore"
+# Files that are never linked or reported as untracked
+IGNORED_NAMES = {".DS_Store"}
 HOMEBREW_BASE = (
     Path("/home/linuxbrew/.linuxbrew") if IS_LINUX else Path("/opt/homebrew")
 )
@@ -138,40 +155,10 @@ def owner(path: Path) -> str:
         return ""
 
 
-def makedir(path: Path) -> None:
-    """Create a directory and any parents"""
-    if path.is_dir():
-        return
-    path.mkdir(parents=True, exist_ok=True)
-    log_sub(f"Created {path}/")
-
-
 def link(source: Path, target: Path) -> None:
     """Create a symlink"""
     if target.exists() or target.is_symlink():
         return
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.symlink_to(source)
-    log_sub(f"Linked {source} -> {target}")
-
-
-def sync_link(source: Path, target: Path) -> None:
-    """Create or update a symlink"""
-    if not source.exists():
-        warn(f"Missing source for link: {source}")
-        return
-
-    if target.is_symlink():
-        current = (target.parent / target.readlink()).resolve()
-        desired = source.resolve()
-        if current == desired:
-            return
-        target.unlink()
-        log_sub(f"Removed {target}")
-    elif target.exists():
-        warn(f"Skipping existing non-link: {target}")
-        return
-
     target.parent.mkdir(parents=True, exist_ok=True)
     target.symlink_to(source)
     log_sub(f"Linked {source} -> {target}")
@@ -238,51 +225,710 @@ def sync_git_repo(repo: str, destination: Path) -> None:
         warn(f"Unable to clone {repo}")
 
 
-@register_module("home")
-def module_home() -> None:
-    """Setup the home directory"""
+LINKED = "linked"
+MISSING = "missing"
+STALE = "stale"
+CONFLICT = "conflict"
+RUN_ID = time.strftime("%Y%m%d-%H%M%S")
 
-    log("Updating home directory files...")
 
-    # Remove broken dotfile symlinks from ~/
-    for entry in HOME.iterdir():
-        if not entry.name.startswith("."):
+def tilde(path: Path) -> str:
+    """Format a path for display, abbreviating the home directory"""
+    if path == HOME:
+        return "~"
+    if path.is_relative_to(HOME):
+        return f"~/{path.relative_to(HOME).as_posix()}"
+    return str(path)
+
+
+def join_rel(rel: str, name: str) -> str:
+    """Join a name onto a path relative to ~ (where "" is ~ itself)"""
+    return f"{rel}/{name}" if rel else name
+
+
+def is_within(path: Path, root: Path) -> bool:
+    """Return true if path is root or is inside root"""
+    return path.is_relative_to(root) or path.is_relative_to(root.resolve())
+
+
+def link_dest(path: Path) -> Path:
+    """Return the normalized absolute destination of a symlink"""
+    return Path(os.path.normpath(path.parent / os.readlink(path)))
+
+
+def move(source: Path, destination: Path) -> None:
+    """Move a file or directory, creating parent directories as needed"""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(source), str(destination))
+
+
+def symlink(source: Path, target: Path) -> None:
+    """Create a symlink at target, creating parent directories as needed"""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.symlink_to(source)
+
+
+def is_empty_dir(directory: Path) -> bool:
+    """Return true if a directory contains nothing but ignorable files"""
+    return all(child.name in IGNORED_NAMES for child in directory.iterdir())
+
+
+def remove_dir(directory: Path) -> None:
+    """Remove an empty directory and any ignorable files in it"""
+    for name in IGNORED_NAMES:
+        (directory / name).unlink(missing_ok=True)
+    directory.rmdir()
+
+
+def remove_empty_parents(directory: Path, stop: Path) -> None:
+    """Remove empty directories from directory up to (but not including) stop"""
+    while directory != stop and directory.is_relative_to(stop):
+        if not directory.is_dir() or not is_empty_dir(directory):
+            return
+        remove_dir(directory)
+        directory = directory.parent
+
+
+def remove_empty_tree(root: Path) -> None:
+    """Remove empty directories in a tree, including the root"""
+    for directory, _, _ in os.walk(root, topdown=False):
+        if is_empty_dir(Path(directory)):
+            remove_dir(Path(directory))
+
+
+def perform(
+    dry_run: bool, message: str, action: Callable[..., object], *args: Path
+) -> None:
+    """Run an action and log it, or just log it for a dry run"""
+    if not dry_run:
+        action(*args)
+    log_sub(f"(dry run) {message}" if dry_run else message)
+
+
+def git_paths(*args: str, stdin: list[str] | None = None) -> list[str]:
+    """Run a git command in DOTFILES that outputs NUL-separated paths"""
+    result = subprocess.run(
+        ["git", "-C", str(DOTFILES), *args],
+        input="\0".join(stdin) if stdin is not None else None,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    # check-ignore exits with 1 when no paths are ignored
+    if result.returncode not in (0, 1):
+        err(f"git {args[0]} failed: {result.stderr.strip()}")
+        raise SystemExit(1)
+    return [path for path in result.stdout.split("\0") if path]
+
+
+def ignored_paths(rels: list[str]) -> set[str]:
+    """Return the paths relative to ~ that git ignores in DOTFILES_HOME"""
+    if not rels:
+        return set()
+
+    queries: dict[str, str] = {}
+    for rel in rels:
+        if rel.endswith("/"):
+            # A directory might not exist in the repo, so git can't tell that
+            # it's a directory. Checking a path inside it lets directory-only
+            # patterns match.
+            queries[f"home/{rel}.dotfiles-probe"] = rel
+            queries[f"home/{rel.rstrip('/')}"] = rel
+        else:
+            queries[f"home/{rel}"] = rel
+
+    paths = git_paths("check-ignore", "-z", "--stdin", stdin=list(queries))
+    return {queries[path] for path in paths if path in queries}
+
+
+def translate_ignore_rule(line: str) -> str | None:
+    """Convert a gitignore rule relative to ~ into one relative to the repo"""
+    if not line.strip() or line.startswith("#"):
+        return None
+
+    negate = line.startswith("!")
+    pattern = line[1:] if negate else line
+    body = pattern.rstrip("/")
+    if not body.strip():
+        return None
+
+    # A pattern with a slash (other than a trailing one) is relative to the
+    # ignore file's directory; anything else matches at any depth.
+    if "/" in body:
+        rule = f"/home/{pattern.lstrip('/')}"
+    else:
+        rule = f"/home/**/{pattern}"
+    return f"!{rule}" if negate else rule
+
+
+def sync_excludes() -> None:
+    """Copy the rules in IGNORE_FILE into the repo's .git/info/exclude"""
+    result = run_command(
+        ["git", "-C", str(DOTFILES), "rev-parse", "--git-path", "info/exclude"],
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return
+    exclude_file = DOTFILES / result.stdout.strip()
+
+    rules: list[str] = []
+    if IGNORE_FILE.is_relative_to(HOME):
+        # The ignore file itself is always local
+        rules.append(f"/home/{IGNORE_FILE.relative_to(HOME).as_posix()}")
+    if IGNORE_FILE.exists():
+        for line in IGNORE_FILE.read_text(encoding="utf-8").splitlines():
+            rule = translate_ignore_rule(line)
+            if rule:
+                rules.append(rule)
+
+    # Replace the generated block, keeping anything else in the file
+    existing = (
+        exclude_file.read_text(encoding="utf-8").splitlines()
+        if exclude_file.exists()
+        else []
+    )
+    if EXCLUDE_BEGIN in existing and EXCLUDE_END in existing:
+        start = existing.index(EXCLUDE_BEGIN)
+        end = existing.index(EXCLUDE_END)
+        existing = existing[:start] + existing[end + 1 :]
+    while existing and not existing[-1].strip():
+        existing.pop()
+
+    lines = [*existing, *([""] if existing else []), EXCLUDE_BEGIN, *rules, EXCLUDE_END]
+    content = "\n".join(lines) + "\n"
+    if not exclude_file.exists() or exclude_file.read_text(encoding="utf-8") != content:
+        exclude_file.parent.mkdir(parents=True, exist_ok=True)
+        exclude_file.write_text(content, encoding="utf-8")
+
+
+def managed_files() -> set[str]:
+    """Return the files in DOTFILES_HOME (relative to it) that git doesn't ignore"""
+    paths = git_paths(
+        "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "home"
+    )
+    return {
+        rel
+        for rel in (path.removeprefix("home/") for path in paths)
+        if os.path.lexists(DOTFILES_HOME / rel)
+        and PurePosixPath(rel).name not in IGNORED_NAMES
+    }
+
+
+def local_files(rel: str) -> list[str]:
+    """Return the files in ~/rel that aren't links into the repo"""
+    found: list[str] = []
+    for directory, dirs, files in os.walk(HOME / rel):
+        root = Path(directory)
+        # os.walk lists links to directories in dirs but doesn't follow them
+        for name in sorted(files + [d for d in dirs if (root / d).is_symlink()]):
+            path = root / name
+            if name in IGNORED_NAMES or (
+                path.is_symlink() and is_within(link_dest(path), DOTFILES)
+            ):
+                continue
+            found.append(path.relative_to(HOME).as_posix())
+    return found
+
+
+def home_relative(raw: str) -> str | None:
+    """Convert a path in ~ or DOTFILES_HOME to a path relative to ~"""
+    path = Path(os.path.abspath(os.path.expanduser(raw)))
+
+    if path != DOTFILES_HOME and path.is_relative_to(DOTFILES_HOME):
+        return path.relative_to(DOTFILES_HOME).as_posix()
+
+    if is_within(path, DOTFILES) or is_within(DOTFILES, path):
+        err(f"{raw}: can't manage the dotfiles repo itself")
+    elif path == HOME or not path.is_relative_to(HOME):
+        err(f"{raw}: not inside ~ or {tilde(DOTFILES_HOME)}")
+    else:
+        return path.relative_to(HOME).as_posix()
+
+    return None
+
+
+class Linker:
+    """Links each file in DOTFILES_HOME to the same location in ~"""
+
+    def __init__(self, *, force: bool = False, dry_run: bool = False) -> None:
+        self.force = force
+        self.dry_run = dry_run
+        sync_excludes()
+        self.managed = managed_files()
+        # Directories that were converted from links or created. These are only
+        # needed to track what would have changed during a dry run.
+        self.converted: set[Path] = set()
+        self.created: set[Path] = set()
+        self._tracked: set[Path] | None = None
+
+    @property
+    def tracked(self) -> set[Path]:
+        """All files tracked by the repo"""
+        if self._tracked is None:
+            self._tracked = {DOTFILES / path for path in git_paths("ls-files", "-z")}
+        return self._tracked
+
+    def parent_link(self, rel: str) -> Path | None:
+        """Return an ancestor of ~/rel that links into the repo, if any.
+
+        These are left over from linking whole directories, and are replaced
+        with real directories by sync.
+        """
+        for parent in (HOME / rel).parents:
+            if parent == HOME or not parent.is_relative_to(HOME):
+                break
+            if parent in self.converted:
+                return None
+            if parent.is_symlink() and is_within(link_dest(parent), DOTFILES):
+                return parent
+        return None
+
+    def state(self, rel: str) -> str:
+        """Return the state of the link for a managed file"""
+        source = DOTFILES_HOME / rel
+        target = HOME / rel
+
+        if self.parent_link(rel):
+            return STALE
+        if self.dry_run and any(
+            p in self.converted or p in self.created for p in target.parents
+        ):
+            return MISSING
+        if target.is_symlink():
+            if link_dest(target) == source or (
+                target.exists() and target.resolve() == source.resolve()
+            ):
+                return LINKED
+            # Broken links and links into the repo are safe to replace
+            if not target.exists() or is_within(link_dest(target), DOTFILES):
+                return STALE
+            return CONFLICT
+        if os.path.lexists(target):
+            return CONFLICT
+        return MISSING
+
+    def link(self, rel: str) -> bool:
+        """Link a managed file into ~. Returns false if it couldn't be linked."""
+        if self.state(rel) == LINKED:
+            return True
+        if not self.prepare_parents(rel):
+            return False
+
+        source = DOTFILES_HOME / rel
+        target = HOME / rel
+        state = self.state(rel)
+
+        if state == CONFLICT:
+            if not self.force:
+                warn(f"Skipping {tilde(target)}: a local file is in the way")
+                return False
+            backup = BACKUP_DIR / RUN_ID / rel
+            perform(
+                self.dry_run,
+                f"Backed up {tilde(target)} to {tilde(backup)}",
+                move,
+                target,
+                backup,
+            )
+        elif state == STALE:
+            perform(self.dry_run, f"Removed stale link {tilde(target)}", target.unlink)
+
+        perform(self.dry_run, f"Linked {tilde(target)}", symlink, source, target)
+        return True
+
+    def prepare_parents(self, rel: str) -> bool:
+        """Make sure every parent of ~/rel is a real directory"""
+        target = HOME / rel
+        parents = [p for p in target.parents if p.is_relative_to(HOME) and p != HOME]
+
+        for parent in reversed(parents):
+            if parent in self.converted or parent in self.created:
+                continue
+            if parent.is_symlink() and is_within(link_dest(parent), DOTFILES):
+                self.convert(parent)
+                continue
+            if parent.is_dir():
+                continue
+            if os.path.lexists(parent):
+                warn(f"Skipping {tilde(target)}: {tilde(parent)} isn't a directory")
+                return False
+            perform(self.dry_run, f"Created {tilde(parent)}/", parent.mkdir)
+            self.created.add(parent)
+
+        return True
+
+    def convert(self, link: Path) -> None:
+        """Replace a link into the repo with a real directory.
+
+        Untracked files in the linked directory (e.g., files generated by an
+        app) are local to this machine, so they're moved into the new
+        directory. Managed files are linked individually afterwards.
+        """
+        dest = link_dest(link)
+        local: list[str] = []
+
+        if dest.is_dir() and not dest.is_symlink():
+            managed = {DOTFILES_HOME / rel for rel in self.managed}
+            keep = {p for p in self.tracked | managed if p.is_relative_to(dest)}
+            # Directories that contain kept files; anything else can be moved
+            # as a whole
+            keep_dirs = {parent for p in keep for parent in p.parents}
+
+            for directory, dirs, files in os.walk(dest):
+                root = Path(directory)
+                for name in sorted(dirs):
+                    if root / name not in keep_dirs:
+                        local.append((root / name).relative_to(dest).as_posix())
+                dirs[:] = [d for d in dirs if root / d in keep_dirs]
+                for name in sorted(files):
+                    if root / name not in keep:
+                        local.append((root / name).relative_to(dest).as_posix())
+
+        perform(
+            self.dry_run,
+            f"Replaced link {tilde(link)} with a directory",
+            self._replace_with_dir,
+            link,
+        )
+        if local:
+            perform(
+                self.dry_run,
+                f"Moved {len(local)} local item(s) from {tilde(dest)} to {tilde(link)}",
+                lambda: self._move_local(dest, link, local),
+            )
+        self.converted.add(link)
+
+    @staticmethod
+    def _replace_with_dir(link: Path) -> None:
+        link.unlink()
+        link.mkdir()
+
+    @staticmethod
+    def _move_local(dest: Path, link: Path, local: list[str]) -> None:
+        for sub in local:
+            move(dest / sub, link / sub)
+        remove_empty_tree(dest)
+        remove_empty_parents(dest.parent, DOTFILES)
+
+    def prune(self) -> None:
+        """Remove links into the repo that are broken or no longer managed"""
+        candidates: set[str] = set()
+        if STATE_FILE.exists():
+            candidates.update(STATE_FILE.read_text(encoding="utf-8").splitlines())
+
+        # Also check the directories links are in, which catches links that
+        # weren't created by sync (e.g., links to whole directories)
+        directories = {HOME} | {(HOME / rel).parent for rel in self.managed}
+        for directory in directories:
+            if directory.is_symlink() or not directory.is_dir():
+                continue
+            for entry in directory.iterdir():
+                if entry.is_symlink():
+                    candidates.add(entry.relative_to(HOME).as_posix())
+
+        for rel in sorted(candidates - self.managed):
+            path = HOME / rel
+            if not rel or path in self.converted or not path.is_symlink():
+                continue
+            dest = link_dest(path)
+            if not is_within(dest, DOTFILES):
+                continue
+            if not path.exists():
+                perform(self.dry_run, f"Removed broken link {tilde(path)}", path.unlink)
+            elif is_within(dest, DOTFILES_HOME):
+                perform(
+                    self.dry_run, f"Removed unmanaged link {tilde(path)}", path.unlink
+                )
+            else:
+                continue
+            if not self.dry_run:
+                remove_empty_parents(path.parent, HOME)
+
+        if not self.dry_run:
+            linked = sorted(rel for rel in self.managed if self.state(rel) == LINKED)
+            STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+            STATE_FILE.write_text("".join(f"{rel}\n" for rel in linked), "utf-8")
+
+    def untracked(self, roots: list[str]) -> list[str]:
+        """Return files and directories in ~ that aren't in the repo.
+
+        Directories are only descended into if they also exist in the repo, so
+        an entirely local directory is reported once, with a trailing slash.
+        Paths that git ignores are left out.
+        """
+        found: list[str] = []
+        # Look inside the directories containing the ignore file rather than
+        # reporting them as a whole, since the ignore file itself is ignored
+        descend: set[str] = set()
+        if IGNORE_FILE.is_relative_to(HOME):
+            ignore_rel = PurePosixPath(IGNORE_FILE.relative_to(HOME).as_posix())
+            descend = {p.as_posix() for p in ignore_rel.parents if p.parts}
+
+        def walk(rel: str) -> None:
+            try:
+                children = sorted((HOME / rel).iterdir())
+            except OSError:
+                return
+            for child in children:
+                child_rel = join_rel(rel, child.name)
+                if (
+                    child.name in IGNORED_NAMES
+                    or child_rel in self.managed
+                    or is_within(child, DOTFILES)
+                ):
+                    continue
+                if child.is_symlink():
+                    if not is_within(link_dest(child), DOTFILES):
+                        found.append(child_rel)
+                elif child.is_dir():
+                    source = DOTFILES_HOME / child_rel
+                    if (
+                        source.is_dir() and not source.is_symlink()
+                    ) or child_rel in descend:
+                        walk(child_rel)
+                    else:
+                        found.append(f"{child_rel}/")
+                else:
+                    found.append(child_rel)
+
+        for root in roots:
+            walk(root)
+
+        ignored = ignored_paths(found)
+        return [rel for rel in found if rel not in ignored]
+
+
+def import_file(target: Path, source: Path) -> None:
+    """Move a file into the repo, replacing any existing copy, and link it"""
+    if os.path.lexists(source):
+        source.unlink()
+    move(target, source)
+    symlink(source, target)
+
+
+def restore_file(source: Path, target: Path) -> None:
+    """Move a file out of the repo, replacing its link"""
+    if target.is_symlink():
+        target.unlink()
+    move(source, target)
+    remove_empty_parents(source.parent, DOTFILES_HOME)
+
+
+def cmd_sync(args: argparse.Namespace) -> int:
+    """Link managed files into ~ and clean up stale links"""
+    linker = Linker(force=args.force, dry_run=args.dry_run)
+    log("Syncing home directory links...")
+
+    ok = True
+    for rel in sorted(linker.managed):
+        ok = linker.link(rel) and ok
+
+    linker.prune()
+    if not ok:
+        warn("Some files weren't linked; see `dotfiles status`")
+    return 0 if ok else 1
+
+
+def cmd_import(args: argparse.Namespace) -> int:
+    """Move files from ~ into DOTFILES_HOME and link them"""
+    linker = Linker(dry_run=args.dry_run)
+    exit_code = 0
+
+    for raw in args.paths:
+        rel = home_relative(raw)
+        if rel is None:
+            exit_code = 1
             continue
-        if entry.is_symlink() and not entry.exists():
-            entry.unlink(missing_ok=True)
-            log_sub(f"Removed {entry}")
 
-    # Remove broken symlinks from ~/.config
-    if XDG_CONFIG_HOME.is_dir():
-        for entry in XDG_CONFIG_HOME.iterdir():
-            if entry.is_symlink() and not entry.exists():
-                entry.unlink(missing_ok=True)
-                log_sub(f"Removed {entry}")
+        target = HOME / rel
+        if linker.parent_link(rel):
+            err(f"{tilde(target)} is in a linked directory; run `dotfiles sync` first")
+            exit_code = 1
+            continue
 
-    # Link files in .dotfiles/home into ~/
-    home_dir = DOTFILES / "home"
-    if home_dir.exists():
-        for source in sorted(home_dir.iterdir()):
-            link(source, HOME / f".{source.name}")
+        if target.is_dir() and not target.is_symlink():
+            files = local_files(rel)
+        elif os.path.lexists(target):
+            files = [rel]
+        elif os.path.lexists(DOTFILES_HOME / rel):
+            # Already in the repo, so it just needs to be linked
+            for file in sorted(linker.managed):
+                if (file == rel or file.startswith(f"{rel}/")) and not linker.link(
+                    file
+                ):
+                    exit_code = 1
+            continue
+        else:
+            err(f"{tilde(target)} doesn't exist")
+            exit_code = 1
+            continue
 
-    makedir(XDG_CONFIG_HOME)
+        ignored = ignored_paths(files)
+        if ignored:
+            if len(files) == 1:
+                err(f"{tilde(target)} is ignored by git")
+                exit_code = 1
+            else:
+                log_sub(f"Skipped {len(ignored)} file(s) ignored by git")
 
-    config_dir = DOTFILES / "config"
-    if config_dir.exists():
-        for source in sorted(config_dir.iterdir()):
-            target = XDG_CONFIG_HOME / source.name
-            if target.is_dir() and not target.is_symlink():
-                local_dir = XDG_CONFIG_HOME / "local"
-                local_dir.mkdir(parents=True, exist_ok=True)
-                destination = local_dir / source.name
-                try:
-                    shutil.move(str(target), str(destination))
-                    log_sub(f"Moved {target} -> {destination}")
-                except shutil.Error as exc:
-                    warn(f"Unable to move {target}: {exc}")
-            link(source, target)
+        for file in files:
+            if file in ignored:
+                continue
+            target = HOME / file
+            source = DOTFILES_HOME / file
 
-    makedir(XDG_CACHE_HOME / "zsh")
+            if target.is_symlink():
+                warn(f"Skipping {tilde(target)}: it's a symlink")
+                continue
+            if source.is_dir() and not source.is_symlink():
+                err(f"Skipping {tilde(target)}: {tilde(source)} is a directory")
+                exit_code = 1
+                continue
+            if os.path.lexists(source) and not args.force:
+                err(
+                    f"Skipping {tilde(target)}: it's already in the repo"
+                    " (--force replaces the repo's copy with it)"
+                )
+                exit_code = 1
+                continue
+
+            perform(
+                args.dry_run, f"Imported {tilde(target)}", import_file, target, source
+            )
+            linker.managed.add(file)
+
+    return exit_code
+
+
+def cmd_forget(args: argparse.Namespace) -> int:
+    """Stop managing files, moving them from DOTFILES_HOME back into ~"""
+    linker = Linker(dry_run=args.dry_run)
+    exit_code = 0
+
+    for raw in args.paths:
+        rel = home_relative(raw)
+        if rel is None:
+            exit_code = 1
+            continue
+
+        files = sorted(f for f in linker.managed if f == rel or f.startswith(f"{rel}/"))
+        if not files:
+            err(f"{tilde(HOME / rel)} isn't in the repo")
+            exit_code = 1
+            continue
+        if linker.parent_link(rel):
+            err(
+                f"{tilde(HOME / rel)} is in a linked directory; run `dotfiles sync` first"
+            )
+            exit_code = 1
+            continue
+
+        for file in files:
+            target = HOME / file
+            source = DOTFILES_HOME / file
+            if linker.state(file) == CONFLICT:
+                err(f"Skipping {tilde(target)}: a local file is in the way")
+                exit_code = 1
+                continue
+            perform(
+                args.dry_run, f"Restored {tilde(target)}", restore_file, source, target
+            )
+
+    return exit_code
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    """Show link problems and untracked files"""
+    linker = Linker()
+    colors = {
+        MISSING: COLORS.yellow,
+        STALE: COLORS.yellow,
+        CONFLICT: COLORS.red,
+    }
+
+    if args.paths:
+        roots: list[str] = []
+        for raw in args.paths:
+            path = Path(os.path.abspath(os.path.expanduser(raw)))
+            rel = "" if path == HOME else home_relative(raw)
+            if rel is None:
+                return 1
+            roots.append(rel)
+    else:
+        # Everything under the top-level directories in the repo (e.g., ~/.config)
+        roots = sorted(
+            p.name for p in DOTFILES_HOME.iterdir() if p.is_dir() and not p.is_symlink()
+        )
+
+    states = {rel: linker.state(rel) for rel in sorted(linker.managed)}
+    problems = {rel: state for rel, state in states.items() if state != LINKED}
+    untracked = linker.untracked(roots)
+
+    for rel, state in problems.items():
+        print(f"{colors[state]}{state:<10}{COLORS.reset} ~/{rel}")
+    for rel in untracked:
+        print(f"{COLORS.blue}{'untracked':<10}{COLORS.reset} ~/{rel}")
+
+    if CONFLICT in problems.values():
+        print(
+            "\nconflict: a local file is where a link should be."
+            " `dotfiles import -f <path>` keeps the local file;"
+            " `dotfiles sync -f` keeps the repo's."
+        )
+    if not problems and not untracked:
+        log(f"All {len(states)} files are linked")
+
+    return 1 if problems else 0
+
+
+def cmd_ignore(args: argparse.Namespace) -> int:
+    """Add paths in ~ to the local ignore file"""
+    linker = Linker()
+    exit_code = 0
+    rules: list[str] = []
+
+    for raw in args.paths:
+        rel = home_relative(raw)
+        if rel is None:
+            exit_code = 1
+            continue
+
+        path = HOME / rel
+        if any(f == rel or f.startswith(f"{rel}/") for f in linker.managed):
+            err(f"{tilde(path)} is in the repo; use `dotfiles forget` first")
+            exit_code = 1
+            continue
+
+        is_dir = path.is_dir() and not path.is_symlink()
+        query = f"{rel}/" if is_dir else rel
+        if ignored_paths([query]):
+            log_sub(f"{tilde(path)} is already ignored")
+            continue
+
+        # Anchor the rule so it only matches this path
+        rule = rel if "/" in rel else f"/{rel}"
+        rule = f"{rule}/" if is_dir else rule
+        if rule in rules:
+            continue
+        rules.append(rule)
+        log_sub(f"Ignored {tilde(path)}{'/' if is_dir else ''}")
+
+    if rules:
+        IGNORE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        text = (
+            IGNORE_FILE.read_text(encoding="utf-8")
+            if IGNORE_FILE.exists()
+            else (
+                "# Local files for `dotfiles status` to ignore. Uses gitignore syntax,\n"
+                "# with paths relative to ~. This file isn't part of the dotfiles repo.\n"
+            )
+        )
+        if text and not text.endswith("\n"):
+            text += "\n"
+        IGNORE_FILE.write_text(text + "".join(f"{r}\n" for r in rules), "utf-8")
+        sync_excludes()
+
+    return exit_code
 
 
 @register_module("apt", os="linux")
@@ -537,37 +1183,149 @@ def module_hammerspoon() -> None:
             log_sub("Updated Hammerspoon config file location")
 
 
-parser = argparse.ArgumentParser(
-    prog="dotfiles",
-    description="Update local environment. All modules are updated by default.",
-)
-parser.add_argument(
-    "-i", "--install", action="store_true", help="Install missing things"
-)
-parser.add_argument(
-    "module",
-    nargs="?",
-    help="A module to update",
-    choices=sorted(m.name for m in MODULES),
-)
-args = parser.parse_args()
+def cmd_update(args: argparse.Namespace) -> int:
+    """Run install/update modules"""
+    global install_missing
 
-os.chdir(HOME)
+    if args.list:
+        for m in MODULES:
+            print(m.name)
+        return 0
 
-install_missing = args.install
-exit_code = 0
+    names = {m.name for m in MODULES}
+    unknown = [name for name in args.modules if name not in names]
+    if unknown:
+        err(f"Unknown module: {', '.join(unknown)}")
+        return 1
 
-if args.module:
-    handler = next((m for m in MODULES if m.name == args.module), None)
-    if handler:
-        handler.fn()
-    else:
-        err(f"Unknown module: {args.module}")
-        exit_code = 1
-else:
+    os.chdir(HOME)
+    install_missing = args.install
+
+    # Run modules in registration order
     for m in MODULES:
-        m.fn()
+        if not args.modules or m.name in args.modules:
+            m.fn()
 
-log("Done")
+    log("Done")
+    return 0
 
-raise SystemExit(exit_code)
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="dotfiles",
+        description="Manage home directory dotfiles and update the local environment.",
+    )
+    commands = parser.add_subparsers(dest="command", metavar="command")
+
+    sync = commands.add_parser(
+        "sync",
+        help="link repo files into ~",
+        description=(
+            f"Link each file in {tilde(DOTFILES_HOME)} to the same location in ~,"
+            " replacing stale links, and remove broken or unmanaged links into"
+            " the repo. Files that git ignores aren't linked."
+        ),
+    )
+    sync.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help=f"replace local files that are in the way, backing them up to {tilde(BACKUP_DIR)}",
+    )
+    sync.add_argument(
+        "-n", "--dry-run", action="store_true", help="show what would change"
+    )
+    sync.set_defaults(fn=cmd_sync)
+
+    import_ = commands.add_parser(
+        "import",
+        help="move files from ~ into the repo and link them",
+        description=(
+            f"Move files from ~ into {tilde(DOTFILES_HOME)} and replace them with"
+            " links. Importing a directory imports each file in it, skipping"
+            " files that git ignores."
+        ),
+    )
+    import_.add_argument("paths", nargs="+", metavar="path")
+    import_.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="replace files already in the repo with the local versions",
+    )
+    import_.add_argument(
+        "-n", "--dry-run", action="store_true", help="show what would change"
+    )
+    import_.set_defaults(fn=cmd_import)
+
+    forget = commands.add_parser(
+        "forget",
+        help="move files from the repo back into ~",
+        description=(
+            f"Move files from {tilde(DOTFILES_HOME)} back into ~, replacing their"
+            " links. Forgetting a directory forgets each file in it."
+        ),
+    )
+    forget.add_argument("paths", nargs="+", metavar="path")
+    forget.add_argument(
+        "-n", "--dry-run", action="store_true", help="show what would change"
+    )
+    forget.set_defaults(fn=cmd_forget)
+
+    status = commands.add_parser(
+        "status",
+        help="show link problems and untracked files",
+        description=(
+            "Show managed files that aren't linked, and untracked files in ~"
+            " that aren't in the repo. Untracked files are only listed in"
+            f" directories that also exist in {tilde(DOTFILES_HOME)} (by default,"
+            " everything under its top-level directories, such as ~/.config)."
+            " Files that git ignores aren't listed. Exits with status 1 if any"
+            " links need attention."
+        ),
+    )
+    status.add_argument(
+        "paths",
+        nargs="*",
+        metavar="path",
+        help="directories to check for untracked files",
+    )
+    status.set_defaults(fn=cmd_status)
+
+    ignore = commands.add_parser(
+        "ignore",
+        help="hide local files from status",
+        description=(
+            f"Add paths in ~ to {tilde(IGNORE_FILE)}, which keeps them out of"
+            " `dotfiles status` and the repo. That file uses gitignore syntax"
+            " with paths relative to ~, can be edited directly, and isn't part"
+            " of the repo."
+        ),
+    )
+    ignore.add_argument("paths", nargs="+", metavar="path")
+    ignore.set_defaults(fn=cmd_ignore)
+
+    update = commands.add_parser(
+        "update",
+        help="install and update tools",
+        description="Install and update tools. All modules are run by default.",
+        epilog=f"modules: {', '.join(m.name for m in MODULES)}",
+    )
+    update.add_argument(
+        "-i", "--install", action="store_true", help="install missing things"
+    )
+    update.add_argument(
+        "-l", "--list", action="store_true", help="list available modules"
+    )
+    update.add_argument("modules", nargs="*", metavar="module", help="modules to run")
+    update.set_defaults(fn=cmd_update)
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        return 1
+
+    return args.fn(args)
+
+
+raise SystemExit(main())

@@ -1,0 +1,8 @@
+{
+  "trustedformulae": [
+    "auth0/auth0-cli/auth0",
+    "getsentry/xcodebuildmcp/xcodebuildmcp",
+    "microsoft/mssql-release/msodbcsql18",
+    "mobile-dev-inc/tap/maestro"
+  ]
+}

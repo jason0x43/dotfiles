@@ -1,0 +1,60 @@
+#compdef dotfiles
+
+_dotfiles_commands() {
+  local -a commands
+  commands=(
+    'sync:Link repo files into ~'
+    'import:Move files from ~ into the repo and link them'
+    'forget:Move files from the repo back into ~'
+    'status:Show link problems and untracked files'
+    'ignore:Hide local files from status'
+    'update:Install and update tools'
+  )
+  _describe -t commands 'dotfiles commands' commands "$@"
+}
+
+_dotfiles() {
+  local curcontext=$curcontext state line ret=1
+  _arguments -C \
+    '(- *)'{-h,--help}'[Show help]' \
+    ': :_dotfiles_commands' \
+    '*:: :->args' && ret=0
+
+  case $state in
+    args)
+      case $line[1] in
+        sync)
+          _arguments \
+            '(-f --force)'{-f,--force}'[Back up and replace local files in the way]' \
+            '(-n --dry-run)'{-n,--dry-run}'[Show what would change]' && ret=0
+          ;;
+        import)
+          _arguments \
+            '(-f --force)'{-f,--force}"[Replace the repo's copy with the local file]" \
+            '(-n --dry-run)'{-n,--dry-run}'[Show what would change]' \
+            '*:path:_files' && ret=0
+          ;;
+        forget)
+          _arguments \
+            '(-n --dry-run)'{-n,--dry-run}'[Show what would change]' \
+            '*:path:_files' && ret=0
+          ;;
+        ignore)
+          _arguments '*:path:_files' && ret=0
+          ;;
+        status)
+          _arguments '*:directory:_files -/' && ret=0
+          ;;
+        update)
+          _arguments \
+            '(-i --install)'{-i,--install}'[Install missing things]' \
+            '(-l --list)'{-l,--list}'[List available modules]' \
+            "*:module:(${(f)$(dotfiles update --list 2>/dev/null)})" && ret=0
+          ;;
+      esac
+      ;;
+  esac
+  return ret
+}
+
+_dotfiles
