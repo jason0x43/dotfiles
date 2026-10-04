@@ -32,13 +32,14 @@ The repo targets macOS (primary) and Linux (Debian-based) environments.
 │       ├── git/      # Git configuration
 │       ├── bat/      # Syntax highlighting themes
 │       ├── mise/     # Tool version manager
-│       └── yazi/     # File manager
-├── zsh/              # Zsh configuration files
-│   ├── .zshenv       # Environment setup (sourced first)
-│   ├── .zshrc        # Interactive shell config
-│   ├── functions/    # 32 autoloaded zsh functions
-│   ├── alias.zsh     # Command aliases
-│   └── p10k.zsh      # Powerlevel10k prompt config
+│       ├── yazi/     # File manager
+│       └── zsh/      # Zsh configuration ($ZDOTDIR)
+│           ├── .zshenv   # Environment and path (all shells)
+│           ├── .zprofile # Restores path order after macOS path_helper
+│           ├── .zshrc    # Interactive setup; sources conf.d/*.zsh
+│           ├── conf.d/   # Options, completion, keys, aliases, tools, plugins
+│           ├── functions/ # Autoloaded zsh functions
+│           └── p10k.zsh  # Powerlevel10k prompt config
 ├── launchd/          # macOS launch agents (2 plist files)
 ├── nix-darwin/       # Nix Darwin system configuration
 │   └── flake.nix     # Nix flake for system packages
@@ -190,7 +191,8 @@ _Note: Requires Nix installed. Host name may differ - check flake.nix for
   single quotes, 2 space indent)
 - **Fish**: Autoload files in `home/.config/fish/conf.d/` (numeric prefix for order:
   `05_`, `10_`, `99_`)
-- **Zsh**: Source order matters - check `.zshrc` for plugin loading sequence
+- **Zsh**: Source order matters - `conf.d/` files load in name order, and the
+  line editor plugins in `60-plugins.zsh` must load last
 
 ## Important Behavioral Notes
 
@@ -215,9 +217,11 @@ copying it into `home/` by hand (files added by hand are linked on the next
 
 **Zsh load order:**
 
-1. `home/.zshenv` → sources `zsh/.zshenv`
-2. `zsh/.zshenv` → sources `zsh/common.zsh` (sets XDG paths, DOTFILES, etc.)
-3. `zsh/.zshrc` → loads plugins, sources config files
+1. `home/.zshenv` → sets `ZDOTDIR` and sources `$ZDOTDIR/.zshenv` (XDG paths,
+   DOTFILES, path, editor)
+2. `$ZDOTDIR/.zprofile` (login shells) → restores the path order
+3. `$ZDOTDIR/.zshrc` (interactive) → autoloads functions, loads the prompt,
+   then sources `conf.d/*.zsh` in name order and `local/zshrc`
 
 **Fish load order:**
 
@@ -304,7 +308,6 @@ launchd/          # macOS launch agents
 nix-darwin/       # Nix flake for system config
 powershell/       # PowerShell profile
 terminal/         # Terminal themes
-zsh/              # Zsh configuration
 ```
 
 ## Trust These Instructions
