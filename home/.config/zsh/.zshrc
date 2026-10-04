@@ -16,7 +16,12 @@ autoload -Uz $ZDOTDIR/functions/*(N-.:t)
 
 # Prompt
 # --------------------------------------------------------------------------
-if [[ -f $ZDOTDIR/p10k.zsh ]]; then
+# Trying starship; set ZSH_PROMPT=p10k to switch back to Powerlevel10k
+: ${ZSH_PROMPT:=starship}
+
+if [[ $ZSH_PROMPT == starship ]] && (( $+commands[starship] )); then
+    eval "$(starship init zsh)"
+elif [[ -f $ZDOTDIR/p10k.zsh ]]; then
     zfetch $ZPLUGDIR romkatv/powerlevel10k
     source $ZPLUGDIR/romkatv/powerlevel10k/powerlevel10k.zsh-theme
     source $ZDOTDIR/p10k.zsh
