@@ -51,7 +51,8 @@ The repo targets macOS (primary) and Linux (Debian-based) environments.
 
 - `~/.dotfiles` → Repository root (set by `$DOTFILES` env var)
 - `~/<path>` → Symlinked to `home/<path>` for each file in `home/`
-- `~/.local/config` → Host-specific configs (NOT in repo, never commit)
+- Local files in `~` listed in `~/.config/dotfiles/ignore` → host-specific or
+  secret configs (NOT in repo, never commit)
 - `~/.cache` → Transient files (XDG_CACHE_HOME)
 
 ## Build & Validation Commands
@@ -253,7 +254,8 @@ copying it into `home/` by hand (files added by hand are linked on the next
 
 **Instead:**
 
-- Store in `~/.local/config/` (automatically sourced by some tools)
+- Store next to the tool's config in `~` (e.g. `~/.config/git/local`,
+  `~/.config/fish/conf.d/99_local_*.fish`) and run `dotfiles ignore <path>`
 - Document requirements in code comments
 - Provide stub/example files if needed
 

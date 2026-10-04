@@ -138,4 +138,5 @@
 	defaultBranch = main
 
 [include]
-	path = ~/.config.local/git/config
+	# Local settings, not in the repo
+	path = ~/.config/git/local

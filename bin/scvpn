@@ -6,15 +6,7 @@ set -euo pipefail
 # read from ~/.config/scvpn.conf (a sourced shell snippet). See the
 # example config or `scvpn --help` for the recognized variables.
 
-CONFIG_FILE="${SCVPN_CONFIG:-}"
-
-if [[ -z "$CONFIG_FILE" ]]; then
-  if [[ -f "$HOME/.config.local/scvpn.conf" ]]; then
-    CONFIG_FILE="$HOME/.config.local/scvpn.conf"
-  else
-    CONFIG_FILE="$HOME/.config/scvpn.conf"
-  fi
-fi
+CONFIG_FILE="${SCVPN_CONFIG:-$HOME/.config/scvpn.conf}"
 
 # --- Defaults (overridable from the config file) -----------------------------
 

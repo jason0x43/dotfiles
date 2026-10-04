@@ -13,7 +13,10 @@ Terminal: [wezterm](https://wezfurlong.org/wezterm/) Shell:
 
 The location of my dotfiles is specified by the `DOTFILES` environment variable,
 set to `~/.dotfiles` by default. Things that shouldn’t be in the repo, like
-sensitive or host-specific information, go in `~/.local/config`.
+sensitive or host-specific information, live alongside the managed files in
+`~/.config` (for example `~/.config/git/local` or
+`~/.config/fish/conf.d/99_local_*.fish`). Add them to `dotfiles ignore` so
+`dotfiles status` hides them and `dotfiles import` and git skip them.
 
 Git doesn't support environment variable expansion in `include` statements in
 `.gitconfig`, but it will automatically look in `~/.config/git/config`, and the
