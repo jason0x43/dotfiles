@@ -1,23 +1,21 @@
 # This code was originally from
 # https://github.com/ninrod/dotfiles/boot/functions.zsh
+#
+# Avoid cd here; once zoxide and mise are loaded, every cd runs their hooks.
 
 local Rst='\e[0m' Red='\e[31m' Yel='\e[33m' Blu='\e[34m'
-
-git_clone_error_msg() {
-  echo -e "  ${Red}[ERROR]${Rst} git clone errored: ${Red}${1}${Rst}. ${Yel}aborting...${Rst}"
-}
 
 typeset -Ag plugins
 
 # Simplest dependency fetcher known to mankind
 if [[ $1 == "update" ]]; then
   for name in ${(@k)plugins}; do
-    local cwd=$(pwd)
-    local dest=$plugins[$name]
-    cd $dest
+    if ! git -C $plugins[$name] symbolic-ref -q HEAD > /dev/null; then
+      echo -e "Skipping ${Yel}${name}${Rst} (pinned to a ref)"
+      continue
+    fi
     echo -e "Updating ${Yel}${name}${Rst}..."
-    git pull --quiet --recurse-submodules
-    cd $cwd
+    git -C $plugins[$name] pull --quiet --recurse-submodules
   done
 elif [[ $1 == "ls" ]]; then
   for name in ${(@k)plugins}; do
@@ -36,33 +34,28 @@ else
     dest=$dest/$name
   fi
 
-  local cwd=$(pwd)
-  plugins[$name]=$dest
-
   if [[ ! -d $dest ]]; then
     local url=https://github.com/$name
     local ref=$3
+    local -a depth=(--depth 1)
+    [[ -n $ref ]] && depth=()
     echo -e "Missing plugin ${Yel}${name}${Rst}"
     echo -e "  Cloning from ${Blu}${url}${Rst}..."
-    if [[ -n $ref ]]; then
-      git clone --quiet --recurse-submodules $url $dest
-      if [[ $? != 0 ]]; then
-        git_clone_error_msg $?
-        cd $cwd
-        return $?
-      fi
+    # Fail instead of prompting for credentials if the repo doesn't exist
+    GIT_TERMINAL_PROMPT=0 git clone --quiet --recurse-submodules $depth $url $dest
+    local err=$?
+    if (( err )); then
+      echo -e "  ${Red}[ERROR]${Rst} git clone errored: ${Red}${err}${Rst}. ${Yel}aborting...${Rst}"
+      return $err
+    fi
 
-      git checkout --quiet $ref
-      echo -e "  Checked out branch ${ref}"
+    if [[ -n $ref ]]; then
+      git -C $dest checkout --quiet $ref
+      echo -e "  Checked out ${ref}"
     else
-      git clone --quiet --recurse-submodules --depth 1 $url $dest
-      if [[ $? != 0 ]]; then
-        git_clone_error_msg $?
-        cd $cwd
-        return $?
-      fi
-      echo -e "  Checked out master"
+      echo -e "  Checked out default branch"
     fi
   fi
-  cd $cwd
+
+  plugins[$name]=$dest
 fi

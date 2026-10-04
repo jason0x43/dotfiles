@@ -47,11 +47,6 @@ fi
     fi
 } &!
 
-# Kitty completions
-if [[ $TERM == "kitty" ]]; then
-    kitty + complete setup zsh | source /dev/stdin
-fi
-
 # Docker completions
 if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
     for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
