@@ -51,6 +51,9 @@ The `bin/dotfiles` script manages the links:
 
 `sync`, `import`, and `forget` take `-n`/`--dry-run`.
 
+A `pre-push` hook in `.githooks/` fails the push if `dotfiles status` isn't
+clean. Enable it in a clone with `git config core.hooksPath .githooks`.
+
 - `dotfiles ignore <path>...` — hide local files from `status`
 
 Files that git ignores are never linked or listed as untracked. There are two
