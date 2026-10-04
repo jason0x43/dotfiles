@@ -1,6 +1,8 @@
 # This code was originally from
 # https://github.com/ninrod/dotfiles/boot/functions.zsh
 
+local Rst='\e[0m' Red='\e[31m' Yel='\e[33m' Blu='\e[34m'
+
 git_clone_error_msg() {
   echo -e "  ${Red}[ERROR]${Rst} git clone errored: ${Red}${1}${Rst}. ${Yel}aborting...${Rst}"
 }

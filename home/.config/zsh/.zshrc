@@ -28,18 +28,7 @@ fi
 
 # Declare some key global variables
 # ------------------------------------------------------------------------
-typeset -gU cdpath
 typeset -gU fpath
-typeset -gU manpath
-
-# manpath
-# ----------------------------------------------------------------------------
-# Set the list of directories that man searches for manuals.
-if [ -e /etc/manpaths ]; then
-    while read line; do 
-        manpath+=$line
-    done < /etc/manpaths
-fi
 
 # Editors
 # ----------------------------------------------------------------------------
@@ -54,28 +43,11 @@ fi
 export EDITOR=$SUDO_EDITOR
 export VISUAL=$EDITOR
 
-# Turn on color for everything
-# ------------------------------------------------------------------------
-autoload -Uz colors && colors
-
-# Terminal colors
-TC='\e['
-Rst="${TC}0m"
-Blk="${TC}30m";
-Red="${TC}31m";
-Grn="${TC}32m";
-Yel="${TC}33m";
-Blu="${TC}34m";
-Prp="${TC}35m";
-Cyn="${TC}36m";
-Wht="${TC}37m";
-
 # Completions
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
 # completion plugins
 
-export ZCOMPDIR=$ZCACHEDIR/completions
 if [[ ! -d "$ZCOMPDIR" ]]; then
     mkdir -p "$ZCOMPDIR"
 fi
@@ -89,7 +61,6 @@ fpath=(
     $fpath
     $ZPLUGDIR/zsh-users/zsh-completions/src
     $ZCOMPDIR
-    $HOMEBREW_BASE/share/zsh-completions
 )
 
 # Load and initialize the completion system, ignoring insecure directories.
@@ -192,19 +163,12 @@ zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-va
 # Populate hostname completion
 zstyle -e ':completion:*:hosts' hosts 'reply=(
     ${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
-    ${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
+    ${=${(f)"$(cat /etc/hosts(N) 2>/dev/null)"}%%\#*}
     ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
 )'
 
 # Don't complete uninteresting users...
-zstyle ':completion:*:*:*:users' ignored-patterns \
-    adm amanda apache avahi beaglidx bin cacti canna clamav daemon \
-    dbus distcache dovecot fax ftp games gdm gkrellmd gopher \
-    hacluster haldaemon halt hsqldb ident junkbust ldap lp mail \
-    mailman mailnull mldonkey mysql nagios \
-    named netdump news nfsnobody nobody nscd ntp nut nx openvpn \
-    operator pcap postfix postgres privoxy pulse pvm quagga radvd \
-    rpc rpcuser rpm shutdown squid sshd sync uucp vcsa xfs '_*'
+zstyle ':completion:*:*:*:users' ignored-patterns daemon nobody '_*'
 
 # ... unless we really want to
 zstyle '*' single-ignored show
@@ -240,18 +204,8 @@ bindkey -v
 # ------------------------------------------------------------------------
 source $ZDOTDIR/alias.zsh
 
-# Theme
+# Colors
 # ------------------------------------------------------------------------
-if [[ -e $HOME/.theme ]]; then
-    theme=$(cat $HOME/.theme)
-    if [[ $theme == 'light' ]]; then
-        export THEME_VARIANT=$theme
-    elif [[ $theme == 'black' ]]; then
-        export THEME_VARIANT=$theme
-    fi
-    unset theme
-fi
-
 export LSCOLORS='ExFxCxDxBxfxdxacagafad'
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
 export CLICOLOR=1
@@ -279,18 +233,12 @@ setopt   RC_QUOTES              # Allow 'Henry''s Garage' instead of 'Henry'\''s
 # Jobs
 setopt   AUTO_RESUME            # Attempt to resume existing job before creating a new process
 setopt   LONG_LIST_JOBS         # List jobs in the long format by default
-setopt   NOTIFY                 # Report status of background jobs immediately
 unsetopt BG_NICE                # Don't run all background jobs at a lower priority
 unsetopt CHECK_JOBS             # Don't report on jobs when shell exit
 unsetopt HUP                    # Don't kill jobs on shell exit
 
 # History
-setopt   BANG_HIST              # Treat the '!' character specially during expansion
-setopt   HIST_BEEP              # Beep when accessing non-existent history
-setopt   HIST_EXPIRE_DUPS_FIRST # Expire a duplicate event first when trimming history
-setopt   HIST_FIND_NO_DUPS      # Do not display a previously found event
 setopt   HIST_IGNORE_ALL_DUPS   # Delete an old recorded event if a new event is a duplicate
-setopt   HIST_IGNORE_DUPS       # Do not record an event that was just recorded again
 setopt   HIST_IGNORE_SPACE      # Do not record an event starting with a space
 setopt   HIST_SAVE_NO_DUPS      # Do not write a duplicate event to the history file
 setopt   HIST_VERIFY            # Do not execute immediately upon history expansion
@@ -298,8 +246,6 @@ setopt   SHARE_HISTORY          # Share history between all sessions
 
 # Completion
 setopt   ALWAYS_TO_END          # Move cursor to the end of a completed word
-setopt   AUTO_LIST              # Automatically list choices on ambiguous completion
-setopt   AUTO_PARAM_SLASH       # If completed parameter is a directory, add a trailing slash
 setopt   COMPLETE_IN_WORD       # Complete from both ends of a word
 setopt   PATH_DIRS              # Perform path search even on command names with slashes
 unsetopt CASE_GLOB              # Make globbing case insensitive
@@ -331,31 +277,9 @@ export PAGER='less'
 # bat
 # ------------------------------------------------------------------------
 if (( $+commands[bat] )); then
-    alias cat=bat
-
     # BAT_THEME is also used by delta, so set it here rather than in the bat
     # config file
     export BAT_THEME=wezterm
-fi
-
-# fzf (https://github.com/junegunn/fzf)
-# ------------------------------------------------------------------------
-if (( $+commands[fzf] )); then
-    export FZF_PATH=`echo $(which fzf)(:A:h:h)`
-
-    # Make FZF respond more quickly when hitting escape
-    # https://github.com/junegunn/fzf.vim/issues/248
-    export ESCDELAY=10
-
-    # Use -1 for the bg color to specify 'none'
-    export FZF_DEFAULT_OPTS='--color=bg:-1,fg:-1,bg+:0,fg+:-1,hl:5,hl+:5,marker:18,gutter:-1,spinner:14,info:14'
-
-    if [[ -d $FZF_PATH/shell ]]; then
-        source $FZF_PATH/shell/completion.zsh
-        source $FZF_PATH/shell/key-bindings.zsh
-    fi
-
-    source $ZDOTDIR/fzf.zsh
 fi
 
 # History key bindings
@@ -376,36 +300,12 @@ zle -N down-line-or-local-history
 bindkey '^[[A' up-line-or-local-history
 bindkey '^[[B' down-line-or-local-history
 
-# Setup a precmd to let Terminal.app know the CWD
-if [[ "$TERM_PROGRAM" == "Apple_Terminal" ]]; then
-    update_cwd () {
-        local SEARCH=' '
-        local REPLACE='%20'
-        local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-        printf '\e]7;%s\a' "$PWD_URL"
-    }
-    [[ -z $precmd_functions ]] && precmd_functions=()
-    precmd_functions=($precmd_functions update_cwd)
-fi
-
 # Node
 # ----------------------------------------------------------------------------
 # Load NPM completion
 if (( $+commands[npm] )); then
     zfetch $ZPLUGDIR lukechilds/zsh-better-npm-completion
     source $ZPLUGDIR/lukechilds/zsh-better-npm-completion/zsh-better-npm-completion.plugin.zsh
-fi
-
-# TPM
-# ------------------------------------------------------------------------
-if [[ ! -d $XDG_DATA_HOME/tmux ]]; then
-    mkdir $XDG_DATA_HOME/tmux
-fi
-
-zfetch $XDG_DATA_HOME/tmux tmux-plugins/tpm
-
-if [[ ! -d $XDG_CACHE_HOME/tmux ]]; then
-    mkdir $XDG_CACHE_HOME/tmux
 fi
 
 # mise

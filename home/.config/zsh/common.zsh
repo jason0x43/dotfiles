@@ -1,5 +1,4 @@
-# Some core variables are set here so that they can be loaded by scripts like
-# base16_theme that may be run in a non-standard environment.
+# Core variables shared by all zsh shells
 
 export DOTFILES=${DOTFILES:-$HOME/.dotfiles}
 

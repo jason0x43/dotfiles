@@ -25,7 +25,6 @@ if (( $+commands[rlwrap] )); then
 fi
 
 # Shortcuts
-alias agl='ag -l'
 alias rgl='rg -l'
 alias rgla='rg -l -u'
 alias back='popd'
@@ -106,16 +105,7 @@ alias gwa='git worktree add'
 alias gwr='git worktree remove'
 
 alias tiga='tig --all'
-alias fgl='fzf-git-log'
 alias ts='tig status'
-
-# ssh in interactive shells
-# alias ssh=themed_ssh
-
-# tmux
-alias tls='tmux list-sessions'
-alias tas='tmux attach -t'
-alias tks='tmux kill-session -t'
 
 # xcode
 alias xcr='xcrun'
@@ -131,7 +121,6 @@ alias cd="nocorrect ${aliases[cd]:-cd}"
 alias cp="nocorrect ${aliases[cp]:-cp}"
 alias gcc="nocorrect ${aliases[gcc]:-gcc}"
 alias grep="nocorrect ${aliases[grep]:-grep}"
-alias gulp="nocorrect ${aliases[gulp]:-gulp}"
 alias ln="nocorrect ${aliases[ln]:-ln}"
 alias man="nocorrect ${aliases[man]:-man}"
 alias mkdir="nocorrect ${aliases[mkdir]:-mkdir}"
@@ -139,11 +128,8 @@ alias mv="nocorrect ${aliases[mv]:-mv}"
 alias rm="nocorrect ${aliases[rm]:-rm}"
 alias vim="nocorrect ${aliases[vim]:-vim}"
 alias nvim="nocorrect ${aliases[nvim]:-nvim}"
-alias tsd="nocorrect ${aliases[tsd]:-tsd}"
-alias jake="nocorrect ${aliases[jake]:-jake}"
 
 # Disable globbing for some commands
-alias bower="noglob ${aliases[bower]:-bower}"
 alias find="noglob ${aliases[find]:-find}"
 alias ftp="noglob ${aliases[ftp]:-ftp}"
 alias history="noglob ${aliases[history]:-history}"
@@ -201,10 +187,6 @@ fi
 
 if (( $+commands[zellij] )); then
     alias za='zellij attach'
-fi
-
-if (( $+commands[tmux] )); then
-    alias ta='tmux attach'
 fi
 
 if (( $+commands[wezterm] )); then

@@ -12,7 +12,6 @@ source $ZDOTDIR/common.zsh
 
 # Language
 # ----------------------------------------------------------------------------
-[[ -z "$LANG" ]] && eval "$(locale)"
 [[ -z "$LANG" ]] && export LANG=en_US.UTF-8
 [[ -z "$LC_ALL" ]] && export LC_ALL=$LANG
 
@@ -53,26 +52,6 @@ if [[ -d $HOMEBREW_BASE ]]; then
     )
 fi
 
-# Docker
-# ----------------------------------------------------------------------------
-# Disable Docker's "Use 'docker scan' to run Snyk" message
-export DOCKER_SCAN_SUGGEST=false
-
-# Groovy
-# ----------------------------------------------------------------------------
-if [[ -z "$GROOVY_HOME" ]]; then
-    export GROOVY_HOME=$HOMEBREW_BASE/opt/groovy/libexec
-fi
-
-# Java
-# ----------------------------------------------------------------------------
-if [[ -z "$JAVA_HOME" ]]; then
-    if [[ -x /usr/libexec/java_home ]]; then
-        export JAVA_HOME=`/usr/libexec/java_home -v 14 2> /dev/null`
-    fi
-fi
-export PATH_TO_FX=$HOME/Development/libs/javafx-sdk-11.0.2/lib
-
 # Node
 # ----------------------------------------------------------------------------
 if [[ -e $HOME/.config/ssl/ca.pem ]]; then
@@ -88,12 +67,6 @@ if (( $+commands[go] )); then
     esac
 fi
 
-# Android
-# ------------------------------------------------------------------------
-if (( $+commands[android] )); then
-    export ANDROID_HOME=`echo $(which android)(:A:h:h)`
-fi
-
 # Terminal
 # --------------------------------------------------------------------------
 if [[ -z $TERM_PROGRAM ]]; then
@@ -106,10 +79,6 @@ if [[ -z $TERM_PROGRAM ]]; then
     # https://github.com/kovidgoyal/kitty/issues/1645#issuecomment-496221126 
     export KITTY_DISABLE_WAYLAND=1
 fi
-
-# Tmux
-# --------------------------------------------------------------------------
-export TMUX_PLUGIN_MANAGER_PATH="$XDG_DATA_HOME/tmux/tmux-plugins"
 
 # pkg-config
 # --------------------------------------------------------------------------
@@ -137,12 +106,6 @@ export PKG_CONFIG_PATH=$(print -R ${(j|:|)pkg_config_path})
 # Use Bootsnap to speed up repeated brew calls
 if [[ -d $HOMEBREW_BASE ]]; then
     export HOMEBREW_BOOTSNAP=1
-
-    path=(
-        $HOMEBREW_BASE/bin
-        $HOMEBREW_BASE/sbin
-        $path
-    )
 fi
 
 # LLVM
@@ -159,12 +122,6 @@ fi
 if [[ -d $HOMEBREW_BASE/opt/ruby ]]; then
     path=(
         $HOMEBREW_BASE/opt/ruby/bin
-        $path
-    )
-fi
-if [[ -d $HOMEBREW_BASE/lib/ruby/gems/3.0.0 ]]; then
-    path=(
-        $HOMEBREW_BASE/lib/ruby/gems/3.0.0/bin
         $path
     )
 fi
@@ -193,61 +150,6 @@ if [[ -d $HOMEBREW_BASE/opt/python3 ]]; then
     )
 fi
 
-if [[ -d $HOME/.poetry/bin ]]; then
-    path=(
-        $HOME/.poetry/bin
-        $path
-    )
-fi
-
-if (( $+commands[pdm] )); then
-    function () {
-        local pdm_dirs=($HOMEBREW_BASE/Cellar/pdm/*)
-        local pdm_dir=${pdm_dirs[-1]}
-        local lib_dirs=($pdm_dir/libexec/lib/*)
-        local lib_dir=${lib_dirs[-1]}
-        if [[ -z $PYTHONPATH ]]; then
-            export PYTHONPATH=$lib_dir/site-packages/pdm/pep582
-        elif [[ ! $PYTHONPATH =~ $lib_dir ]]; then 
-            export PYTHONPATH=$lib_dir/site-packages/pdm/pep582:$PYTHONPATH
-        fi
-    }
-fi
-
-# PHP
-if [[ -d $HOMEBREW_BASE/opt/php@7.1/bin ]]; then
-    path=(
-        $HOME/.composer/vendor/bin
-        $path
-        $HOMEBREW_BASE/opt/php@7.1/bin
-        $HOMEBREW_BASE/opt/php@7.1/sbin
-    )
-fi
-
-# TeX
-if [[ -e $HOMEBREW_BASE/texlive ]]; then 
-    path=(
-        $path
-        $HOMEBREW_BASE/texlive/2019/bin/x86_64-darwin
-    )
-fi
-
-# VMware
-if [[ -e /Applications/VMware\ Fusion.app/Contents/Library ]]; then
-    path=(
-        $path
-        /Applications/VMware\ Fusion.app/Contents/Library
-    )
-fi
-
-# Deno
-if [[ -d $HOME/.deno/bin ]]; then
-    path=(
-        $HOME/.deno/bin
-        $path
-    )
-fi
-
 # Bun
 if [[ -d $HOME/.bun/bin ]]; then
     export BUN_INSTALL="$HOME/.bun"
@@ -265,22 +167,6 @@ fi
 # ripgrep
 if (( $+commands[rg] )); then
     export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep
-fi
-
-# mise
-if [[ -d $HOME/.local/share/mise/bin ]]; then
-    path=(
-        $HOME/.local/share/mise/bin
-        $path
-    )
-fi
-
-# orbstack
-if (( $+commands[orb] )); then
-    path=(
-        ~/.orbstack/bin
-        $path
-    )
 fi
 
 # Add user dirs to path
