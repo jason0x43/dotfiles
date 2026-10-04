@@ -6,15 +6,16 @@
 # The fpath should be initialized before trying to load plugins (with zfetch)
 # or trying to initialize completions
 fpath=(
-    $ZFUNCDIR
-    $DOTFILES/zsh/functions
+    $ZDOTDIR/functions
     $fpath
 )
 
 # Autoload all user shell functions, following symlinks
 # ------------------------------------------------------------------------
-if [[ -d $DOTFILES/zsh/functions ]]; then
-    for func in $DOTFILES/zsh/functions/*(:t); autoload -U $func
+if [[ -d $ZDOTDIR/functions ]]; then
+    for func in $ZDOTDIR/functions/*(:t); do
+        autoload -U $func
+    done
 fi
 
 # Prompt
@@ -35,9 +36,9 @@ typeset -gU manpath
 # ----------------------------------------------------------------------------
 # Set the list of directories that man searches for manuals.
 if [ -e /etc/manpaths ]; then
-	while read line; do 
-		manpath+=$line
-	done < /etc/manpaths
+    while read line; do 
+        manpath+=$line
+    done < /etc/manpaths
 fi
 
 # Editors
@@ -69,15 +70,6 @@ Prp="${TC}35m";
 Cyn="${TC}36m";
 Wht="${TC}37m";
 
-# zsh-autocomplete
-# --------------------------------------------------------------------------
-# Should be loaded before completions
-# zstyle ':autocomplete:list-choices:*' max-lines 5
-# zstyle ':autocomplete:space:*' magic expand-history
-# zstyle ':autocomplete:tab:*' completion select
-# zfetch $ZPLUGDIR marlonrichert/zsh-autocomplete
-# source $ZPLUGDIR/marlonrichert/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-
 # Completions
 # ------------------------------------------------------------------------
 # The completion system should be configured and enabled before sourcing
@@ -104,9 +96,9 @@ fpath=(
 # Note that fpath should be configured before calling compinit.
 # (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
 autoload -Uz compinit
-if [[ $HOME =~ "/Users" ]] then
+if [[ $HOME =~ "/Users" ]]; then
     # Only try to rebuild the comp dump once a day
-    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]] then
+    if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' $ZCOMPFILE) ]]; then
         compinit -i -d $ZCOMPFILE
     else
         compinit -C -i -d $ZCOMPFILE
@@ -124,7 +116,7 @@ fi
 # Compile the zcompfile in the background
 {
     # Compile zcompdump, if modified, to increase startup speed.
-    if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]] then
+    if [[ -s "$ZCOMPFILE" && (! -s "${ZCOMPFILE}.zwc" || "$ZCOMPFILE" -nt "${ZCOMPFILE}.zwc") ]]; then
         zcompile "$ZCOMPFILE"
     fi
 } &!
@@ -262,7 +254,6 @@ fi
 
 export LSCOLORS='ExFxCxDxBxfxdxacagafad'
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
-
 export CLICOLOR=1
 
 # Shell options
@@ -508,4 +499,4 @@ tabs -4
 
 # Local config
 # --------------------------------------------------------------------------
-[[ -f $ZCONFDIR/zshrc ]] && source $ZCONFDIR/zshrc
+[[ -f $ZDOTDIR/local/zshrc ]] && source $ZDOTDIR/local/zshrc
