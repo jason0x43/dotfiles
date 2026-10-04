@@ -35,8 +35,8 @@ bindkey -M vicmd "j" history-substring-search-down
 zfetch $ZPLUGDIR zsh-users/zsh-autosuggestions
 source $ZPLUGDIR/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# Use a solarized-friendly background color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=14'
+# Show suggestions in gray (bright black), matching fish
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 
 # Make autosuggest faster
 export ZSH_AUTOSUGGEST_USE_ASYNC=1
