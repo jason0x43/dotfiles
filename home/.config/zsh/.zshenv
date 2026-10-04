@@ -15,6 +15,7 @@ export DOTFILES=${DOTFILES:-$HOME/.dotfiles}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$TMPDIR}
 
 export ZDATADIR=$XDG_DATA_HOME/zsh
@@ -80,12 +81,18 @@ path=(
     $HOME/.local/bin(N)
     $DOTFILES/bin(N)
     $HOME/.bun/bin(N)
+    $HOME/Library/pnpm/bin(N)
+    $HOME/.deno/bin(N)
+    $HOME/.dotnet/tools(N)
+    $HOME/.dotnet(N)
+    $HOME/.opencode/bin(N)
     # Unversioned python and pip
     # https://discourse.brew.sh/t/pip-install-upgrade-pip-breaks-pip-when-installed-with-homebrew/5338
     $HOMEBREW_BASE/opt/python3/libexec/bin(N)
     $HOMEBREW_BASE/opt/sqlite3/bin(N)
     $HOME/.cargo/bin(N)
     $HOMEBREW_BASE/opt/ruby/bin(N)
+    $HOMEBREW_BASE/opt/php@8.1/bin(N)
     $HOMEBREW_BASE/{bin,sbin}(N)
     /usr/local/bin(N)
     $path
@@ -108,6 +115,8 @@ export VISUAL=$EDITOR
 
 # Node
 # ----------------------------------------------------------------------------
+export NODE_OPTIONS='--disable-warning=ExperimentalWarning --enable-source-maps'
+
 if [[ -e $HOME/.config/ssl/ca.pem ]]; then
     export NODE_EXTRA_CA_CERTS=$HOME/.config/ssl/ca.pem
 fi
@@ -136,6 +145,7 @@ export PKG_CONFIG_PATH=${(j|:|)pkg_config_path}
 # Use Bootsnap to speed up repeated brew calls
 if [[ -d $HOMEBREW_BASE ]]; then
     export HOMEBREW_BOOTSNAP=1
+    export HOMEBREW_NO_ENV_HINTS=1
 fi
 
 # Bun
@@ -148,10 +158,23 @@ if (( $+commands[corepack] )); then
     export COREPACK_ENABLE_AUTO_PIN=0
 fi
 
+# pnpm
+if [[ -d $HOME/Library/pnpm ]]; then
+    export PNPM_HOME=$HOME/Library/pnpm
+fi
+
+# .NET
+if [[ -d $HOME/.dotnet ]]; then
+    export DOTNET_ROOT=$HOME/.dotnet
+fi
+
 # ripgrep
 if (( $+commands[rg] )); then
     export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep
 fi
+
+# Claude
+export CLAUDE_CONFIG_DIR=$XDG_CONFIG_HOME/claude
 
 # Local config
 # --------------------------------------------------------------------------

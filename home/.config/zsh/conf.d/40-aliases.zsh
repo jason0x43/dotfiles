@@ -18,6 +18,7 @@ alias mv='mv -i'
 alias rm='rm -i'
 alias type='type -a'
 alias fda='fd -I'
+alias dush='du -sh'
 
 # Let node use local readline setup (vi mode)
 if (( $+commands[rlwrap] )); then
@@ -27,6 +28,9 @@ fi
 # Shortcuts
 alias rgl='rg -l'
 alias rgla='rg -l -u'
+alias rga='rg -u'
+alias ldl='recent-downloads'
+alias f='fzf'
 alias back='popd'
 alias help='run-help'
 alias se='sudo -e'
@@ -48,7 +52,8 @@ alias gbd='git branch -D'
 alias gbdo='git push -d origin' 
 alias gbk='git killbranch'
 alias gbl='git local-branches'
-alias gbm='git mybranches' 
+alias gbm='git branch -m'
+alias gbmine='git mybranches'
 alias gbf='git bf'
 alias gc='git c'
 alias gca='git ca'
@@ -58,12 +63,14 @@ alias gcp='git cp'
 alias gcpe='git cp -e'
 alias gcpn='git cpn'
 alias gcpr='git checkout-pr'
+alias gce='git commit --allow-empty --no-verify'
 
 # Cleanup
 alias gcln='git clean -nxd'
 alias gclf='git clean -fxd'
 
 alias gd='git diff'
+alias gdt='git difftool'
 alias gds='git ds'
 alias gdv='git dv'
 alias gf='git f'
@@ -76,20 +83,20 @@ alias ggl='git gl'
 alias gid='git rev-parse HEAD'
 
 # Display graph logs
-local lg="git log --graph --abbrev-commit --date-order --format=format:'%Cblue%h%Creset%C(bold red)%d%Creset %s <%an> %Cgreen(%ar)%Creset'"
-local lga="$lg --all"
-alias gl="$lga -n 20"
-alias gla="$lga"
-alias glb="$lg -n 20"
-alias glba="$lg"
+alias gl='git lg -n 20'
+alias gla='git lg'
+alias glb='git lgb -n 20'
+alias glba='git lgb'
 
 # Show descendents from a particular commit
-alias glf="$lga --ancestry-path"
-alias glfm="$lg --ancestry-path"
+alias glf='git lg --ancestry-path'
+alias glfm='git lgb --ancestry-path'
 
 alias gls='git ls'
 alias gmb='git mb'
-alias gp='git p'
+alias gp='git pull'
+alias gpp='git pull --prune'
+alias gpt='git p'
 alias gr='git r'
 alias gri='git ri'
 alias grc='git rc'
@@ -99,10 +106,48 @@ alias grv='git rv'
 alias gs='git -c status.color=always status --short'
 alias gsh='git show'
 alias gshs='git show --stat'
-alias gsu='gs | grep UU'
+alias gsu='gs | grep U'
+alias gui='gitui'
 alias gwl='git worktree list'
 alias gwa='git worktree add'
 alias gwr='git worktree remove'
+
+# vim
+alias vim='vi'
+alias vil="vi -c 'normal \`0'"
+
+# wt
+alias wta='wt add'
+alias wtl='wt list'
+alias wtd='wt delete'
+alias wtr='wt remove'
+
+# kitty
+alias kt='kitten @ set-tab-title'
+alias icat='kitten icat'
+
+# grip
+alias grip='go-grip -H grip.local'
+
+# opencode
+alias oc='opencode'
+
+# lazygit
+alias lg='lazygit'
+alias lgs='lazygit status'
+alias lgl='lazygit log'
+
+# Tailscale
+if [[ -x /Applications/Tailscale.app/Contents/MacOS/Tailscale ]]; then
+    alias tailscale=/Applications/Tailscale.app/Contents/MacOS/Tailscale
+fi
+
+if (( $+commands[pi] )); then
+    alias pp='pi --model gpt-5.4-mini -p'
+fi
+
+# Claude
+alias cld='open "claude://code/new?folder=$PWD"'
 
 alias tiga='tig --all'
 alias ts='tig status'
@@ -174,11 +219,11 @@ fi
 
 # Better ls
 if (( $+commands[eza] )); then
-    alias ls='eza -F'
+    alias ls='eza -F auto'
     alias lt='ls -T'
     alias la='ls -a'
     alias l='ls -1a'
-    alias lg='ll --git'
+    alias llg='ll --git'
 fi
 
 if (( $+commands[docker] )); then

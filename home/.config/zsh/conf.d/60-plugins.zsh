@@ -46,3 +46,12 @@ export ZSH_AUTOSUGGEST_USE_ASYNC=1
 # hang zsh
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+
+# Key bindings
+# --------------------------------------------------------------------------
+# Match fish: ctrl-y accepts the suggestion, ctrl-e dismisses it, and
+# ctrl-n/ctrl-p search history for the current input
+bindkey -M viins '^y' autosuggest-accept
+bindkey -M viins '^e' autosuggest-clear
+bindkey -M viins '^n' history-substring-search-down
+bindkey -M viins '^p' history-substring-search-up

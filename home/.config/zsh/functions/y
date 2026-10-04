@@ -1,0 +1,8 @@
+# Run yazi and cd to the directory it was in when it exited
+local tmp=$(mktemp -t yazi-cwd.XXXXXX) cwd
+yazi "$@" --cwd-file="$tmp"
+cwd=$(<$tmp)
+if [[ -n $cwd && $cwd != $PWD ]]; then
+	builtin cd -- "$cwd"
+fi
+rm -f -- "$tmp"

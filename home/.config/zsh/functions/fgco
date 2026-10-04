@@ -1,0 +1,2 @@
+# Check out a branch chosen with fzf
+git checkout "$(git branch --all | grep -v HEAD | sed 's/^[* ] //' | fzf)"
