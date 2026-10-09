@@ -59,3 +59,11 @@ bindkey -M viins '^p' history-substring-search-up
 # ctrl-e also cancels the completion menu, restoring what was typed
 zmodload zsh/complist
 bindkey -M menuselect '^e' undo
+
+# Atuin
+# --------------------------------------------------------------------------
+if [[ ! -d "$HOME/.atuin" ]]; then
+    curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh -s -- --non-interactive
+fi
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh)"
