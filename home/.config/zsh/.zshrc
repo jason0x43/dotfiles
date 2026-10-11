@@ -36,3 +36,6 @@ unset config
 # pnpm
 # dummy entry for pnpm
 # pnpm end
+
+# bun completions
+# dummy entry for bun

@@ -1035,7 +1035,7 @@ def module_bat() -> None:
             err(result.stdout.strip())
 
 
-@register_module("fish")
+# @register_module("fish")
 def module_fish() -> None:
     """Install and configure the fish shell"""
     if not command_exists("fish") and not brew_install("fish"):
