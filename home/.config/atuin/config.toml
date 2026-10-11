@@ -362,6 +362,8 @@ autostart = true
 
 [ai]
 enabled = true
+endpoint = "http://127.0.0.1:62321"
+endpoint_protocol = "oss"
 ## Columns to display in the interactive search, from left to right.
 ## The selection indicator (" > ") is always shown first implicitly.
 ##
