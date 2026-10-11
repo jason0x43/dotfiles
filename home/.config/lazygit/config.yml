@@ -1,6 +1,5 @@
 git:
   autoFetch: false
-
 gui:
   expandFocusedSidePanel: true
   nerdFontsVersion: '3'
@@ -10,11 +9,9 @@ gui:
   theme:
     selectedLineBgColor:
       - black
-  useHunkModeInStagingView: false
-
+  useHunkModeInDiffView: false
 keybinding:
   universal:
     quit: <c-c>
-
 promptToReturnFromSubprocess: false
 quitOnTopLevelReturn: true
