@@ -32,3 +32,7 @@ unset config
 # Local config
 # --------------------------------------------------------------------------
 [[ -f $ZDOTDIR/local/zshrc ]] && source $ZDOTDIR/local/zshrc
+
+# pnpm
+# dummy entry for pnpm
+# pnpm end
