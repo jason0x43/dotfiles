@@ -71,6 +71,6 @@ Some apps save files by replacing them, which turns a link back into a regular
 file. `status` reports these as conflicts; `dotfiles import -f <path>` keeps the
 local version, and `dotfiles sync -f` keeps the repo's.
 
-`dotfiles update [-i] [module...]` installs core homebrew packages and updates
+`dotfiles update [module...]` installs core homebrew packages and updates
 tools and plugins (`dotfiles update --list` shows the modules). On a new
-machine, run `dotfiles sync && dotfiles update -i`.
+machine, run `dotfiles sync && dotfiles update`.

@@ -117,8 +117,6 @@ os.environ["HOMEBREW_AUTO_UPDATE_SECS"] = "300"
 os.environ["HOMEBREW_BASE"] = str(HOMEBREW_BASE)
 os.environ["PATH"] = f"{HOMEBREW_BASE / 'bin'}:{os.environ.get('PATH', '')}"
 
-install_missing: bool = False
-
 
 def log(message: str, color: str | None = None) -> None:
     """Print a primary message to stdout"""
@@ -938,15 +936,16 @@ def module_apt() -> None:
     run_command(["sudo", "apt", "update", "-qq"])
     run_command(["sudo", "apt", "upgrade", "-qq"])
 
+    missing = [pkg for pkg in ("git", "unzip") if not command_exists(pkg)]
+    if missing:
+        log_sub(f"Installing {', '.join(missing)}...")
+        run_command(["sudo", "apt", "install", "-y", "-qq", *missing])
+
 
 @register_module("brew")
 def module_brew() -> None:
     log("Setting up homebrew...")
     if not BREW.exists():
-        if not install_missing:
-            warn("Homebrew not installed")
-            return
-
         log_sub("Installing Homebrew...")
         run_command(
             'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
@@ -1186,8 +1185,6 @@ def module_hammerspoon() -> None:
 
 def cmd_update(args: argparse.Namespace) -> int:
     """Run install/update modules"""
-    global install_missing
-
     if args.list:
         for m in MODULES:
             print(m.name)
@@ -1200,7 +1197,6 @@ def cmd_update(args: argparse.Namespace) -> int:
         return 1
 
     os.chdir(HOME)
-    install_missing = args.install
 
     # Run modules in registration order
     for m in MODULES:
@@ -1311,9 +1307,6 @@ def main() -> int:
         help="install and update tools",
         description="Install and update tools. All modules are run by default.",
         epilog=f"modules: {', '.join(m.name for m in MODULES)}",
-    )
-    update.add_argument(
-        "-i", "--install", action="store_true", help="install missing things"
     )
     update.add_argument(
         "-l", "--list", action="store_true", help="list available modules"

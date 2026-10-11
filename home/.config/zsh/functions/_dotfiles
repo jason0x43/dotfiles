@@ -47,7 +47,6 @@ _dotfiles() {
           ;;
         update)
           _arguments \
-            '(-i --install)'{-i,--install}'[Install missing things]' \
             '(-l --list)'{-l,--list}'[List available modules]' \
             "*:module:(${(f)$(dotfiles update --list 2>/dev/null)})" && ret=0
           ;;
