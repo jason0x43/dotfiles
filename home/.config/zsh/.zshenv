@@ -70,6 +70,10 @@ case "$OSTYPE" in
     linux*)  export GOPATH=$HOME/go ;;
 esac
 
+# pnpm
+PNPM_HOME=${XDG_DATA_HOME:-$HOME/.local/share}/pnpm
+[[ -d $PNPM_HOME ]] && export PNPM_HOME || unset PNPM_HOME
+
 # Path
 # ----------------------------------------------------------------------------
 # Entries marked (N) are only added if they exist
@@ -81,7 +85,8 @@ path=(
     $HOME/.local/bin(N)
     $DOTFILES/bin(N)
     $HOME/.bun/bin(N)
-    $HOME/Library/pnpm/bin(N)
+    ${PNPM_HOME:+$PNPM_HOME/bin}(N)
+    ${PNPM_HOME:+$PNPM_HOME}(N)
     $HOME/.deno/bin(N)
     $HOME/.dotnet/tools(N)
     $HOME/.dotnet(N)
@@ -156,11 +161,6 @@ fi
 # corepack
 if (( $+commands[corepack] )); then
     export COREPACK_ENABLE_AUTO_PIN=0
-fi
-
-# pnpm
-if [[ -d $HOME/Library/pnpm ]]; then
-    export PNPM_HOME=$HOME/Library/pnpm
 fi
 
 # .NET

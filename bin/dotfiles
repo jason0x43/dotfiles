@@ -1076,9 +1076,21 @@ def module_node() -> None:
 
 @register_module("pnpm")
 def module_pnpm() -> None:
+    pnpm_home = XDG_DATA_HOME / "pnpm"
+
+    def add_pnpm_to_path() -> None:
+        dirs = [str(d) for d in (pnpm_home / "bin", pnpm_home) if d.is_dir()]
+        os.environ["PATH"] = ":".join([*dirs, os.environ.get("PATH", "")])
+
+    add_pnpm_to_path()
     if not command_exists("pnpm"):
         log("Installing pnpm...")
-        run_command("curl -fsSL https://get.pnpm.io/install.sh | sh -", shell=True)
+        run_command(
+            "curl -fsSL https://get.pnpm.io/install.sh | sh -",
+            shell=True,
+            extra_env={"PNPM_HOME": str(pnpm_home)},
+        )
+        add_pnpm_to_path()
 
     log_sub("Updating pnpm...")
     run_command(["pnpm", "self-update", "latest"])
@@ -1086,9 +1098,14 @@ def module_pnpm() -> None:
 
 @register_module("bun")
 def module_bun() -> None:
+    bun_bin = HOME / ".bun" / "bin"
+    if bun_bin.is_dir():
+        os.environ["PATH"] = f"{bun_bin}:{os.environ.get('PATH', '')}"
+
     if not command_exists("bun"):
         log("Installing bun...")
         run_command("curl -fsSL https://bun.com/install | bash", shell=True)
+        os.environ["PATH"] = f"{bun_bin}:{os.environ.get('PATH', '')}"
     else:
         log("Updating bun...")
         run_command(["bun", "upgrade"])
