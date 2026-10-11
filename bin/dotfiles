@@ -976,6 +976,7 @@ def module_brew() -> None:
         "mise",
         "lazygit",
         "neovim",
+        "zsh-patina",
     }
 
     if IS_MACOS:

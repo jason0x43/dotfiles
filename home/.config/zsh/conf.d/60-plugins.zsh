@@ -1,12 +1,16 @@
 # Plugins that hook into the line editor. These should be loaded last.
 
-# zsh-syntax-highlighting
-# --------------------------------------------------------------------------
-# This should be loaded after everything else that defines widgets
-# https://github.com/zsh-users/zsh-syntax-highlighting
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting
-source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+# syntax highlighting                                                                                            ▐
+# --------------------------------------------------------------------------                                         ▐
+if (( $+commands[zsh-patina] )); then
+    eval "$(zsh-patina activate)"
+else
+    # This should be loaded after everything else that defines widgets                                                   ▐
+    # https://github.com/zsh-users/zsh-syntax-highlighting                                                               ▐
+    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)                                                            ▐
+    zfetch $ZPLUGDIR zsh-users/zsh-syntax-highlighting                                                                   ▐
+    source $ZPLUGDIR/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh                                ▐
+fi
 
 # zsh-history-substring-search
 # --------------------------------------------------------------------------
