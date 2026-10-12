@@ -6,10 +6,6 @@ export PAGER='less'
 # bat
 # ------------------------------------------------------------------------
 if (( $+commands[bat] )); then
-    # BAT_THEME is also used by delta, so set it here rather than in the bat
-    # config file
-    export BAT_THEME=wezterm
-
     # Render man pages with bat, stripping the formatting man adds
     export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
 fi
