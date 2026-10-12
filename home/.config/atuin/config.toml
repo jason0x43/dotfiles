@@ -340,7 +340,7 @@ autostart = true
 ##
 ## - array of strings: show commands run by any shell in the array; "" includes
 ##   commands that have no recorded shell
-# shells = "auto"
+shells = "all"
 
 [tmux]
 ## Enable using atuin with tmux popup (requires tmux >= 3.2)
