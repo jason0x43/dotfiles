@@ -18,15 +18,71 @@ fpath=(
     $ZCOMPDIR
 )
 
-# wt completions (regenerated when missing or more than a day old)
-if (( $+commands[wt] )); then
-    () {
-        (( $# )) && return
-        wt completions zsh >| $ZCOMPDIR/_wt.tmp \
-            && mv -f $ZCOMPDIR/_wt.tmp $ZCOMPDIR/_wt \
-            || rm -f $ZCOMPDIR/_wt.tmp
-    } $ZCOMPDIR/_wt(N.mh-24)
+# Generated completions
+# ------------------------------------------------------------------------
+# Completion files in $ZCOMPDIR that are generated or copied from installed
+# tools. If any of them change, the compinit dump is removed so the next
+# compinit rescans fpath and picks them up.
+typeset -g _zcomp_changed=0
+
+# Usage: _zcomp_generate <name> <command...>
+# Writes the output of <command> to $ZCOMPDIR/_<name> when that file is
+# missing or more than a day old.
+_zcomp_generate() {
+    local dest=$ZCOMPDIR/_$1
+    shift
+    local -a fresh=($dest(N.mh-24))
+    (( $#fresh )) && return
+
+    if ! "$@" >| $dest.tmp 2>/dev/null || [[ ! -s $dest.tmp ]]; then
+        rm -f $dest.tmp
+        return
+    fi
+
+    if cmp -s $dest.tmp $dest; then
+        # Unchanged; reset the clock
+        rm -f $dest.tmp
+        touch $dest
+    else
+        mv -f $dest.tmp $dest
+        _zcomp_changed=1
+    fi
+}
+
+(( $+commands[dotfiles] )) && _zcomp_generate dotfiles dotfiles completion zsh
+(( $+commands[wt] )) && _zcomp_generate wt wt completions zsh
+
+# pnpm's script only registers its completion function when it's first
+# autoloaded, so also call it to complete that first time
+if (( $+commands[pnpm] )); then
+    _zcomp_pnpm() {
+        pnpm completion zsh && print '_pnpm_completion "$@"'
+    }
+    _zcomp_generate pnpm _zcomp_pnpm
+    unfunction _zcomp_pnpm
 fi
+
+# yargs picks the script type from $SHELL, so force zsh
+(( $+commands[opencode] )) && _zcomp_generate opencode env SHELL=zsh opencode completion
+
+# Docker Desktop ships zsh completions; copy them when they're new or updated
+if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
+    () {
+        local f dest
+        for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion(N); do
+            dest=$ZCOMPDIR/_${${f:t}%.zsh-completion}
+            if [[ ! -f $dest || $f -nt $dest ]]; then
+                cp $f $dest && chmod a-x $dest && _zcomp_changed=1
+            fi
+        done
+    }
+fi
+
+if (( _zcomp_changed )); then
+    rm -f $ZCOMPFILE $ZCOMPFILE.zwc
+fi
+unfunction _zcomp_generate
+unset _zcomp_changed
 
 # Load and initialize the completion system, ignoring insecure directories.
 # Note that fpath should be configured before calling compinit.
@@ -56,18 +112,6 @@ fi
         zcompile "$ZCOMPFILE"
     fi
 } &!
-
-# Docker completions
-if [[ -d /Applications/Docker.app/Contents/Resources/etc ]]; then
-    for f in /Applications/Docker.app/Contents/Resources/etc/*.zsh-completion; do
-        dest=$ZCOMPDIR/_$(basename -s .zsh-completion $f)
-        if [[ ! -f $dest || $f -nt $dest ]]; then
-            cp $f $dest
-            chmod a-x $dest
-        fi
-    done
-    unset dest
-fi
 
 # Use caching to make completion for commands with many options usable
 zstyle ':completion:*' use-cache on
