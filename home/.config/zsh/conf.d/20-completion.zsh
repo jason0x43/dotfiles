@@ -18,6 +18,16 @@ fpath=(
     $ZCOMPDIR
 )
 
+# wt completions (regenerated when missing or more than a day old)
+if (( $+commands[wt] )); then
+    () {
+        (( $# )) && return
+        wt completions zsh >| $ZCOMPDIR/_wt.tmp \
+            && mv -f $ZCOMPDIR/_wt.tmp $ZCOMPDIR/_wt \
+            || rm -f $ZCOMPDIR/_wt.tmp
+    } $ZCOMPDIR/_wt(N.mh-24)
+fi
+
 # Load and initialize the completion system, ignoring insecure directories.
 # Note that fpath should be configured before calling compinit.
 # (https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh)
