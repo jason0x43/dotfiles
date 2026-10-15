@@ -1,6 +1,6 @@
 {
   "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.config/claude/mods/usage-band"
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.dotfiles/claude/mods/usage-band"
   },
   "attribution": {
     "commit": "",
