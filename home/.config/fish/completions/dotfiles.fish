@@ -1,1 +1,0 @@
-dotfiles completion fish | source
