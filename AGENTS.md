@@ -1,44 +1,29 @@
 # Agent notes
 
-Personal dotfiles for macOS (primary) and Debian-based Linux. See `README.md`
-for how the repo is laid out and how `bin/dotfiles` works.
+Personal dotfiles for macOS (primary) and Debian-based Linux. `README.md` explains the layout and `bin/dotfiles` (a Python script; run `bin/dotfiles -h` for its commands).
 
 ## Managed files
 
-- `home/` mirrors `~`; `bin/dotfiles sync` symlinks each file individually, so
-  directories in `~` are real and local files can sit next to linked ones.
-- To start managing a file, use `bin/dotfiles import ~/<path>` rather than
-  copying it into `home/` by hand. `sync`, `import`, and `forget` take
-  `-n`/`--dry-run`; `bin/dotfiles status` reports link problems.
-- Repo `.gitignore` files are for generic patterns describing the repo's own
-  contents. Machine-specific ignores go in `~/.config/dotfiles/ignore` (via
-  `dotfiles ignore <path>`); never add personal app names to the repo's
-  `.gitignore`.
-- Never commit secrets or machine-specific settings. Put them next to the
-  tool's config in `~` (e.g. `~/.config/git/local`,
-  `~/.config/fish/conf.d/99_local_*.fish`) and ignore them.
+- `home/` mirrors `~`. `bin/dotfiles sync` symlinks each file individually, so directories in `~` are real and local files can sit next to linked ones. Editing a file under `home/` changes the live config.
+- To start managing a file, run `bin/dotfiles import ~/<path>` instead of copying it into `home/`. `sync`, `import`, and `forget` accept `-n`/`--dry-run`; `bin/dotfiles status` reports link problems. The `pre-push` hook fails if `status` isn't clean.
+- Repo `.gitignore` files are only for generic patterns about the repo's own contents. Machine-specific ignores go in `~/.config/dotfiles/ignore` (via `bin/dotfiles ignore <path>`); never add personal app names to the repo's `.gitignore`.
+- Never commit secrets or machine-specific settings. Put them in local, ignored files next to the tool's config, e.g. `~/.config/git/local`, `~/.config/fish/conf.d/99_local_*.fish`, or `~/.config/zsh/local/zshrc`.
+- `launchd/` holds macOS LaunchAgents installed by `bin/dotfiles update launchd`.
 
 ## Shell configs
 
-- Zsh: `home/.zshenv` sets `ZDOTDIR` to `~/.config/zsh`. `.zshrc` sources
-  `conf.d/*.zsh` in name order, and the line editor plugins in
-  `60-plugins.zsh` must load last. Plugins are fetched by the `zfetch`
-  function into `$ZPLUGDIR`.
-- Fish: `conf.d/` files load alphabetically; use numeric prefixes (`05_`,
-  `10_`, `99_`) to control order.
-- Neovim plugins (`vim.pack`) are updated by the user from within Neovim; don't
-  update them or the lock file yourself.
+- Zsh: `home/.zshenv` sets `ZDOTDIR=~/.config/zsh`. `.zshrc` sources `conf.d/*.zsh` in name order; `60-plugins.zsh` (line editor plugins) must stay last. Plugins are fetched with `zfetch $ZPLUGDIR <owner>/<repo>`.
+- Fish: `conf.d/` files load alphabetically; use numeric prefixes (`05_`, `10_`, `99_`) to control order. Unprefixed files there come from tool installers and load after the numbered ones.
+- Neovim plugins (`vim.pack`) are updated by the user from within Neovim; don't update them or `nvim-pack-lock.json`.
 
 ## Conventions
 
-- Scripts in `bin/` must be executable. Guard platform-specific code (e.g.
-  `[[ $OSTYPE == darwin* ]]`).
-- Formatting follows `home/.editorconfig`, `home/.prettierrc`, and
-  `home/.config/nvim/stylua.toml`.
+- Scripts in `bin/` must be executable. Guard platform-specific code (e.g. `[[ $OSTYPE == darwin* ]]`).
+- Formatting follows `home/.editorconfig`, `home/.prettierrc`, and `home/.config/nvim/stylua.toml`.
 
 ## Validation
 
-- Syntax check changed shell files with `zsh -n <file>` or `fish -n <file>`.
-- Check Lua with `stylua --check <path>`.
-- Run `bin/dotfiles update <module>` for an affected subsystem when relevant
-  (`bin/dotfiles update --list` shows the modules).
+- Shell: `zsh -n <file>` or `fish -n <file>`.
+- Lua: `stylua --check <path>`.
+- Python (e.g. `bin/dotfiles`): `ruff check <file>`.
+- When a change affects a subsystem, run `bin/dotfiles update <module>` (`bin/dotfiles update --list` shows the modules).
