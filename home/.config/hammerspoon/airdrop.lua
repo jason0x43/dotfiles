@@ -23,28 +23,37 @@ local recentWindows = {}
 -- restore focus after AirDrop's Finder window steals it
 ---@type hs.window | nil
 local previousWindow
+---@type hs.application | nil
+local previousApp
 
 local FINDER = "com.apple.finder"
 
 ---Refocus the window that was active before Finder took over. With Stage
 ---Manager this also returns it to the center stage.
 local function restoreFocus()
-	if not previousWindow or not previousWindow:application() then
-		logger.i("No previous window to refocus")
+	if not previousApp or not previousApp:isRunning() then
+		logger.i("No previous app to refocus")
 		return
 	end
 
 	-- Skip if the user has since switched to some other app
 	local front = hs.application.frontmostApplication()
 	local frontID = front and front:bundleID()
-	local previousID = previousWindow:application():bundleID()
+	local previousID = previousApp:bundleID()
 	if frontID ~= FINDER and frontID ~= previousID then
 		logger.i("Not refocusing; frontmost app is " .. tostring(frontID))
 		return
 	end
 
-	logger.i("Refocusing " .. previousID .. " window: " .. previousWindow:title())
-	previousWindow:focus()
+	if previousWindow and previousWindow:application() then
+		logger.i(
+			"Refocusing " .. previousID .. " window: " .. previousWindow:title()
+		)
+		previousWindow:focus()
+	else
+		logger.i("Reactivating " .. tostring(previousID))
+		previousApp:activate()
+	end
 end
 
 ---Return true if the file at path was received via AirDrop.
@@ -197,13 +206,19 @@ AirDrop.appWatcher = hs.application.watcher
 		end
 		local isFinder = app:bundleID() == FINDER
 		if event == hs.application.watcher.deactivated and not isFinder then
-			previousWindow = app:focusedWindow()
-			logger.d(
-				"Remembered "
-					.. tostring(app:bundleID())
-					.. " window: "
-					.. tostring(previousWindow and previousWindow:title())
-			)
+			-- Ignore windowless apps, such as the system services involved in an
+			-- AirDrop transfer, so they don't replace the user's window
+			local win = app:focusedWindow() or app:mainWindow()
+			if win then
+				previousApp = app
+				previousWindow = win
+				logger.d(
+					"Remembered "
+						.. tostring(app:bundleID())
+						.. " window: "
+						.. win:title()
+				)
+			end
 		elseif event == hs.application.watcher.launched and isFinder then
 			-- Re-attach the Finder watcher if Finder is relaunched
 			if AirDrop.finderWatcher then
