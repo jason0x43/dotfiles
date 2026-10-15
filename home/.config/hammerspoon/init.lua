@@ -46,6 +46,7 @@ require("keybinds")
 --require("display-watcher")
 require("pi-status")
 require("scvpn-status")
+require("airdrop")
 JiraMonitor = require("jira-monitor")
 
 hs.alert.show("Hammerspoon config loaded")
