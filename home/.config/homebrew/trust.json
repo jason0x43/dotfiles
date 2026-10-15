@@ -4,5 +4,8 @@
     "getsentry/xcodebuildmcp/xcodebuildmcp",
     "microsoft/mssql-release/msodbcsql18",
     "mobile-dev-inc/tap/maestro"
+  ],
+  "trustedtaps": [
+    "microsoft/mssql-release"
   ]
 }
