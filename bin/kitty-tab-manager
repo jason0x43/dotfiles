@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# Manage the tabs in the current kitty OS window in an overlay.
+#
+#   type       fuzzy-filter tabs
+#   enter      focus the selected tab
+#   tab        rename the selected tab (enter saves, esc cancels,
+#              an empty name restores the automatic title)
+#   esc        close
+#
+# Run it directly from a kitty shell (it opens itself in an overlay), or map it:
+#
+#   map ctrl+t launch --type=overlay --copy-env ~/.dotfiles/bin/kitty-tab-manager
+set -euo pipefail
+
+# kitty launched from the Dock has a minimal PATH, and `launch --copy-env`
+# passes that along rather than the PATH set up by the shell, so add the
+# locations of fzf and kitty ourselves.
+if [[ -n ${KITTY_INSTALLATION_DIR:-} ]]; then
+  PATH="$PATH:${KITTY_INSTALLATION_DIR%/Resources/kitty}/MacOS"
+fi
+PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH
+
+self=$(realpath "$0")
+select_prompt='tab> '
+rename_prompt='rename> '
+select_header='enter: go · tab: rename · esc: close'
+rename_header='enter: save · esc: cancel · empty: reset to automatic title'
+
+# Tabs in the OS window containing this window, as:
+#   <tab id> TAB <active marker> TAB <position> TAB <title> TAB <cwd>
+# For the tab hosting this overlay, the title and cwd come from the window the
+# overlay covers, since the tab would otherwise report the overlay's own title.
+list_tabs() {
+  kitty @ ls | jq -r '
+    def pad($n): . + (" " * ([$n - length, 0] | max));
+    [.[] | select(any(.tabs[].windows[]; .is_self)) | .tabs
+    | to_entries[] | .key as $pos | .value as $t
+    | ([$t.windows[] | select(.is_self)] | first) as $self
+    | (if $self then
+         [$t.groups[] | select(any(.windows[]; . == $self.id)) | .windows[0]] | first
+       else null end) as $base_id
+    | ([$t.windows[] | select(if $base_id then .id == $base_id else .is_active end)] | first
+       // $t.windows[0]) as $w
+    | [
+        $t.id,
+        (if $t.is_active then "●" else " " end),
+        ($pos + 1),
+        (if $t.title_overridden then $t.title else $w.title end),
+        (($w.foreground_processes[-1].cwd // $w.cwd // "") | sub("^" + env.HOME; "~"))
+      ]]
+    | ([.[][3] | length] | max | [., 40] | min) as $width
+    | .[] | .[2] |= (tostring | pad(3)) | .[3] |= pad($width)
+    | @tsv'
+}
+
+# True when this process is running in an overlay (i.e. it is not the first
+# window in its window group).
+in_overlay() {
+  kitty @ ls | jq -e '
+    .[].tabs[].groups[]
+    | select(any(.windows[]; . == (env.KITTY_WINDOW_ID | tonumber)))
+    | .windows[0] != (env.KITTY_WINDOW_ID | tonumber)' >/dev/null
+}
+
+# Subcommands used by fzf bindings. Each prints fzf actions for `transform`.
+case "${1:-}" in
+  _list)
+    list_tabs
+    exit
+    ;;
+  _tab)
+    # Start renaming the tab under the cursor.
+    [[ $FZF_PROMPT == "$rename_prompt" ]] && exit
+    printf '%s' "$2" >"$KTM_STATE"
+    printf 'change-prompt(%s)+change-header(%s)+disable-search+change-query:%s' \
+      "$rename_prompt" "$rename_header" "$3"
+    exit
+    ;;
+  _enter)
+    if [[ $FZF_PROMPT == "$rename_prompt" ]]; then
+      kitty @ set-tab-title --match "id:$(<"$KTM_STATE")" -- "$FZF_QUERY"
+      printf 'change-prompt(%s)+change-header(%s)+enable-search+clear-query+track-current+reload:%q _list' \
+        "$select_prompt" "$select_header" "$self"
+    else
+      printf 'accept'
+    fi
+    exit
+    ;;
+  _esc)
+    if [[ $FZF_PROMPT == "$rename_prompt" ]]; then
+      printf 'change-prompt(%s)+change-header(%s)+enable-search+clear-query' \
+        "$select_prompt" "$select_header"
+    else
+      printf 'abort'
+    fi
+    exit
+    ;;
+esac
+
+for cmd in fzf jq kitty; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "$cmd is required but not installed."
+    sleep 2
+    exit 1
+  fi
+done
+
+if [[ -z ${KITTY_WINDOW_ID:-} ]]; then
+  echo "Not running in kitty." >&2
+  exit 1
+fi
+
+# Called directly from a shell: reopen in an overlay over this window.
+if ! in_overlay; then
+  exec kitty @ launch --type=overlay --match "id:$KITTY_WINDOW_ID" \
+    --env "PATH=$PATH" "$self" >/dev/null
+fi
+
+export KTM_STATE
+KTM_STATE=$(mktemp -t kitty-tab-manager)
+trap 'rm -f "$KTM_STATE"' EXIT
+
+tabs=$(list_tabs)
+active_pos=$(awk -F'\t' '$2 == "●" { print NR; exit }' <<<"$tabs")
+
+selection=$(
+  fzf <<<"$tabs" \
+    --with-shell='bash -c' \
+    --delimiter=$'\t' --with-nth=2.. --nth=3.. \
+    --id-nth=1 \
+    --layout=reverse --info=inline-right \
+    --prompt="$select_prompt" --header="$select_header" \
+    --bind "load:pos(${active_pos:-1})+unbind(load)" \
+    --bind "change:first" \
+    --bind "tab:transform:$(printf %q "$self") _tab {1} {4}" \
+    --bind "enter:transform:$(printf %q "$self") _enter" \
+    --bind "esc:transform:$(printf %q "$self") _esc" \
+    --bind "ctrl-c:abort"
+) || exit 0
+
+kitty @ focus-tab --match "id:${selection%%$'\t'*}"
