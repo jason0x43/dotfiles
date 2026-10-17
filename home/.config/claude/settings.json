@@ -17,5 +17,13 @@
   "theme": "auto",
   "editorMode": "vim",
   "terminalProgressBarEnabled": true,
-  "agentPushNotifEnabled": false
+  "agentPushNotifEnabled": false,
+  "hooks": {
+    "WorktreeCreate": [
+      { "hooks": [{ "type": "command", "command": "wt hook create" }] }
+    ],
+    "WorktreeRemove": [
+      { "hooks": [{ "type": "command", "command": "wt hook remove" }] }
+    ]
+  }
 }
