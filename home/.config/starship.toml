@@ -2,6 +2,9 @@
 
 add_newline = false
 
+# Leave room for slow cold starts (the default is 500ms)
+command_timeout = 1500
+
 format = """
 $hostname\
 $directory\
@@ -36,6 +39,8 @@ min_time = 3000
 # modules, this includes tools set in parent directories' mise.toml files.
 [custom.mise]
 when = true
+# mise is normally fast but can exceed the timeout after long idle periods
+ignore_timeout = true
 shell = ["sh"]
 format = "( $output)"
 command = '''
