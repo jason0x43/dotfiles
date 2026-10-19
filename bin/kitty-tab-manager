@@ -70,11 +70,18 @@ case "${1:-}" in
     exit
     ;;
   _tab)
-    # Start renaming the tab under the cursor.
+    # Start renaming the tab under the cursor. If the title ends with an
+    # extension (e.g. "notes.md"), prefill just the extension (without the dot)
+    # with the cursor before it.
     [[ $FZF_PROMPT == "$rename_prompt" ]] && exit
     printf '%s' "$2" >"$KTM_STATE"
-    printf 'change-prompt(%s)+change-header(%s)+disable-search+change-query:%s' \
-      "$rename_prompt" "$rename_header" "$3"
+    printf 'change-prompt(%s)+change-header(%s)+disable-search+' \
+      "$rename_prompt" "$rename_header"
+    if [[ $3 =~ [^/[:space:]]\.([[:alpha:]][[:alnum:]_-]*)$ ]]; then
+      printf 'change-query(%s)+beginning-of-line' "${BASH_REMATCH[1]}"
+    else
+      printf 'change-query:%s' "$3"
+    fi
     exit
     ;;
   _enter)
