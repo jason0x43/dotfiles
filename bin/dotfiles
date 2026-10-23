@@ -1095,6 +1095,9 @@ def module_pnpm() -> None:
     log_sub("Updating pnpm...")
     run_command(["pnpm", "self-update", "latest"])
 
+    log_sub("Updating global pnpm packages...")
+    run_command(["pnpm", "update", "--global", "--latest"], quiet=True)
+
 
 @register_module("bun")
 def module_bun() -> None:
