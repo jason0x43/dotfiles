@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+
+"""Rebuild the zsh history file from atuin's history."""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+HOME = Path.home()
+
+# zsh stores history metafied: these bytes are written as Meta + (byte ^ 32)
+META = 0x83
+METAFY_BYTES = {0} | set(range(META, 0xA3))
+
+
+def default_histfile() -> Path:
+    cache = os.environ.get("ZCACHEDIR")
+    if cache:
+        return Path(cache) / "zhistory"
+    xdg_cache = os.environ.get("XDG_CACHE_HOME", HOME / ".cache")
+    return Path(xdg_cache) / "zsh" / "zhistory"
+
+
+def find_atuin() -> str:
+    atuin = shutil.which("atuin") or HOME / ".atuin" / "bin" / "atuin"
+    return str(atuin)
+
+
+def metafy(text: str) -> bytes:
+    out = bytearray()
+    for byte in text.encode():
+        if byte in METAFY_BYTES:
+            out += bytes([META, byte ^ 32])
+        else:
+            out.append(byte)
+    return bytes(out)
+
+
+def history_entry(time: str, command: str) -> bytes:
+    stamp = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+    epoch = int(stamp.replace(tzinfo=UTC).timestamp())
+    # zsh writes embedded newlines as a backslash-newline continuation
+    command = command.replace("\n", "\\\n")
+    return f": {epoch}:0;".encode() + metafy(command) + b"\n"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "-f",
+        "--file",
+        type=Path,
+        default=default_histfile(),
+        help="history file to write (default: %(default)s)",
+    )
+    parser.add_argument(
+        "-s",
+        "--size",
+        type=int,
+        default=10000,
+        help="number of unique commands to keep; match zsh's SAVEHIST "
+        "(default: %(default)s)",
+    )
+    parser.add_argument(
+        "--no-sync",
+        action="store_true",
+        help="don't run 'atuin sync' first",
+    )
+    args = parser.parse_args()
+
+    atuin = find_atuin()
+
+    if not args.no_sync:
+        result = subprocess.run([atuin, "sync"], check=False, capture_output=True)
+        if result.returncode != 0:
+            print("atuin sync failed; using local history", file=sys.stderr)
+
+    output = subprocess.run(
+        [
+            atuin,
+            "history",
+            "list",
+            "--print0",
+            "--tz",
+            "+0",
+            "--format",
+            "{time}\t{command}",
+        ],
+        capture_output=True,
+        check=True,
+        text=True,
+    ).stdout
+
+    # atuin lists oldest first; keep the newest occurrence of each command
+    seen: set[str] = set()
+    entries: list[tuple[str, str]] = []
+    for record in reversed(output.split("\0")):
+        if not record:
+            continue
+        time, _, command = record.partition("\t")
+        if not command.strip() or command in seen:
+            continue
+        seen.add(command)
+        entries.append((time, command))
+        if len(entries) >= args.size:
+            break
+    entries.reverse()
+
+    histfile: Path = args.file
+    histfile.parent.mkdir(parents=True, exist_ok=True)
+    tmpfile = histfile.with_name(f"{histfile.name}.atuin-tmp")
+    with tmpfile.open("wb") as f:
+        for time, command in entries:
+            f.write(history_entry(time, command))
+
+    if histfile.exists():
+        shutil.copy2(histfile, histfile.with_name(f"{histfile.name}.bak"))
+    tmpfile.replace(histfile)
+
+    print(f"Wrote {len(entries)} commands to {histfile}")
+
+
+if __name__ == "__main__":
+    main()

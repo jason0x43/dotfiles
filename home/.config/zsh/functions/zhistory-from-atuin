@@ -1,0 +1,8 @@
+# Rebuild the history file from atuin, then replace this shell's history with it
+command zhistory-from-atuin "$@" || return
+
+# Shrinking HISTSIZE to 0 empties the history list without touching the file
+local size=$HISTSIZE
+HISTSIZE=0
+HISTSIZE=$size
+fc -R
