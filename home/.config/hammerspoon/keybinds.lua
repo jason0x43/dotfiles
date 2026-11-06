@@ -114,19 +114,22 @@ hs.hotkey.bind({ "ctrl", "alt", "shift" }, "f", function()
 	win:setFrame(frame)
 end)
 
--- Move the active window to the left side of the display
-hs.hotkey.bind({ "ctrl", "shift" }, "h", function()
-	window.moveTo("left")
-end)
+-- Move the active window a step in a vim direction, repeating while held
+for key, offset in pairs({
+	h = { -const.MOVE_STEP, 0 },
+	j = { 0, const.MOVE_STEP },
+	k = { 0, -const.MOVE_STEP },
+	l = { const.MOVE_STEP, 0 },
+}) do
+	local function move()
+		window.moveBy(offset[1], offset[2])
+	end
+	hs.hotkey.bind({ "ctrl", "shift" }, key, move, nil, move)
+end
 
 -- Fill the left side of the display with the active window
 hs.hotkey.bind({ "ctrl", "alt", "shift" }, "h", function()
 	window.fill("left")
-end)
-
--- Move the active window to the right side of the display
-hs.hotkey.bind({ "ctrl", "shift" }, "l", function()
-	window.moveTo("right")
 end)
 
 -- Fill the right side of the display with the active window

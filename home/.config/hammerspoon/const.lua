@@ -1,17 +1,20 @@
 return {
-  -- Relative Directions
-  LEFT = "left",
-  RIGHT = "right",
-  CENTER = "center",
-  NW = "nw",
-  NE = "ne",
-  SW = "sw",
-  SE = "se",
+	-- Relative Directions
+	LEFT = "left",
+	RIGHT = "right",
+	CENTER = "center",
+	NW = "nw",
+	NE = "ne",
+	SW = "sw",
+	SE = "se",
 
-  -- Dimensions
-  THIN_WIDTH = (1020 / 3840) * 1.4,
-  TERM_WIDTH = (1020 / 3840) * 1.7,
-  PADDING = 30,
+	-- Dimensions
+	THIN_WIDTH = (1020 / 3840) * 1.4,
+	TERM_WIDTH = (1020 / 3840) * 1.7,
+	PADDING = 30,
 
-  INCREMENT = 0.05,
+	INCREMENT = 0.05,
+
+	-- Distance in pixels to move a window with each step
+	MOVE_STEP = 20,
 }

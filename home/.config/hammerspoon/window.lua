@@ -32,7 +32,7 @@ end
 M.isStageManagerEnabled = function()
 	local output =
 		hs.execute("/usr/bin/defaults read com.apple.WindowManager GloballyEnabled")
-  ---@cast output string
+	---@cast output string
 	return util.trim(output) == "1"
 end
 
@@ -141,6 +141,33 @@ M.moveTo = function(area, window)
 
 	win:setFrame(winFrame)
 	return win
+end
+
+---Move the focused window by an offset in pixels, stopping at the padded
+---screen edges. Only the axes being moved along are limited.
+---@param dx number
+---@param dy number
+M.moveBy = function(dx, dy)
+	local win = hs.window.focusedWindow()
+	if win == nil then
+		return
+	end
+
+	local screenFrame = getScreenFrame(win:screen())
+	local winFrame = win:frame()
+	local topLeft = { x = winFrame.x, y = winFrame.y }
+
+	if dx ~= 0 then
+		local maxX = screenFrame.x + screenFrame.w - winFrame.w
+		topLeft.x = math.max(screenFrame.x, math.min(winFrame.x + dx, maxX))
+	end
+
+	if dy ~= 0 then
+		local maxY = screenFrame.y + screenFrame.h - winFrame.h
+		topLeft.y = math.max(screenFrame.y, math.min(winFrame.y + dy, maxY))
+	end
+
+	win:setTopLeft(topLeft)
 end
 
 ---Move the focused window to a space
