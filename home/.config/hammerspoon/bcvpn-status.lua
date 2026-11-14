@@ -16,9 +16,56 @@ local disconnectedIcon = util
 local connectedIcon = util
 	.loadImage("vpn-connected.svg")
 	:setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
-local connectingIcon = util
-	.loadImage("vpn-connecting.svg")
-	:setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
+-- While connecting or disconnecting, the shield's fill pulses: the outline
+-- stays solid while the fill fades from full to PULSE_MIN_ALPHA and back,
+-- once every PULSE_FRAMES * PULSE_INTERVAL_SECONDS.
+local PULSE_FRAMES = 16
+local PULSE_INTERVAL_SECONDS = 0.1
+local PULSE_MIN_ALPHA = 0.15
+
+---Render the pulse frames. Both icons have the same outline and the
+---connected one adds the fill, so each frame is the disconnected icon (just
+---the outline) with the connected icon drawn over it at the frame's opacity:
+---the outline stays solid and only the fill fades.
+---@return hs.image[]
+local function makePulseFrames()
+	-- Draw at 2x so the frames stay sharp on Retina displays, then give them
+	-- the icon's point size.
+	local scale = 2
+	local canvas = hs.canvas.new({
+		x = 0,
+		y = 0,
+		w = ICON_WIDTH * scale,
+		h = ICON_HEIGHT * scale,
+	})
+	if not canvas then
+		error("Failed to create the bcvpn pulse canvas")
+	end
+	canvas[1] = {
+		type = "image",
+		image = disconnectedIcon,
+		imageScaling = "scaleToFit",
+	}
+	canvas[2] = {
+		type = "image",
+		image = connectedIcon,
+		imageScaling = "scaleToFit",
+	}
+
+	local frames = {}
+	for i = 0, PULSE_FRAMES - 1 do
+		local cos = math.cos(2 * math.pi * i / PULSE_FRAMES)
+		canvas[2].imageAlpha = PULSE_MIN_ALPHA
+			+ (1 - PULSE_MIN_ALPHA) * (1 + cos) / 2
+		frames[#frames + 1] =
+			canvas:imageFromCanvas():setSize({ h = ICON_HEIGHT, w = ICON_WIDTH })
+	end
+	canvas:delete()
+
+	return frames
+end
+
+local pulseFrames = makePulseFrames()
 
 -- Connection states reported by `bcvpn status`.
 local STATUS = {
@@ -58,6 +105,9 @@ local M = {
 	---The running `bcvpn status`
 	---@type hs.task | nil
 	statusTask = nil,
+	---Steps the pulse animation while a command runs
+	---@type hs.timer | nil
+	pulseTimer = nil,
 }
 
 ---Run a bcvpn command through a login shell, so bcvpn, bun, docker and op
@@ -105,19 +155,47 @@ local function ensureMenubar()
 	end)
 end
 
+---Start pulsing the icon, if it isn't already.
+local function startPulse()
+	if M.pulseTimer then
+		return
+	end
+
+	local frame = 1
+	M.menubar:setIcon(pulseFrames[frame])
+	M.pulseTimer = hs.timer.doEvery(PULSE_INTERVAL_SECONDS, function()
+		frame = frame % #pulseFrames + 1
+		M.menubar:setIcon(pulseFrames[frame])
+	end)
+end
+
+local function stopPulse()
+	if M.pulseTimer then
+		M.pulseTimer:stop()
+		M.pulseTimer = nil
+	end
+end
+
 ---Update the menubar icon and tooltip from the current state.
 local function updateMenubar()
 	ensureMenubar()
 
-	local icon = disconnectedIcon
-	if M.pendingAction == "up" then
-		icon = connectingIcon
-	elseif M.state and M.state.status == STATUS.CONNECTED then
-		icon = connectedIcon
+	local label
+	if M.pendingAction then
+		-- Status refreshes can land mid-command; startPulse leaves a running
+		-- animation alone so it doesn't jump back to the first frame.
+		startPulse()
+		label = M.pendingAction == "up" and "Connecting..." or "Disconnecting..."
+	else
+		stopPulse()
+		local icon = disconnectedIcon
+		if M.state and M.state.status == STATUS.CONNECTED then
+			icon = connectedIcon
+		end
+		M.menubar:setIcon(icon)
+		label = M.state and STATUS_LABELS[M.state.status] or "Checking..."
 	end
-	M.menubar:setIcon(icon)
 
-	local label = M.state and STATUS_LABELS[M.state.status] or "Checking..."
 	M.menubar:setTooltip("bcvpn: " .. label)
 end
 
