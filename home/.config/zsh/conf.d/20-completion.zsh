@@ -52,6 +52,7 @@ _zcomp_generate() {
 (( $+commands[dotfiles] )) && _zcomp_generate dotfiles dotfiles completion zsh
 (( $+commands[wt] )) && _zcomp_generate wt wt completions zsh
 (( $+commands[bcx] )) && _zcomp_generate bcx bcx completion zsh
+(( $+commands[bcvpn] )) && _zcomp_generate bcvpn bcvpn completion zsh
 
 # pnpm's script only registers its completion function when it's first
 # autoloaded, so also call it to complete that first time
