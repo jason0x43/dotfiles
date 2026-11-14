@@ -45,7 +45,7 @@ require("url-dispatcher")
 require("keybinds")
 --require("display-watcher")
 require("pi-status")
-require("scvpn-status")
+require("bcvpn-status")
 require("airdrop")
 JiraMonitor = require("jira-monitor")
 
