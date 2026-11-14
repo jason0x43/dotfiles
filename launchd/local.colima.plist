@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>KeepAlive</key>
+    <dict>
+      <key>SuccessfulExit</key>
+      <true/>
+    </dict>
+    <key>Label</key>
+    <string>local.colima</string>
+    <key>LimitLoadToSessionType</key>
+    <array>
+      <string>Aqua</string>
+      <string>Background</string>
+      <string>LoginWindow</string>
+      <string>StandardIO</string>
+      <string>System</string>
+    </array>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/bin/sh</string>
+      <string>-c</string>
+      <string>XDG_CONFIG_HOME="$HOME/.config" exec /opt/homebrew/opt/colima/bin/colima start -f</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>/tmp/local.colima/stderr.log</string>
+    <key>StandardOutPath</key>
+    <string>/tmp/local.colima/stdout.log</string>
+  </dict>
+</plist>
