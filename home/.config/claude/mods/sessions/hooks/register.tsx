@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { SessionRow } from '../types'
+import type { SessionRow, SessionScope, SessionList } from '../types'
 
 const PANE = 'sessions'
 const LIMIT = 40
@@ -11,8 +11,15 @@ const REFRESH_MS = 30_000
 
 // Change a tag when that value's fields change: it declines what an earlier
 // version stored, which outlives a reload.
-const rows = atom({ plugin: 'sessions', key: 'rows' } as const, [], {
-  shape: 'rows-3',
+// The rows of the latest scan, with the scope it ran for.
+const rows = atom(
+  { plugin: 'sessions', key: 'rows' } as const,
+  { scope: 'here', list: [], isLoaded: false } as SessionList,
+  { shape: 'rows-4' },
+)
+// 'here' lists this folder's sessions (the default); 'all', every folder's.
+const scope = atom({ plugin: 'sessions', key: 'scope' } as const, 'here' as SessionScope, {
+  shape: 'scope-1',
 })
 const current = atom({ plugin: 'sessions', key: 'current' } as const, '', {
   shape: 'current-1',
@@ -252,11 +259,17 @@ async function scan($: any) {
   // <projects>/<project folder>/<session>.jsonl
   const projectDir = transcriptPath.slice(0, transcriptPath.lastIndexOf('/'))
   const projectsDir = projectDir.slice(0, projectDir.lastIndexOf('/'))
+  const projectFolder = basename(projectDir)
+  const wanted = await read($, scope)
 
-  const [files, desktop] = await Promise.all([
+  const [allFiles, desktop] = await Promise.all([
     listTranscripts($, projectsDir),
     readDesktop($).catch(emptyIndex),
   ])
+  // This folder's sessions live in this session's project folder. Parents and
+  // children from other folders stay out, since fileById holds only these.
+  const files =
+    wanted === 'all' ? allFiles : allFiles.filter(f => f.folder === projectFolder)
   const fileById = new Map(files.map(f => [f.id, f]))
 
   const found = new Map<string, SessionRow>()
@@ -301,7 +314,13 @@ async function scan($: any) {
     }
   }
 
-  await update($, rows, () => [...found.values()])
+  // A scan outrun by a change of scope leaves the newer scope's rows alone.
+  if ((await read($, scope)) !== wanted) return
+  await update($, rows, () => ({
+    scope: wanted,
+    list: [...found.values()],
+    isLoaded: true,
+  }))
 }
 
 // ---------------------------------------------------------------------------
@@ -459,7 +478,8 @@ export const register: Register = on => {
     const result = await next(e)
     await $.command.register({
       name: 'sessions',
-      description: 'Show or hide the recent sessions pane',
+      description: 'Show or hide recent sessions for this folder, or all folders',
+      argumentHint: '[all]',
     })
     void $.session.id().then(id => update($, current, () => id))
     await update($, cwd, () => e.cwd)
@@ -472,23 +492,38 @@ export const register: Register = on => {
     return result
   })
 
-  // /sessions: closed → open with the keyboard; open → close. (Typing the
-  // command puts the keyboard in the prompt, so the pane never has it here;
-  // ctrl+x tab moves the keyboard into an open pane.)
-  on('command.run', { command: 'sessions' }, async $ => {
+  // /sessions [all]: this folder's sessions, or every folder's with `all`.
+  // Closed → open with the keyboard; open in the same scope → close; open in
+  // the other scope → switch to it. (Typing the command puts the keyboard in
+  // the prompt, so the pane never has it here; ctrl+x tab moves the keyboard
+  // into an open pane.)
+  on('command.run', { command: 'sessions' }, async ($, e) => {
+    const arg = e.args.trim().toLowerCase()
+    if (arg !== '' && arg !== 'all') {
+      return { text: `Usage: /sessions [all]`, exitCode: 1 }
+    }
+    const wanted: SessionScope = arg === 'all' ? 'all' : 'here'
+    const was = await read($, scope)
     const pane = (await $.ui.panes()).find(p => p.id === PANE)
-    if (pane?.isPlaced) {
+    if (pane?.isPlaced && was === wanted) {
       await $.ui.close({ id: PANE })
       return { text: 'Sessions pane closed.' }
     }
-    await $.ui.open({ id: PANE, title: 'Sessions', focus: true, closeOnEscape: true })
+    await update($, scope, () => wanted)
+    const title = wanted === 'all' ? 'Sessions (all)' : 'Sessions'
+    if (pane?.isPlaced) {
+      await $.ui.close({ id: PANE })
+    }
+    await $.ui.open({ id: PANE, title, focus: true, closeOnEscape: true })
     void scan($).catch(() => {})
-    return { text: 'Sessions pane opened.' }
+    const which = wanted === 'all' ? 'all folders' : 'this folder'
+    return { text: `Sessions pane opened (${which}).` }
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Text, Button } = $.ui.resolve(e)
-    const list = await read($, rows)
+    const loaded = await read($, rows)
+    const wanted = await read($, scope)
     const me = await read($, current)
     const here = await read($, cwd)
     const now = Date.now()
@@ -549,8 +584,16 @@ export const register: Register = on => {
       }
     }
 
-    if (list.length === 0) {
+    if (!loaded.isLoaded || loaded.scope !== wanted) {
       return <Text dimColor>Looking for sessions…</Text>
+    }
+    const list = loaded.list
+    if (list.length === 0) {
+      return (
+        <Text dimColor>
+          {wanted === 'all' ? 'No sessions yet.' : 'No other sessions in this folder. Try /sessions all.'}
+        </Text>
+      )
     }
 
     const out: any[] = []

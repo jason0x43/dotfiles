@@ -10,10 +10,21 @@ export type SessionRow = {
   parentId?: string
 }
 
+// 'here': the sessions of this session's folder; 'all': every folder's.
+export type SessionScope = 'here' | 'all'
+
+export type SessionList = {
+  scope: SessionScope
+  list: SessionRow[]
+  // False until a scan has finished, so an empty list reads as "none".
+  isLoaded: boolean
+}
+
 declare module 'claude-code' {
   interface PluginState {
     sessions: {
-      rows: Shaped<SessionRow[]>
+      rows: Shaped<SessionList>
+      scope: Shaped<SessionScope>
       current: Shaped<string>
       cwd: Shaped<string>
     }
