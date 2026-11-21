@@ -27,4 +27,19 @@ M.focus_kitty = function(dir)
   end
 end
 
+---Focus a neovim window, or at the edge hand off to the terminal multiplexer
+---@param dir 'up' | 'down' | 'left' | 'right'
+M.focus_pane = function(dir)
+  local curr_win = vim.fn.winnr()
+  vim.api.nvim_command('wincmd ' .. directions[dir])
+  if curr_win ~= vim.fn.winnr() then
+    return
+  end
+  if vim.env.REX_BLOCK then
+    vim.system({ 'rex', 'focus', dir }, { detach = true })
+  else
+    vim.fn.system('kitty @ kitten nvim_nav.py nvim ' .. dir)
+  end
+end
+
 return M

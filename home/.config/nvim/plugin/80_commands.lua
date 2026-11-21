@@ -55,7 +55,7 @@ cmd('Diff', function()
 end, 'Toggle a git diff overlay', '?')
 
 cmd('KittyFocus', function(arg)
-  require('user.terminal').focus_kitty(arg.args)
+  require('user.terminal').focus_pane(arg.args)
 end, 'Move the window focus', 1)
 
 cmd('Yazi', function()
