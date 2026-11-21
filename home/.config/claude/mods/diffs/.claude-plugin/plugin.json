@@ -1,0 +1,6 @@
+{
+  "name": "diffs",
+  "version": "0.1.0",
+  "description": "Collapse or hide the inline diffs Edit and Write draw in the transcript",
+  "types": "./types/index.d.ts"
+}
