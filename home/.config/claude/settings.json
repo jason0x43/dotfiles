@@ -1,10 +1,10 @@
 {
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.dotfiles/home/.config/claude/mods/sessions:~/.dotfiles/home/.config/claude/mods/diffs"
+  },
   "attribution": {
     "commit": "",
     "pr": ""
-  },
-  "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.dotfiles/home/.config/claude/mods/sessions:~/.dotfiles/home/.config/claude/mods/diffs"
   },
   "permissions": {
     "defaultMode": "auto"
@@ -88,9 +88,9 @@
       "autoCompactWindow": 400000
     }
   },
+  "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "editorMode": "vim",
   "terminalProgressBarEnabled": true,
-  "agentPushNotifEnabled": false,
-  "skipDangerousModePermissionPrompt": true
+  "agentPushNotifEnabled": false
 }
