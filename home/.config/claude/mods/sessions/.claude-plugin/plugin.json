@@ -1,0 +1,6 @@
+{
+  "name": "sessions",
+  "version": "0.1.0",
+  "description": "A sidebar pane listing your recent Claude Code sessions, like Claude Desktop's session panel",
+  "types": "./types/index.d.ts"
+}

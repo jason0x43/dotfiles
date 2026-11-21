@@ -3,6 +3,9 @@
     "commit": "",
     "pr": ""
   },
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.dotfiles/home/.config/claude/mods/sessions"
+  },
   "permissions": {
     "defaultMode": "auto"
   },
@@ -59,6 +62,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'rex __internal session-start --agent claude 2>/dev/null || true'",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -69,13 +83,14 @@
     "cc-plugin-you-should-know@builtin": true,
     "lua-lsp@claude-plugins-official": true
   },
-  "theme": "auto",
-  "editorMode": "vim",
-  "terminalProgressBarEnabled": true,
-  "agentPushNotifEnabled": false,
   "modelSettings": {
     "claude-opus-5-5": {
       "autoCompactWindow": 400000
     }
-  }
+  },
+  "theme": "auto",
+  "editorMode": "vim",
+  "terminalProgressBarEnabled": true,
+  "agentPushNotifEnabled": false,
+  "skipDangerousModePermissionPrompt": true
 }
