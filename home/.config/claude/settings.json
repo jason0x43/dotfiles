@@ -81,7 +81,14 @@
   },
   "enabledPlugins": {
     "cc-plugin-you-should-know@builtin": true,
-    "lua-lsp@claude-plugins-official": true
+    "frontend-design@anthropic-plugin-directory": true,
+    "code-review@anthropic-plugin-directory": true,
+    "context7@anthropic-plugin-directory": true,
+    "skill-creator@anthropic-plugin-directory": true,
+    "code-simplifier@anthropic-plugin-directory": true,
+    "feature-dev@anthropic-plugin-directory": true,
+    "claude-code-setup@anthropic-plugin-directory": true,
+    "commit-commands@anthropic-plugin-directory": true
   },
   "modelSettings": {
     "claude-opus-5-5": {
