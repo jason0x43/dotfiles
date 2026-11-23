@@ -1,0 +1,5 @@
+node_modules/
+# Build output; run `npm run build` after a fresh checkout
+compiled/
+# Holds the Home Assistant token
+settings.json

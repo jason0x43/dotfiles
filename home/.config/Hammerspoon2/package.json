@@ -1,0 +1,17 @@
+{
+  "name": "hammerspoon2-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hammerspoon 2 config, written in TypeScript (src/) and compiled to compiled/.\nRun `npm run build` (or `npm run watch`) after editing src/. Third-party JS libraries: run `npm run bundle` after adding packages with `npm install <package>`.",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf compiled",
+    "bundle": "node bundle.js"
+  }
+}

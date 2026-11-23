@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "compiled",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": [],
+    "noEmitOnError": true,
+    "skipLibCheck": true
+  },
+  "files": [
+    "hammerspoon.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
+}
