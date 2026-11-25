@@ -105,6 +105,9 @@
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 
+[merge]
+	stat = false
+
 [rebase]
 	instructionFormat = [%an @ %ar] %s
 	autostash = true
