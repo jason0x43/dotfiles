@@ -5,6 +5,9 @@ bindkey -v
 # Get into vim command mode faster when hitting ESC
 export KEYTIMEOUT=1
 
+# Rex sends ctrl+[ as CSI u (ESC[91;5u) instead of ESC; treat it as ESC
+bindkey -M viins '^[[91;5u' vi-cmd-mode
+
 # History key bindings
 # ------------------------------------------------------------------------
 # Up and down arrow keys step through local history
